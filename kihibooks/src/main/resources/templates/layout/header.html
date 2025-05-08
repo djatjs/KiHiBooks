@@ -4,65 +4,130 @@
     <meta charset="UTF-8">
     <title th:replace="this :: title">Default Title</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <style>
-
-    </style>
+    
 </head>
 <body>
-    <header th:fragment="header" >
-        <div class="d-flex bg-white">
-            <div class="p-2 mr-auto ml-3">
-                <a class="p-2 mr-2" th:href="@{/}">
-                    <img class="mt-1" src="/resources/static/img/logo.png" alt="로고" style="height: 30px;">
-                </a>
-            </div>
-            <div class="p-2 ">
-                <form class="form-inline" action="/action_page.php">
-                    <div class="mt-1" style="border:2px solid; border-radius: 15px;">
-                        <img class="ml-1 mb-1" src="/resources/static/img/magnifier.png" alt="돋보기" style="height: 20px;">
-                        <input type="text"style="border:none; outline: none; background: transparent;">
-                    </div>
-                </form>
-            </div>
+<header th:fragment="header">
+    <div class="d-flex bg-white">
+        <div class="p-2 mr-auto ml-3">
             <a class="p-2 mr-2" th:href="@{/}">
-                <img class="mt-1" src="/resources/static/img/bell.png" alt="알림" style="height: 20px;">
+                <img class="mt-1" src="/resources/static/img/logo.png" alt="로고" style="height: 30px;">
             </a>
-            <a class="p-2 mr-2" th:href="@{/}">
-                <img class="mt-1" src="/resources/static/img/cart.png" alt="카트" style="height: 20px;">
-            </a>
-            <!-- <th:block sec:authorize="isAnonymous()"> -->
-                <a class="p-2 mr-2 mt-2" th:href="@{/signup}" style="text-decoration: none; color: black;">
-                    회원가입
-                </a>
-                <a class="p-2 mr-2 mt-2" th:href="@{/login}" style="text-decoration: none; color: black;">
-                    로그인
-                </a>
-            <!-- </th:block> -->
-            <!-- <th:block sec:authorize="isAuthenticated()"> 아직은 먼일 -->
-                <a class="p-2 mr-2" th:href="@{/}">
-                    <img class="mt-1" src="/resources/static/img/library.png" alt="내 서재" style="height: 20px;">
-                </a>
-                <a class="p-2 mr-2" th:href="@{/}">
-                    <img class="mt-1" src="/resources/static/img/user_profile.png" alt="프로필" style="height: 20px;">
-                </a>
-            <!-- </th:block> -->
         </div>
+        <div class="p-2">
+            <form class="form-inline" action="/action_page.php">
+                <div class="mt-1" style="border:2px solid; border-radius: 15px;">
+                    <img class="ml-1 mb-1" src="/resources/static/img/magnifier.png" alt="돋보기" style="height: 20px;">
+                    <input type="text" style="border:none; outline: none; background: transparent;">
+                </div>
+            </form>
+        </div>
+        <a class="p-2 mr-2" th:href="@{/}">
+            <img class="mt-1" src="/resources/static/img/bell.png" alt="알림" style="height: 20px;">
+        </a>
+        <a class="p-2 mr-2" th:href="@{/}">
+            <img class="mt-1" src="/resources/static/img/cart.png" alt="카트" style="height: 20px;">
+        </a>
+        <a class="p-2 mr-2 mt-2" th:href="@{/signup}" style="text-decoration: none; color: black;">회원가입</a>
+        <a class="p-2 mr-2 mt-2" th:href="@{/login}" style="text-decoration: none; color: black;">로그인</a>
+    </div>
 
-        <div>
-            <div class="d-flex justify-content-between bg-white mb-3">
-                <div class="d-flex">
-                    <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">로맨스</a>
-                    <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">로판</a>
-                    <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">판타지</a>
-                    <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">무협</a>
+    <div>
+        <div class="d-flex justify-content-between bg-white mb-3">
+            <div class="d-flex">
+                <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">로맨스</a>
+                <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">로판</a>
+                <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">판타지</a>
+                <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">무협</a>
+            </div>
+            <div class="d-flex justify-content-center">
+                <div class="category-wrapper">
+                    <button class="category-button" onclick="toggleDropdown(event)">
+                        <img src="/resources/static/img/menu.png" alt="메뉴" style="height: 15px; "> 전체 카테고리
+                    </button>
+
+                    <div class="dropdown-menu" id="dropdown">
+                        <div class="tabs">
+                            <button class="tab-button active" onclick="switchTab(event, 0)">로맨스</button>
+                            <button class="tab-button" onclick="switchTab(event, 1)">로판</button>
+                            <button class="tab-button" onclick="switchTab(event, 2)">판타지</button>
+                            <button class="tab-button" onclick="switchTab(event, 3)">무협</button>
+                        </div>
+
+                        <div class="tab-content active">
+                            <div class="sub-category">
+                                <div class="mb-2 mt-2">현대 로맨스</div>
+                                <div class="mb-2 mt-2">오피스물</div>
+                            </div>
+                        </div>
+                        <div class="tab-content">
+                            <div class="sub-category">
+                                <div>
+                                    <div class="mb-2 mt-2">동양풍</div>
+                                    <div class="mb-2 mt-2">가상세계</div>
+                                </div>
+                                <div>
+                                    <div class="mb-2 mt-2">서양풍</div>
+                                    <div class="mb-2 mt-2">이세계</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-content">
+                            <div class="sub-category">
+                                <div>
+                                    <div class="mb-2 mt-2">정통 판타지</div>
+                                    <div class="mb-2 mt-2">퓨전 판타지</div>
+                                    <div class="mb-2 mt-2">현대 판타지</div>
+                                    <div class="mb-2 mt-2">게임 판타지</div>
+                                </div>
+                                <div>
+                                    <div class="mb-2 mt-2">대체 역사</div>
+                                    <div class="mb-2 mt-2">스포츠</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-content">
+                            <div class="sub-category">
+                                <div class="mb-2 mt-2">무림 고수</div>
+                                <div class="mb-2 mt-2">복수극</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="d-flex justify-content-center">
-                    <div class="p-2 mr-3"><img class="mb-1" src="/resources/static/img/menu.png" alt="전체 카테고리" style="height: 15px;"> 전체 카테고리</div>
-                    <div class="p-2 mr-3"><img class="mb-1" src="/resources/static/img/P.png" alt="포인트" style="height: 20px;">포인트 충전</div>
+                <div class="p-2 mr-3">
+                    <img class="mb-1" src="/resources/static/img/P.png" alt="포인트" style="height: 20px;">포인트 충전
                 </div>
             </div>
         </div>
-        <hr class="my-hr3">
-    </header>
+    </div>
+    <hr class="my-hr3">
+    <script>
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById("dropdown");
+            dropdown.classList.toggle("active");
+        }
+    
+        function switchTab(event, index) {
+            event.stopPropagation();
+            const tabs = document.querySelectorAll(".tab-button");
+            const contents = document.querySelectorAll(".tab-content");
+    
+            tabs.forEach((tab, i) => {
+                tab.classList.toggle("active", i === index);
+                contents[i].classList.toggle("active", i === index);
+            });
+        }
+    
+        document.addEventListener("click", function (e) {
+            const dropdown = document.getElementById("dropdown");
+            const isInside = dropdown.contains(e.target) || e.target.closest('.category-button');
+            if (!isInside) {
+                dropdown.classList.remove("active");
+            }
+        });
+    </script>
+</header>
+
 </body>
 </html>
