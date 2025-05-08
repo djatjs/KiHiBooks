@@ -40,7 +40,7 @@
             <!-- </th:block> -->
             <!-- <th:block sec:authorize="isAuthenticated()"> 아직은 먼일 -->
                 <a class="p-2 mr-2" th:href="@{/}">
-                    <img class="mt-1" src="/resources/static/img/library3.png" alt="내 서재" style="height: 20px;">
+                    <img class="mt-1" src="/resources/static/img/library.png" alt="내 서재" style="height: 20px;">
                 </a>
                 <a class="p-2 mr-2" th:href="@{/}">
                     <img class="mt-1" src="/resources/static/img/user_profile.png" alt="프로필" style="height: 20px;">
@@ -49,16 +49,16 @@
         </div>
 
         <div>
-            <div class="d-flex bg-white mb-3 mt-1">
-                <a class="p-2 ml-4" th:href="@{/}" style="text-decoration: none; color: black;">로맨스</a>
-                <a class="p-2 ml-4" th:href="@{/}" style="text-decoration: none; color: black;">로판</a>
-                <a class="p-2 ml-4" th:href="@{/}" style="text-decoration: none; color: black;">판타지</a>
-                <a class="p-2 ml-4" th:href="@{/}" style="text-decoration: none; color: black;">무협</a>
-                <div class="p-2 mr-3 ml-auto" >
-                    <a class="p-2 ml-4" th:href="@{/}" style="text-decoration: none; color: black;">전체 카테고리</a>
+            <div class="d-flex justify-content-between bg-white mb-3">
+                <div class="d-flex">
+                    <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">로맨스</a>
+                    <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">로판</a>
+                    <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">판타지</a>
+                    <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">무협</a>
                 </div>
-                <div class="p-2 mr-3" >
-                    <a class="p-2 ml-4" th:href="@{/}" style="text-decoration: none; color: black;">포인트 충전</a>
+                <div class="d-flex justify-content-center">
+                    <div class="p-2 mr-3"><img class="mb-1" src="/resources/static/img/menu.png" alt="전체 카테고리" style="height: 15px;"> 전체 카테고리</div>
+                    <div class="p-2 mr-3"><img class="mb-1" src="/resources/static/img/P.png" alt="포인트" style="height: 20px;">포인트 충전</div>
                 </div>
             </div>
         </div>
