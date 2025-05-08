@@ -20,7 +20,7 @@
                 <form class="form-inline" action="/action_page.php">
                     <div class="mt-1" style="border:2px solid; border-radius: 15px;">
                         <img class="ml-1 mb-1" src="/resources/static/img/magnifier.png" alt="돋보기" style="height: 20px;">
-                        <input type="text"style="border:none; outline: none; background: transparent;" placeholder="Search">
+                        <input type="text"style="border:none; outline: none; background: transparent;">
                     </div>
                 </form>
             </div>
@@ -49,13 +49,17 @@
         </div>
 
         <div>
-            <div class="d-flex bg-white mb-3">
-                <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">로맨스</a>
-                <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">로판</a>
-                <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">판타지</a>
-                <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">무협</a>
-                <div class="p-2 mr-3 ml-auto" >전체 카테고리</div>
-                <div class="p-2 mr-3" >포인트 충전</div>
+            <div class="d-flex bg-white mb-3 mt-1">
+                <a class="p-2 ml-4" th:href="@{/}" style="text-decoration: none; color: black;">로맨스</a>
+                <a class="p-2 ml-4" th:href="@{/}" style="text-decoration: none; color: black;">로판</a>
+                <a class="p-2 ml-4" th:href="@{/}" style="text-decoration: none; color: black;">판타지</a>
+                <a class="p-2 ml-4" th:href="@{/}" style="text-decoration: none; color: black;">무협</a>
+                <div class="p-2 mr-3 ml-auto" >
+                    <a class="p-2 ml-4" th:href="@{/}" style="text-decoration: none; color: black;">전체 카테고리</a>
+                </div>
+                <div class="p-2 mr-3" >
+                    <a class="p-2 ml-4" th:href="@{/}" style="text-decoration: none; color: black;">포인트 충전</a>
+                </div>
             </div>
         </div>
         <hr class="my-hr3">
