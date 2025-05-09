@@ -1,17 +1,30 @@
 <!DOCTYPE html>
-<html 
-xmlns:th="http://www.thymeleaf.org"
-xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
-layout:decorate="~{layout/layout.html}">
-<head>
-<meta charset="UTF-8">
-<title>KiHiBooks</title>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout.html}">
 
+<head>
+	<meta charset="UTF-8">
+	<title>KiHiBooks</title>
+	<style>
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 0 20px;
+		}
+
+		@media (max-width: 800px) {
+			.container {
+				padding: 0;
+			}
+		}
+	</style>
 </head>
-<body >
+
+<body>
 	<main layout:fragment="content" class="container">
 		<h1>KiHiBooks Main</h1>
-        
+
 	</main>
 </body>
+
 </html>
