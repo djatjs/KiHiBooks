@@ -5,11 +5,38 @@
 <head>
 	<meta charset="UTF-8">
 	<title>KiHiBooks</title>
+	<link rel="stylesheet" href="/css/swiper-bundle.min.css">
+	<style>
+		.swiper { width: 100%; height: 400px; }
+		.swiper-slide img { width: 100%; height: 100%; object-fit: cover; }
+	</style>
 </head>
 
 <body>
 	<main layout:fragment="content" class="container">
-		<h1>KiHiBooks Main</h1>
+		<div class="swiper main-banner">
+			<div class="swiper-wrapper">
+					<div class="swiper-slide" th:each="img : ${banners}">
+						<img th:src="@{/resources/static{path}(path=${img})}" alt="배너">
+					</div>
+			</div>
+			<div class="swiper-button-next"></div>
+			<div class="swiper-button-prev"></div>
+			<div class="swiper-pagination"></div>
+	</div>
+
+	<script src="/js/swiper-bundle.min.js"></script>
+	<script>
+    new Swiper(".main-banner", {
+			loop: true,
+			autoplay: { delay: 4000, disableOnInteraction: false },
+			pagination: { el: ".swiper-pagination", clickable: true },
+			navigation: {
+				nextEl: ".swiper-button-next",
+				prevEl: ".swiper-button-prev",
+			},
+    });
+	</script>
 
 	</main>
 </body>
