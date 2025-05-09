@@ -23,7 +23,7 @@ public class UserService {
 	private String setfrom; //보내는 이의 이메일
 
     public boolean sendEmail(EmailVO email) {
-        if(email == null || email.getEv_ur_email().length() < 1){
+        if(email == null || email.getEv_email().length() < 1){
 			return false;
 		}
 		try{
@@ -31,20 +31,30 @@ public class UserService {
 			String code = createCode(6);
 			System.out.println(code);
 			//코드 발송
-			boolean sendRes = sendCodeToMail(email.getEv_ur_email(), "[KIHIBooks]이메일 인증", "인증번호는 <b>"+code+"</b> 입니다. 유출되지 않도록 해주세요.");
-			//DB에 이메일, 코드, 유효시간 저장
-			boolean saveRes = userDAO.
-
+			boolean sendRes = sendCodeToMail(email.getEv_email(), "[KIHIBooks]이메일 인증", "인증번호는 <b>"+code+"</b> 입니다. 유출되지 않도록 해주세요.");
 			if(!sendRes){
 				return false;
 			}
+			email.setEv_code(code);
 
+			//DB에 인증정보 저장되어 있다면 삭제 후
+			EmailVO dbEmail = userDAO.selectEV(email.getEv_email());
+			if(dbEmail != null){
+				userDAO.deleteEV(email.getEv_email());
+			}
+			//DB에 이메일, 코드, 유효시간 저장
+			boolean saveRes = userDAO.insertEV(email);
+			if(!saveRes){
+				return false;
+			}
+
+			return true;
 		}
 		catch(Exception e){
+			e.printStackTrace();
 			return false;
 		}
 		
-		return true;
     }
 
 	
@@ -78,12 +88,11 @@ public class UserService {
 			messageHelper.setSubject(title);
 			messageHelper.setText(content, true);
 
-			System.out.println(message);
-
 			mailSender.send(message);
 			return true;
 		}
 		catch(Exception e){
+			e.printStackTrace();
 			return false;
 		}
 	}

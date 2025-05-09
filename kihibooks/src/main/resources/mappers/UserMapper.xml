@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.kh.kihibooks.dao.UserDAO">
-
+    <insert id="insertEV">
+        insert into email_verification(ev_email, ev_code, ev_expried)
+        values(#{ev_email},#{ev_code},#{ev_expried})
+    </insert>
+    <select id="selectEV" resultType="EmailVO">
+        select * from email_verification where ev_email = #{ev_email}
+    </select>
+    <delete id="deleteEV">
+        delete from email_verification where ev_email = #{ev_email}
+    </delete>
 </mapper>

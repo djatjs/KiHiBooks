@@ -5,7 +5,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.kh.kihibooks.model.vo.EmailVO;
@@ -28,7 +27,7 @@ public class UserController {
     @PostMapping("/email/sendVerificationCode")
     public boolean sendEmail(@RequestBody String email) {
         EmailVO newEmail = new EmailVO();
-        newEmail.setEv_ur_email(email.trim());
+        newEmail.setEv_email(email.trim());
         boolean evRes = userService.sendEmail(newEmail);
         System.out.println(evRes);
         if(!evRes) return false;
