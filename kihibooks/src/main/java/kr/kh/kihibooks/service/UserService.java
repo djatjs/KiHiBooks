@@ -18,7 +18,7 @@ public class UserService {
 
 	@Autowired
 	private JavaMailSender mailSender;
-	
+
 	@Value("${spring.mail.username}")
 	private String setfrom; //보내는 이의 이메일
 
@@ -26,16 +26,16 @@ public class UserService {
         if(email == null || email.getEv_ur_email().length() < 1){
 			return false;
 		}
-		System.out.println(email);
-		System.out.println(setfrom);
 		try{
 			//코드 생성
 			String code = createCode(6);
 			System.out.println(code);
 			//코드 발송
-			boolean res = sendCodeToMail(email.getEv_ur_email(), "[KIHIBooks]이메일 인증", "인증번호는 <b>"+code+"</b> 입니다. 유출되지 않도록 해주세요.");
-			
-			if(!res){
+			boolean sendRes = sendCodeToMail(email.getEv_ur_email(), "[KIHIBooks]이메일 인증", "인증번호는 <b>"+code+"</b> 입니다. 유출되지 않도록 해주세요.");
+			//DB에 이메일, 코드, 유효시간 저장
+			boolean saveRes = userDAO.
+
+			if(!sendRes){
 				return false;
 			}
 
