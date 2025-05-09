@@ -8,9 +8,9 @@
 </head>
 <body>
 <header th:fragment="header">
-    <div class="d-flex bg-white">
-        <div class="p-2 mr-auto ml-3">
-            <a class="p-2 mr-2" th:href="@{/}">
+    <div class="d-flex bg-white container">
+        <div class="p-2 mr-auto">
+            <a class="p-2" th:href="@{/}">
                 <img class="mt-1" src="/resources/static/img/logo.png" alt="로고" style="height: 30px;">
             </a>
         </div>
@@ -28,17 +28,17 @@
         <a class="p-2 mr-2" th:href="@{/}">
             <img class="mt-1" src="/resources/static/img/cart.png" alt="카트" style="height: 20px;">
         </a>
-        <a class="p-2 mr-2 mt-2" th:href="@{/signup}" style="text-decoration: none; color: black;">회원가입</a>
-        <a class="p-2 mr-2 mt-2" th:href="@{/login}" style="text-decoration: none; color: black;">로그인</a>
+        <a class="p-2 mt-2" th:href="@{/signup}" style="text-decoration: none; color: black;">회원가입</a>
+        <a class="p-2 mt-2" th:href="@{/login}" style="text-decoration: none; color: black;">로그인</a>
     </div>
 
-    <div>
+    <div class="container">
         <div class="d-flex justify-content-between bg-white mb-3">
             <div class="d-flex">
-                <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">로맨스</a>
-                <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">로판</a>
-                <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">판타지</a>
-                <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">무협</a>
+                <a class="p-2" th:href="@{/}" style="text-decoration: none; color: black;">로맨스</a>
+                <a class="p-2" th:href="@{/}" style="text-decoration: none; color: black;">로판</a>
+                <a class="p-2" th:href="@{/}" style="text-decoration: none; color: black;">판타지</a>
+                <a class="p-2" th:href="@{/}" style="text-decoration: none; color: black;">무협</a>
             </div>
             <div class="d-flex justify-content-center">
                 <div class="category-wrapper">
@@ -68,7 +68,6 @@
                                 </div>
                                 <div>
                                     <div class="mb-2 mt-2">서양풍</div>
-                                    <div class="mb-2 mt-2">이세계</div>
                                 </div>
                             </div>
                         </div>
@@ -94,7 +93,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="p-2 mr-3">
+                <div class="p-2">
                     <img class="mb-1" src="/resources/static/img/P.png" alt="포인트" style="height: 20px;">포인트 충전
                 </div>
             </div>
