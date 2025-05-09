@@ -67,8 +67,36 @@
                 </div>
             </div>
         </div>
-        <hr class="my-hr3">
-    </header>
+    </div>
+    <hr class="my-hr3">
+    <script>
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById("dropdown");
+            dropdown.classList.toggle("active");
+        }
+    
+        function switchTab(event, index) {
+            event.stopPropagation();
+            const tabs = document.querySelectorAll(".tab-button");
+            const contents = document.querySelectorAll(".tab-content");
+    
+            tabs.forEach((tab, i) => {
+                tab.classList.toggle("active", i === index);
+                contents[i].classList.toggle("active", i === index);
+            });
+        }
+    
+        document.addEventListener("click", function (e) {
+            const dropdown = document.getElementById("dropdown");
+            const isInside = dropdown.contains(e.target) || e.target.closest('.category-button');
+            if (!isInside) {
+                dropdown.classList.remove("active");
+            }
+        });
+    </script>
+</header>
+
 </body>
 
 </html>
