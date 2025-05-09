@@ -6,11 +6,6 @@
 	<meta charset="UTF-8">
 	<title>마이키히</title>
 	<style>
-		html, body {
-			width: 100%;
-			overflow-x: auto;
-		}
-
 		.text {
 			padding-left: 20px;
 		}
@@ -20,7 +15,7 @@
 		}
 
 		.menu-item, .t {
-			color: #666;
+			color: #333;
 		}
 
 		.text {
@@ -34,7 +29,11 @@
 		}
 
 		.icon {
-			filter: grayscale(100%) brightness(0%) invert(40%);
+			filter: grayscale(100%) brightness(0%) invert(33%);
+		}
+
+		.selectedIcon{
+			filter: brightness(0) saturate(100%) invert(61%) sepia(56%) saturate(387%) hue-rotate(328deg) brightness(101%) contrast(101%);
 		}
 
 		.mykihi {
@@ -170,8 +169,7 @@
 	<main layout:fragment="content" class="container d-flex" style="min-height: 700px;">
 		<div class="left-menu ml-3" style="width: 180px; flex-shrink: 0;">
 			<h3 class="mt-4 mb-4">마이키히</h3>
-			<a th:href="@{/mypage}" class="bold menu-item"><img class="mb-1 icon" src="/resources/static/img/home.png"
-					alt="마이 홈" style="height: 15px;"> 마이키히홈</a>
+			<a th:href="@{/account/mykihi}" class="bold menu-item" style="color: #ff7f50;"><img class="mb-1 selectedIcon" src="/resources/static/img/home.png" alt="마이홈" style="height: 15px;"> 마이키히홈</a>
 			<hr>
 			<div class="book">
 				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/book.png" alt="책" style="height: 15px;"> 책
@@ -183,7 +181,7 @@
 			<div class="my">
 				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/person.png" alt="개인"
 						style="height: 15px;"> 개인</div>
-				<div class="mt-2 bold text menu-item">내 정보 관리</div>
+				<a th:href="@{/account/modify}" class="mt-2 bold text menu-item">내 정보 관리</a>
 				<div class="mt-1 bold text menu-item">리뷰 관리</div>
 			</div>
 			<hr>

@@ -19,9 +19,14 @@ public class MainController {
 		return "user/login";
 	}
 
-	@GetMapping("/mypage")
+	@GetMapping("/account/mykihi")
 	public String mypage() {
 		return "user/mypage";
+	}
+
+	@GetMapping("/account/modify")
+	public String edit() {
+		return "user/edit";
 	}
 
 }
