@@ -5,12 +5,48 @@
 <head>
 	<meta charset="UTF-8">
 	<title>KiHiBooks</title>
+	<style>
+		.sidenav {
+			width: 130px;
+			z-index: 1;
+			top: 20px;
+			left: 10px;
+			overflow-x: hidden;
+			padding: 8px 0;
+		}
+		#myHome:hover{
+			text-decoration: none;
+		}
+		.bold {
+			font-weight: bold;
+		}
+		.menu-item{
+			color: black;
+		}
+		.menu-item:hover{
+			text-decoration: none;
+			color: black;
+		}
+	</style>
 </head>
 
 <body>
 	<main layout:fragment="content" class="container">
-		
-
+		<div class="sidenav">
+			<a th:href="@{/mypage}" class="bold menu-item"><img class="mb-1" src="/resources/static/img/home.png" alt="마이 홈" style="height: 15px;"> 마이키히홈</a>
+			<hr>
+			<div class="bold"><img class="mb-1" src="/resources/static/img/book.png" alt="책" style="height: 15px;"> 책</div>
+			<div>관심 작품</div>
+			<div>최근 조회한 작품</div>
+			<hr>
+			<div class="bold"><img class="mb-1" src="/resources/static/img/person.png" alt="개인" style="height: 15px;"> 개인</div>
+			<div>내 정보 관리</div>
+			<div>리뷰 관리</div>
+			<hr>
+			<div class="bold"><img class="mb-1" src="/resources/static/img/card.png" alt="구매" style="height: 15px;"> 구매/혜택</div>
+			<div>결제 내역</div>
+			<div>키히 포인트</div>
+		</div>
 	</main>
 </body>
 
