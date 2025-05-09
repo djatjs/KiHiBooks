@@ -1,5 +1,5 @@
 package kr.kh.kihibooks.dao;
 
-public class UserDAO {
+public interface UserDAO {
 	
 }
