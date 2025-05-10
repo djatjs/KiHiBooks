@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.kh.kihibooks.model.vo.EmailVO;
@@ -34,5 +35,12 @@ public class UserController {
         return evRes;
     }
     
-    
+    @ResponseBody
+    @PostMapping("/email/verifyCode")
+    public boolean verifyCode(@RequestParam String userCode, @RequestParam String email) {
+        if(userCode == null || email == null){
+            return false;
+        }
+        return userService.checkCode(email, userCode);
+    }
 }

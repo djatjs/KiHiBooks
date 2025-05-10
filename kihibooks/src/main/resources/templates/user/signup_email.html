@@ -3,44 +3,76 @@
 	layout:decorate="~{layout/layout.html}">
 
 <head>
-	<meta charset="UTF-8">
-	<title>KiHiBooks</title>
-	<style>
-	main {
-		margin-top: 70px;
-		display: flex;
-		flex-direction: column;
-		align-items: center;	
-	}
-	
+    <meta charset="UTF-8">
+    <title>KiHiBooks</title>
+    <style>
+        main {
+            margin-top: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;    
+        }
 
-	</style>
+        .form-group {
+            position: relative; /* 라벨을 절대 위치로 설정하기 위해 부모 요소에 상대 위치 설정 */
+            margin-bottom: 20px; /* 각 입력 필드 간의 간격 조정 */
+        }
+
+        
+
+        input:focus {
+            border-color: blue; /* 포커스 시 테두리 색상 변경 */
+            outline: none; /* 기본 포커스 아웃라인 제거 */
+        }
+
+        label {
+            position: absolute; /* 라벨을 절대 위치로 설정 */
+            top: 10px; /* 입력 필드의 상단에서 10px 떨어지도록 설정 */
+            left: 10px; /* 입력 필드의 왼쪽에서 10px 떨어지도록 설정 */
+            background: transparent; /* 라벨 배경을 흰색으로 설정하여 입력 필드와 겹치지 않도록 */
+            padding: 0 5px; /* 라벨의 좌우 패딩 */
+            transition: transform 0.3s ease, color 0.3s ease; /* 부드러운 전환 효과 */
+            color: #999; /* 기본 라벨 색상 */
+        }
+
+        input:focus + label,
+        input:not(:placeholder-shown) + label { /* 포커스되거나 입력된 경우 라벨 위치 조정 */
+            transform: translateY(-24px); /* 라벨을 위로 이동 */
+            color: #ff7f50; /* 포커스 시 라벨 색상 변경 */
+            font-size: 12px; /* 라벨 크기 조정 */
+        }
+
+        /* placeholder 스타일 (입력 필드에 기본 텍스트) */
+        input::placeholder {
+            color: transparent; /* 기본 텍스트 색상 투명하게 설정 */
+        }
+    </style>
 </head>
 
 <body>
-	<!-- 이메일, 이메일 인증, 비밀번호, 비번확인, 출생년도, 남/녀, 닉네임  -->
-	<main layout:fragment="content" class="container">
-		<h3 style="text-align: center;">KiHiBooks email</h3>
-		<form action="/action_page.php">
-			<div class="form-group">
-				<input type="email" class="form-control" placeholder="Enter email" id="email">
-			</div>
-			<button type="button" class="btn btn-primary mb-3" id="sendVerificationCode">이메일 인증</button> <!-- 버튼에 id 추가 -->
-			
-			<!-- 인증번호 입력 필드 및 확인 버튼 추가 -->
-			<div class="form-group">
-				<input type="text" class="form-control" placeholder="인증번호 입력" id="verificationCode" disabled> <!-- 초기에는 비활성화 -->
-			</div>
-			<button type="button" class="btn btn-secondary mb-3" id="checkVerificationCode" disabled>인증번호 확인</button> <!-- 초기에는 비활성화 -->
-			
-			<div class="form-group">
-				<input type="password" class="form-control" placeholder="Enter password" id="pwd">
-			</div>
-			<div class="form-group">
-				<input type="password" class="form-control" placeholder="Check password" id="pwd2">
-			</div>
-			<button type="submit" class="btn btn-primary col-12">가입</button>
-		</form>
+    <main layout:fragment="content" class="container">
+        <h3 style="text-align: center;" >KiHiBooks email</h3>
+        <form action="/action_page.php">
+            <div class="form-group">
+                <input type="email" class="form-control" id="email" name="email" placeholder=" " required>
+                <label for="email">이메일</label>
+            </div>
+            <button type="button" class="btn btn-primary mb-3" id="sendVerificationCode">이메일 인증</button>
+            
+            <div class="form-group">
+                <input type="text" class="form-control" id="verificationCode" name="verificationCode" placeholder=" " disabled>
+                <label for="verificationCode">인증코드</label>
+            </div>
+            <button type="button" class="btn btn-secondary mb-3" id="checkVerificationCode" disabled>인증번호 확인</button>
+            
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="Enter password" id="pwd" required>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="Check password" id="pwd2" required>
+            </div>
+            <button type="submit" class="btn btn-primary col-12" id="join-btn" disabled>가입</button>
+        </form>
 		<script>
 			$("#sendVerificationCode").click(function(){
 				const email = $("#email").val().trim();
@@ -51,7 +83,7 @@
 					return;
 				}
 				alert(email);
-				$("#sendVerificationCode").prop("disabled", true); // 버튼 비활성화
+				//$("#sendVerificationCode").prop("disabled", true); // 버튼 비활성화
 
 				$.ajax({
 					url: "/email/sendVerificationCode",
@@ -74,6 +106,41 @@
 					complete: function(){
 					}
 				})
+				return;
+			})
+		</script>
+		<script>
+			$("#checkVerificationCode").click(function(){
+				const email = $("#email").val().trim();
+				const vCode = $("#verificationCode").val().trim();
+				
+				if (!vCode) {
+					alert("인증번호를 입력해주세요.");
+					return;
+				}
+
+				$.ajax({
+					url : "/email/verifyCode",
+					method: "POST",
+					data: {
+						email: email,
+						userCode: vCode
+					},
+					success : function(response){
+						if(response){
+							alert("인증 성공!");
+							$("#join-btn").prop("disabled", false); //가입 버튼 활성화
+							$("#sendVerificationCode").prop("disabled", true); // 이메일 재발송 방지
+							$("#verificationCode").prop("disabled", true); // 인증번호 입력 필드 비활성화
+							$("#checkVerificationCode").prop("disabled", true); // 인증번호 확인 버튼 비활성화
+						}
+						else{
+							alert("인증에 실패하였습니다. 다시 시도해주세요.");
+						}
+					}
+
+				})
+				
 				return;
 			})
 		</script>

@@ -97,4 +97,14 @@ public class UserService {
 		}
 	}
 
+
+
+    public boolean checkCode(String email, String userCode) {
+		int count = userDAO.selectCode(email, userCode);
+		if(count == 0){
+			return false;
+		}
+		return true;
+    }
+
 }

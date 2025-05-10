@@ -11,4 +11,7 @@
     <delete id="deleteEV">
         delete from email_verification where ev_email = #{ev_email}
     </delete>
+    <select id="selectCode" resultType="int">
+        select count(*) from email_verification where ev_email = #{email} and ev_code = #{userCode}
+    </select>
 </mapper>
