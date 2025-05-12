@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.kh.kihibooks.dao.BookDAO">
+    <select id="selectTopBooks" resultType="BookVO">
+        SELECT 
+            BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_PUBLISH_DATE
+        FROM 
+            book
+        ORDER BY 
+            BO_TOTAL_RATING DESC, BO_REVIEW_COUNT DESC
+        LIMIT 18;
+    </select>
+
+</mapper>

@@ -18,7 +18,8 @@ public class BookController {
     private BookService bookService;
     
     @GetMapping("/realtime")
-    public List<BookVO> getMethodName(@RequestParam String param) {
+    public List<BookVO> getTopBooks() {
+
         return bookService.getTopBooks();
     }
     

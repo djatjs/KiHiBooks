@@ -1,0 +1,11 @@
+package kr.kh.kihibooks.dao;
+
+import java.util.List;
+
+import kr.kh.kihibooks.model.vo.BookVO;
+
+public interface BookDAO {
+
+    List<BookVO> selectTopBooks();
+    
+}
