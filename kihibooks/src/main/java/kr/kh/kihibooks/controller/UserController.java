@@ -41,10 +41,6 @@ public class UserController {
 		return "user/editForm";
 	}
 
-
-
-
-
     @GetMapping("/signup/email")
     public String signupEmail() {
         return "user/signup_email";
