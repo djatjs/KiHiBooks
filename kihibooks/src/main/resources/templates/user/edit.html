@@ -16,7 +16,8 @@
 			font-weight: bold;
 		}
 
-		.menu-item, .t {
+		.menu-item,
+		.t {
 			color: #666;
 		}
 
@@ -28,8 +29,8 @@
 		.icon {
 			filter: grayscale(100%) brightness(0%) invert(40%);
 		}
-		
-		.selectedIcon{
+
+		.selectedIcon {
 			filter: brightness(0) saturate(100%) invert(61%) sepia(56%) saturate(387%) hue-rotate(328deg) brightness(101%) contrast(101%);
 		}
 
@@ -40,21 +41,21 @@
 			flex-shrink: 0;
 		}
 
-		#check-pw{
+		#check-pw {
 			border: 1px solid #c7c7c7;
 			border-radius: 3px;
 		}
-		
-		#check-pw:hover{
+
+		#check-pw:hover {
 			border-color: #736763;
 		}
 
-		#check-pw:focus{
+		#check-pw:focus {
 			border-color: #ff7f50;
 			outline: none;
 		}
 
-		.checkPwBtn{
+		.checkPwBtn {
 			text-decoration: none;
 			box-sizing: border-box;
 			border-radius: 4px;
@@ -73,13 +74,13 @@
 			font-size: 13px;
 		}
 
-		.send-email-modify-pw{
+		.send-email-modify-pw {
 			font-size: 13px;
 			color: #666;
 			cursor: default;
 		}
 
-		.sendEmailBtn{
+		.sendEmailBtn {
 			font-weight: 600;
 			font-size: 13px;
 			background: none;
@@ -89,7 +90,6 @@
 			padding: 0;
 			color: #555;
 		}
-
 	</style>
 </head>
 
@@ -126,7 +126,7 @@
 				<div class="page-modify">
 					<h5 style="font-weight: 600; color: #333;">비밀번호 재확인</h5>
 					<div class="password-check mt-4">
-						<form th:action="@{/checkPW}" method="post" id="checkPw-form">
+						<form th:action="@{/checkPw}" method="post" id="checkPw-form">
 							<p class="check-description">보안을 위해 비밀번호를 한번 더 입력해 주세요.</p>
 							<div class="input-wrap">
 								<input type="password" name="password" id="check-pw">
@@ -141,13 +141,42 @@
 				</div>
 			</div>
 		</div>
-
 		<script>
-			$(".checkPwBtn").click(function(e){
+			$(".checkPwBtn").click(function (e) {
 				e.preventDefault();
-				let getPw = $("#check-pw").val();
-				
-			})
+				let $pw = $("#check-pw").val();
+
+				getHtml();
+				// $.ajax({
+				// 	async: true,
+				// 	url: "/user/checkPw",
+				// 	method: "post",
+				// 	data: { pw: $pw },
+				// 	success: function (isMatched) {
+				// 		if (isMatched === true) {
+				// 			getHtml($pw);
+				// 		} else {
+				// 			alert("비밀번호가 일치하지 않습니다.");
+				// 		}
+				// 	},
+				// 	error: function () {
+				// 		alert("비밀번호 확인 실패");
+				// 	}
+				// });
+			});
+
+			function getHtml() {
+				$.ajax({
+					url: "/user/editForm",
+					method: 'get',
+					success: function (html) {
+						$(".content-page").html(html);
+					},
+					error: function () {
+						alert("HTML 로딩 실패");
+					}
+				});
+			}
 		</script>
 	</main>
 </body>

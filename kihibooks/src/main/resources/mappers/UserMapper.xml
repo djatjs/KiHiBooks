@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.kh.kihibooks.dao.UserDAO">
-
+	<select id="checkPw" resultType="UserVO">
+		select * from user where ur_id = #{ur_id} and ur_pw = #{ur_pw}
+	</select>
 </mapper>

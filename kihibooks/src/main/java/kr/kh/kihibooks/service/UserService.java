@@ -11,4 +11,12 @@ public class UserService {
 	@Autowired
 	UserDAO userDAO;
 
+	public boolean checkPw(String id, String pw) {
+		if(id == null || pw == null) {
+			return false;
+		}
+
+		return userDAO.checkPw(id, pw) == null;
+	}
+
 }
