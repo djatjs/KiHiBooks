@@ -30,13 +30,7 @@ public class UserController {
 		return "user/edit";
 	}
 
-	@PostMapping("/checkPw")
-	@ResponseBody
-	public boolean checkPw(@RequestParam String pw, Principal principal) {
-		return userService.checkPw(principal.getName(), pw);
-	}
-
-  @GetMapping("/user/editForm")
+    @GetMapping("/user/editForm")
 	public String editForm() {
 		return "user/editForm";
 	}
@@ -89,5 +83,6 @@ public class UserController {
         
         return "redirect:/";
     }
+    
     
 }
