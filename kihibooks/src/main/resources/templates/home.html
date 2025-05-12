@@ -1,17 +1,128 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layout/layout.html}">
 
 <head>
 	<meta charset="UTF-8">
 	<title>KiHiBooks</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+	<style>
+		/* 메인 배너 */
+		.swiper {
+		width: 100%;
+		height: 500px;
+		border-radius: 16px;
+		overflow: hidden;
+		}
+		.swiper-slide img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		}
+		/* 버튼 : 신작 / 베스트 / 매일랜덤티켓 / 키다무 / 출석체크 */
+		.button-container{
+			display: flex; justify-content: center; flex-wrap: wrap;
+			gap: 20px; padding: 20px 0; margin: 20px;
+		}
+		.button-wrapper{
+			display: flex; flex-direction: column;
+			margin: 10px; text-decoration: none !important;
+			align-items: center; text-align: center;
+		}
+		.button-wrapper,
+		.button-wrapper:link,
+		.button-wrapper:visited,
+		.button-wrapper:hover,
+		.button-wrapper:active {
+			text-decoration: none !important;
+			color: inherit !important;
+		}
+		.round-button{
+			background-color: #f0f0f0;
+			border: none; border-radius: 50%;
+			width: 70px; height: 70px;
+			display: flex; justify-content: center; align-items: center;
+			cursor: pointer;
+		}
+		.button-icon{
+			width: 20px; height: 20px; object-fit: contain;
+		}
+		.button-text{
+			margin-top: 8px; font-size: 13px; font-weight: bold;
+		}
+  	</style>
 </head>
 
 <body>
-	<main layout:fragment="content" class="container">
-		<h1>KiHiBooks Main</h1>
+	<div layout:fragment="content">
+		<!-- 메인 배너 -->
+		<div class="swiper">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide" th:each="img : ${banners}">
+					<img th:src="@{/resources/static{path}(path=${img})}" alt="배너"> <!--@{${img}}-->
+				</div>
+			</div>
+			<div class="swiper-button-next"></div>
+			<div class="swiper-button-prev"></div>
+			<div class="swiper-pagination"></div>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+		<script>
+			window.addEventListener('DOMContentLoaded', function(){
+				const swiper = new Swiper('.swiper', {
+					loop: true,
+					autoplay: {
+						delay: 3000,
+					},
+					pagination: {
+						el: '.swiper-pagination',
+						clickable: true,
+					},
+					navigation: {
+						nextEl: '.swiper-button-next',
+						prevEl: '.swiper-button-prev',
+					},
+				});
+			})
+		</script>
+		<!-- 버튼 : 신작 / 베스트 / 매일랜덤티켓 / 키다무 / 출석체크 -->
+		<div class="button-container">
+			<a href="<c:url value='home'>" class="button-wrapper">
+				<div class="round-button">
+					<img src="/resources/static/img/N.png" alt="신작" class="button-icon">
+				</div>
+				<div class="button-text">신작</div>
+			</a>
+			<a href="<c:url value='/'>" class="button-wrapper">
+				<div class="round-button">
+					<img src="/resources/static/img/best.png" alt="베스트" class="button-icon">
+				</div>
+				<div class="button-text">베스트</div>
+			</a>
+			<a href="<c:url value='/'>" class="button-wrapper">
+				<div class="round-button">
+					<img src="/resources/static/img/ticket.png" alt="매일랜덤티켓" class="button-icon">
+				</div>
+				<div class="button-text">매일랜덤티켓</div>
+			</a>
+			<a href="<c:url value='/'>" class="button-wrapper">
+				<div class="round-button">
+					<img src="/resources/static/img/clock.png" alt="키다무" class="button-icon">
+				</div>
+				<div class="button-text">키다무</div>
+			</a>
+			<a href="<c:url value='/'>" class="button-wrapper">
+				<div class="round-button">
+					<img src="/resources/static/img/calendar.png" alt="출석체크" class="button-icon">
+				</div>
+				<div class="button-text">출석체크</div>
+			</a>
+		</div>
+		<!-- 실시간 랭킹 -->
 
-	</main>
+	</div>
 </body>
 
 </html>

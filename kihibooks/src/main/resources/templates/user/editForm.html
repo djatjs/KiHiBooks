@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+	<meta charset="UTF-8">
+	<title>회원정보 변경</title>
+	<style>
+		.page-modify{
+			width: 100%;
+		}
+
+		.table-wrap{
+			border-collapse: collapse;
+			border-spacing: 0;
+			border-bottom: 1px solid #e6e8eb;
+			width: 100%;
+		}
+
+		tbody{
+			display: table-row-group;
+			vertical-align: middle;
+			unicode-bidi: isolate;
+			border-color: inherit;
+		}
+
+		.bt{
+			border-top: 1px solid #e6e8eb;
+		}
+
+		th{
+			text-align: right;
+			background: #f2f4f5;
+			font-weight: 700;
+			color: #867c77;
+			width: 150px;
+			padding: 10px 14px;
+			line-height: 28px;
+			font-size: 14px;
+			vertical-align: top;
+		}
+
+		td{
+			font-size: 14px;
+			text-align: left;
+			padding: 10px 14px;
+		}
+
+		.deleteBtn{
+			appearance: none;
+			outline: 0;
+			box-sizing: border-box;
+			border-radius: 4px;
+			font-weight: 700;
+			text-align: center;
+			cursor: pointer;
+			line-height: 1em;
+			vertical-align: baseline;
+			background-color: #fff;
+			border: 1px solid #d9d4d1;
+			font-size: 14px;
+			padding: 6px 14px;
+			color: #867c77;
+		}
+
+		.deleteBtn:hover{
+			text-decoration: none;
+			color: #867c77;
+		}
+
+		.input_wrapper input{
+			position: relative;
+			width: 240px;
+			border-radius: 3px;
+			box-sizing: border-box;
+			border: 1px solid #a0a0a0;
+			padding-right: 10px;
+			padding: 6px;
+			font-size: 14px;
+			font-weight: 700;
+		}
+
+		.pw_row{
+			margin-top: 10px;
+		}
+
+		.pw_row input{
+			position: relative;
+			width: 240px;
+			border-radius: 3px;
+			box-sizing: border-box;
+			border: 1px solid #a0a0a0;
+			padding-right: 10px;
+			padding: 6px;
+			font-size: 14px;
+			font-weight: 700;
+		}
+
+		.changeNickBtn, .changePwBtn {
+			padding: 7px 14px;
+			box-sizing: border-box;
+			border-radius: 4px;
+			font-weight: 700;
+			text-align: center;
+			display: inline-block;
+			cursor: pointer;
+			line-height: 1em;
+			vertical-align: baseline;
+			color: #fff;
+			background: #968c89;
+			border: 1px solid #736863;
+			font-size: 14px;
+		}
+
+		.change_pw_guide{
+			padding: 18px 0 3px 0;
+			line-height: 1em;
+		}
+
+		.guide_title{
+			font-weight: 700;
+			color: #736863;
+		}
+
+		ul{
+			padding: 0;
+			margin: 0;
+			list-style-position: inside;
+		}
+		
+		li{
+			margin: 3px 0;
+			padding: 2px 0;
+		}
+
+		.guide{
+			position: relative;
+			padding: 3px 0 5px 10px;
+			list-style-type: none;
+			font-weight: 500;
+			color: #666;
+			font-size: 13px;
+		}
+
+		input::placeholder{
+			color: #a0a0a0;
+		}
+	</style>
+</head>
+
+<body>
+	<main layout:fragment="content" class="container d-flex" style="min-height: 700px;">
+
+		<div class="page-modify">
+			<h5 style="font-weight: 600; color: #333;">내 정보 관리</h5>
+			<div class="edit-info mt-4">
+				<table class="table-wrap">
+					<tbody>
+						<tr class="ur_email bt">
+							<th>이메일</th>
+							<td>
+								<span>이메일</span>
+								<a th:href="@{/deleteId}" class="deleteBtn" style="float: right;">회원 탈퇴</a>
+							</td>
+						</tr>
+						<tr class="ur_nickname bt">
+							<th>닉네임</th>
+							<td>
+								<div class="nick_edit">
+									<div class="input_wrapper">
+										<input type="text" name="nickname" id="input_nick" placeholder="닉네임">
+									</div>
+									<ul class="checkNick"></ul>
+									<div class="change_nick_guide">
+										<ul class="guide_wrapper">
+											<li class="guide">3자 이상, 영문/숫자만 입력해주세요.</li>
+										</ul>
+									</div>
+									<div class="edit_button_wrapper">
+										<button type="button" class="changeNickBtn">닉네임 변경</button>
+									</div>
+								</div>
+							</td>
+						</tr>
+						<tr class="ur_pw bt">
+							<th>비밀번호 변경</th>
+							<td>
+								<div class="pw_row">
+									<input type="password" id="current_pw" name="pw" title="현재 비밀번호 입력" placeholder="현재 비밀번호">
+								</div>
+								<div class="pw_row">
+									<input type="password" id="new_pw" name="pw" title="변경할 비밀번호 입력" placeholder="새 비밀번호">
+								</div>
+								<div class="pw_row">
+									<input type="password" id="current_pw" name="pw" title="변경할 비밀번호 한 번 더 입력" placeholder="새 비밀번호 확인">
+								</div>
+								<div class="change_pw_guide">
+									<p class="guide_title">비밀번호 변경 시 유의사항</p>
+									<ul class="guide_wrapper">
+										<li class="guide">3자 이상, 영문/숫자/특수문자(!@#$)만 입력해주세요.</li>
+										<li class="guide">닉네임과 동일한 비밀번호는 사용할 수 없습니다.</li>
+									</ul>
+								</div>
+								<div class="edit_button_wrapper">
+									<button type="button" class="changePwBtn">비밀번호 변경</button>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+	</main>
+</body>
+
+</html>
