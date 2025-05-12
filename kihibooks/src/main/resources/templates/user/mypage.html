@@ -4,14 +4,265 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>KiHiBooks</title>
+	<title>마이키히</title>
+	<style>
+		.text {
+			padding-left: 20px;
+		}
+
+		.bold {
+			font-weight: bold;
+		}
+
+		.menu-item, .t {
+			color: #333;
+		}
+
+		.text {
+			color: #736763;
+			font-size: 15px;
+		}
+
+		.menu-item:hover {
+			text-decoration: none;
+			color: #666;
+		}
+
+		.icon {
+			filter: grayscale(100%) brightness(0%) invert(33%);
+		}
+
+		.selectedIcon{
+			filter: brightness(0) saturate(100%) invert(61%) sepia(56%) saturate(387%) hue-rotate(328deg) brightness(101%) contrast(101%);
+		}
+
+		.mykihi {
+			padding: 0 10px;
+			margin-left: 80px;
+			width: 900px;
+			flex-shrink: 0;
+		}
+
+		.mykihi-home {
+			border: 2px solid #736763;
+			width: 100%;
+			cursor: default;
+			table-layout: fixed;
+			display: flex;
+		}
+
+		.account-info {
+			margin: 1px;
+			flex-grow: 0;
+			flex-shrink: 0;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			width: 200px;
+			padding: 35px 25px 25px 25px;
+			background: #fff4ed;
+			vertical-align: top;
+			min-height: 250px;
+		}
+
+		.asset-info{
+			vertical-align: middle;
+			padding: 27px 0;
+		}
+
+		.table-wrapper{
+			display: table;
+			width: 100%;
+			table-layout: fixed;
+			border-collapse: collapse;
+		}
+
+		.table-cell{
+			display: table-cell;
+			text-align: center;
+			vertical-align: top;
+		}
+
+		.val{
+			color: #ff7f50;
+		}
+
+		.logoutBtn {
+			display: block;
+			width: 70px;
+			background: none;
+			font-size: 14px;
+			padding: 5px 0;
+			border: 2px solid #ebded6;
+			border-radius: 3px;
+			font-weight: 600;
+			color: #736763;
+		}
+
+		.recent-title{
+			position: relative;
+			cursor: default;
+		}
+
+		.recent-title::before{
+			content: '';
+			display: block;
+			width: 100%;
+			height: 2px;
+			background: #e5e5e5;
+			position: absolute;
+			left: 0;
+			top: 50%;
+			margin-top: -3px;
+			z-index: 1;
+		}
+
+		.recent-title::after{
+			width: 0;
+			height: 0;
+			content: '';
+			display: block;
+			clear: both;
+		}
+
+		.rct-text{
+			position: relative;
+			background: #fff;
+			z-index: 2;
+			font-weight: 700;
+			margin: 0;
+			width: 160px;
+			float: left;
+		}
+
+		.btn-wrapper{
+			margin: 0;
+			padding: 0;
+			float: right;
+			background: #fff;
+			padding-left: 14px;
+			position: relative;
+			z-index: 2;
+		}
+
+		.moreBtn{
+			color: white;
+			display: inline-block;
+			width: 95px;
+			text-align: center;
+			background: #303538;
+			border-radius: 2px;
+			position: relative;
+			padding: 3px 0 3px 3px;
+			font-size: 14px;
+			font-weight: 700;
+		}
+
+		.moreBtn:hover{
+			text-decoration: none;
+			color: white;
+		}
+	</style>
 </head>
 
 <body>
-	<main layout:fragment="content" class="container">
-		
+	<main layout:fragment="content" class="container d-flex" style="min-height: 700px;">
+		<div class="left-menu ml-3" style="width: 180px; flex-shrink: 0;">
+			<h3 class="mt-4 mb-4">마이키히</h3>
+			<a th:href="@{/account/mykihi}" class="bold menu-item" style="color: #ff7f50;"><img class="mb-1 selectedIcon" src="/resources/static/img/home.png" alt="마이홈" style="height: 15px;"> 마이키히홈</a>
+			<hr>
+			<div class="book">
+				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/book.png" alt="책" style="height: 15px;"> 책
+				</div>
+				<div class="mt-2 bold text menu-item">관심 작품</div>
+				<div class="mt-1 bold text menu-item">최근 조회한 작품</div>
+			</div>
+			<hr>
+			<div class="my">
+				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/person.png" alt="개인"
+						style="height: 15px;"> 개인</div>
+				<a th:href="@{/account/modify}" class="mt-2 bold text menu-item">내 정보 관리</a>
+				<div class="mt-1 bold text menu-item">리뷰 관리</div>
+			</div>
+			<hr>
+			<div class="point">
+				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/card.png" alt="구매" style="height: 15px;">
+					구매/혜택</div>
+				<div class="mt-2 bold text menu-item">결제 내역</div>
+				<div class="mt-1 bold text menu-item">키히 포인트</div>
+			</div>
+		</div>
+		<div class="mykihi mt-4">
+			<div class="mykihi-home">
+				<div class="account-info">
+					<div class="info-email">
+						<div>닉네임</div>
+						<div>이메일</div>
+					</div>
+					<button class="logoutBtn">로그아웃</button>
+				</div>
+				<div class="asset-info">
+					<div class="table-wrapper">
+						<div class="table-cell">
+							<div class="info-point mt-5">
+								<img src="/resources/static/img/P.png" alt="포인트" style="height: 30px">
+								<div class="bold mt-1">키히 포인트</div>
+								<div class="val bold">0원</div>
+								<div style="color: #736763; font-weight: 600; font-size: 13px;">충전 내역 
+									<span class="val">»</span>
+								</div>
+							</div>
+						</div>
+						<div class="table-cell">
+							<div class="info-libarary mt-5">
+								<img src="/resources/static/img/library.png" alt="서재" style="height: 25px">
+								<div class="bold mt-1">내 서재</div>
+								<div class="val bold">0개</div>
+							</div>
+						</div>
+						<div class="table-cell">
+							<div class="info-cart mt-5">
+								<img src="/resources/static/img/cart.png" alt="카트" style="height: 25px">
+								<div class="bold mt-1">카트</div>
+								<div class="val bold">0개</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
+			<div class="mykihi-recents" style="margin-top: 40px;">
+				<div class="recent-title">
+					<h5 class="rct-text">최근 조회한 작품</h5>
+					<div class="btn-wrapper">
+						<a class="moreBtn">
+							<span>전체 보기</span>
+							<span>»</span>
+						</a>
+					</div>
+				</div>
+				<div class="book">
+					<div class="book-thumb-wrapper">
+						<div class="book-thumb">
+							<div class="thumb-img">
+								<img src="" alt="책표지">
+							</div>
+							<a href="" class="thumbBtn"></a>
+						</div>
+					</div>
+					<div class="book-info-wrapper">
+						<div class="book-title">
+							<a href="#" class="title-link">
+								<span class="title-text">책 제목</span>
+							</a>
+						</div>
+						<div class="book-author-wrapper">
+							<a href="#" class="book-author">작가명</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</main>
 </body>
-
 </html>
