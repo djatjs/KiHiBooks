@@ -12,7 +12,7 @@
 		/* 메인 배너 */
 		.swiper {
 		width: 100%;
-		height: 300px;
+		height: 500px;
 		border-radius: 16px;
 		overflow: hidden;
 		}
@@ -28,21 +28,29 @@
 		}
 		.button-wrapper{
 			display: flex; flex-direction: column;
+			margin: 10px; text-decoration: none !important;
 			align-items: center; text-align: center;
-			width: 100px;
+		}
+		.button-wrapper,
+		.button-wrapper:link,
+		.button-wrapper:visited,
+		.button-wrapper:hover,
+		.button-wrapper:active {
+			text-decoration: none !important;
+			color: inherit !important;
 		}
 		.round-button{
 			background-color: #f0f0f0;
 			border: none; border-radius: 50%;
-			width: 90px; height: 90px;
+			width: 70px; height: 70px;
 			display: flex; justify-content: center; align-items: center;
 			cursor: pointer;
 		}
 		.button-icon{
-			width: 30px; height: 30px; object-fit: contain;
+			width: 20px; height: 20px; object-fit: contain;
 		}
 		.button-text{
-			margin-top: 8px; font-size: 14px; font-weight: bold;
+			margin-top: 8px; font-size: 13px; font-weight: bold;
 		}
   	</style>
 </head>
@@ -81,36 +89,36 @@
 		</script>
 		<!-- 버튼 : 신작 / 베스트 / 매일랜덤티켓 / 키다무 / 출석체크 -->
 		<div class="button-container">
-			<div class="button-wrapper">
-				<button class="round-button">
+			<a href="<c:url value='home'>" class="button-wrapper">
+				<div class="round-button">
 					<img src="/resources/static/img/N.png" alt="신작" class="button-icon">
-				</button>
+				</div>
 				<div class="button-text">신작</div>
-			</div>
-			<div class="button-wrapper">
-				<button class="round-button">
+			</a>
+			<a href="<c:url value='/'>" class="button-wrapper">
+				<div class="round-button">
 					<img src="/resources/static/img/best.png" alt="베스트" class="button-icon">
-				</button>
+				</div>
 				<div class="button-text">베스트</div>
-			</div>
-			<div class="button-wrapper">
-				<button class="round-button">
+			</a>
+			<a href="<c:url value='/'>" class="button-wrapper">
+				<div class="round-button">
 					<img src="/resources/static/img/ticket.png" alt="매일랜덤티켓" class="button-icon">
-				</button>
+				</div>
 				<div class="button-text">매일랜덤티켓</div>
-			</div>
-			<div class="button-wrapper">
-				<button class="round-button">
+			</a>
+			<a href="<c:url value='/'>" class="button-wrapper">
+				<div class="round-button">
 					<img src="/resources/static/img/clock.png" alt="키다무" class="button-icon">
-				</button>
+				</div>
 				<div class="button-text">키다무</div>
-			</div>
-			<div class="button-wrapper">
-				<button class="round-button">
+			</a>
+			<a href="<c:url value='/'>" class="button-wrapper">
+				<div class="round-button">
 					<img src="/resources/static/img/calendar.png" alt="출석체크" class="button-icon">
-				</button>
+				</div>
 				<div class="button-text">출석체크</div>
-			</div>
+			</a>
 		</div>
 		<!-- 실시간 랭킹 -->
 
