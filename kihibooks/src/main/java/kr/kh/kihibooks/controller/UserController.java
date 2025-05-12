@@ -36,7 +36,7 @@ public class UserController {
 		return userService.checkPw(principal.getName(), pw);
 	}
 
-    @PostMapping("/user/editForm")
+  @GetMapping("/user/editForm")
 	public String editForm() {
 		return "user/editForm";
 	}
