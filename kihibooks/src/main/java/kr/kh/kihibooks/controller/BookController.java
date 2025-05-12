@@ -22,12 +22,12 @@ public class BookController {
     public List<BookVO> getMethodName(@RequestParam String param) {
         return bookService.getTopBooks();
     }
-
-    @GetMapping("/libaray/recents")
-    public String recentList(Model model, int ur_num) {
-        List<BookVO> list = bookService.getBookList(ur_num);
+    
+    @GetMapping("/library/recents")
+	public String recentList(Model model, Integer ur_num) {
+        List<BookVO> list = bookService.getBookList(ur_num==null?0:ur_num);
         model.addAttribute("bookList", list);
-        return "book/list";
-    }
+		return "user/recentList";
+	}
     
 }

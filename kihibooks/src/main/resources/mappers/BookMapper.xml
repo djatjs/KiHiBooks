@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.kh.kihibooks.dao.BookDAO">
-    <select id="">
-
-    </seelct>
+    <select id="selectBookList" resultType="BookVO">
+        select book.* from book
+        join recent_view on bo_code = rc_bo_code
+        where rc_ur_num = #{ur_num}
+    </select>
 </mapper>

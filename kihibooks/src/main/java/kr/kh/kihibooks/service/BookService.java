@@ -3,10 +3,12 @@ package kr.kh.kihibooks.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import kr.kh.kihibooks.dao.BookDAO;
 import kr.kh.kihibooks.model.vo.BookVO;
 
+@Service
 public class BookService {
 
     @Autowired

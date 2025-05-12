@@ -30,7 +30,7 @@ public class UserController {
 		return "user/edit";
 	}
 
-  @GetMapping("/user/editForm")
+    @GetMapping("/user/editForm")
 	public String editForm() {
 		return "user/editForm";
 	}
@@ -83,5 +83,6 @@ public class UserController {
         
         return "redirect:/";
     }
+    
     
 }
