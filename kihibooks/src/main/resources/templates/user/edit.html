@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout.html}">
+
+<head>
+	<meta charset="UTF-8">
+	<title>회원정보 변경</title>
+	<style>
+		.text {
+			padding-left: 20px;
+			color: #736763;
+			font-size: 15px;
+		}
+
+		.bold {
+			font-weight: bold;
+		}
+
+		.menu-item,
+		.t {
+			color: #666;
+		}
+
+		.menu-item:hover {
+			text-decoration: none;
+			color: #666;
+		}
+
+		.icon {
+			filter: grayscale(100%) brightness(0%) invert(40%);
+		}
+
+		.selectedIcon {
+			filter: brightness(0) saturate(100%) invert(61%) sepia(56%) saturate(387%) hue-rotate(328deg) brightness(101%) contrast(101%);
+		}
+
+		.mykihi {
+			padding: 0 10px;
+			margin-left: 80px;
+			width: 900px;
+			flex-shrink: 0;
+		}
+
+		#check-pw {
+			border: 1px solid #c7c7c7;
+			border-radius: 3px;
+		}
+
+		#check-pw:hover {
+			border-color: #736763;
+		}
+
+		#check-pw:focus {
+			border-color: #ff7f50;
+			outline: none;
+		}
+
+		.checkPwBtn {
+			text-decoration: none;
+			box-sizing: border-box;
+			border-radius: 4px;
+			font-weight: 700;
+			display: inline-block;
+			text-align: center;
+			color: #fff;
+			background-color: #ff7f50;
+			border: 1px solid #ff7948;
+			font-size: 14px;
+			padding: 3px 18px;
+		}
+
+		.check-description {
+			font-weight: 600;
+			font-size: 13px;
+		}
+
+		.send-email-modify-pw {
+			font-size: 13px;
+			color: #666;
+			cursor: default;
+		}
+
+		.sendEmailBtn {
+			font-weight: 600;
+			font-size: 13px;
+			background: none;
+			border: 0;
+			border-radius: 0;
+			margin: 0;
+			padding: 0;
+			color: #555;
+		}
+	</style>
+</head>
+
+<body>
+	<main layout:fragment="content" class="container d-flex" style="min-height: 700px;">
+		<div class="left-menu ml-3" style="width: 180px; flex-shrink: 0;">
+			<h3 class="mt-4 mb-4">마이키히</h3>
+			<a th:href="@{/account/mykihi}" class="bold menu-item"><img class="mb-1 icon" src="/resources/static/img/home.png"
+					alt="마이 홈" style="height: 15px;"> 마이키히홈</a>
+			<hr>
+			<div class="book">
+				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/book.png" alt="책" style="height: 15px;"> 책
+				</div>
+				<div class="mt-2 bold text menu-item">관심 작품</div>
+				<div class="mt-1 bold text menu-item">최근 조회한 작품</div>
+			</div>
+			<hr>
+			<div class="my">
+				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/person.png" alt="개인"
+						style="height: 15px;"> 개인</div>
+				<a th:href="@{/account/modify}" class="mt-2 bold menu-item text" style="color: #ff7f50;">내 정보 관리</a>
+				<div class="mt-1 bold text menu-item">리뷰 관리</div>
+			</div>
+			<hr>
+			<div class="point">
+				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/card.png" alt="구매" style="height: 15px;">
+					구매/혜택</div>
+				<div class="mt-2 bold text menu-item">결제 내역</div>
+				<div class="mt-1 bold text menu-item">키히 포인트</div>
+			</div>
+		</div>
+		<div class="mykihi mt-4">
+			<div class="content-page">
+				<div class="page-modify">
+					<h5 style="font-weight: 600; color: #333;">비밀번호 재확인</h5>
+					<div class="password-check mt-4">
+						<form th:action="@{/checkPw}" method="post" id="checkPw-form">
+							<p class="check-description">보안을 위해 비밀번호를 한번 더 입력해 주세요.</p>
+							<div class="input-wrap">
+								<input type="password" name="password" id="check-pw">
+								<button class="checkPwBtn mb-1">확인</button>
+								<div class="send-email-modify-pw mt-1">
+									비밀번호가 기억나지 않으세요?
+									<button type="button" class="sendEmailBtn">비밀번호 재설정</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			$(".checkPwBtn").click(function (e) {
+				e.preventDefault();
+				let $pw = $("#check-pw").val();
+
+				getHtml();
+				// $.ajax({
+				// 	async: true,
+				// 	url: "/user/checkPw",
+				// 	method: "post",
+				// 	data: { pw: $pw },
+				// 	success: function (isMatched) {
+				// 		if (isMatched === true) {
+				// 			getHtml($pw);
+				// 		} else {
+				// 			alert("비밀번호가 일치하지 않습니다.");
+				// 		}
+				// 	},
+				// 	error: function () {
+				// 		alert("비밀번호 확인 실패");
+				// 	}
+				// });
+			});
+
+			function getHtml() {
+				$.ajax({
+					url: "/user/editForm",
+					method: 'get',
+					success: function (html) {
+						$(".content-page").html(html);
+					},
+					error: function () {
+						alert("HTML 로딩 실패");
+					}
+				});
+			}
+		</script>
+	</main>
+</body>
+
+</html>
