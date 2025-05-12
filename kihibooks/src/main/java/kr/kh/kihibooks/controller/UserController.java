@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.model.vo.EmailVO;
+import kr.kh.kihibooks.model.vo.UserVO;
 
 @Controller
 public class UserController {
@@ -36,7 +37,7 @@ public class UserController {
 		return userService.checkPw(principal.getName(), pw);
 	}
 
-    @PostMapping("/user/editForm")
+    @GetMapping("/user/editForm")
 	public String editForm() {
 		return "user/editForm";
 	}
@@ -89,9 +90,11 @@ public class UserController {
     }
 
     @PostMapping("/signup/email")
-    public String signupEmailPost() {
-        
-        return "redirect:/";
+    public String signupEmailPost(UserVO user) {
+        if(userService.signup(user)){
+            return "redirect:/";
+        }
+        return "redirect:/signup/email";
     }
     
 }

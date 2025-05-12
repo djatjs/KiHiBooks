@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import jakarta.mail.internet.MimeMessage;
 import kr.kh.kihibooks.dao.UserDAO;
 import kr.kh.kihibooks.model.vo.EmailVO;
+import kr.kh.kihibooks.model.vo.UserVO;
 
 @Service
 public class UserService {
@@ -18,6 +20,9 @@ public class UserService {
 
 	@Autowired
 	private JavaMailSender mailSender;
+
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 	@Value("${spring.mail.username}")
 	private String setfrom; //보내는 이의 이메일
@@ -123,5 +128,23 @@ public class UserService {
 			return false;
 		}
 		return true;
+    }
+
+    public boolean signup(UserVO user) {
+		System.out.println(user);
+		if(user == null){
+			return false;
+		}
+
+		//비번 암호화
+		String encPw = passwordEncoder.encode(user.getUr_pw());
+		user.setUr_pw(encPw);
+		// 가입된 이메일, 닉네임인지는 html에서 확인했으므로 생략
+
+		try {
+			return userDAO.insertUser(user);
+		} catch (Exception e) {
+			return false;
+		}
     }
 }

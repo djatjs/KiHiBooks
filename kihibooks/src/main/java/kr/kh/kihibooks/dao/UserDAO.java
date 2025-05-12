@@ -19,5 +19,7 @@ public interface UserDAO {
     int selectEmail(@Param("email") String email);
 
     int selectNickName(@Param("nickName") String nickName);
+
+    boolean insertUser(UserVO user);
 	
 }

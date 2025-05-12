@@ -60,13 +60,12 @@
         <h3 style="text-align: center;" >KiHiBooks email</h3>
         <form th:action="@{/signup/email}" method="post"  id="signup-form">
             <div class="form-group">
-                <input type="email" class="form-control" id="email" name="email" placeholder=" " required>
+                <input type="email" class="form-control" id="email" name="ur_email" placeholder=" " required>
                 <label for="email" class="content-label">이메일</label>
-				<label id="email-error" class="error-message"></label>
+				<label id="ur_email-error" class="error-message"></label>
             </div>
 			<div>
 				<button type="button" class="btn btn-primary mb-3" id="sendVerificationCode" disabled>이메일 인증</button>
-				<!-- <input type="hidden" name="chcekedEmail" > -->
 			</div>
             
             <div class="form-group">
@@ -76,20 +75,20 @@
             <button type="button" class="btn btn-secondary mb-3" id="checkVerificationCode" disabled>인증번호 확인</button>
             
 			<div class="form-group">
-                <input type="text" class="form-control" id="nickName" name="nickName" placeholder=" " required>
-				<label for="pwd" class="content-label">닉네임</label>
-				<label id="nickName-error" class="error-message error "></label>
+                <input type="text" class="form-control" id="nickname" name="ur_nickname" placeholder=" " required>
+				<label for="ur_nickname" class="content-label">닉네임</label>
+				<label id="ur_nickname-error" class="error-message error "></label>
             </div>
 
             <div class="form-group">
-                <input type="password" class="form-control" id="pw" name="pw" placeholder=" " required>
-				<label for="pw" class="content-label">비밀번호</label>
-				<label id="pw-error" class="error-message"></label>
+                <input type="password" class="form-control" id="ur_pw" name="ur_pw" placeholder=" " required>
+				<label for="ur_pw" class="content-label">비밀번호</label>
+				<label id="ur_pw-error" class="error-message"></label>
             </div>
             <div class="form-group">
-				<input type="password" class="form-control" id="pw2" name="pw2" placeholder=" " required />
-				<label for="pw2" class="content-label">비밀번호 확인</label>
-				<label id="pw2-error" class="error-message error "></label>
+				<input type="password" class="form-control" id="ur_pw2" name="ur_pw2" placeholder=" " required />
+				<label for="ur_pw2" class="content-label">비밀번호 확인</label>
+				<label id="ur_pw2-error" class="error-message error "></label>
 			</div>
 			
             <button type="submit" class="btn btn-primary col-12" id="join-btn" disabled>가입</button>
@@ -167,42 +166,42 @@
 		<script>
 			$("#signup-form").validate({
 				rules : {
-					email : {
+					ur_email : {
 						required : true,
 						duplicate : true,
 						email : true,
 						regex : /^([A-Za-z0-9\._])+@([A-Za-z0-9]+\.[A-Za-z]{2,})$/
 					},
-					nickName : {
+					ur_nickname : {
 						required : true,
 						duplicateNickName : true,
 						regex : /^[ㄱ-ㅎ가-힣a-zA-Z0-9]{3,12}$/
 					},
-					pw : {
+					ur_pw : {
 						required : true,
 						regex : /^[a-zA-Z0-9!@#$]{3,12}$/
 					},
-					pw2 : {
-						equalTo : pw
+					ur_pw2 : {
+						equalTo : ur_pw
 					}
 				},
 				messages : {
-					email : {
+					ur_email : {
 						required : "·이메일은 필수 항목입니다.",
 						duplicate : "·이미 가입된 이메일입니다.",
 						email : "·이메일 형식을 지켜주세요.",
 						regex : "이메일 형식"
 					},
-					nickName : {
+					ur_nickname : {
 						required : "·닉네임은 필수 항목입니다.",
 						duplicateNickName : "·이미 사용중인 닉네임입니다.",
 						regex : "·닉네임은 영어, 숫자로 이루어져 있으며, 3~12자입니다."
 					},
-					pw : {
+					ur_pw : {
 						required : "·비번은 필수 항목입니다.",
 						regex : "·비번은 영어, 숫자, 특수문자(!@#$)로 이루어져 있으며, 3~12자입니다."
 					},
-					pw2 : {
+					ur_pw2 : {
 						equalTo : "·비번과 비번 확인이 같지 않습니다."
 					}
 					
