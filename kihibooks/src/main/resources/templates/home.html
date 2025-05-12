@@ -174,21 +174,57 @@
 				let books =[];
 				let currentPage = 0;
 				const pageSize = 9;
+				loadBooks();
 
-				async function loadBooks() {
-					try{
-						const response = await fetch('/realtime');
-						books = await response.json();
-						renderBooks();
-					}catch(err){
-						console.error("책 데이터 불러오는 중 오류 발생", err);
-					}					
+				function loadBooks() {
+					$.ajax({
+						url: '/realtime',
+						method: 'GET',
+						dataType: 'json',
+						success: function(data){
+							console.log("서버에서 받은 데이터", data);
+							books = data;
+							renderBooks();
+						},
+						error: function(xhr, status,error){
+							console.error("데이터 요청 실패", status, error);
+						}
+					});
 				}
 
 				function renderBooks(){
+					console.log("renderBooks 호출됨", currentPage);
+
+					const grid = document.getElementById("bookGrid");
+					grid.innerHTML = "";
+
+					const start = currentPage * pageSize;
+					const end = start + pageSize;
+					const pageBooks = books.slice(start, end);
+
+					console.log(pageBooks.length);
+
+					pageBooks.forEach((book, index) =>{
+						console.log(book.bo_title);
+
+						const bookDiv = document.createElement("div");
+						bookDiv.className = "book-item";
+
+						bookDiv.innerHTML = `
+							<img 
+								src = "/resources/static/covers/cover1.png"
+								alt = "${book.bo_title}" width="80" height="116"
+							/>
+							<div class="book-title">${book.bo_title}</div>
+							<div class="book-rating">
+								★${book.bo_total_rating / 1000} |
+								리뷰 ${book.bo_review_count}
+							</div>
+						`;
+						grid.appendChild(bookDiv);
+					});
 				}
 				
-
 				function nextPage() {
 					if ((currentPage + 1) * pageSize < books.length) {
 					currentPage++;
