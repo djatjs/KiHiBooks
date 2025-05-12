@@ -13,5 +13,9 @@ public interface UserDAO {
     void deleteEV(String email);
 
     int selectCode(@Param("email") String email, @Param("userCode")String userCode);
+
+    int selectEmail(@Param("email") String email);
+
+    int selectNickName(@Param("nickName") String nickName);
 	
 }

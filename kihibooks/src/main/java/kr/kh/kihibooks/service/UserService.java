@@ -47,17 +47,13 @@ public class UserService {
 			if(!saveRes){
 				return false;
 			}
-
 			return true;
 		}
 		catch(Exception e){
 			e.printStackTrace();
 			return false;
 		}
-		
     }
-
-	
 
 	private String createCode(int size) {
 		String code = "";
@@ -97,8 +93,6 @@ public class UserService {
 		}
 	}
 
-
-
     public boolean checkCode(String email, String userCode) {
 		int count = userDAO.selectCode(email, userCode);
 		if(count == 0){
@@ -107,4 +101,19 @@ public class UserService {
 		return true;
     }
 
+    public boolean checkEmail(String email) {
+		int count = userDAO.selectEmail(email);
+		if(count != 0){
+			return false;
+		}
+		return true;
+    }
+
+	public boolean checkNickName(String nickName) {
+		int count = userDAO.selectNickName(nickName);
+		if(count != 0){
+			return false;
+		}
+		return true;
+    }
 }

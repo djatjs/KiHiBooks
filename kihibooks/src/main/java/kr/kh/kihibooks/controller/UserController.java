@@ -34,7 +34,25 @@ public class UserController {
         if(!evRes) return false;
         return evRes;
     }
-    
+
+    @ResponseBody
+    @PostMapping("/check/email")
+    public boolean checkEmail(@RequestBody String email) {
+        if(email == null){
+            return false;
+        }
+        return userService.checkEmail(email);
+    }
+
+    @ResponseBody
+    @PostMapping("/check/nickName")
+    public boolean checkNickName(@RequestBody String nickName) {
+        if(nickName == null){
+            return false;
+        }
+        return userService.checkNickName(nickName);
+    }
+
     @ResponseBody
     @PostMapping("/email/verifyCode")
     public boolean verifyCode(@RequestParam String userCode, @RequestParam String email) {
@@ -43,4 +61,11 @@ public class UserController {
         }
         return userService.checkCode(email, userCode);
     }
+
+    @PostMapping("/signup/email")
+    public String signupEmailPost() {
+        
+        return "redirect:/";
+    }
+    
 }

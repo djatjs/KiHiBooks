@@ -14,4 +14,10 @@
     <select id="selectCode" resultType="int">
         select count(*) from email_verification where ev_email = #{email} and ev_code = #{userCode}
     </select>
+    <select id="selectEmail" resultType="int">
+        select count(*) from user where ur_email = #{email}
+    </select>
+    <select id="selectNickName" resultType="int">
+        select count(*) from user where ur_nickname = #{nickName}
+    </select>
 </mapper>
