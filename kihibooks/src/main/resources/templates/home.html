@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+<html 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layout/layout.html}">
 
 <head>
@@ -22,33 +24,43 @@
 </head>
 
 <body>
-	<div class="swiper">
-		<div class="swiper-wrapper">
-			<div class="swiper-slide" th:each="img : ${banners}">
-				<img th:src="@{/resources/static{path}(path=${img})}" alt="배너">
+	<div layout:fragment="content">
+		<div class="swiper">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide" th:each="img : ${banners}">
+					<img th:src="@{/resources/static{path}(path=${img})}" alt="배너"> <!--@{${img}}-->
+				</div>
 			</div>
+			<div class="swiper-button-next"></div>
+			<div class="swiper-button-prev"></div>
+			<div class="swiper-pagination"></div>
 		</div>
-		<div class="swiper-button-next"></div>
-		<div class="swiper-button-prev"></div>
-		<div class="swiper-pagination"></div>
+		<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+		<script>
+			window.addEventListener('DOMContentLoaded', function(){
+				console.log('aaa');
+
+				const swiperElement = document.querySelector('.swiper');
+				console.log('swiper element is', swiperElement);
+
+				const swiper = new Swiper('.swiper', {
+					loop: true,
+					autoplay: {
+						delay: 3000,
+					},
+					pagination: {
+						el: '.swiper-pagination',
+						clickable: true,
+					},
+					navigation: {
+						nextEl: '.swiper-button-next',
+						prevEl: '.swiper-button-prev',
+					},
+				});
+			})
+		</script>
+
 	</div>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script>
-	const swiper = new Swiper('.swiper', {
-		loop: true,
-		autoplay: {
-		delay: 3000,
-		},
-		pagination: {
-		el: '.swiper-pagination',
-		clickable: true,
-		},
-		navigation: {
-		nextEl: '.swiper-button-next',
-		prevEl: '.swiper-button-prev',
-		},
-	});
-</script>
 </body>
 
 </html>
