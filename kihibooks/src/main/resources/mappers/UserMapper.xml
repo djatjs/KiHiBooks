@@ -4,4 +4,23 @@
 	<select id="checkPw" resultType="UserVO">
 		select * from user where ur_id = #{ur_id} and ur_pw = #{ur_pw}
 	</select>
+    <insert id="insertEV">
+        insert into email_verification(ev_email, ev_code, ev_expried)
+        values(#{ev_email},#{ev_code},#{ev_expried})
+    </insert>
+    <select id="selectEV" resultType="EmailVO">
+        select * from email_verification where ev_email = #{ev_email}
+    </select>
+    <delete id="deleteEV">
+        delete from email_verification where ev_email = #{ev_email}
+    </delete>
+    <select id="selectCode" resultType="int">
+        select count(*) from email_verification where ev_email = #{email} and ev_code = #{userCode}
+    </select>
+    <select id="selectEmail" resultType="int">
+        select count(*) from user where ur_email = #{email}
+    </select>
+    <select id="selectNickName" resultType="int">
+        select count(*) from user where ur_nickname = #{nickName}
+    </select>
 </mapper>
