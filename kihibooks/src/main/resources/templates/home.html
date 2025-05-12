@@ -9,22 +9,47 @@
 	<title>KiHiBooks</title>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 	<style>
-    .swiper {
-      width: 100%;
-      height: 300px;
-      border-radius: 16px;
-      overflow: hidden;
-    }
-    .swiper-slide img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  </style>
+		/* 메인 배너 */
+		.swiper {
+		width: 100%;
+		height: 300px;
+		border-radius: 16px;
+		overflow: hidden;
+		}
+		.swiper-slide img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		}
+		/* 버튼 : 신작 / 베스트 / 매일랜덤티켓 / 키다무 / 출석체크 */
+		.button-container{
+			display: flex; justify-content: center; flex-wrap: wrap;
+			gap: 20px; padding: 20px 0; margin: 20px;
+		}
+		.button-wrapper{
+			display: flex; flex-direction: column;
+			align-items: center; text-align: center;
+			width: 100px;
+		}
+		.round-button{
+			background-color: #f0f0f0;
+			border: none; border-radius: 50%;
+			width: 90px; height: 90px;
+			display: flex; justify-content: center; align-items: center;
+			cursor: pointer;
+		}
+		.button-icon{
+			width: 30px; height: 30px; object-fit: contain;
+		}
+		.button-text{
+			margin-top: 8px; font-size: 14px; font-weight: bold;
+		}
+  	</style>
 </head>
 
 <body>
 	<div layout:fragment="content">
+		<!-- 메인 배너 -->
 		<div class="swiper">
 			<div class="swiper-wrapper">
 				<div class="swiper-slide" th:each="img : ${banners}">
@@ -38,11 +63,6 @@
 		<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 		<script>
 			window.addEventListener('DOMContentLoaded', function(){
-				console.log('aaa');
-
-				const swiperElement = document.querySelector('.swiper');
-				console.log('swiper element is', swiperElement);
-
 				const swiper = new Swiper('.swiper', {
 					loop: true,
 					autoplay: {
@@ -59,6 +79,40 @@
 				});
 			})
 		</script>
+		<!-- 버튼 : 신작 / 베스트 / 매일랜덤티켓 / 키다무 / 출석체크 -->
+		<div class="button-container">
+			<div class="button-wrapper">
+				<button class="round-button">
+					<img src="/resources/static/img/N.png" alt="신작" class="button-icon">
+				</button>
+				<div class="button-text">신작</div>
+			</div>
+			<div class="button-wrapper">
+				<button class="round-button">
+					<img src="/resources/static/img/best.png" alt="베스트" class="button-icon">
+				</button>
+				<div class="button-text">베스트</div>
+			</div>
+			<div class="button-wrapper">
+				<button class="round-button">
+					<img src="/resources/static/img/ticket.png" alt="매일랜덤티켓" class="button-icon">
+				</button>
+				<div class="button-text">매일랜덤티켓</div>
+			</div>
+			<div class="button-wrapper">
+				<button class="round-button">
+					<img src="/resources/static/img/clock.png" alt="키다무" class="button-icon">
+				</button>
+				<div class="button-text">키다무</div>
+			</div>
+			<div class="button-wrapper">
+				<button class="round-button">
+					<img src="/resources/static/img/calendar.png" alt="출석체크" class="button-icon">
+				</button>
+				<div class="button-text">출석체크</div>
+			</div>
+		</div>
+		<!-- 실시간 랭킹 -->
 
 	</div>
 </body>
