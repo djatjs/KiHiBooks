@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout.html}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>KiHiBooks</title>
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
+    <style>
+        main {
+            margin-top: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
+			width: 360px;
+        }
+		.form-group input{
+			height: 45px;
+		}
+        input:focus {
+            
+			border-color: blue; /* 포커스 시 테두리 색상 변경 */
+            outline: none;
+        }
+
+        .content-label {
+            position: absolute;
+            top: 10px;
+            left: 8px;
+            background: transparent;
+            padding: 0 5px;
+            transition: transform 0.3s ease, color 0.3s ease;
+            color: #999;
+        }
+        input:focus + .content-label,
+        input:not(:placeholder-shown) + .content-label {
+			transform: translateY(-10px);
+            color: #ff7f50;
+            font-size: 10px;
+        }
+        input::placeholder {
+            color: transparent;
+        }
+		.error-message {
+			display: none;
+			color: #ff7f50;
+			font-size: 12px;
+			margin-top: 5px;
+		}
+    </style>
+</head>
+
+<body>
+    <main layout:fragment="content" class="container">
+        <h3 style="text-align: center;" >KiHiBooks email</h3>
+        <form th:action="@{/signup/email}" method="post"  id="signup-form">
+            <div class="form-group">
+                <input type="email" class="form-control" id="email" name="email" placeholder=" " required>
+                <label for="email" class="content-label">이메일</label>
+				<label id="email-error" class="error-message"></label>
+            </div>
+			<div>
+				<button type="button" class="btn btn-primary mb-3" id="sendVerificationCode" disabled>이메일 인증</button>
+				<!-- <input type="hidden" name="chcekedEmail" > -->
+			</div>
+            
+            <div class="form-group">
+                <input type="text" class="form-control" id="verificationCode" name="verificationCode" placeholder=" " disabled>
+                <label for="verificationCode" class="content-label">인증코드</label>
+            </div>
+            <button type="button" class="btn btn-secondary mb-3" id="checkVerificationCode" disabled>인증번호 확인</button>
+            
+			<div class="form-group">
+                <input type="text" class="form-control" id="nickName" name="nickName" placeholder=" " required>
+				<label for="pwd" class="content-label">닉네임</label>
+				<label id="nickName-error" class="error-message error "></label>
+            </div>
+
+            <div class="form-group">
+                <input type="password" class="form-control" id="pw" name="pw" placeholder=" " required>
+				<label for="pw" class="content-label">비밀번호</label>
+				<label id="pw-error" class="error-message"></label>
+            </div>
+            <div class="form-group">
+				<input type="password" class="form-control" id="pw2" name="pw2" placeholder=" " required />
+				<label for="pw2" class="content-label">비밀번호 확인</label>
+				<label id="pw2-error" class="error-message error "></label>
+			</div>
+			
+            <button type="submit" class="btn btn-primary col-12" id="join-btn" disabled>가입</button>
+        </form>
+		<script>
+			$("#sendVerificationCode").click(function(){
+				const email = $("#email").val().trim();
+				$("#email").val(email);
+				alert(email);
+				if (!email) { // 이메일이 비어 있는지 확인
+					alert("이메일 주소를 입력해주세요.");
+					return;
+				}
+
+				$.ajax({
+					url: "/email/sendVerificationCode",
+					method: "POST",
+					data: email,
+					contentType: "text/plain",
+					success: function(response) {
+						if(response){
+							alert("인증번호가 이메일로 발송되었습니다. 1분 내에 확인 후 입력해주세요.");
+							$("#verificationCode").prop("disabled", false);
+							$("#checkVerificationCode").prop("disabled", false);
+							
+						}else{
+							alert("이메일 발송에 실패했습니다. 다시 시도해주세요.");
+						}
+					},
+					error: function(){
+						$("#verificationCode").prop("disabled", false);
+					},
+					complete: function(){
+					}
+				})
+
+				//$("#sendVerificationCode").prop("disabled", true); // 버튼 비활성화
+
+				
+				return;
+			})
+		</script>
+		<script>
+			$("#checkVerificationCode").click(function(){
+				const email = $("#email").val().trim();
+				const vCode = $("#verificationCode").val().trim();
+				
+				if (!vCode) {
+					alert("인증번호를 입력해주세요.");
+					return;
+				}
+				$.ajax({
+					url : "/email/verifyCode",
+					method: "POST",
+					data: {
+						email: email,
+						userCode: vCode
+					},
+					success : function(response){
+						if(response){
+							alert("인증 성공!");
+							$("#join-btn").prop("disabled", false); //가입 버튼 활성화
+							$("#sendVerificationCode").prop("disabled", true); // 이메일 재발송 방지
+							$("#verificationCode").prop("disabled", true); // 인증번호 입력 필드 비활성화
+							$("#checkVerificationCode").prop("disabled", true); // 인증번호 확인 버튼 비활성화
+						}
+						else{
+							alert("인증에 실패하였습니다. 다시 시도해주세요.");
+						}
+					}
+				})
+				return;
+			})
+		</script>
+		<script>
+			$("#signup-form").validate({
+				rules : {
+					email : {
+						required : true,
+						duplicate : true,
+						email : true,
+						regex : /^([A-Za-z0-9\._])+@([A-Za-z0-9]+\.[A-Za-z]{2,})$/
+					},
+					nickName : {
+						required : true,
+						duplicateNickName : true,
+						regex : /^[ㄱ-ㅎ가-힣a-zA-Z0-9]{3,12}$/
+					},
+					pw : {
+						required : true,
+						regex : /^[a-zA-Z0-9!@#$]{3,12}$/
+					},
+					pw2 : {
+						equalTo : pw
+					}
+				},
+				messages : {
+					email : {
+						required : "·이메일은 필수 항목입니다.",
+						duplicate : "·이미 가입된 이메일입니다.",
+						email : "·이메일 형식을 지켜주세요.",
+						regex : "이메일 형식"
+					},
+					nickName : {
+						required : "·닉네임은 필수 항목입니다.",
+						duplicateNickName : "·이미 사용중인 닉네임입니다.",
+						regex : "·닉네임은 영어, 숫자로 이루어져 있으며, 3~12자입니다."
+					},
+					pw : {
+						required : "·비번은 필수 항목입니다.",
+						regex : "·비번은 영어, 숫자, 특수문자(!@#$)로 이루어져 있으며, 3~12자입니다."
+					},
+					pw2 : {
+						equalTo : "·비번과 비번 확인이 같지 않습니다."
+					}
+					
+				},
+				submitHandler: function () {
+					form.submit();
+				},
+				errorPlacement: function (error, element) {
+					const name = element.attr("name");
+					const target = $(`#${name}-error`);
+					target.html(error).css("display", "block"); // 메시지 표시
+				},
+				success: function (label, element) {
+					const name = $(element).attr("name");
+					const target = $(`#${name}-error`);
+					target.html("").css("display", "none"); // 메시지 숨김
+				}
+			});
+			$.validator.addMethod("regex", function(value, element, regex){
+				var re = new RegExp(regex);
+				return this.optional(element) || re.test(value);
+			}, "정규 표현식을 확인하세요.");
+			
+			$.validator.addMethod("duplicate", function(value, element){
+				return this.optional(element) || checkEmail(value);
+			}, "이미 사용중인 이메일입니다.");
+			$.validator.addMethod("duplicateNickName", function(value, element){
+				return this.optional(element) || checkNickName(value);
+			}, "이미 사용중인 닉네임입니다.");
+			/**
+			 * 아이디가 주어지면 사용 가능여부를 반환하는 함수
+			 * @params id 중복 검사를 할 아이디
+			 * @return 사용 가능 여부. true 사용 가능, false 이미 사용 중
+			*/
+			function checkNickName(nickName){
+				$.ajax({
+					async : false,
+					url: "/check/nickName",
+					method : "POST",
+					data : nickName,
+					contentType: "text/plain",
+					success : function(data){
+						res = data;
+					},
+					error : function(){
+					}
+				})
+				return res;
+			}
+			function checkEmail(email){
+				$.ajax({
+					async : false,
+					url: "/check/email",
+					method: "POST",
+					data: email,
+					contentType: "text/plain",
+					success : function(data){
+						res = data;
+						$("#sendVerificationCode").prop("disabled",!res);
+					},
+					error : function(){
+					}
+				})
+				return res;
+			}
+		</script>
+	</main>
+</body>
+
+</html>
