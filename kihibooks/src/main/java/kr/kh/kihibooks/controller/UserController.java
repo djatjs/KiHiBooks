@@ -36,14 +36,10 @@ public class UserController {
 		return userService.checkPw(principal.getName(), pw);
 	}
 
-    @GetMapping("/user/editForm")
+  @GetMapping("/user/editForm")
 	public String editForm() {
 		return "user/editForm";
 	}
-
-
-
-
 
     @GetMapping("/signup/email")
     public String signupEmail() {
