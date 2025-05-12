@@ -6,4 +6,14 @@
         join recent_view on bo_code = rc_bo_code
         where rc_ur_num = #{ur_num}
     </select>
+    <select id="selectTopBooks" resultType="BookVO">
+        SELECT 
+            BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_PUBLISH_DATE
+        FROM 
+            book
+        ORDER BY 
+            BO_TOTAL_RATING DESC, BO_REVIEW_COUNT DESC
+        LIMIT 18;
+    </select>
+
 </mapper>

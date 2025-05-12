@@ -1,5 +1,10 @@
 package kr.kh.kihibooks.model.vo;
 
+import java.sql.Timestamp;
+
+import lombok.Data;
+
+@Data
 public class BookVO {
     String bo_code;
     String bo_title;
@@ -12,7 +17,7 @@ public class BookVO {
     String bo_serial_schedule;
     String bo_wait_for_free;
     int bo_wff_date;
-    int bo_publish_date;
+    Timestamp bo_publish_date;
     String bo_adult;
     String bo_sc_code;
     int bo_pi_num;

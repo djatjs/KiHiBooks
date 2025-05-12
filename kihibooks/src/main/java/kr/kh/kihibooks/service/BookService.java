@@ -14,8 +14,8 @@ public class BookService {
     @Autowired
     BookDAO bookDAO;
 
-    public List<BookVO> getTopBooks() {
-        throw new UnsupportedOperationException("Unimplemented method 'getTopBooks'");
+    public List<BookVO> getTopBooks() {    
+        return bookDAO.selectTopBooks();
     }
 
     public List<BookVO> getBookList(int ur_num) {
