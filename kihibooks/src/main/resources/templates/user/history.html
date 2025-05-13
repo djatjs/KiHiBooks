@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout.html}">
+
+<head>
+	<meta charset="UTF-8">
+	<title>회원정보 변경</title>
+	<style>
+		.text {
+			padding-left: 20px;
+			color: #736763;
+			font-size: 15px;
+		}
+
+		.bold {
+			font-weight: bold;
+		}
+
+		.menu-item,
+		.t {
+			color: #666;
+		}
+
+		.menu-item:hover {
+			text-decoration: none;
+			color: #666;
+		}
+
+		.icon {
+			filter: grayscale(100%) brightness(0%) invert(40%);
+		}
+
+		.selectedIcon {
+			filter: brightness(0) saturate(100%) invert(61%) sepia(56%) saturate(387%) hue-rotate(328deg) brightness(101%) contrast(101%);
+		}
+
+		.mykihi {
+			padding: 0 10px;
+			margin-left: 80px;
+			width: 900px;
+			flex-shrink: 0;
+		}
+
+		.point-tab {
+			display: flex;
+			width: 100%;
+			border-bottom: 2px solid #d9d2d1;
+			list-style: none;
+			margin: 7px 0 24px;
+		}
+
+		.checkout-point,
+		.history-point {
+			margin-right: 10px;
+			display: flex;
+			position: relative;
+			font-size: 15px;
+			font-weight: 700;
+			line-height: 18px;
+		}
+
+		.checkout-point:hover,
+		.history-point:hover {
+			text-decoration: none;
+		}
+
+		.history-point::after {
+			background: #ff7f50;
+			content: '';
+			position: absolute;
+			bottom: -4px;
+			left: 0;
+			right: 0;
+			width: 87%;
+			height: 4px;
+		}
+
+		.checkout-point:hover::after {
+			background: #c7c1c0;
+		}
+
+		.checkout-point::after {
+			content: '';
+			position: absolute;
+			bottom: -8px;
+			left: 0;
+			right: 0;
+			width: 84%;
+			height: 4px;
+			background: transparent;
+		}
+
+		.mypoint_amount{
+			margin-top: 30px;
+			font-weight: 700;
+			color: #4d4440;
+			font-size: 14px;
+		}
+
+		.total{
+			font-size: 17px;
+			font-weight: 700;
+			color: #ff7f50;
+		}
+
+		.point-history-table{
+			margin: 20px 0;
+			text-align: center;
+			color: #918480;
+			width: 100%;
+			border-collapse: collapse;
+			border-spacing: 0;
+		}
+
+		.point-history-table thead{
+			border-top: 1px solid #ebe7e6;
+			background-color: #f5f3f2;
+		}
+
+		.point-history-table thead tr{
+			font-size: 13px;
+		}
+
+		.point-history-table tr{
+			border-bottom: 1px solid #ebe7e6;
+		}
+
+		.point-history-table th{
+			padding: 10px 15px;
+		}
+
+		.point-history-table tbody {
+			color: #918480;
+		}
+
+		.detail-link{
+			cursor: pointer;
+		}
+
+		.point-history-table td{
+			padding: 10px 15px 11px 15px;
+			font-size: 13px;
+		}
+
+		.body_title{
+			font-weight: 700;
+			color: #4d4340;
+			text-align: left;
+			font-size: 14px;
+		}
+
+		.body_main_val{
+			text-align: right;
+		}
+		.body_amount{
+			color: #ff7f50;
+			font-weight: 700;
+			font-size: 14px;
+		}
+		
+		.body_sub_val{
+			text-align: right;
+		}
+
+		.body_sub_amount{
+			color: #636c73;
+			font-weight: 700;
+			font-size: 14px;
+		}
+
+		.page-item{
+			min-width: 40px;
+			text-align: center;
+		}
+
+		.page-item a{
+			color: #918680;
+			font-weight: 700;
+			font-size: 14px;
+		}
+
+		.page-item.active .page-link {
+			color: #fff;
+			background: #ff7f50;
+			border-color: #ff6a33;
+		}
+
+		.page-item a:hover{
+			text-decoration: none;
+		}
+
+		.page-link:hover{
+			color: #918680;
+		}
+	</style>
+</head>
+
+<body>
+	<main layout:fragment="content" class="container d-flex" style="min-height: 650px;">
+		<div class="left-menu ml-3" style="width: 180px; flex-shrink: 0;">
+			<h3 class="mt-4 mb-4" style="font-weight: 600;">마이키히</h3>
+			<a th:href="@{/account/mykihi}" class="bold menu-item"><img class="mb-1 icon" src="/resources/static/img/home.png"
+					alt="마이 홈" style="height: 15px;"> 마이키히홈</a>
+			<hr>
+			<div class="book">
+				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/book.png" alt="책" style="height: 15px;"> 책
+				</div>
+				<div class="mt-2 bold text menu-item">관심 작품</div>
+				<a th:href="@{/library/recents}" class="mt-1 bold text menu-item">최근 조회한 작품</a>
+			</div>
+			<hr>
+			<div class="my">
+				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/person.png" alt="개인"
+						style="height: 15px;"> 개인</div>
+				<a th:href="@{/account/modify}" class="mt-2 bold menu-item text">내 정보 관리</a>
+				<div class="mt-1 bold text menu-item">리뷰 관리</div>
+			</div>
+			<hr>
+			<div class="point">
+				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/card.png" alt="구매" style="height: 15px;">
+					구매/혜택</div>
+				<div class="mt-2 bold text menu-item">결제 내역</div>
+				<a th:href="@{/order/checkout/point}" class="mt-1 bold text menu-item" style="color: #ff7f50;">키히 포인트</a>
+			</div>
+		</div>
+		<div class="mykihi mt-4">
+			<div class="content-page">
+				<div class="page-point">
+					<h5 style="font-weight: 700; color: #222;">키히캐시</h5>
+					<div class="point-tab mt-3">
+						<a th:href="@{/order/checkout/point}" class="checkout-point mb-2">
+							<li class="checkout-point" style="color: #666;">포인트 충전</li>
+						</a>
+						<a th:href="@{/order/history_point}" class="history-point mb-1">
+							<li class="history-point" style="color: #000;">충전 내역</li>
+						</a>
+					</div>
+					<p class="mypoint_amount">내 키히포인트
+						<span class="total">0원</span>
+					</p>
+					<table class="point-history-table">
+						<colgroup>
+							<col style="width: 140px;">
+							<col style="width: auto;">
+							<col style="width: 95px;">
+							<col style="width: 95px;">
+							<col style="width: 134px;">
+							<col class="detail-icon">
+						</colgroup>
+						<thead>
+							<tr>
+								<th class="default">충전일</th>
+								<th class="title" style="text-align: left;">구분</th>
+								<th class="main_val" style="text-align: right;">충전 포인트</th>
+								<th class="sub_val" style="text-align: right;">적립 포인트</th>
+								<th class="default">결제 수단</th>
+								<th class="detail-icon" style="width: 5px; padding: 0 10px;"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="detail-link">
+								<td class="default">2025.05.13. 14:13</td>
+								<td class="body_title">키히포인트 충전</td>
+								<td class="body_main_val">
+									<span class="body_amount">30,000원</span>
+								</td>
+								<td class="body_sub_val">
+									<span class="body_sub_amount">1,200원</span>
+								</td>
+								<td class="default">신용카드</td>
+								<td class="detail-icon">
+									<a th:href="@{/order/history_point/${po_num}}">
+										<span>></span>
+									</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="paging-wrapper">
+						<div class="module-paging">
+							<ul class="pagination d-flex" style="justify-content: center;">
+								<li class="page-item">
+									<a class="page-link" href=""><</a>
+								</li>
+								<li class="page-item active">
+									<a href="" class="page-link">1</a>
+								</li>
+								<li class="page-item">
+									<a href="" class="page-link">2</a>
+								</li>
+								<li class="page-item">
+									<a href="" class="page-link">></a>
+								</li>
+							</ul>
+						</div>
+					</div>
+			</div>
+		</div>
+		<script>
+
+		</script>
+	</main>
+</body>
+
+</html>
