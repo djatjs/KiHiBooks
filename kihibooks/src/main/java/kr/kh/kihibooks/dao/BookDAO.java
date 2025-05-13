@@ -9,5 +9,7 @@ public interface BookDAO {
     List<BookVO> selectBookList(int ur_num);	
 
     List<BookVO> selectTopBooks();
+
+	List<BookVO> selectWaitFreeBooks();
     
 }

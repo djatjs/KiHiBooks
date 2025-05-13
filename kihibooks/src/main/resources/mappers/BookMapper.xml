@@ -15,5 +15,16 @@
             BO_TOTAL_RATING DESC, BO_REVIEW_COUNT DESC
         LIMIT 18;
     </select>
+    <select id="selectWaitFreeBooks" resultType="BookVO">
+        SELECT 
+            BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_WAIT_FOR_FREE
+        FROM 
+            book
+        WHERE 
+            BO_WAIT_FOR_FREE = 'Y'
+        ORDER BY BO_PUBLISH_DATE DESC
+        LIMIT 20
+    </select>
+    
 
 </mapper>

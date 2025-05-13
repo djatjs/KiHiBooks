@@ -213,6 +213,108 @@
 		.side-nav.right {
 			right: -30px;
 		}
+		/* 키다무 */
+		.waitfree-section {
+			margin: 40px 0;
+			position: relative;
+		}
+
+		.waitfree-title {
+			font-size: 22px;
+			font-weight: bold;
+			margin-bottom: 20px;
+		}
+
+		.waitfree-slider-wrapper {
+			position: relative;
+			overflow: hidden;
+		}
+
+		.waitfree-track {
+			display: flex;
+			gap: 16px;
+			scroll-behavior: smooth;
+			overflow-x: scroll;
+			padding: 0 20px 8px;
+			scrollbar-width: none;
+		}
+
+		.waitfree-track::-webkit-scrollbar {
+			display: none;
+		}
+
+		.waitfree-item {
+			flex: 0 0 160px;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			font-size: 13px;
+			color: #333;
+		}
+
+		.waitfree-thumb {
+			width: 100%;
+			aspect-ratio: 3 / 4;
+			border-radius: 4px;
+			overflow: hidden;
+			background-color: #f2f2f2;
+		}
+
+		.waitfree-thumb img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+		}
+
+		.waitfree-title-text {
+			margin-top: 6px;
+			font-weight: bold;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.waitfree-author {
+			font-size: 12px;
+			color: #666;
+			margin-top: 2px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.waitfree-rating {
+			font-size: 12px;
+			color: #d00;
+			margin-top: 2px;
+		}
+
+		.waitfree-arrow {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 32px;
+			height: 32px;
+			background: white;
+			border: 1px solid #ccc;
+			border-radius: 50%;
+			font-size: 18px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			z-index: 10;
+		}
+
+		.waitfree-arrow.left {
+			left: 0;
+		}
+
+		.waitfree-arrow.right {
+			right: 0;
+		}
 
   	</style>
 </head>
@@ -387,10 +489,102 @@
 				}
 			</script>
 		</div>
+		<!-- 키다리면 무료 -->
+		<section class="waitfree-section">
+			<h3 class="waitfree-title">키히, 기다리면 무료</h3>
+			<div class="waitfree-slider-wrapper">
+				<button class="waitfree-arrow left" onclick="scrollWaitfree(-1)"><</button>
+				<div class="waitfree-track" id="waitfreeGrid"></div>
+				<button class="waitfree-arrow right" onclick="scrollWaitfree(1)">></button>
+			</div>
+		</section>
+		<script>
+			function scrollWaitfree(direction){
+				const grid = document.getElementById("waitfreeGrid");
+				const scrollAmount = 180 * direction;
+				grid.scrollBy({ left: scrollAmount, behavior: 'smooth'});
+			}
+			$(document).ready(function () {
+				$.ajax({
+					url: "/waitfree/list",
+					method: "GET",
+					dataType: "json",
+					success: function (data) {
+						const $grid = $("#waitfreeGrid");
+						$grid.empty();
+		
+						data.forEach((book, index) => {
+							const imageNum = index + 1;
+							const html = `
+								<div class="waitfree-item">
+									<div class="waitfree-thumb">
+										<img src="/resources/static/covers/cover${imageNum}.png" alt="${book.bo_title}">
+									</div>
+									<div class="waitfree-title-text">${book.bo_title}</div>
+									<div class="waitfree-author">${book.bo_author || '작가 미정'}</div>
+									<div class="book-rating">★${book.bo_total_rating / 1000} | 리뷰 ${book.bo_review_count}</div>
+								</div>
+							`;
+							$grid.append(html);
+						});
+					},
+					error: function (xhr, status, error) {
+						console.error("기다리면 무료 데이터 로딩 실패:", status, error);
+					}
+				});
+			});
+		</script>
+		
 
 
+		<!-- 웹소설 베스트 -->
+		<div>
+			<h3>웹 소설 베스트</h3>
+			<div></div>
+		</div>
+		<!-- 키워드 검색 -->
+		<div>
+			<h3>키워드 검색</h3>
+			<div></div>
+		</div>
+		<!-- 키다무 신작 -->
+		<div>
+			<h3>키다무 신작</h3>
+			<div></div>
+		</div>
+		<!-- 50화 무료신작 -->
+		<div>
+			<h3>50화 무료신작</h3>
+			<div></div>
+		</div>
+		<!-- 최신 업데이트 -->
+		<div>
+			<h3>최신 업데이트</h3>
+			<div></div>
+		</div>
 
 
+		<button id="goTopBtn" class="go-top-btn">↑</button>
+		<script>
+			// 스크롤 시 버튼 표시/숨김
+			window.addEventListener("scroll", function () {
+				const topBtn = document.getElementById("goTopBtn");
+				if (window.scrollY > 300) {
+					topBtn.style.display = "block";
+				} else {
+					topBtn.style.display = "none";
+				}
+			});
+
+			// 클릭 시 스무스 스크롤로 위로 이동
+			document.getElementById("goTopBtn").addEventListener("click", function () {
+				window.scrollTo({
+					top: 0,
+					behavior: "smooth"
+				});
+			});
+
+		</script>
 	</div>
 </body>
 
