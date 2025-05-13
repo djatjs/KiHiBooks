@@ -84,5 +84,18 @@ public class UserController {
         return "redirect:/";
     }
     
-    
+    @GetMapping("/order/checkout/point")
+    public String point(){
+        return "user/point";
+    }
+
+    @GetMapping("/order/historyPoint")
+    public String historyPoint(){
+        return "user/historyPoint";
+    }
+
+    @GetMapping("/order/history")
+    public String history(){
+        return "/user/history";
+    }
 }

@@ -19,6 +19,7 @@
 		.menu-item,
 		.t {
 			color: #666;
+			display: block;
 		}
 
 		.menu-item:hover {
@@ -115,10 +116,10 @@
 			</div>
 			<hr>
 			<div class="point">
-				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/card.png" alt="구매" style="height: 15px;">
-					구매/혜택</div>
-				<div class="mt-2 bold text menu-item">결제 내역</div>
-				<div class="mt-1 bold text menu-item">키히 포인트</div>
+				<div class="t bold">
+					<img class="mb-1 icon" src="/resources/static/img/card.png" alt="구매" style="height: 15px;"> 구매/혜택</div>
+				<a th:href="@{/order/history}" class="mt-2 bold text menu-item">결제 내역</a>
+				<a th:href="@{/order/checkout/point}" class="mt-1 bold text menu-item">키히 포인트</a>
 			</div>
 		</div>
 		<div class="mykihi mt-4">

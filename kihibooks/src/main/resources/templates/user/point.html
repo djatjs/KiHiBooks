@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout.html}">
+
+<head>
+	<meta charset="UTF-8">
+	<title>회원정보 변경</title>
+	<style>
+		.text {
+			padding-left: 20px;
+			color: #736763;
+			font-size: 15px;
+		}
+
+		.bold {
+			font-weight: bold;
+		}
+
+		.menu-item,
+		.t {
+			color: #666;
+			display: block;
+		}
+
+		.menu-item:hover {
+			text-decoration: none;
+			color: #666;
+		}
+
+		.icon {
+			filter: grayscale(100%) brightness(0%) invert(40%);
+		}
+
+		.selectedIcon {
+			filter: brightness(0) saturate(100%) invert(61%) sepia(56%) saturate(387%) hue-rotate(328deg) brightness(101%) contrast(101%);
+		}
+
+		.mykihi {
+			padding: 0 10px;
+			margin-left: 80px;
+			width: 900px;
+			flex-shrink: 0;
+		}
+
+		.point-tab {
+			display: flex;
+			width: 100%;
+			border-bottom: 2px solid #d9d2d1;
+			list-style: none;
+			margin: 7px 0 24px;
+		}
+
+		.checkout-point,
+		.history-point {
+			margin-right: 10px;
+			display: flex;
+			position: relative;
+			font-size: 15px;
+			font-weight: 700;
+			line-height: 18px;
+		}
+
+		.checkout-point:hover,
+		.history-point:hover {
+			text-decoration: none;
+		}
+
+		.checkout-point::after {
+			background: #ff7f50;
+			content: '';
+			position: absolute;
+			bottom: -8px;
+			left: 0;
+			right: 0;
+			width: 87%;
+			height: 4px;
+		}
+
+		.history-point:hover::after {
+			background: #c7c1c0;
+		}
+
+		.history-point::after {
+			content: '';
+			position: absolute;
+			bottom: -4px;
+			left: 0;
+			right: 0;
+			width: 84%;
+			height: 4px;
+			background: transparent;
+		}
+
+		.text>h5 {
+			white-space: nowrap;
+			color: #141414;
+			font-weight: 600;
+			line-height: 28px;
+			margin-bottom: 9px;
+		}
+
+		.text>span {
+			color: #555;
+			font-weight: 500;
+			line-height: 19px;
+		}
+
+		.banner {
+			padding-bottom: 40px;
+		}
+
+		.banner-text {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 135px;
+			background: #fff9f7;
+		}
+
+		ul{
+			margin: 0;
+			padding: 0;
+		}
+
+		.charge-point-table {
+			list-style-type: none;
+		}
+
+		.line {
+			padding-top: 10px;
+			border-top: 1px solid #e6e6e6;
+		}
+
+		.p {
+			display: flex;
+			width: 100%;
+			height: 42px;
+			align-items: center;
+			position: relative;
+			color: #141414;
+			padding: 0 30px;
+		}
+
+		.label {
+			display: flex;
+			align-items: center;
+			box-sizing: border-box;
+			width: 100%;
+			position: relative;
+			height: 100%;
+		}
+
+		.label-text {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			height: 100%;
+			cursor: pointer;
+		}
+
+		.amount {
+			display: flex;
+			flex-basis: 75px;
+			margin-left: 10px;
+			font-weight: 700;
+			justify-content: flex-start;
+			color: #141414;
+		}
+
+		.per {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-width: 33px;
+			background: #f5f5f5;
+			border: 1px solid rgba(0, 0, 0, 0.06);
+			flex-shrink: 0;
+			padding: 0 5px 0 6px;
+			border-radius: 100px;
+			font-weight: 600;
+			color: #ff7f50;
+			margin-left: -5px;
+		}
+
+		.per-po{
+			display: flex;
+			color: #141414;
+			justify-content: flex-end;
+			font-weight: 500;
+
+		}
+
+		.table-head {
+			display: flex;
+			height: 46px;
+			margin-bottom: 10px;
+			border-top: 1px solid #e6e6e6;
+			border-bottom: 1px solid #e6e6e6;
+			font-weight: 700;
+			color: #787878;
+			padding: 0 30px;
+		}
+
+		.head-title {
+			display: flex;
+			align-items: center;
+			width: 100%;
+			justify-content: space-between;
+		}
+
+		.label-text span:nth-child(1) {
+			width: 80px;
+			/* 충전 금액 */
+		}
+
+		.label-text span:nth-child(2) {
+			width: 40px;
+			/* 적립률 */
+		}
+
+		.label-text span:nth-child(3) {
+			width: 80px;
+			/* 포인트 적립 */
+		}
+
+		input[type="radio"]{
+			accent-color: #ff7f50;
+
+			width: 20px;
+			height: 20px;
+		}
+
+		.blank{
+			display: flex;
+			align-items: center;
+			width: 29px;
+		}
+	</style>
+</head>
+
+<body>
+	<main layout:fragment="content" class="container d-flex" style="min-height: 650px;">
+		<div class="left-menu ml-3" style="width: 180px; flex-shrink: 0;">
+			<h3 class="mt-4 mb-4" style="font-weight: 600;">마이키히</h3>
+			<a th:href="@{/account/mykihi}" class="bold menu-item"><img class="mb-1 icon" src="/resources/static/img/home.png"
+					alt="마이 홈" style="height: 15px;"> 마이키히홈</a>
+			<hr>
+			<div class="book">
+				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/book.png" alt="책" style="height: 15px;"> 책
+				</div>
+				<div class="mt-2 bold text menu-item">관심 작품</div>
+				<a th:href="@{/library/recents}" class="mt-1 bold text menu-item">최근 조회한 작품</a>
+			</div>
+			<hr>
+			<div class="my">
+				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/person.png" alt="개인"
+						style="height: 15px;"> 개인</div>
+				<a th:href="@{/account/modify}" class="mt-2 bold menu-item text">내 정보 관리</a>
+				<div class="mt-1 bold text menu-item">리뷰 관리</div>
+			</div>
+			<hr>
+			<div class="point">
+				<div class="t bold">
+					<img class="mb-1 icon" src="/resources/static/img/card.png" alt="구매" style="height: 15px;"> 구매/혜택
+				</div>
+				<a th:href="@{/order/history}" class="mt-2 bold text menu-item">결제 내역</a>
+				<a th:href="@{/order/checkout/point}" class="mt-1 bold text menu-item" style="color: #ff7f50;">키히 포인트</a>
+			</div>
+		</div>
+		<div class="mykihi mt-4">
+			<div class="content-page">
+				<div class="page-point">
+					<h5 style="font-weight: 700; color: #222;">키히포인트</h5>
+					<div class="point-tab mt-3">
+						<a th:href="@{/order/checkout/point}" class="checkout-point mb-2">
+							<li class="checkout-point" style="color: #000;">포인트 충전</li>
+						</a>
+						<a th:href="@{/order/history_point}" class="history-point mb-1">
+							<li class="history-point" style="color: #666;">충전 내역</li>
+						</a>
+					</div>
+					<div class="point-banner">
+						<div class="banner">
+							<div class="banner-text">
+								<div class="text">
+									<h5>키히포인트 충전하면 최대 <strong style="color: #ff7f50;">5%</strong> 적립</h5>
+									<span>포인트 충전하고 편하게 감상하세요.</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="charge-container">
+						<h5 style="font-weight: 700; color: #222; font-size: 20px;">내 키히포인트
+							<span style="color: #ff7f50; font-weight: 700; font-size: 18px;">0원</span>
+						</h5>
+						<div class="charge-point">
+							<ul class="charge-point-table">
+								<li class="table-head">
+									<span class="blank"></span>
+									<span class="head-title">
+										<span class="charge-amount">충전 금액</span>
+										<span class="percent">적립률</span>
+										<span class="per-point">포인트 적립</span>
+									</span>
+								</li>
+								<li class="p">
+									<label class="label">
+										<input type="radio" class="2000-radio" name="cach-amount" value="2000" title="2000원 선택" readonly
+											autocomplete="off">
+										<span class="label-text">
+											<span class="amount">2,000원</span>
+											<span class="per">3%</span>
+											<span class="per-po">+60원</span>
+										</span>
+									</label>
+								</li>
+								<li class="p">
+									<label class="label">
+										<input type="radio" class="5000-radio" name="cach-amount" value="5000" title="5000원 선택" readonly
+											autocomplete="off">
+										<span class="label-text">
+											<span class="amount">5,000원</span>
+											<span class="per">3%</span>
+											<span class="per-po">+150원</span>
+										</span>
+									</label>
+								</li>
+								<li class="p">
+									<label class="label">
+										<input type="radio" class="10000-radio" name="cach-amount" value="10000" title="10000원 선택" readonly
+											autocomplete="off">
+										<span class="label-text">
+											<span class="amount">10,000원</span>
+											<span class="per">3%</span>
+											<span class="per-po">+300원</span>
+										</span>
+									</label>
+								</li>
+								<li class="p">
+									<label class="label">
+										<input type="radio" class="20000-radio" name="cach-amount" value="20000" title="20000원 선택" readonly
+											autocomplete="off">
+										<span class="label-text">
+											<span class="amount">20,000원</span>
+											<span class="per">3%</span>
+											<span class="per-po">+600원</span>
+										</span>
+									</label>
+								</li>
+								<li class="line"></li>
+								<li class="p">
+									<label class="label">
+										<input type="radio" checked class="30000-radio" name="cach-amount" value="30000" title="30000원 선택" readonly
+											autocomplete="off">
+										<span class="label-text">
+											<span class="amount">30,000원</span>
+											<span class="per">4%</span>
+											<span class="per-po">+1,200원</span>
+										</span>
+									</label>
+								</li>
+								<li class="p">
+									<label class="label">
+										<input type="radio" class="50000-radio" name="cach-amount" value="50000" title="50000원 선택" readonly
+											autocomplete="off">
+										<span class="label-text">
+											<span class="amount">50,000원</span>
+											<span class="per">4%</span>
+											<span class="per-po">+2,000원</span>
+										</span>
+									</label>
+								</li>
+								<li class="p">
+									<label class="label">
+										<input type="radio" class="70000-radio" name="cach-amount" value="70000" title="70000원 선택" readonly
+											autocomplete="off">
+										<span class="label-text">
+											<span class="amount">70,000원</span>
+											<span class="per">4%</span>
+											<span class="per-po">+2,800원</span>
+										</span>
+									</label>
+								</li>
+								<li class="line"></li>
+								<li class="p">
+									<label class="label">
+										<input type="radio" class="100000-radio" name="cach-amount" value="100000" title="100000원 선택"
+											readonly autocomplete="off">
+										<span class="label-text">
+											<span class="amount">100,000원</span>
+											<span class="per">5%</span>
+											<span class="per-po">+5,000원</span>
+										</span>
+									</label>
+								</li>
+								<li class="p">
+									<label class="label">
+										<input type="radio" class="200000-radio" name="cach-amount" value="200000" title="200000원 선택"
+											readonly autocomplete="off">
+										<span class="label-text">
+											<span class="amount">200,000원</span>
+											<span class="per">5%</span>
+											<span class="per-po">+10,000원</span>
+										</span>
+									</label>
+								</li>
+								<li class="p">
+									<label class="label">
+										<input type="radio" class="300000-radio" name="cach-amount" value="300000" title="300000원 선택"
+											readonly autocomplete="off">
+										<span class="label-text">
+											<span class="amount">300,000원</span>
+											<span class="per">5%</span>
+											<span class="per-po">+15,000원</span>
+										</span>
+									</label>
+								</li>
+								<li class="p">
+									<label class="label">
+										<input type="radio" class="400000-radio" name="cach-amount" value="400000" title="400000원 선택"
+											readonly autocomplete="off">
+										<span class="label-text">
+											<span class="amount">400,000원</span>
+											<span class="per">5%</span>
+											<span class="per-po">+20,000원</span>
+										</span>
+									</label>
+								</li>
+								<li class="p">
+									<label class="label">
+										<input type="radio" class="500000-radio" name="cach-amount" value="500000" title="500000원 선택"
+											readonly autocomplete="off">
+										<span class="label-text">
+											<span class="amount">500,000원</span>
+											<span class="per">5%</span>
+											<span class="per-po">+25,000원</span>
+										</span>
+									</label>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+
+		</script>
+	</main>
+</body>
+
+</html>
