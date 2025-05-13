@@ -1,0 +1,62 @@
+main {
+	margin-top: 50px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+.btns {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	margin-top: 30px;
+}
+
+.btn-join {
+	position: relative;
+	width: 360px;
+	padding: 12px 20px;
+	border-radius: 25px;
+	color: white;
+	font-weight: bold;
+	font-size: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.btn-icon {
+	position: absolute;
+	left: 20px;
+	height: 20px;
+}
+
+.btn-text {
+	flex: 1;
+	text-align: center;
+	z-index: 1;
+}
+
+.btn-kakao {
+	background-color: #FEE500;
+	color: #3C1E1E;
+}
+
+.btn-naver {
+	background-color: #03C75A;
+}
+
+.btn-email {
+	background-color: #4285F4;
+}

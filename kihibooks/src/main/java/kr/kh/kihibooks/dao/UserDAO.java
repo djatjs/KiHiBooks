@@ -16,8 +16,12 @@ public interface UserDAO {
 
     int selectCode(@Param("email") String email, @Param("userCode")String userCode);
 
-    int selectEmail(@Param("email") String email);
+    UserVO selectEmail(@Param("email") String email);
 
     int selectNickName(@Param("nickName") String nickName);
+
+    boolean insertUserWithPw(UserVO user);
+
+    boolean insertUserWithoutPw(UserVO user);
 	
 }
