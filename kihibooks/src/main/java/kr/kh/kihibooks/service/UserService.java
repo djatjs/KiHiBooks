@@ -6,6 +6,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import jakarta.mail.internet.MimeMessage;
 import kr.kh.kihibooks.dao.UserDAO;
@@ -115,8 +116,8 @@ public class UserService {
     }
 
     public boolean checkEmail(String email) {
-		int count = userDAO.selectEmail(email);
-		if(count != 0){
+		UserVO count = userDAO.selectEmail(email);
+		if(count != null){
 			return false;
 		}
 		return true;
@@ -142,9 +143,11 @@ public class UserService {
 		// 가입된 이메일, 닉네임인지는 html에서 확인했으므로 생략
 
 		try {
-			return userDAO.insertUser(user);
+			return userDAO.insertUserWithPw(user);
 		} catch (Exception e) {
 			return false;
 		}
     }
+
+
 }

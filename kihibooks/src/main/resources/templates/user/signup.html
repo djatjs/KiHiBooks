@@ -6,77 +6,19 @@ layout:decorate="~{layout/layout.html}">
 <head>
 <meta charset="UTF-8">
 <title>KiHiBooks</title>
-<style>
-	main {
-		text-align: center;
-		margin-top: 50px;
-	}
-	a {
-		text-decoration: none;
-		color: inherit;
-	}
-	a:hover {
-		text-decoration: none;
-	}
-	.btns {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 10px;
-		margin-top: 30px;
-	}
-
-	.btn-join {
-		position: relative;
-		width: 300px;
-		padding: 12px 20px;
-		border-radius: 25px;
-		color: white;
-		font-weight: bold;
-		font-size: 14px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		cursor: pointer;
-	}
-	.btn-icon {
-		position: absolute;
-		left: 20px;
-		height: 20px;
-	}
-	
-	.btn-text {
-		flex: 1;
-		text-align: center;
-		z-index: 1;
-		
-		
-	}
-	.btn-kakao {
-		background-color: #FEE500;
-		color: #3C1E1E;
-	}
-
-	.btn-naver {
-		background-color: #03C75A;
-	}
-
-	.btn-email {
-		background-color: #4285F4;
-	}
-</style>
+<link rel="stylesheet" href="/resources/static/css/signup.css">
 </head>
 <body >
 	<main layout:fragment="content" class="container">
-		<h3>회원가입</h3>
 		<img src="/resources/static/img/logo.png" alt="로고">
         <div class="btns">
 			<!-- 카카오 버튼 -->
-			<a th:href="@{/}">
+			<a th:href="@{'https://kauth.kakao.com/oauth/authorize'(client_id=${kakaoClientId},redirect_uri=${kakaoRedirectUri},response_type='code')}">
 				<div class="btn-join btn-kakao">
 					<img src="/resources/static/img/kakao.png" class="btn-icon" alt="카카오 아이콘">
 					<span class="btn-text">카카오 계정으로 가입하기</span>
 				</div>
+				<!-- <img src="/resources/static/img/kakaoLogin.png" style="width: 50%;" alt="카카오 아이콘"> -->
 			</a>
 	
 			<!-- 네이버 버튼 -->

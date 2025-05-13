@@ -1,8 +1,10 @@
 package kr.kh.kihibooks.controller;
 
 import java.security.Principal;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import kr.kh.kihibooks.service.ApiService;
 import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.model.vo.EmailVO;
 import kr.kh.kihibooks.model.vo.UserVO;
@@ -20,6 +23,15 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
+
+    @Autowired
+    ApiService apiService;
+
+    @Value("${kakao.client.id}")
+    private String kakaoClientId;
+
+    @Value("${kakao.redirect.uri}")
+    private String kakaoRedirectUri;
 
 	@GetMapping("/account/mykihi")
 	public String mypage() {
@@ -42,10 +54,14 @@ public class UserController {
 		return "user/editForm";
 	}
 
-
-
-
-
+    //회원가입 선택 창
+    @GetMapping("/signup")
+	public String signup(Model model) {
+		model.addAttribute("kakaoClientId", kakaoClientId);
+        model.addAttribute("kakaoRedirectUri", kakaoRedirectUri);
+		return "user/signup";
+	}
+    
     @GetMapping("/signup/email")
     public String signupEmail() {
         return "user/signup_email";
@@ -96,5 +112,25 @@ public class UserController {
         }
         return "redirect:/signup/email";
     }
+
+
+    @GetMapping("/signup/kakao") // 실제 Redirect URI 경로로 수정
+    public String kakaoLogin(@RequestParam String code) {
+        System.out.println("인가 코드: " + code);
+
+        // 1. 인가 코드를 사용하여 액세스 토큰을 요청합니다. 이 로직은 ApiService에 구현합니다.
+        String accessToken = apiService.getKakaoAccessToken(code); // ApiService에 메소드 추가 필요
+
+        // 2. 액세스 토큰을 사용하여 사용자 정보를 요청합니다. 이 로직도 ApiService에 구현합니다.
+        Map<String, Object> userInfo = apiService.getKakaoUserInfo(accessToken); // ApiService에 메소드 추가 필요
+        System.out.println("사용자 정보:" + userInfo);
+        // 3. 받은 사용자 정보(이메일, 닉네임 등)를 기반으로 회원가입 또는 로그인을 처리합니다.
+        // 이 로직 또한 ApiService에 구현하여 데이터베이스에 저장합니다.
+        apiService.processKakaoUser(userInfo); // ApiService에 메소드 추가 필요
+
+        // 처리가 완료되면 적절한 페이지로 리다이렉트합니다.
+        return "redirect:/";
+    }
+    
     
 }
