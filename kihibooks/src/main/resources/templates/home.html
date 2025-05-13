@@ -12,12 +12,39 @@
 		/* 메인 배너 */
 		.swiper {
 			width: 100%; height: 500px;
-			border-radius: 16px; padding: 20px;
+			border-radius: 16px;
 			overflow: hidden;
+			position: relative;
+		}
+		.swiper-slide {
+			width: 100%;
+			height: 100%;
 		}
 		.swiper-slide img {
 			width: 100%; height: 100%;
+			display: block;
 			object-fit: cover;
+		}
+		[class*="swiper-button"]{
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			background-color: white;
+			border: 1px solid #ccc;
+			border-radius: 50%;
+			width: 36px;
+			height: 36px;
+			font-size: 20px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			box-shadow: 0 0 4px rgba(0,0,0,0.1);
+			transition: background-color 0.2s ease;
+		}
+		[class*="swiper-button"]::after{
+			font-size: 16px !important;
+			color: black;
 		}
 		/* 버튼 : 신작 / 베스트 / 매일랜덤티켓 / 키다무 / 출석체크 */
 		.button-container{
