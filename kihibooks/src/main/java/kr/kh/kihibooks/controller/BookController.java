@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,13 +22,10 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @Autowired
-    private SqlSession sqlSession;
-    
     @GetMapping("/realtime")
     @ResponseBody
     public Map<String, Object> getTopBooks() {
-        List<BookVO> books = sqlSession.selectList("kr.kh.kihibooks.dao.BookDAO.selectTopBooks");
+        List<BookVO> books = bookService.getTopBooks();
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         
         Map<String, Object> map = new HashMap<>();
@@ -45,5 +41,14 @@ public class BookController {
         model.addAttribute("bookList", list);
 		return "user/recentList";
 	}
+
+    @GetMapping("/waitfree/list")
+    @ResponseBody
+    public List<BookVO> getWaitFreeList() {
+        List<BookVO> list = bookService.getWaitFreeBooks();
+        System.out.println(list.size());
+        return list;
+    }
+
     
 }

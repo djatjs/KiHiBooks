@@ -22,4 +22,9 @@ public class BookService {
         return bookDAO.selectBookList(ur_num);
     }
 
+    public List<BookVO> getWaitFreeBooks() {
+        return bookDAO.selectWaitFreeBooks();
+    }
+    
+
 }
