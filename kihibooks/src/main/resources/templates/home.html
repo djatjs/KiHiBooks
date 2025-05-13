@@ -51,6 +51,27 @@
 			margin-top: 8px; font-size: 13px; font-weight: bold;
 		}
 		/* 실시간 랭킹 */
+		.ranking-header {
+			position: relative;
+			margin-top: 30px;
+			margin-bottom: 60px;
+			text-align: center;
+		}
+
+		.ranking-title {
+			font-size: 30px;
+			font-weight: bold;
+			margin: 0;
+		}
+
+		.last-updated {
+			position: absolute;
+			right: 0;
+			top: 50%;
+			transform: translateY(-50%);
+			font-size: 13px;
+			color: #888;
+		}
 		.ranking-body {
 			position: relative;
 			display: flex;
@@ -67,6 +88,9 @@
 		}
 		.ranking-container h2{
 			text-align: center; margin-bottom: 30px;
+		}
+		.lastUpdatedText{
+			justify-content: right;
 		}
 
 		.book-item {
@@ -156,11 +180,11 @@
 		}
 
 		.side-nav.left {
-			left: -48px; /* 버튼이 왼쪽으로 조금 튀어나오게 */
+			left: -30px;
 		}
 
 		.side-nav.right {
-			right: -48px;
+			right: -30px;
 		}
 
   	</style>
@@ -233,7 +257,10 @@
 		</div>
 		<!-- 실시간 랭킹 -->
 		<div class="ranking-container">
-			<h2>실시간 랭킹</h2>
+			<div class="ranking-header">
+				<h2 class="ranking-title">실시간 랭킹</h2>
+				<div id="lastUpdatedText" class="last-updated">최근 갱신: -</div>
+			</div>	
 			<div class="ranking-body">
 				<button id="prevBtn" onclick="prevPage()" class="side-nav left"><</button>
 
@@ -246,6 +273,9 @@
 				let currentPage = 0;
 				const pageSize = 9;
 				loadBooks();
+				setInterval(()=>{
+					loadBooks();
+				}, 30 * 60 * 1000);
 
 				function loadBooks() {
 					$.ajax({
@@ -253,8 +283,9 @@
 						method: 'GET',
 						dataType: 'json',
 						success: function(data){
-							books = data;
+							books = data.books;
 							renderBooks();
+							updateLastUpdated(data.lastUpdated);
 						},
 						error: function(xhr, status,error){
 							console.error("데이터 요청 실패", status, error);
@@ -262,9 +293,20 @@
 					});
 				}
 
+				function updateLastUpdated(isoTimeStr){
+					const date = new Date(isoTimeStr);
+					const hours = date.getHours().toString().padStart(2, '0');
+					const minutes = date.getMinutes().toString().padStart(2, '0');
+					const ampm = hours >= 12 ? "오후" : "오전";
+					const hour12 = hours % 12 === 0 ? 12 : hours % 12;
+					document.getElementById("lastUpdatedText").innerText = `최근 갱신: ${ampm} ${hour12}:${minutes}`;
+				}
+
 				function updateNavButtons(){
-					document.getElementById("prevBtn").disabled = currentPage === 0;
-					document.getElementById("nextBtn").disabled = (currentPage + 1) * pageSize >= books.length;
+					const prevBtn = document.getElementById("prevBtn");
+					const nextBtn = document.getElementById("nextBtn");
+					prevBtn.style.display = (currentPage === 0) ? "none" : "flex";
+					nextBtn.style.display = ((currentPage + 1) * pageSize >= books.length) ? "none" : "flex";
 
 				}
 

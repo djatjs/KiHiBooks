@@ -1,7 +1,12 @@
 package kr.kh.kihibooks.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,17 +22,21 @@ public class BookController {
     
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private SqlSession sqlSession;
     
     @GetMapping("/realtime")
     @ResponseBody
-    public List<BookVO> getTopBooks() {
-        List<BookVO> books = bookService.getTopBooks();
-        if(books == null){
-            System.out.println("books is null");
-        }else{
-            System.out.println(books.size());
-        }
-        return books;
+    public Map<String, Object> getTopBooks() {
+        List<BookVO> books = sqlSession.selectList("kr.kh.kihibooks.dao.BookDAO.selectTopBooks");
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        
+        Map<String, Object> map = new HashMap<>();
+        map.put("books", books);
+        map.put("lastUpdated", now);
+
+        return map;
     }
     
     @GetMapping("/library/recents")

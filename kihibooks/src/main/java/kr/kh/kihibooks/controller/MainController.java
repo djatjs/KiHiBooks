@@ -17,7 +17,6 @@ public class MainController {
 			"/banners/banner3.png"
 		);
 		model.addAttribute("banners", banners);
-		System.out.println("배너 리스트 전달됨");
 		return "home";
 	}
     @GetMapping("/signup")
