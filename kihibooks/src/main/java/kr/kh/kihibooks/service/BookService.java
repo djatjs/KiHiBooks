@@ -14,7 +14,7 @@ public class BookService {
     @Autowired
     BookDAO bookDAO;
 
-    public List<BookVO> getTopBooks() {    
+    public List<BookVO> getTopBooks() {
         return bookDAO.selectTopBooks();
     }
 
