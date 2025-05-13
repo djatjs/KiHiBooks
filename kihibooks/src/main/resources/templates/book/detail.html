@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout.html}">
+
+<head>
+	<meta charset="UTF-8">
+	<title>KiHiBooks</title>
+</head>
+
+<body>
+	<main layout:fragment="content" class="container d-flex" style="min-height: 650px;">
+		<div class="content-page">
+			<div class="page-detail">
+				<div class="detail-content">
+					<div class="detail">
+						<div class="grid-left-top">
+							<div class="thumb-grid">
+								<button type="button" class="thumb">
+									<img class="thumb-img" src=""></img>
+								</button>
+							</div>
+							<div class="info-grid">
+								<div class="category">
+									<ul class="cate-ul">
+										<li class="cate-li">
+											<span class="blank"></span>
+											<div class="cate-title">
+												<a th:href="@{/}" class="main-cate-title">판타지 웹소설</a>
+												<span>></span>
+												<a th:href="@{/}" class="sub-cate-title">현대 판타지</a>
+											</div>
+										</li>
+									</ul>
+								</div>
+								<h3 class="book-title">이세계 착각 헌터</h3>
+								<div class="rating-content">
+									<ul class="rating-ul">
+										<li class="rating-li">
+											<button type="button" class="total-rating">
+												<img src="resources/static/img/star.png" alt="별" class="start-img" style="height: 15px;">
+												<div class="rate-score">4.9점</div>
+												<div class="rate-cnt">(12,896)</div>
+											</button>
+										</li>
+										<li class="like-li">
+											<span class="likes">관심 39,486</span>
+										</li>
+									</ul>
+								</div>
+								<div class="info-content">
+									<div class="author">
+										<ul class="author-ul">
+											<li class="author-li">
+												<div class="author-name">대대원 저</div>
+											</li>
+										</ul>
+									</div>
+									<div class="publisher">
+										<a th:href="@{/}" class="publisher-link">익시드 출판</a>
+									</div>
+									<div class="total-episode">총 507화</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</body>
+
+</html>

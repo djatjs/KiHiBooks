@@ -45,5 +45,11 @@ public class BookController {
         model.addAttribute("bookList", list);
 		return "user/recentList";
 	}
+
+
+    @GetMapping("/books")
+    public String bookDetail(){
+        return "book/detail";
+    }
     
 }
