@@ -19,8 +19,14 @@ public class SecurityConfig {
         http.csrf(csrf ->csrf.disable())
             .authorizeHttpRequests((requests) -> requests
                 .anyRequest().permitAll()  // 그 외 요청은 인증 필요
-            );
-            
+            )
+            .formLogin((form) -> form
+                .loginPage("/login")  // 커스텀 로그인 페이지 설정
+                .permitAll()           // 로그인 페이지는 접근 허용
+                .loginProcessingUrl("/login")//
+                .defaultSuccessUrl("/")
+            )
+            ;
         return http.build();
     }
 

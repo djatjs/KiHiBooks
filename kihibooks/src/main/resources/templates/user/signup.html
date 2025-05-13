@@ -10,7 +10,7 @@ layout:decorate="~{layout/layout.html}">
 </head>
 <body >
 	<main layout:fragment="content" class="container">
-		<img src="/resources/static/img/logo.png" alt="로고">
+		<img src="/resources/static/img/logo.png" alt="로고" style="width: 360px;">
         <div class="btns">
 			<!-- 카카오 버튼 -->
 			<a th:href="@{'https://kauth.kakao.com/oauth/authorize'(client_id=${kakaoClientId},redirect_uri=${kakaoRedirectUri},response_type='code')}">

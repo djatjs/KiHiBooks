@@ -178,7 +178,7 @@
 			});
 			$.validator.addMethod("regex", function(value, element, regex){
 				var re = new RegExp(regex);
-				return this.optional(element) || re.test(value);
+				return this.optional(element) || regex.test(value);
 			}, "정규 표현식을 확인하세요.");
 			
 			$.validator.addMethod("duplicate", function(value, element){

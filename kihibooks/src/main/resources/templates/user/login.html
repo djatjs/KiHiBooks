@@ -41,10 +41,10 @@ layout:decorate="~{layout/layout.html}">
 		</form>
 		<div class="d-flex justify-content-center mt-3">
 			<a href="@{/}">아이디 찾기</a>
-			<span>|</span>
-			<a href="@{/}">비밀번호 찾기</a>
-			<span>|</span>
-			<a href="@{/}">회원가입</a>
+			<span class="ml-3">|</span>
+			<a href="@{/}" class="ml-3">비밀번호 찾기</a>
+			<span class="ml-3">|</span>
+			<a href="@{/}" class="ml-3">회원가입</a>
 		</div>
 		<div class="btns mt-2">
 			<a th:href="@{'https://kauth.kakao.com/oauth/authorize'(client_id=${kakaoClientId},redirect_uri=${kakaoRedirectUri},response_type='code')}">
