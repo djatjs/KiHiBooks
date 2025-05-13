@@ -1,7 +1,5 @@
 package kr.kh.kihibooks.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,6 +24,12 @@ public class SecurityConfig {
                 .loginProcessingUrl("/login")//
                 .defaultSuccessUrl("/")
             )
+            .logout((logout) -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .permitAll())
             ;
         return http.build();
     }

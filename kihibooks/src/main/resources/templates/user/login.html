@@ -23,7 +23,7 @@ layout:decorate="~{layout/layout.html}">
 			<img src="/resources/static/img/join_msg.png" alt="홍보 메시지" style="width: 27%;">
 			<img src="/resources/static/img/join_img.png" alt="홍보 이미지" style="width: 27%;">
 		</div>
-		<form th:action="@{/login/email}" method="post"  id="login-form">
+		<form th:action="@{/login}" method="post"  id="login-form">
 			<div class="form-group">
                 <input type="email" class="form-control" id="email" name="username" placeholder=" " required>
                 <label for="email" class="content-label">이메일</label>
@@ -32,11 +32,11 @@ layout:decorate="~{layout/layout.html}">
                 <input type="password" class="form-control" id="ur_pw" name="password" placeholder=" " required>
 				<label for="ur_pw" class="content-label">비밀번호</label>
             </div>
-			<div class="form-control mb-3" style="line-height: 33px;  height: 45px;">
+			<!-- <div class="form-control mb-3" style="line-height: 33px;  height: 45px;">
 				<label>
 					<input type="checkbox" name="remember-me"> 로그인 상태 유지
 				</label>
-			</div>
+			</div> -->
 			<button type="submit" class="btn btn-primary col-12" id="login-btn">가입</button>
 		</form>
 		<div class="d-flex justify-content-center mt-3">

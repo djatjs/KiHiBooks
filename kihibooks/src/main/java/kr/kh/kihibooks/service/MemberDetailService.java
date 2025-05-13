@@ -7,9 +7,20 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import kr.kh.kihibooks.dao.UserDAO;
-import kr.kh.kihibooks.model.util.*;
+import kr.kh.kihibooks.utils.*;
 import kr.kh.kihibooks.model.vo.UserVO;
 
-public class MemberDetailService {
-    
+@Service
+public class MemberDetailService implements UserDetailsService{
+
+	@Autowired
+	UserDAO userDao;
+	
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		UserVO user = userDao.selectEmail(username);
+
+		return user == null ? null : new CustomUser(user);
+	}
+
 }
