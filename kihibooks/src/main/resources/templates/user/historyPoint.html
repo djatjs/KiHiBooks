@@ -150,7 +150,7 @@
 			font-size: 14px;
 		}
 
-		.body_val {
+		.body_main_val {
 			text-align: right;
 		}
 
@@ -160,11 +160,21 @@
 			font-size: 14px;
 		}
 
-		.detail-icon a{
+		.body_sub_val {
+			text-align: right;
+		}
+
+		.body_sub_amount {
+			color: #736863;
+			font-weight: 700;
+			font-size: 14px;
+		}
+
+		.detail-icon a {
 			color: #736863;
 		}
 
-		.detail-icon a:hover{
+		.detail-icon a:hover {
 			text-decoration: none;
 		}
 
@@ -197,17 +207,17 @@
 			padding: 120px 0;
 		}
 
-		.empty-history{
+		.empty-history {
 			display: block;
 			margin: 0 auto;
 			text-align: center;
 			color: #736863;
 		}
 
-		.empty-icon{
+		.empty-icon {
 			display: block;
 			margin: 0 auto;
-			
+			filter: invert(100%) sepia(10%) saturate(350%) hue-rotate(330deg) brightness(98%) contrast(90%);
 		}
 	</style>
 </head>
@@ -234,38 +244,59 @@
 			</div>
 			<hr>
 			<div class="point">
-				<div class="t bold"><img class="mb-1 icon" src="/resources/static/img/card.png" alt="구매" style="height: 15px;"> 구매/혜택</div>
-				<a th:href="@{/order/history}" class="mt-2 bold text menu-item" style="color: #ff7f50;">결제 내역</a>
-				<a th:href="@{/order/checkout/point}" class="mt-1 bold text menu-item">키히 포인트</a>
+				<div class="t bold">
+					<img class="mb-1 icon" src="/resources/static/img/card.png" alt="구매" style="height: 15px;"> 구매/혜택
+				</div>
+				<a th:href="@{/order/history}" class="mt-2 bold text menu-item">결제 내역</a>
+				<a th:href="@{/order/checkout/point}" class="mt-1 bold text menu-item" style="color: #ff7f50;">키히 포인트</a>
 			</div>
 		</div>
 		<div class="mykihi mt-4">
 			<div class="content-page">
 				<div class="page-point">
-					<h5 style="font-weight: 700; color: #222;">결제내역</h5>
-					<!-- <div th:if="${historyList != null and !#lists.isEmpty(historyList)}"> -->
+					<h5 style="font-weight: 700; color: #222;">키히포인트</h5>
+					<div class="point-tab mt-3">
+						<a th:href="@{/order/checkout/point}" class="checkout-point mb-2">
+							<li class="checkout-point" style="color: #666;">포인트 충전</li>
+						</a>
+						<a th:href="@{/order/history_point}" class="history-point mb-1">
+							<li class="history-point" style="color: #000;">충전 내역</li>
+						</a>
+					</div>
+					<div th:if="${historyList != null and !#lists.isEmpty(historyList)}">
+						<p class="mypoint_amount">내 키히포인트
+							<span class="total">0원</span>
+						</p>
 						<table class="point-history-table">
 							<colgroup>
-								<col style="width: 170px;">
+								<col style="width: 140px;">
 								<col style="width: auto;">
 								<col style="width: 95px;">
+								<col style="width: 95px;">
+								<col style="width: 134px;">
 								<col class="detail-icon">
 							</colgroup>
 							<thead>
 								<tr>
-									<th class="default">구매일</th>
-									<th class="title" style="text-align: left;">결제 내역</th>
-									<th class="main_val" style="text-align: right;">주문 금액</th>
+									<th class="default">충전일</th>
+									<th class="title" style="text-align: left;">구분</th>
+									<th class="main_val" style="text-align: right;">충전 포인트</th>
+									<th class="sub_val" style="text-align: right;">적립 포인트</th>
+									<th class="default">결제 수단</th>
 									<th class="detail-icon" style="width: 5px; padding: 0 10px;"></th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr class="detail-link">
 									<td class="default">2025.05.13. 14:13</td>
-									<td class="body_title">이세계 착각 헌터 29화 외 1권</td>
-									<td class="body_val">
-										<span class="body_amount">200원</span>
+									<td class="body_title">키히포인트 충전</td>
+									<td class="body_main_val">
+										<span class="body_amount">30,000원</span>
 									</td>
+									<td class="body_sub_val">
+										<span class="body_sub_amount">1,200원</span>
+									</td>
+									<td class="default">신용카드</td>
 									<td class="detail-icon">
 										<a th:href="@{/order/history_point/${po_num}}">
 											<span>></span>
@@ -278,7 +309,8 @@
 							<div class="module-paging">
 								<ul class="pagination d-flex" style="justify-content: center;">
 									<li class="page-item">
-										<a href="" class="page-link"><</a>
+										<a href="" class="page-link">
+											<< /a>
 									</li>
 									<li class="page-item active">
 										<a href="" class="page-link">1</a>
@@ -293,12 +325,12 @@
 							</div>
 						</div>
 					</div>
-					<!-- <div th:if="${historyList == null or #lists.isEmpty(historyList)}">
+					<div th:if="${historyList == null or #lists.isEmpty(historyList)}">
 						<div class="empty">
-							<img src="/resources/static/img/p_icon.png" alt="coin icon" class="empty-icon" style="height: 90px;">
-							<p class="empty-history mt-3">결제 내역이 없습니다.</p>
+							<img src="/resources/static/img/coins.png" alt="coin icon" class="empty-icon" style="height: 80px;">
+							<p class="empty-history mt-3">키히포인트 충전 내역이 없습니다.</p>
 						</div>
-					</div> -->
+					</div>
 				</div>
 			</div>
 			<script>
