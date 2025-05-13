@@ -89,7 +89,7 @@ public class UserController {
         return "user/point";
     }
 
-    @GetMapping("/order/historyPoint")
+    @GetMapping("/order/history_point")
     public String historyPoint(){
         return "user/historyPoint";
     }
