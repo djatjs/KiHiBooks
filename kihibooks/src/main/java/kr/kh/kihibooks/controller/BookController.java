@@ -34,6 +34,14 @@ public class BookController {
 
         return map;
     }
+
+    @GetMapping("/best")
+    @ResponseBody
+    public List<BookVO> getBestBooks() {
+        List<BookVO> books = bookService.getTopBooks();
+        
+        return books;
+    }
     
     @GetMapping("/library/recents")
 	public String recentList(Model model, Integer ur_num) {
@@ -50,5 +58,10 @@ public class BookController {
         return list;
     }
 
+
+    @GetMapping("/books")
+    public String bookDetail(){
+        return "book/detail";
+    }
     
 }
