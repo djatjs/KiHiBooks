@@ -1,5 +1,7 @@
 package kr.kh.kihibooks.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -11,6 +13,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -241,51 +245,96 @@ public class ApiService {
 
             // TODO: 여기에서 기존 사용자로 로그인 처리 로직 구현
             // Spring Security를 사용한 로그인 처리 시작
-            try {
-                // 1. UserVO 객체를 Spring Security의 UserDetails 객체로 변환
-                // UserDetails는 Spring Security에서 사용자의 주체(Principal) 정보를 나타내는 인터페이스입니다.
-                // UserVO 객체의 정보를 바탕으로 UserDetails 객체를 생성합니다.
-                UserDetails userDetails = convertUserVoToUserDetails(existingUser); // 아래에 이 헬퍼 메소드를 구현해야 합니다.
+            // try {
+            //     // 1. UserVO 객체를 Spring Security의 UserDetails 객체로 변환
+            //     // UserDetails는 Spring Security에서 사용자의 주체(Principal) 정보를 나타내는 인터페이스입니다.
+            //     // UserVO 객체의 정보를 바탕으로 UserDetails 객체를 생성합니다.
+            //     UserDetails userDetails = convertUserVoToUserDetails(existingUser); // 아래에 이 헬퍼 메소드를 구현해야 합니다.
 
-                // 2. Authentication 객체 생성
-                // UsernamePasswordAuthenticationToken은 가장 흔히 사용되는 Authentication 구현체 중 하나입니다.
-                // UserDetails, 자격 증명(credentials, 카카오 로그인의 경우 비밀번호는 null), 그리고 권한 목록을 인자로 받습니다.
-                Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails,        // principal (주체) - UserDetails 객체
-                        null,               // credentials (자격 증명) - 비밀번호는 사용하지 않으므로 null
-                        userDetails.getAuthorities() // 사용자의 권한 목록 (UserDetails에서 가져옴)
-                );SecurityContextHolder.getContext().setAuthentication(authentication);
+            //     // 2. Authentication 객체 생성
+            //     // UsernamePasswordAuthenticationToken은 가장 흔히 사용되는 Authentication 구현체 중 하나입니다.
+            //     // UserDetails, 자격 증명(credentials, 카카오 로그인의 경우 비밀번호는 null), 그리고 권한 목록을 인자로 받습니다.
+            //     // Authentication authentication = new UsernamePasswordAuthenticationToken(
+            //     //         userDetails,        // principal (주체) - UserDetails 객체
+            //     //         null,               // credentials (자격 증명) - 비밀번호는 사용하지 않으므로 null
+            //     //         userDetails.getAuthorities() // 사용자의 권한 목록 (UserDetails에서 가져옴)
+            //     // );SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                System.out.println("Spring Security 로그인 처리 완료: " + email);
+            //     System.out.println("Spring Security 로그인 처리 완료: " + email);
 
-            } catch (Exception e) {
-                 // Spring Security 로그인 처리 중 예외 발생 시
-                System.err.println("Spring Security 로그인 처리 중 오류 발생: " + e.getMessage());
-                 e.printStackTrace(); // 자세한 오류 정보를 콘솔에 출력 (개발 시 유용)
-                 // 실제 서비스에서는 사용자에게 오류 페이지를 보여주거나 적절한 방식으로 처리해야 합니다.
-                 throw new RuntimeException("카카오 계정 로그인 처리 실패", e); // 오류를 다시 던져서 컨트롤러에서 처리하게 함
-            }
-            // 필요에 따라 사용자 정보 업데이트 (이전 코드와 동일)
-            // 예: 카카오에서 닉네임을 변경했을 경우, 우리 DB 정보도 업데이트
-            // UserDAO에 updateUserNickname(UserVO user)와 같은 메소드가 구현되어 있어야 합니다.
-            if (nickname != null && !existingUser.getUr_nickname().equals(nickname)) {
-                System.out.println("기존 사용자 닉네임 변경 감지: DB '" + existingUser.getUr_nickname() + "' -> 카카오 '" + nickname + "'");
-                existingUser.setUr_nickname(nickname);
-                userDAO.updateUserNickname(existingUser); // UserDAO 메소드 호출
-                System.out.println("기존 사용자 닉네임 DB 업데이트 완료: " + email + " -> " + nickname);
-            } else {
-                System.out.println("기존 사용자 닉네임 변경 없음.");
-            }
-            // 생년월일, 성별 등 다른 정보 업데이트 로직 (필요하다면 추가)
-            // ...
+            // } catch (Exception e) {
+            //      // Spring Security 로그인 처리 중 예외 발생 시
+            //     System.err.println("Spring Security 로그인 처리 중 오류 발생: " + e.getMessage());
+            //      e.printStackTrace(); // 자세한 오류 정보를 콘솔에 출력 (개발 시 유용)
+            //      // 실제 서비스에서는 사용자에게 오류 페이지를 보여주거나 적절한 방식으로 처리해야 합니다.
+            //      throw new RuntimeException("카카오 계정 로그인 처리 실패", e); // 오류를 다시 던져서 컨트롤러에서 처리하게 함
+            // }
+            // // 필요에 따라 사용자 정보 업데이트 (이전 코드와 동일)
+            // // 예: 카카오에서 닉네임을 변경했을 경우, 우리 DB 정보도 업데이트
+            // // UserDAO에 updateUserNickname(UserVO user)와 같은 메소드가 구현되어 있어야 합니다.
+            // if (nickname != null && !existingUser.getUr_nickname().equals(nickname)) {
+            //     System.out.println("기존 사용자 닉네임 변경 감지: DB '" + existingUser.getUr_nickname() + "' -> 카카오 '" + nickname + "'");
+            //     existingUser.setUr_nickname(nickname);
+            //     //userDAO.updateUserNickname(existingUser); // UserDAO 메소드 호출
+            //     System.out.println("기존 사용자 닉네임 DB 업데이트 완료: " + email + " -> " + nickname);
+            // } else {
+            //     System.out.println("기존 사용자 닉네임 변경 없음.");
+            // }
+            // // 생년월일, 성별 등 다른 정보 업데이트 로직 (필요하다면 추가)
+            // // ...
 
 
-            System.out.println("기존 사용자 로그인 처리 로직 완료: " + email);
-            // TODO: 로그인 완료 후 적절한 페이지로 리다이렉트 (컨트롤러에서 결정)
-            // 이 메소드는 void를 반환하므로, 리다이렉트는 이 메소드를 호출한 컨트롤러에서 담당합니다.
+            // System.out.println("기존 사용자 로그인 처리 로직 완료: " + email);
+            // // TODO: 로그인 완료 후 적절한 페이지로 리다이렉트 (컨트롤러에서 결정)
+            // // 이 메소드는 void를 반환하므로, 리다이렉트는 이 메소드를 호출한 컨트롤러에서 담당합니다.
             
         }
     }
+
+    // // ApiService 클래스 내부에 UserVO 객체를 Spring Security의 UserDetails로 변환하는 헬퍼 메소드 추가
+    // /**
+    //  * UserVO 객체를 Spring Security에서 사용하는 UserDetails 객체로 변환합니다.
+    //  * 이 메소드는 UserVO의 정보를 바탕으로 Spring Security가 사용자의 정보와 권한을 인식하도록 합니다.
+    //  * @param userVO 변환할 사용자 정보 (UserVO 객체)
+    //  * @return Spring Security의 UserDetails 인터페이스 구현체
+    //  */
+    
+    // private UserDetails convertUserVoToUserDetails(UserVO userVO) {
+    //     // 1. 사용자 권한(Authority) 목록 생성
+    //     List<GrantedAuthority> authorities = new ArrayList<>();
+    //     // UserVO의 권한 필드(ur_authority) 값을 Spring Security의 GrantedAuthority 객체로 변환하여 추가합니다.
+    //     // UserVO의 ur_authority는 enum('ADMIN','USER','PUBLISHER','LIMITED') 형태라고 하셨으므로,
+    //     // 이를 Spring Security의 "ROLE_" 접두사가 붙은 권한 문자열로 변환하는 것이 일반적입니다.
+    //     if (userVO.getUr_authority() != null) {
+    //         // UserVO의 getUr_authority() 메소드가 String을 반환한다고 가정합니다.
+    //         String authority = userVO.getUr_authority();
+    //         // 권한 문자열 앞에 "ROLE_" 접두사 추가 (Spring Security 관례)
+    //         authorities.add(new SimpleGrantedAuthority("ROLE_" + authority.toUpperCase())); // 예: "USER" -> "ROLE_USER"
+    //     } else {
+    //          // 권한 정보가 없는 경우 기본 권한을 추가할 수 있습니다. (예: ROLE_ANONYMOUS 또는 기본 ROLE_USER)
+    //          authorities.add(new SimpleGrantedAuthority("ROLE_USER")); // 권한이 없다면 기본 USER 권한 부여
+    //     }
+
+
+    //     // 2. Spring Security에서 제공하는 기본 UserDetails 구현체인 User 객체 생성
+    //     // 이 객체는 사용자명(Principal), 비밀번호(Credentials), 활성화 상태, 계정 만료/잠금 상태, 권한 목록 등을 인자로 받습니다.
+    //     return new org.springframework.security.core.userdetails.User(
+    //             userVO.getUr_email(), // 사용자명 (Principal): 보통 로그인 ID로 사용. 여기서는 이메일 사용
+    //             "",                   // 비밀번호 (Credentials): 카카오 로그인은 비밀번호 인증이 아니므로 빈 문자열 "" 또는 null
+    //                                   // Spring Security의 User 클래스는 null을 허용하지만, 일반적으로 빈 문자열을 사용합니다.
+    //             true,                 // 계정 활성화 여부 (enabled) - true로 설정
+    //             true,                 // 계정 만료 여부 (accountNonExpired) - true로 설정
+    //             true,                 // 자격 증명 만료 여부 (credentialsNonExpired) - true로 설정
+    //             true,                 // 계정 잠금 여부 (accountNonLocked) - true로 설정
+    //             authorities           // 사용자의 권한 목록 (위에서 생성한 List<GrantedAuthority>)
+    //     );
+
+    //     // 만약 UserVO에 계정 활성화/만료/잠금 등에 대한 필드가 있다면, 해당 필드 값을 사용하여 위 boolean 값들을 동적으로 설정할 수 있습니다.
+    //     // 예: return new org.springframework.security.core.userdetails.User(userVO.getUr_email(), "", userVO.isEnabled(), ... , authorities);
+
+    //     // 또는 프로젝트에 UserDetails를 구현한 커스텀 클래스가 있다면 해당 클래스의 객체를 생성하여 반환합니다.
+    //     // 예: return new YourCustomUserDetails(userVO.getUr_email(), "", userVO.isEnabled(), ..., authorities, userVO);
+    // }
 
 
 }
