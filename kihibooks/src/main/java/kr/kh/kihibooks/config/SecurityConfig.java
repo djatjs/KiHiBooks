@@ -4,9 +4,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import kr.kh.kihibooks.service.MemberDetailService;
 
 @Configuration
 @EnableWebSecurity
@@ -21,7 +24,8 @@ public class SecurityConfig {
             .formLogin((form) -> form
                 .loginPage("/login")  // 커스텀 로그인 페이지 설정
                 .permitAll()           // 로그인 페이지는 접근 허용
-                .loginProcessingUrl("/login")//
+                .loginProcessingUrl("/login")
+                .failureUrl("/login")
                 .defaultSuccessUrl("/")
             )
             .logout((logout) -> logout
@@ -38,4 +42,10 @@ public class SecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 			return new BCryptPasswordEncoder();
 	}
+
+    // @Bean
+    // public UserDetailsService userDetailsService() {
+    //     return new MemberDetailService();
+    // }
+    
 }

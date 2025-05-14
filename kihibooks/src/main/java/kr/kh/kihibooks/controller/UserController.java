@@ -3,8 +3,15 @@ package kr.kh.kihibooks.controller;
 import java.security.Principal;
 import java.util.Map;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +20,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import kr.kh.kihibooks.service.ApiService;
 import kr.kh.kihibooks.service.UserService;
+import kr.kh.kihibooks.utils.CustomUser;
 import kr.kh.kihibooks.model.vo.EmailVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 
@@ -34,7 +44,13 @@ public class UserController {
     private String kakaoRedirectUri;
 
 	@GetMapping("/account/mykihi")
-	public String mypage() {
+	public String mypage(Model model) {
+        
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserVO user = userService.selectUser(userDetails.getUsername());
+        
+        System.out.println("유저 확인 : "+user);
+        model.addAttribute("user", user);
 		return "user/mypage";
 	}
 
@@ -122,7 +138,7 @@ public class UserController {
 
 
     @GetMapping("/signup/kakao") // 실제 Redirect URI 경로로 수정
-    public String kakaoLogin(@RequestParam String code) {
+    public String kakaoLogin(@RequestParam String code, HttpServletRequest request) {
         System.out.println("인가 코드: " + code);
 
         // 1. 인가 코드를 사용하여 액세스 토큰을 요청
@@ -132,7 +148,26 @@ public class UserController {
         Map<String, Object> userInfo = apiService.getKakaoUserInfo(accessToken); 
         System.out.println("사용자 정보:" + userInfo);
         // 3. 받은 사용자 정보(이메일, 닉네임 등)를 기반으로 회원가입 또는 로그인 처리
-        apiService.processKakaoUser(userInfo); 
+        UserDetails userDetails = apiService.processKakaoUser(userInfo);
+
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+            userDetails,
+            null,
+            userDetails.getAuthorities()
+        );
+
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(authentication);
+
+        // 💡 세션에 SecurityContext 저장
+        HttpSession session = request.getSession(true);
+        session.setAttribute(
+            HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+            securityContext
+        );
+
+        System.out.println("Spring Security 로그인 처리 완료: " + userDetails.getUsername());
 
         // 처리가 완료되면 적절한 페이지로 리다이렉트
         return "redirect:/";

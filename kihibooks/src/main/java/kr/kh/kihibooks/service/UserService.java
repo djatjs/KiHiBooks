@@ -149,5 +149,12 @@ public class UserService {
 		}
     }
 
+	public UserVO selectUser(String userEmail) {
+		if(userEmail == null){
+			return null;
+		}
+		return userDAO.selectEmail(userEmail);
+	}
+
 
 }
