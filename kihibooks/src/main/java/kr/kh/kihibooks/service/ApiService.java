@@ -10,6 +10,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -120,26 +123,7 @@ public class ApiService {
         String email = null;
         String nickname = null;
         String birthyear = null; // 생년월일도 받아왔으니 파싱 가능
-
-        // 카카오 API 응답 예시 구조:
-        // {
-        //   "id": 12345,
-        //   "connected_at": "...",
-        //   "properties": { "nickname": "..." },
-        //   "kakao_account": {
-        //     "profile_nickname_needs_agreement": false,
-        //     "profile": { "nickname": "...", "is_default_nickname": false },
-        //     "has_email": true,
-        //     "email_needs_agreement": false,
-        //     "is_email_valid": true,
-        //     "is_email_verified": true,
-        //     "email": "...", // 이메일
-        //     "has_birthyear": true,
-        //     "birthyear_needs_agreement": false,
-        //     "birthyear": "..." // 생년월일
-        //     // 기타 정보 (성별, 연령대 등)는 동의 설정 및 추가 API 호출 필요
-        //   }
-        // }
+        String gender= null;
 
         // 'kakao_account' 맵 가져오기
         Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
@@ -176,6 +160,15 @@ public class ApiService {
             // 성별 정보 등 다른 정보도 kakao_account에 있을 수 있습니다.
             // 필요하다면 has_gender, gender_needs_agreement 등을 확인하고 gender 값을 파싱할 수 있습니다.
             // String gender = (String) kakaoAccount.get("gender"); // 예시
+            // 생년월일 가져오기 (has_birthyear가 true이고 birthyear_needs_agreement가 false일 경우)
+            Boolean hasGender = (Boolean) kakaoAccount.get("has_gender");
+            Boolean genderNeedsAgreement = (Boolean) kakaoAccount.get("gender_needs_agreement");
+
+            if (Boolean.TRUE.equals(hasGender) && Boolean.FALSE.equals(genderNeedsAgreement)) {
+                gender = (String) kakaoAccount.get("gender");
+            } else {
+                System.out.println("카카오 성별 정보 접근 권한 없음 또는 동의 필요");
+            }
 
         }
 
@@ -217,6 +210,18 @@ public class ApiService {
                 newUser.setUr_year(null); // 생년월일 정보가 없다면 null
             }
 
+            if (gender != null) {
+                if(gender.equals("female")){
+                    gender = "F";
+                }
+                else if(gender.equals("male")){
+                    gender = "M";
+                }
+                newUser.setUr_gender(gender);
+            } else {
+                newUser.setUr_gender(null);// 생년월일 정보가 없다면 null
+            }
+
 
             // UserDAO의 save 또는 insert 메소드를 사용하여 DB에 저장
             // UserDAO에 save(User user) 메소드가 구현되어 있어야 합니다.
@@ -235,31 +240,50 @@ public class ApiService {
             System.out.println("기존 카카오 사용자 발견: " + email + ", 닉네임: " + existingUser.getUr_nickname());
 
             // TODO: 여기에서 기존 사용자로 로그인 처리 로직 구현
-            // 실제 로그인 처리: Spring Security와 연동하여 Authentication 객체 생성 및 SecurityContextHolder에 설정
-            // 세션 생성 또는 JWT 토큰 발행 등의 방법이 있습니다.
-            // 이 부분은 애플리케이션의 인증/권한 관리 전략에 따라 복잡해질 수 있습니다.
-            // 간단히는 해당 User 객체를 사용하여 세션에 로그인 정보(예: user.getUrNum(), user.getUrEmail())를 저장하는 방식도 가능합니다.
+            // Spring Security를 사용한 로그인 처리 시작
+            try {
+                // 1. UserVO 객체를 Spring Security의 UserDetails 객체로 변환
+                // UserDetails는 Spring Security에서 사용자의 주체(Principal) 정보를 나타내는 인터페이스입니다.
+                // UserVO 객체의 정보를 바탕으로 UserDetails 객체를 생성합니다.
+                UserDetails userDetails = convertUserVoToUserDetails(existingUser); // 아래에 이 헬퍼 메소드를 구현해야 합니다.
 
-            // 예시: 간단하게 사용자 번호와 이메일을 세션에 저장하는 방식 (세션 관리가 별도로 필요합니다)
-            // HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
-            // session.setAttribute("loggedInUserNum", existingUser.getUrNum());
-            // session.setAttribute("loggedInUserEmail", existingUser.getUrEmail());
-            // System.out.println("세션에 사용자 정보 저장: " + existingUser.getUrEmail());
+                // 2. Authentication 객체 생성
+                // UsernamePasswordAuthenticationToken은 가장 흔히 사용되는 Authentication 구현체 중 하나입니다.
+                // UserDetails, 자격 증명(credentials, 카카오 로그인의 경우 비밀번호는 null), 그리고 권한 목록을 인자로 받습니다.
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails,        // principal (주체) - UserDetails 객체
+                        null,               // credentials (자격 증명) - 비밀번호는 사용하지 않으므로 null
+                        userDetails.getAuthorities() // 사용자의 권한 목록 (UserDetails에서 가져옴)
+                );SecurityContextHolder.getContext().setAuthentication(authentication);
 
+                System.out.println("Spring Security 로그인 처리 완료: " + email);
 
-            // 필요에 따라 사용자 정보 업데이트 (예: 카카오에서 닉네임을 변경했을 경우 업데이트)
-            // UserDAO에 update(User user) 메소드가 있다면 호출
-            if (!existingUser.getUr_nickname().equals(nickname)) {
-                existingUser.setUr_nickname(nickname);
-                //userDAO.update(existingUser); // 메소드 이름은 실제 UserDAO 구현에 맞게 수정하세요.
-                System.out.println("기존 사용자 닉네임 업데이트: " + email + " -> " + nickname);
-            } else {
-                System.out.println("기존 사용자 정보 변경 없음.");
+            } catch (Exception e) {
+                 // Spring Security 로그인 처리 중 예외 발생 시
+                System.err.println("Spring Security 로그인 처리 중 오류 발생: " + e.getMessage());
+                 e.printStackTrace(); // 자세한 오류 정보를 콘솔에 출력 (개발 시 유용)
+                 // 실제 서비스에서는 사용자에게 오류 페이지를 보여주거나 적절한 방식으로 처리해야 합니다.
+                 throw new RuntimeException("카카오 계정 로그인 처리 실패", e); // 오류를 다시 던져서 컨트롤러에서 처리하게 함
             }
+            // 필요에 따라 사용자 정보 업데이트 (이전 코드와 동일)
+            // 예: 카카오에서 닉네임을 변경했을 경우, 우리 DB 정보도 업데이트
+            // UserDAO에 updateUserNickname(UserVO user)와 같은 메소드가 구현되어 있어야 합니다.
+            if (nickname != null && !existingUser.getUr_nickname().equals(nickname)) {
+                System.out.println("기존 사용자 닉네임 변경 감지: DB '" + existingUser.getUr_nickname() + "' -> 카카오 '" + nickname + "'");
+                existingUser.setUr_nickname(nickname);
+                userDAO.updateUserNickname(existingUser); // UserDAO 메소드 호출
+                System.out.println("기존 사용자 닉네임 DB 업데이트 완료: " + email + " -> " + nickname);
+            } else {
+                System.out.println("기존 사용자 닉네임 변경 없음.");
+            }
+            // 생년월일, 성별 등 다른 정보 업데이트 로직 (필요하다면 추가)
+            // ...
 
 
             System.out.println("기존 사용자 로그인 처리 로직 완료: " + email);
             // TODO: 로그인 완료 후 적절한 페이지로 리다이렉트 (컨트롤러에서 결정)
+            // 이 메소드는 void를 반환하므로, 리다이렉트는 이 메소드를 호출한 컨트롤러에서 담당합니다.
+            
         }
     }
 
