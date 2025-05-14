@@ -46,7 +46,6 @@ public class BookController {
     @ResponseBody
     public List<BookVO> getWaitFreeList() {
         List<BookVO> list = bookService.getWaitFreeBooks();
-        System.out.println(list.size());
         return list;
     }
 
