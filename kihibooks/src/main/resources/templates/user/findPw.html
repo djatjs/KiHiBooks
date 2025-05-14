@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout.html}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>KiHiBooks</title>
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
+	<link rel="stylesheet" href="/resources/static/css/signup_email.css">
+</head>
+
+<body>
+    <main layout:fragment="content" class="container">
+        <h3 style="text-align: center;" >KiHiBooks email</h3>
+		<img src="/resources/static/img/logo.png" alt="로고">
+        <form th:action="@{/signup/email}" method="post"  id="signup-form">
+            <div class="form-group">
+                <input type="email" class="form-control" id="email" name="ur_email" placeholder=" " required>
+                <label for="email" class="content-label">이메일</label>
+				<label id="ur_email-error" class="error-message"></label>
+            </div>
+			
+            <button type="submit" class="btn btn-primary col-12" id="findPw-btn" disabled>비밀번호 찾기</button>
+        </form>
+		<script>
+			$("#findPw-btn").click(function(){
+				const email = $("#email").val().trim();
+				$("#email").val(email);
+				alert(email);
+				if (!email) { // 이메일이 비어 있는지 확인
+					alert("이메일 주소를 입력해주세요.");
+					return;
+				}
+
+				$.ajax({
+					url: "/email/sendVerificationCode",
+					method: "POST",
+					data: email,
+					contentType: "text/plain",
+					success: function(response) {
+						if(response){
+							alert("인증번호가 이메일로 발송되었습니다. 1분 내에 확인 후 입력해주세요.");
+							$("#verificationCode").prop("disabled", false);
+							$("#checkVerificationCode").prop("disabled", false);
+							
+						}else{
+							alert("이메일 발송에 실패했습니다. 다시 시도해주세요.");
+						}
+					},
+					error: function(){
+						$("#verificationCode").prop("disabled", false);
+					},
+					complete: function(){
+					}
+				})
+
+
+				
+				return;
+			})
+		</script>
+		
+		<script>
+			$("#signup-form").validate({
+				rules : {
+					ur_email : {
+						required : true,
+						duplicate : true,
+						email : true,
+						regex : /^([A-Za-z0-9\._])+@([A-Za-z0-9]+\.[A-Za-z]{2,})$/
+					}
+				},
+				messages : {
+					ur_email : {
+						required : "·이메일은 필수 항목입니다.",
+						duplicate : "·비밀번호 찾기 버튼을 눌러주세요.",
+						email : "·이메일 형식을 지켜주세요.",
+						regex : "이메일 형식"
+					}
+				},
+				submitHandler: function () {
+					form.submit();
+				},
+				errorPlacement: function (error, element) {
+					const name = element.attr("name");
+					const target = $(`#${name}-error`);
+					target.html(error).css("display", "block"); // 메시지 표시
+				},
+				success: function (label, element) {
+					const name = $(element).attr("name");
+					const target = $(`#${name}-error`);
+					target.html("").css("display", "none"); // 메시지 숨김
+				}
+			});
+			$.validator.addMethod("regex", function(value, element, regex){
+				var re = new RegExp(regex);
+				return this.optional(element) || regex.test(value);
+			}, "정규 표현식을 확인하세요.");
+			
+			$.validator.addMethod("duplicate", function(value, element){
+				return this.optional(element) || checkEmail(value);
+			}, "가입되지 않은 이메일입니다.");
+			function checkEmail(email){
+				$.ajax({
+					async : false,
+					url: "/check/email",
+					method: "POST",
+					data: email,
+					contentType: "text/plain",
+					success : function(data){
+						res = data;
+						$("#findPw-btn").prop("disabled", res);
+					},
+					error : function(){
+					}
+				})
+				return res;
+			}
+		</script>
+	</main>
+</body>
+
+</html>

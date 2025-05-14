@@ -113,22 +113,28 @@ public class UserController {
         return "redirect:/signup/email";
     }
 
+    @GetMapping("/findPw")
+    public String getMethodName() {
+        return "user/findPw";
+    }
+    
+
+
 
     @GetMapping("/signup/kakao") // 실제 Redirect URI 경로로 수정
     public String kakaoLogin(@RequestParam String code) {
         System.out.println("인가 코드: " + code);
 
-        // 1. 인가 코드를 사용하여 액세스 토큰을 요청합니다. 이 로직은 ApiService에 구현합니다.
-        String accessToken = apiService.getKakaoAccessToken(code); // ApiService에 메소드 추가 필요
+        // 1. 인가 코드를 사용하여 액세스 토큰을 요청
+        String accessToken = apiService.getKakaoAccessToken(code); 
 
-        // 2. 액세스 토큰을 사용하여 사용자 정보를 요청합니다. 이 로직도 ApiService에 구현합니다.
-        Map<String, Object> userInfo = apiService.getKakaoUserInfo(accessToken); // ApiService에 메소드 추가 필요
+        // 2. 액세스 토큰을 사용하여 사용자 정보를 요청
+        Map<String, Object> userInfo = apiService.getKakaoUserInfo(accessToken); 
         System.out.println("사용자 정보:" + userInfo);
-        // 3. 받은 사용자 정보(이메일, 닉네임 등)를 기반으로 회원가입 또는 로그인을 처리합니다.
-        // 이 로직 또한 ApiService에 구현하여 데이터베이스에 저장합니다.
-        apiService.processKakaoUser(userInfo); // ApiService에 메소드 추가 필요
+        // 3. 받은 사용자 정보(이메일, 닉네임 등)를 기반으로 회원가입 또는 로그인 처리
+        apiService.processKakaoUser(userInfo); 
 
-        // 처리가 완료되면 적절한 페이지로 리다이렉트합니다.
+        // 처리가 완료되면 적절한 페이지로 리다이렉트
         return "redirect:/";
     }
     
