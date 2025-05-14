@@ -104,9 +104,10 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			max-width: 1200px;
+			max-width: 1000px;
 			margin: 0 auto;
 			padding: 0 24px;
+			overflow: visible;
 		}
 		.book-grid {
 			width: 100%;
@@ -212,11 +213,11 @@
 		}
 
 		.side-nav.left {
-			left: -30px;
+			left: -10px;
 		}
 
 		.side-nav.right {
-			right: -30px;
+			right: -10px;
 		}
 		/* 키다무 */
 		.waitfree-section {
@@ -322,6 +323,82 @@
 		.waitfree-arrow.right {
 			right: 0;
 		}
+		/* 웹소설 베스트 */
+		.best-body {
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			max-width: 1000px;
+			margin: 0 auto;
+			padding: 0 24px;
+		}
+
+		#bestPrevBtn, #bestNextBtn {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			background-color: white;
+			border: 1px solid #ccc;
+			border-radius: 50%;
+			width: 36px;
+			height: 36px;
+			font-size: 20px;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+			z-index: 10;
+		}
+
+		#bestPrevBtn {
+			left: -10px;
+		}
+
+		#bestNextBtn {
+			right: -10px;
+		}
+		.best-header {
+			display: flex; justify-content: space-between;
+			align-items: center; margin-bottom: 20px;	padding: 0 10px;
+		}
+
+		.best-header h3 {
+			margin: 0; font-size: 22px;	font-weight: bold;
+		}
+
+		[class$="-see-more"] {
+			font-size: 14px;
+			color: #555;
+			cursor: pointer;
+		}
+
+		/* 키워드 검색 */
+		.keyword-header {
+			display: flex; justify-content: space-between;
+			align-items: center; margin-top: 50px;	padding: 0 10px;
+		}
+
+		.keyword-header h3 {
+			margin: 0; font-size: 22px;	font-weight: bold;
+		}
+		.keyword-tag {
+			background-color: #f5f5f5;
+			border-radius: 16px;
+			padding: 6px 12px;
+			margin: 4px;
+			font-size: 14px;
+			cursor: pointer;
+			display: inline-block;
+			transition: background-color 0.2s;
+		}
+
+		.keyword-tag:hover {
+			background-color: #eaeaea;
+		}
+
+
 
 		/* 탑 버튼 */
 		.go-top-btn {
@@ -583,32 +660,162 @@
 			});
 		</script>
 		
-
-
 		<!-- 웹소설 베스트 -->
 		<div>
-			<h3>웹 소설 베스트</h3>
-			<div></div>
+			<div class="best-container">
+				<div class="best-header">
+					<h3>웹 소설 베스트</h3>
+					<div class="best-see-more">더 보기</div>
+				</div>	
+				<div class="best-body">
+					<button id="bestPrevBtn" onclick="prevBestPage()" class="side-nav left"><</button>
+	
+					<div id="bestBookGrid" class="book-grid"></div>
+					
+					<button id="bestNextBtn" onclick="nextBestPage()" class="side-nav right">></button>
+				</div>
+				<script>
+					let bestBooks =[];
+					let currentBestPage = 0;
+					const bestPageSize = 9;
+	
+					function loadBestBooks() {
+						$.ajax({
+							url: '/best',
+							method: 'GET',
+							dataType: 'json',
+							success: function(data){
+								bestBooks = data;
+								renderBestBooks();
+							},
+							error: function(xhr, status,error){
+								console.error("베스트 데이터 요청 실패", status, error);
+							}
+						});
+					}
+	
+					function updateBestNavButtons(){
+						const prevBtn = document.getElementById("bestPrevBtn");
+						const nextBtn = document.getElementById("bestNextBtn");
+						bestPrevBtn.style.display = (currentBestPage === 0) ? "none" : "flex";
+						bestNextBtn.style.display = ((currentBestPage + 1) * bestPageSize >= bestBooks.length) ? "none" : "flex";
+	
+					}
+	
+					function renderBestBooks(){
+						const grid = document.getElementById("bestBookGrid");
+						grid.innerHTML = "";
+	
+						const start = currentBestPage * bestPageSize;
+						const end = start + bestPageSize;
+						const pageBooks = bestBooks.slice(start, end);
+
+						pageBooks.forEach((book, index) =>{
+							
+							const bookDiv = document.createElement("div");
+							bookDiv.className = "book-item";
+	
+							const imageNum = start + index + 1;
+							const imageUrl = `/resources/static/covers/cover${imageNum}.png`;
+							const detailUrl = `/`; //book/detail?code=${book.bo_code}
+							const authorUrl = `/`; //book/detail?code=${book.bo_author} 작가 매칭 되면 사용하면 됨
+	
+							bookDiv.innerHTML = `
+								<a href="${detailUrl}" class="ranking-thumb">
+								<img src="${imageUrl}" alt="${book.bo_title}" width="80" height="116"/>
+								</a>
+								<div class="ranking-number">${imageNum}</div>
+								<div class="ranking-info">
+									<a href="${detailUrl}" class="book-title">${book.bo_title}</a>
+									<div class="book-meta">${book.bo_author || '작가 미정'} · ${book.bo_free_info || '무료'}</div>
+									<div class="book-rating">
+										★${book.bo_total_rating / 1000} |	리뷰 ${book.bo_review_count}
+									</div>
+								</div>
+							`;
+							grid.appendChild(bookDiv);
+						});
+						updateBestNavButtons();
+					}
+					
+					function nextBestPage() {
+						if ((currentBestPage + 1) * bestPageSize < bestBooks.length) {
+						currentBestPage++;
+						renderBestBooks();
+						}
+					}
+	
+					function prevBestPage() {
+						if (currentBestPage > 0) {
+						currentBestPage--;
+						renderBestBooks();
+						}
+					}
+					$(document).ready(()=>{
+						loadBestBooks();
+					})
+					document.querySelector(".best-see-more").addEventListener("click", function() {
+						location.href = "/"; // 이동하고 싶은 주소
+					});
+
+				</script>
 		</div>
 		<!-- 키워드 검색 -->
 		<div>
-			<h3>키워드 검색</h3>
-			<div></div>
+			<div class="keyword-header">
+				<h3>키워드 검색</h3>
+				<div class="keyword-see-more">더 보기</div>
+			</div>
+			<div class="keyword-list">
+				<span class="keyword-tag">#로맨스</span>
+				<span class="keyword-tag">#성장물</span>
+				<span class="keyword-tag">#빙의</span>
+				<span class="keyword-tag">#복수극</span>
+				<span class="keyword-tag">#능력녀</span>
+				<span class="keyword-tag">#회귀물</span>
+				<span class="keyword-tag">#계약결혼</span>
+				<span class="keyword-tag">#집착남</span>
+				<span class="keyword-tag">#황자남주</span>
+				<span class="keyword-tag">#차원이동</span>
+				<span class="keyword-tag">#가짜약혼자</span>
+				<span class="keyword-tag">#후회남</span>
+				<span class="keyword-tag">#기사X공주</span>
+				<span class="keyword-tag">#정략결혼</span>
+				<span class="keyword-tag">#여주성장물</span>
+				<span class="keyword-tag">#전생기억</span>
+				<span class="keyword-tag">#왕족정치극</span>
+			</div>
+			<script>
+				document.querySelectorAll(".keyword-tag").forEach(tag => {
+					tag.addEventListener("click", () => {
+						// const keyword = tag.textContent.replace("#", "");
+						location.href = `/`; //search?keyword=${encodeURIComponent(keyword)}
+					});
+				});
+
+			</script>
+			<div>
+
+			</div>
+			<script>
+				document.querySelector(".keyword-see-more").addEventListener("click", function() {
+						location.href = "/";
+					});
+			</script>
 		</div>
-		<!-- 키다무 신작 -->
-		<div>
+		
+		<!-- <div>
 			<h3>키다무 신작</h3>
 			<div></div>
 		</div>
-		<!-- 50화 무료신작 -->
 		<div>
 			<h3>50화 무료신작</h3>
 			<div></div>
 		</div>
-		<!-- 최신 업데이트 -->
 		<div>
 			<h3>최신 업데이트</h3>
-			<div></div>
+			<div></div> -->
+
 		</div>
 
 
