@@ -57,5 +57,10 @@ public class BookController {
         return list;
     }
 
+
+    @GetMapping("/books")
+    public String bookDetail(){
+        return "book/detail";
+    }
     
 }

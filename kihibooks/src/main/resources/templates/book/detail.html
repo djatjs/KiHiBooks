@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout.html}">
+
+<head>
+	<meta charset="UTF-8">
+	<title>KiHiBooks</title>
+	<style>
+		.detail-content {
+			width: 100%;
+			background: #fff;
+			display: table-cell;
+			vertical-align: top;
+			min-width: 0;
+		}
+
+		.detail {
+			padding-bottom: 20px;
+			font-size: 16px;
+			overflow-wrap: break-word;
+			word-break: break-word;
+			line-height: normal;
+			color: black;
+			font-weight: 400;
+		}
+
+		.grid-left-top {
+			padding: 0 30px;
+			box-sizing: border-box;
+			display: flex;
+		}
+
+		.thumb-grid {
+			min-width: 0;
+			grid-area: left;
+			box-sizing: border-box;
+		}
+
+		.thumb {
+			cursor: zoom-in;
+			position: relative;
+			width: 204px;
+			max-width: 100%;
+			border-radius: 4px;
+			padding: 0;
+			border: 1px solid;
+		}
+
+		.thumb-img {
+			width: 100%;
+			height: auto;
+			background: #f5f5f5;
+		}
+
+		.info-grid {
+			min-width: 0;
+			grid-area: right;
+			box-sizing: border-box;
+		}
+
+		.category {
+			overflow: hidden;
+			box-sizing: border-box;
+		}
+
+		.cate-ul {
+			display: flex;
+			align-items: center;
+			list-style: none;
+			flex-wrap: wrap;
+			margin-top: -3px;
+			margin-left: -17px;
+			margin-bottom: 0;
+		}
+
+		.cate-li{
+			display: flex;
+			align-items: flex-start;
+		}
+
+		.book-title{
+			color: #141414;
+			font-size: 32px;
+			font-weight: 700;
+			line-height: 38px;
+			margin: 12px 0;
+			margin-left: 20px;
+		}
+
+		.rating-content{
+			overflow: hidden;
+			box-sizing: border-box;
+		}
+
+		.rating-ul{
+			list-style: none;
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			margin-left: -17px;
+			margin-top: -6px;
+		}
+
+		.rating-li{
+			margin-top: 6px;
+			display: flex;
+			align-items: center;
+			flex: 0 0 auto;
+			box-sizing: border-box;
+		}
+
+		.total-rating{
+			display: flex;
+			align-items: center;
+			font-size: 15px;
+			line-height: 18px;
+			font-weight: 700;
+		}
+
+		.star-img{
+			filter: brightness(0) saturate(100%) invert(16%) sepia(98%) saturate(2874%) hue-rotate(-5deg) brightness(92%) contrast(95%);
+		}
+	</style>
+</head>
+
+<body>
+	<main layout:fragment="content" class="container d-flex" style="min-height: 650px;">
+		<div class="content-page">
+			<div class="page-detail">
+				<div class="detail-content">
+					<div class="detail">
+						<div class="grid-left-top">
+							<div class="thumb-grid">
+								<button type="button" class="thumb">
+									<img class="thumb-img" src="/resources/static/covers/cover1.png"></img>
+								</button>
+							</div>
+							<div class="info-grid">
+								<div class="category">
+									<ul class="cate-ul">
+										<li class="cate-li">
+											<span class="blank"></span>
+											<div class="cate-title">
+												<a th:href="@{/}" class="main-cate-title">판타지 웹소설</a>
+												<span>></span>
+												<a th:href="@{/}" class="sub-cate-title">현대 판타지</a>
+											</div>
+										</li>
+									</ul>
+								</div>
+								<h3 class="book-title">이세계 착각 헌터</h3>
+								<div class="rating-content">
+									<ul class="rating-ul">
+										<li class="rating-li">
+											<button type="button" class="total-rating">
+												<img src="resources/static/img/star.png" alt="별" class="star-img" style="height: 15px;">
+												<div class="rate-score">4.9점</div>
+												<div class="rate-cnt">(12,896)</div>
+											</button>
+										</li>
+										<li class="like-li">
+											<span class="likes">관심 39,486</span>
+										</li>
+									</ul>
+								</div>
+								<div class="info-content">
+									<div class="author">
+										<ul class="author-ul">
+											<li class="author-li">
+												<div class="author-name">대대원 저</div>
+											</li>
+										</ul>
+									</div>
+									<div class="publisher">
+										<a th:href="@{/}" class="publisher-link">익시드 출판</a>
+									</div>
+									<div class="total-episode">총 507화</div>
+								</div>
+								<div class="interest-content">
+									<button class="interestBtn">+ 관심</button>
+								</div>
+							</div>
+
+						</div>
+						<div class="info-bottom-grid">
+							<div class="bottom-content">
+								<div class="serial-area">
+									<div class="content-area">연재</div>
+									<ul class="serial-ul">
+										<li class="serial-li">
+											<div class="serial-daytitme">매주 (월, 수, 금) 18시</div>
+										</li>
+									</ul>
+								</div>
+								<div class="content-area">
+									<div class="header-text">공지</div>
+									<ul class="noti-ul">
+										<li class="noti-li">
+											<div class="noti-content">
+												<button type="button" class="noti-title">도서 파일 교체 안내 (2025-04-22)
+													<!-- 펼친 경우 ∧ 로 변경 -->
+													<span class="moreBtn">∨</span>
+												</button>
+												<button type="button" class="noti-content">
+													<div class="content-wrapper">
+														<div class="content-wrap">
+															<b>이세계 착각 헌터 495화는</b>
+															2025년 4월 22일 본문 내 문장을 수정한 파일로 교체했습니다.<br>
+															기존 구매자분들께서는 앱 내의 '내 서재'에 다운로드 받은 도서를 삭제하신 후, '구매목록'에서 재다운로드 하시면 수정된 도서로 이용하실 수 있습니다. 도서
+															이용에 참고 부탁드립니다.<br>
+															※ 단, 재다운로드 시 기존 도서에 남긴 독서노트(형광펜, 메모, 책갈피)는 초기화되거나 위치가 변경됩니다.
+														</div>
+													</div>
+												</button>
+											</div>
+										</li>
+									</ul>
+								</div>
+								<div class="content-area">
+									<div class="header-text">키다무</div>
+									<div class="wait-for-free">
+										<span class="wff-text">1일 마다 1편 기다리면 무료</span>
+										<button class="infoBtn">
+											<img src="resources/static/img/info.png" alt="i아이콘" style="height: 20px;">
+										</button>
+									</div>
+									<div class="wff-state">
+										<div class="state-text">무료 이용 가능</div>
+									</div>
+								</div>
+							</div>
+							<div class="continue-btn">
+								<a th:href="@{/}" class="continueBtn">이어보기</a>
+							</div>
+						</div>
+						<div class="metadata">
+							<div class="meta-wrapper">
+								<div class="meata-wrap">
+									<div class="meta">
+										<div class="update-wrap">
+											<div class="wrap-title">업데이트</div>
+											<span class="update-date">2025.05.12 업데이트</span>
+										</div>
+										<div class="publish-wrap">
+											<div class="wrap-title">출간 정보</div>
+											<span class="publish-date">2023.05.02 출간</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="episode-area">
+							<form action="/order/checkout" method="post" class="form_episode_list">
+								<div class="epi-line"></div>
+								<div class="list-module">
+									<div class="option-wrap">
+										<ul class="option-left">
+											<li class="select-all-wrap">
+												<input type="checkbox" id="select_all" class="all-checkbox">
+												<label for="select_all" class="all-label">전체 선택</label>
+											</li>
+											<li class="option-item">
+												<button type="button" class="sort-btn">
+													<img src="resources/static/img/transfer.png" alt="정렬 아이콘" style="height: 15px;">
+													<span class="sort-text">신간부터</span>
+												</button>
+											</li>
+										</ul>
+										<div class="option-right">
+											<ul class="right-ul">
+												<li class="option-item">
+													<p class="option-info">
+														<span class="info-vol">총 <span class="select-cnt">0</span>화</span>
+														<span class="select-price">0원</span>
+													</p>
+												</li>
+												<li class="option-item">
+													<ul class="oi-ul">
+														<li class="btn-item">
+															<button type="button" class="cart-btn">
+																<img src="resources/static/img/cart.png" alt="카트 아이콘" style="height: 15px;"> 카트
+															</button>
+														</li>
+														<li class="btn-item">
+															<button type="button" class="select-buy-btn">선택 소장</button>
+														</li>
+													</ul>
+												</li>
+											</ul>
+										</div>
+									</div>
+									<div class="list-wrapper">
+										<ul class="list-ul">
+											<!-- data-id : ep_code | data-price : ep_price | data-volume : ep_code에서 도서코드 제거 -->
+											<li class="epi-list" data-id="ep_code" data-price="0" data-volume="1">
+												<div class="epi-list-wrapper">
+													<div class="epi-checkbox">
+														<input type="checkbox" id="bookEP_CODE" class="episode-check">
+													</div>
+													<div class="epi-info">
+														<div class="info-title-with-badge">
+															<!-- 무료 회차가 아닌 경우 무료 배지 미노출 | 키다무 도서 & 무료X 회차인 경우 clock_badge로 노출 -->
+															<img src="resources/static/img/free.png" alt="무료 배지" height="20px">
+															<div class="epi-title">이세계 착각 헌터 2화</div>
+														</div>
+														<div>
+															<ul class="info-list-wrapper">
+																<li class="info-ep-date">2023.05.02</li>
+																<!-- 아마도 전체 페이지 들어가야할듯? ↓ -->
+																<li class="info-page-cnt">약 4.5천 자</li>
+																<!-- 소장한 경우만 아래 배지 추가 -->
+																<li class="info-status">소장</li>
+															</ul>
+														</div>
+													</div>
+													<div class="direct-view-wrapper">
+														<a th:href="@{/}" data-book-id="ep_code" class="direct-view-btn">보기</a>
+													</div>
+												</div>
+											</li>
+										</ul>
+									</div>
+									<div class="list-more-button">
+										<button type="button" class="more-button">
+											<span class="more-button-text">더보기</span>
+											<span class="more-button-icon">∨</span>
+										</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</body>
+
+</html>
