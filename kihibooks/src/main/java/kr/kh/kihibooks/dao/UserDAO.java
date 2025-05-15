@@ -23,5 +23,7 @@ public interface UserDAO {
     boolean insertUserWithPw(UserVO user);
 
     boolean insertUserWithoutPw(UserVO user);
+
+    boolean updatePw(UserVO user);
 	
 }

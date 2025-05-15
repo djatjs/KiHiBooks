@@ -114,11 +114,15 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/email/verifyCode")
-    public boolean verifyCode(@RequestParam String userCode, @RequestParam String email) {
+    public boolean verifyCode(@RequestParam String userCode, @RequestParam String email, HttpSession session) {
         if(userCode == null || email == null){
             return false;
         }
-        return userService.checkCode(email, userCode);
+        boolean res = userService.checkCode(email, userCode);
+        if(res){
+            session.setAttribute("email", email);
+        }
+        return res;
     }
 
     @PostMapping("/signup/email")
@@ -133,6 +137,28 @@ public class UserController {
     public String getMethodName() {
         return "user/findPw";
     }
+
+    @GetMapping("/resetPw")
+    public String resetPw(HttpSession session, Model model) {
+        String email = (String) session.getAttribute("email");
+        System.out.println("이메일 : "+email);
+        model.addAttribute("ur_email", email);
+        return "user/resetPw";
+    }
+    @PostMapping("/resetPw")
+    public String resetPwPost(HttpSession session, UserVO user) {
+        if(user == null || user.getUr_email() == null || user.getUr_pw() == null){
+            return "redirect:/findPw";
+        }
+        //비밀번호 재설정 후 세션 지우기
+        boolean resetRes = userService.resetPw(user);
+        if(!resetRes){
+            return "redirect:/findPw";
+        }
+        return "redirect:/";
+    }
+    
+    
     
 
 

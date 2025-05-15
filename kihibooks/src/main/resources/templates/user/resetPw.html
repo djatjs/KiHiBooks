@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout.html}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>KiHiBooks</title>
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
+	<link rel="stylesheet" href="/resources/static/css/signup_email.css">
+	<style>
+		
+	</style>
+</head>
+
+<body>
+    <main layout:fragment="content" class="container">
+        <h3 style="text-align: center;" >KiHiBooks Pw</h3>
+		<img src="/resources/static/img/logo.png" alt="로고">
+        <form th:action="@{/resetPw}" method="post"  id="signup-form">
+            <div class="form-group">
+                <input type="password" class="form-control" id="ur_pw" name="ur_pw" placeholder=" " required>
+				<label for="ur_pw" class="content-label">비밀번호</label>
+				<label id="ur_pw-error" class="error-message"></label>
+            </div>
+            <div class="form-group">
+				<input type="password" class="form-control" id="ur_pw2" name="ur_pw2" placeholder=" " required />
+				<label for="ur_pw2" class="content-label">비밀번호 확인</label>
+				<label id="ur_pw2-error" class="error-message error "></label>
+			</div>
+			<input type="hidden" id="ur_email" name="ur_email" th:value="${ur_email}">
+			<button type="submit" class="btn btn-primary col-12" id="resetPw">비밀번호 재설정</button>
+        </form>
+		<script>
+			$("#signup-form").validate({
+				rules : {
+					ur_pw : {
+						required : true,
+						regex : /^[a-zA-Z0-9!@#$]{3,12}$/
+					},
+					ur_pw2 : {
+						equalTo : ur_pw
+					}
+				},
+				messages : {
+					ur_pw : {
+						required : "·비번은 필수 항목입니다.",
+						regex : "·비번은 영어, 숫자, 특수문자(!@#$)로 이루어져 있으며, 3~12자입니다."
+					},
+					ur_pw2 : {
+						equalTo : "·비번과 비번 확인이 같지 않습니다."
+					}
+				},
+				submitHandler: function () {
+					form.submit();
+				},
+				errorPlacement: function (error, element) {
+					const name = element.attr("name");
+					const target = $(`#${name}-error`);
+					target.html(error).css("display", "block"); // 메시지 표시
+					
+				},
+				success: function (label, element) {
+					const name = $(element).attr("name");
+					const target = $(`#${name}-error`);
+					target.html("").css("display", "none"); // 메시지 숨김
+				}
+			});
+			$.validator.addMethod("regex", function(value, element, regex){
+				var re = new RegExp(regex);
+				return this.optional(element) || regex.test(value);
+			}, "정규 표현식을 확인하세요.");
+		</script>
+		<script>
+			$("#checkVerificationCode").click(function(){
+				const email = $("#email").val().trim();
+				const vCode = $("#verificationCode").val().trim();
+				
+				if (!vCode) {
+					alert("인증번호를 입력해주세요.");
+					return;
+				}
+				$.ajax({
+					url : "/email/verifyCode",
+					method: "POST",
+					data: {
+						email: email,
+						userCode: vCode
+					},
+					success : function(response){
+						if(response){
+							alert("인증 성공! 비밀번호 재설정 페이지로 이동합니다.");
+							location.href = "/?";
+							
+						}
+						else{
+							alert("인증에 실패하였습니다. 다시 시도해주세요.");
+						}
+					}
+				})
+				return;
+			})
+		</script>
+	</main>
+</body>
+
+</html>
