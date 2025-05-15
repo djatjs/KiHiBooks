@@ -8,6 +8,11 @@
 	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
 	<link rel="stylesheet" href="/resources/static/css/signup_email.css">
+	<style>
+		#inputVCode{
+			display: none;
+		}
+	</style>
 </head>
 
 <body>
@@ -20,8 +25,13 @@
                 <label for="email" class="content-label">이메일</label>
 				<label id="ur_email-error" class="error-message"></label>
             </div>
+			<!-- 인증번호 입력 필드와 확인 버튼을 포함하는 div -->
+			<div id="inputVCode" class="form-group mt-3">
+				<input type="text" class="form-control" id="verificationCode" placeholder="인증번호 입력" disabled>
+                <button type="button" class="btn btn-secondary col-12 mt-2" id="checkVerificationCode" disabled>확인</button>
+			</div>
 			
-            <button type="submit" class="btn btn-primary col-12" id="findPw-btn" disabled>비밀번호 찾기</button>
+            <button type="submit" class="btn btn-primary col-12" id="findPw-btn" disabled>인증번호 발송</button>
         </form>
 		<script>
 			$("#findPw-btn").click(function(){
@@ -43,6 +53,7 @@
 							alert("인증번호가 이메일로 발송되었습니다. 1분 내에 확인 후 입력해주세요.");
 							$("#verificationCode").prop("disabled", false);
 							$("#checkVerificationCode").prop("disabled", false);
+							$("#inputVCode").css("display", "block");
 							
 						}else{
 							alert("이메일 발송에 실패했습니다. 다시 시도해주세요.");
@@ -86,6 +97,7 @@
 					const name = element.attr("name");
 					const target = $(`#${name}-error`);
 					target.html(error).css("display", "block"); // 메시지 표시
+					
 				},
 				success: function (label, element) {
 					const name = $(element).attr("name");
@@ -111,12 +123,43 @@
 					success : function(data){
 						res = data;
 						$("#findPw-btn").prop("disabled", res);
+						
 					},
 					error : function(){
 					}
 				})
 				return res;
 			}
+		</script>
+		<script>
+			$("#checkVerificationCode").click(function(){
+				const email = $("#email").val().trim();
+				const vCode = $("#verificationCode").val().trim();
+				
+				if (!vCode) {
+					alert("인증번호를 입력해주세요.");
+					return;
+				}
+				$.ajax({
+					url : "/email/verifyCode",
+					method: "POST",
+					data: {
+						email: email,
+						userCode: vCode
+					},
+					success : function(response){
+						if(response){
+							alert("인증 성공! 비밀번호 재설정 페이지로 이동합니다.");
+							location.href = "/resetPw";
+							
+						}
+						else{
+							alert("인증에 실패하였습니다. 다시 시도해주세요.");
+						}
+					}
+				})
+				return;
+			})
 		</script>
 	</main>
 </body>

@@ -226,8 +226,8 @@
 			<div class="mykihi-home">
 				<div class="account-info">
 					<div class="info-email">
-						<div>닉네임</div>
-						<div>이메일</div>
+						<div th:text="${user.ur_nickname}+'님'" ></div>
+						<div th:text="${user.ur_email}">이메일</div>
 					</div>
 					<form th:action="@{/logout}" method="post">
 						<button class="logoutBtn">로그아웃</button>
@@ -240,8 +240,8 @@
 								<div class="info-point mt-5">
 									<img src="/resources/static/img/P.png" alt="포인트" style="height: 30px">
 									<div class="bold mt-1">키히 포인트</div>
-									<div class="val bold">0원</div>
-								</div>
+									<div class="val bold" th:text="${user.ur_point} + '원'"></div>
+									</div>
 							</a>
 							<a class="charge" th:href="@{/}" style="color: #736763; font-weight: 600; font-size: 13px;">충전 내역
 								<span class="val">»</span>

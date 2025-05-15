@@ -149,5 +149,23 @@ public class UserService {
 		}
     }
 
+	public UserVO selectUser(String userEmail) {
+		if(userEmail == null){
+			return null;
+		}
+		return userDAO.selectEmail(userEmail);
+	}
+
+    public boolean resetPw(UserVO user) {
+		if(user == null || user.getUr_email() == null || user.getUr_pw() == null){
+			return false;
+		}
+		//비번 암호화
+		String encPw = passwordEncoder.encode(user.getUr_pw());
+		user.setUr_pw(encPw);
+		
+		return userDAO.updatePw(user);
+    }
+
 
 }
