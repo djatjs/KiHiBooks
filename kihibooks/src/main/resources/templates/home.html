@@ -224,11 +224,15 @@
 			margin: 40px 0;
 			position: relative;
 		}
+		.waitfree-header {
+			display: flex; justify-content: space-between;
+			align-items: center; margin-bottom: 20px;	padding: 0 10px;
+			margin-top: 50px;
+		}
 
 		.waitfree-title {
 			font-size: 22px;
 			font-weight: bold;
-			margin-bottom: 20px;
 		}
 
 		.waitfree-slider-wrapper {
@@ -398,6 +402,118 @@
 			background-color: #eaeaea;
 		}
 
+		/* 키히 신작 */
+		.new-publish-header {
+			display: flex; justify-content: space-between;
+			align-items: center; margin-bottom: 20px;	padding: 0 10px;
+			margin-top: 50px;
+		}
+
+		.new-publish-header h3 {
+			margin: 0; font-size: 22px;	font-weight: bold;
+		}
+
+		.new-publish-body {
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			max-width: 1000px;
+			margin: 0 auto;
+			padding: 0 24px;
+		}
+		.new-publish-slider-wrapper {
+			position: relative;
+			overflow: hidden;
+		}
+
+		.new-publish-track {
+			display: flex;
+			gap: 16px;
+			scroll-behavior: smooth;
+			overflow-x: scroll;
+			padding: 0 20px 8px;
+			scrollbar-width: none;
+		}
+
+		.new-publish-track::-webkit-scrollbar {
+			display: none;
+		}
+
+		.new-publish-item {
+			flex: 0 0 100px;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+			font-size: 13px;
+			color: #333;
+		}
+
+		.new-publish-thumb {
+			width: 100%;
+			aspect-ratio: 3 / 4;
+			border-radius: 4px;
+			overflow: hidden;
+			background-color: #f2f2f2;
+		}
+
+		.new-publish-thumb img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+		}
+
+		.new-publish-title-text {
+			margin-top: 6px;
+			font-weight: bold;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			text-decoration: none !important;
+			color: inherit !important;
+		}
+
+		.new-publish-author {
+			font-size: 12px;
+			color: #666;
+			margin-top: 2px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.new-publish-rating {
+			font-size: 12px;
+			color: #d00;
+			margin-top: 2px;
+		}
+
+		.new-publish-arrow {
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			width: 32px;
+			height: 32px;
+			background: white;
+			border: 1px solid #ccc;
+			border-radius: 50%;
+			font-size: 18px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			z-index: 10;
+		}
+
+		.new-publish-arrow.left {
+			left: 0;
+		}
+
+		.new-publish-arrow.right {
+			right: 0;
+		}
 
 
 		/* 탑 버튼 */
@@ -600,7 +716,10 @@
 		</div>
 		<!-- 키다리면 무료 -->
 		<section class="waitfree-section">
-			<h3 class="waitfree-title">키히, 기다리면 무료</h3>
+			<div class="waitfree-header">
+				<h3 class="waitfree-title">키히, 기다리면 무료</h3>
+				<div class="wait-see-more">더 보기</div>
+			</div>
 			<div class="waitfree-slider-wrapper">
 				<button class="waitfree-arrow left" id="prevArrow" onclick="scrollWaitfree(-3)"><</button>
 				<div class="waitfree-track" id="waitfreeGrid"></div>
@@ -658,10 +777,12 @@
 					}
 				});setTimeout(updateArrowButtons, 300);
 			});
+			document.querySelector(".wait-see-more").addEventListener("click", function() {
+				location.href = "/"; // 이동하고 싶은 주소
+			});
 		</script>
 		
 		<!-- 웹소설 베스트 -->
-		<div>
 			<div class="best-container">
 				<div class="best-header">
 					<h3>웹 소설 베스트</h3>
@@ -759,7 +880,7 @@
 					});
 
 				</script>
-		</div>
+			</div>
 		<!-- 키워드 검색 -->
 		<div>
 			<div class="keyword-header">
@@ -804,18 +925,74 @@
 			</script>
 		</div>
 		
-		<!-- <div>
-			<h3>키다무 신작</h3>
-			<div></div>
+		<!-- 키히 신작 -->
+		<div class="new-publish-container">
+			<div class="new-publish-header">
+				<h3>키히 신작</h3>
+				<div class="new-see-more">더 보기</div>
+			</div>
+			<div class="new-publish-slider-wrapper">
+				<button class="new-publish-arrow left" id="newPublishPrevArrow" onclick="scrollNewPublish(-3)"><</button>
+				<div class="new-publish-track" id="newPublishGrid"></div>
+				<button class="new-publish-arrow right" id="newPublishNextArrow" onclick="scrollNewPublish(3)">></button>
+			</div>
 		</div>
-		<div>
-			<h3>50화 무료신작</h3>
-			<div></div>
-		</div>
-		<div>
-			<h3>최신 업데이트</h3>
-			<div></div> -->
+		<script>
+				function updateNewPublishArrowButtons(){
+					const newPublishGrid = document.getElementById("newPublishGrid");
+					const newPublishPrevBtn = document.getElementById("newPublishPrevArrow");
+					const newPublishNextBtn = document.getElementById("newPublishNextArrow");
 
+					const newPublishScrollLeft = newPublishGrid.scrollLeft;
+					const newPublishScrollMax = newPublishGrid.scrollWidth - newPublishGrid.clientWidth;
+
+					newPublishPrevBtn.style.display = (newPublishScrollLeft <= 10) ? "none" : "flex";
+					newPublishNextBtn.style.display = (newPublishScrollLeft >= newPublishScrollMax - 10) ? "none" : "flex";
+
+				}
+
+				function scrollNewPublish(direction){
+					const newPublishGrid = document.getElementById("newPublishGrid");
+					const newPublishScrollAmount = 180 * direction;
+					newPublishGrid.scrollBy({ left: newPublishScrollAmount, behavior: 'smooth'});
+					setTimeout(updateNewPublishArrowButtons, 300);
+				}
+				$(document).ready(function () {
+					$.ajax({
+						url: "/newpublish",
+						method: "GET",
+						dataType: "json",
+						success: function (data) {
+							const $grid = $("#newPublishGrid");
+							$grid.empty();
+			
+							data.forEach((book, index) => {
+								const imageNum = index + 1;
+								const detailUrl = `/`; //book/detail?code=${book.bo_code}
+								const authorUrl = `/`; //book/detail?code=${book.bo_author} 작가 매칭 되면 사용하면 됨
+								const html = `
+									<div class="new-publish-item">
+										<a href="${detailUrl}" class="new-publish-thumb">
+											<img src="/resources/static/covers/cover${imageNum}.png" alt="${book.bo_title}">
+										</a>
+										<a href="${detailUrl}" class="new-publish-title-text">${book.bo_title}</a>
+										<div class="new-publish-author">${book.bo_author || '작가 미정'}</div>
+										<div class="book-rating">★${book.bo_total_rating / 1000} | 리뷰 ${book.bo_review_count}</div>
+									</div>
+								`;
+								$grid.append(html);
+							});
+						},
+						error: function (xhr, status, error) {
+							console.error("키히 신작 데이터 로딩 실패:", status, error);
+						}
+					});setTimeout(updateNewPublishArrowButtons, 300);
+				});
+				
+				document.querySelector(".new-see-more").addEventListener("click", function() {
+					location.href = "/"; // 이동하고 싶은 주소
+				});
+			</script>
 		</div>
 
 

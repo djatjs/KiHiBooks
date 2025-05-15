@@ -39,7 +39,13 @@ public class BookController {
     @ResponseBody
     public List<BookVO> getBestBooks() {
         List<BookVO> books = bookService.getTopBooks();
-        
+        return books;
+    }
+
+    @GetMapping("/newpublish")
+    @ResponseBody
+    public List<BookVO> getNewPublishBooks() {
+        List<BookVO> books = bookService.getNewBooks();
         return books;
     }
     

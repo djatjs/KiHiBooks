@@ -25,6 +25,10 @@ public class BookService {
     public List<BookVO> getWaitFreeBooks() {
         return bookDAO.selectWaitFreeBooks();
     }
+
+    public List<BookVO> getNewBooks() {
+        return bookDAO.selectNewBooks();
+    }
     
 
 }

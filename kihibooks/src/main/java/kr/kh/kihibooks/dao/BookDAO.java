@@ -11,5 +11,7 @@ public interface BookDAO {
     List<BookVO> selectTopBooks();
 
 	List<BookVO> selectWaitFreeBooks();
+
+	List<BookVO> selectNewBooks();
     
 }
