@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import kr.kh.kihibooks.model.vo.UserRole;
 import kr.kh.kihibooks.service.MemberDetailService;
 
 @Configuration
@@ -18,8 +19,12 @@ public class SecurityConfig {
 @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf ->csrf.disable())
+        
             .authorizeHttpRequests((requests) -> requests
-                .anyRequest().permitAll()  // 그 외 요청은 인증 필요
+                .requestMatchers("account/mykihi")
+                .authenticated()
+                .anyRequest()
+                .permitAll()  // 그 외 요청은 인증 필요
             )
             .formLogin((form) -> form
                 .loginPage("/login")  // 커스텀 로그인 페이지 설정

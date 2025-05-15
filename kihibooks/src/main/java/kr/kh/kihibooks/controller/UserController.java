@@ -155,6 +155,8 @@ public class UserController {
         if(!resetRes){
             return "redirect:/findPw";
         }
+        //세션에서 email 지우기
+        session.removeAttribute("email");
         return "redirect:/";
     }
     
