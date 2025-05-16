@@ -91,6 +91,10 @@
 			padding: 0;
 			color: #555;
 		}
+		.sendEmailBtn:hover{
+			text-decoration: none;
+			color: #555;
+		}
 	</style>
 </head>
 
@@ -131,10 +135,10 @@
 							<p class="check-description">보안을 위해 비밀번호를 한번 더 입력해 주세요.</p>
 							<div class="input-wrap">
 								<input type="password" name="password" id="check-pw">
-								<button class="checkPwBtn mb-1">확인</button>
+								<button type="submit" class="checkPwBtn mb-1">확인</button>
 								<div class="send-email-modify-pw mt-1">
 									비밀번호가 기억나지 않으세요?
-									<button type="button" class="sendEmailBtn">비밀번호 재설정</button>
+									<a type="button" class="sendEmailBtn" th:href="@{/findPw}">비밀번호 재설정</a>
 								</div>
 							</div>
 						</form>
@@ -147,23 +151,25 @@
 				e.preventDefault();
 				let $pw = $("#check-pw").val();
 
-				getHtml();
-				// $.ajax({
-				// 	async: true,
-				// 	url: "/user/checkPw",
-				// 	method: "post",
-				// 	data: { pw: $pw },
-				// 	success: function (isMatched) {
-				// 		if (isMatched === true) {
-				// 			getHtml($pw);
-				// 		} else {
-				// 			alert("비밀번호가 일치하지 않습니다.");
-				// 		}
-				// 	},
-				// 	error: function () {
-				// 		alert("비밀번호 확인 실패");
-				// 	}
-				// });
+				$.ajax({
+					async: true,
+					url: "/edit/checkPw",
+					method: "post",
+					data: { pw : $pw },
+					success: function (isMatched) {
+						if (isMatched) {
+							getHtml();
+						} else {
+							console.log($pw);
+							alert("비밀번호가 일치하지 않습니다.");
+							location.reload();
+						}
+					},
+					error: function () {
+						console.log($pw);
+						alert("비밀번호 확인 실패");
+					}
+				});
 			});
 
 			function getHtml() {

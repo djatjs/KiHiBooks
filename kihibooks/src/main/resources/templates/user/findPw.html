@@ -3,38 +3,44 @@
 	layout:decorate="~{layout/layout.html}">
 
 <head>
-    <meta charset="UTF-8">
-    <title>KiHiBooks</title>
+	<meta charset="UTF-8">
+	<title>KiHiBooks</title>
 	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
 	<link rel="stylesheet" href="/resources/static/css/signup_email.css">
 	<style>
-		#inputVCode{
+		#inputVCode {
 			display: none;
 		}
 	</style>
 </head>
 
 <body>
-    <main layout:fragment="content" class="container">
-        <h3 style="text-align: center;" >KiHiBooks email</h3>
+	<main layout:fragment="content" class="container">
+		<h3 style="text-align: center;">KiHiBooks email</h3>
 		<img src="/resources/static/img/logo.png" alt="로고">
-        <form th:action="@{/signup/email}" method="post"  id="signup-form">
-            <div class="form-group">
-                <input type="email" class="form-control" id="email" name="ur_email" placeholder=" " required>
-                <label for="email" class="content-label">이메일</label>
+		<form th:action="@{/signup/email}" method="post" id="signup-form">
+			<div class="form-group">
+				<th:block sec:authorize="isAuthenticated()">
+					<input type="email" class="form-control" id="email" name="ur_email" placeholder=" " required th:value="${#authentication.principal.user.ur_email}" readonly>
+				</th:block>
+				<th:block sec:authorize="isAnonymous()">
+					<input type="email" class="form-control" id="email" name="ur_email" placeholder=" " required>
+				</th:block>
+				
+				<label for="email" class="content-label">이메일</label>
 				<label id="ur_email-error" class="error-message"></label>
-            </div>
+			</div>
 			<!-- 인증번호 입력 필드와 확인 버튼을 포함하는 div -->
 			<div id="inputVCode" class="form-group mt-3">
 				<input type="text" class="form-control" id="verificationCode" placeholder="인증번호 입력" disabled>
-                <button type="button" class="btn btn-secondary col-12 mt-2" id="checkVerificationCode" disabled>확인</button>
+				<button type="button" class="btn btn-secondary col-12 mt-2" id="checkVerificationCode" disabled>확인</button>
 			</div>
-			
-            <button type="submit" class="btn btn-primary col-12" id="findPw-btn" disabled>인증번호 발송</button>
-        </form>
+
+			<button type="submit" class="btn btn-primary col-12" id="findPw-btn" disabled>인증번호 발송</button>
+		</form>
 		<script>
-			$("#findPw-btn").click(function(){
+			$("#findPw-btn").click(function () {
 				const email = $("#email").val().trim();
 				$("#email").val(email);
 				alert(email);
@@ -48,46 +54,46 @@
 					method: "POST",
 					data: email,
 					contentType: "text/plain",
-					success: function(response) {
-						if(response){
+					success: function (response) {
+						if (response) {
 							alert("인증번호가 이메일로 발송되었습니다. 1분 내에 확인 후 입력해주세요.");
 							$("#verificationCode").prop("disabled", false);
 							$("#checkVerificationCode").prop("disabled", false);
 							$("#inputVCode").css("display", "block");
-							
-						}else{
+
+						} else {
 							alert("이메일 발송에 실패했습니다. 다시 시도해주세요.");
 						}
 					},
-					error: function(){
+					error: function () {
 						$("#verificationCode").prop("disabled", false);
 					},
-					complete: function(){
+					complete: function () {
 					}
 				})
 
 
-				
+
 				return;
 			})
 		</script>
-		
+
 		<script>
 			$("#signup-form").validate({
-				rules : {
-					ur_email : {
-						required : true,
-						duplicate : true,
-						email : true,
-						regex : /^([A-Za-z0-9\._])+@([A-Za-z0-9]+\.[A-Za-z]{2,})$/
+				rules: {
+					ur_email: {
+						required: true,
+						duplicate: true,
+						email: true,
+						regex: /^([A-Za-z0-9\._])+@([A-Za-z0-9]+\.[A-Za-z]{2,})$/
 					}
 				},
-				messages : {
-					ur_email : {
-						required : "·이메일은 필수 항목입니다.",
-						duplicate : "·비밀번호 찾기 버튼을 눌러주세요.",
-						email : "·이메일 형식을 지켜주세요.",
-						regex : "이메일 형식"
+				messages: {
+					ur_email: {
+						required: "·이메일은 필수 항목입니다.",
+						duplicate: "·비밀번호 찾기 버튼을 눌러주세요.",
+						email: "·이메일 형식을 지켜주세요.",
+						regex: "이메일 형식"
 					}
 				},
 				submitHandler: function () {
@@ -97,7 +103,7 @@
 					const name = element.attr("name");
 					const target = $(`#${name}-error`);
 					target.html(error).css("display", "block"); // 메시지 표시
-					
+
 				},
 				success: function (label, element) {
 					const name = $(element).attr("name");
@@ -105,55 +111,55 @@
 					target.html("").css("display", "none"); // 메시지 숨김
 				}
 			});
-			$.validator.addMethod("regex", function(value, element, regex){
+			$.validator.addMethod("regex", function (value, element, regex) {
 				var re = new RegExp(regex);
 				return this.optional(element) || regex.test(value);
 			}, "정규 표현식을 확인하세요.");
-			
-			$.validator.addMethod("duplicate", function(value, element){
+
+			$.validator.addMethod("duplicate", function (value, element) {
 				return this.optional(element) || checkEmail(value);
 			}, "가입되지 않은 이메일입니다.");
-			function checkEmail(email){
+			function checkEmail(email) {
 				$.ajax({
-					async : false,
+					async: false,
 					url: "/check/email",
 					method: "POST",
 					data: email,
 					contentType: "text/plain",
-					success : function(data){
+					success: function (data) {
 						res = data;
 						$("#findPw-btn").prop("disabled", res);
-						
+
 					},
-					error : function(){
+					error: function () {
 					}
 				})
 				return res;
 			}
 		</script>
 		<script>
-			$("#checkVerificationCode").click(function(){
+			$("#checkVerificationCode").click(function () {
 				const email = $("#email").val().trim();
 				const vCode = $("#verificationCode").val().trim();
-				
+
 				if (!vCode) {
 					alert("인증번호를 입력해주세요.");
 					return;
 				}
 				$.ajax({
-					url : "/email/verifyCode",
+					url: "/email/verifyCode",
 					method: "POST",
 					data: {
 						email: email,
 						userCode: vCode
 					},
-					success : function(response){
-						if(response){
+					success: function (response) {
+						if (response) {
 							alert("인증 성공! 비밀번호 재설정 페이지로 이동합니다.");
 							location.href = "/resetPw";
-							
+
 						}
-						else{
+						else {
 							alert("인증에 실패하였습니다. 다시 시도해주세요.");
 						}
 					}

@@ -59,10 +59,15 @@ public class UserController {
 		return "user/edit";
 	}
 
-	@PostMapping("/checkPw")
+	@PostMapping("/edit/checkPw")
 	@ResponseBody
-	public boolean checkPw(@RequestParam String pw, Principal principal) {
-		return userService.checkPw(principal.getName(), pw);
+	public boolean checkPw(@RequestParam String pw, @AuthenticationPrincipal CustomUser customUser) {
+        if(pw == null || customUser == null) {
+            System.out.println("1");
+            return false;
+        }
+        System.out.println("2");
+		return userService.checkPw(customUser, pw);
 	}
 
     @GetMapping("/user/editForm")
