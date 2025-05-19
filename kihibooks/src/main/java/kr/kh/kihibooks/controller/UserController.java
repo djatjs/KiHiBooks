@@ -44,15 +44,11 @@ public class UserController {
     private String kakaoRedirectUri;
 
 	@GetMapping("/account/mykihi")
-	public String mypage(Model model) {
-        
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserVO user = userService.selectUser(userDetails.getUsername());
-        
-        System.out.println("유저 확인 : "+user);
+    public String mypage(Model model) {
+        UserVO user = userService.getCurrentUser();
         model.addAttribute("user", user);
-		return "user/mypage";
-	}
+        return "user/mypage";
+    }
 
 	@GetMapping("/account/modify")
 	public String edit() {

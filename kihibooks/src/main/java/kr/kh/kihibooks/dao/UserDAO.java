@@ -23,5 +23,8 @@ public interface UserDAO {
     boolean insertUserWithoutPw(UserVO user);
 
     boolean updatePw(UserVO user);
+
+    // UserDAO 인터페이스에 추가
+    public UserVO selectUserByEmailAndProvider(@Param("email")String email, @Param("provider")String provider);
 	
 }

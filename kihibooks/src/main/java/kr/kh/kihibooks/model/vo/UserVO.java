@@ -13,4 +13,5 @@ public class UserVO {
 	String ur_gender;
 	String ur_year;
 	String ur_del;
+	private String ur_provider; // 소셜 로그인 제공자 (예: kakao, naver, email 등)
 }

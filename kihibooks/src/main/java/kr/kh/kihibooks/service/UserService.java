@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -121,7 +123,7 @@ public class UserService {
     }
 
     public boolean checkEmail(String email) {
-		UserVO count = userDAO.selectEmail(email);
+		UserVO count = userDAO.selectUserByEmailAndProvider(email, "EMAIL");
 		if(count != null){
 			return false;
 		}
@@ -137,8 +139,12 @@ public class UserService {
     }
 
     public boolean signup(UserVO user) {
-		System.out.println(user);
+		//이메일로 가입중
 		if(user == null){
+			return false;
+		}
+		//이미 가입된 계정인지 확인
+		if(userDAO.selectUserByEmailAndProvider(user.getUr_email(), "EMAIL") != null){
 			return false;
 		}
 
@@ -172,5 +178,14 @@ public class UserService {
 		return userDAO.updatePw(user);
     }
 
+	public UserVO getCurrentUser() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null || !auth.isAuthenticated()) {
+			return null;
+		}
+		System.out.println(auth);
+		String userEmail = auth.getName();
+		return selectUser(userEmail);
+	}
 
 }

@@ -26,7 +26,7 @@
                         </div>
                     </form>
                 </div>
-                <th:block sec:authorize="isAuthenticated()">
+                <th:block sec:authorize="hasRole('ROLE_USER')">
                     <a class="p-2 mr-2" th:href="@{/}">
                         <img class="mt-1" src="/resources/static/img/bell.png" alt="알림" style="height: 20px;">
                     </a>
@@ -42,7 +42,7 @@
                         로그인
                     </a>
                 </th:block>
-                <th:block sec:authorize="isAuthenticated()">
+                <th:block sec:authorize="hasRole('ROLE_USER')">
                     <a class="p-2 mr-2" th:href="@{/}">
                         <img class="mt-1" src="/resources/static/img/library.png" alt="내 서재" style="height: 20px;">
                     </a>
@@ -50,73 +50,82 @@
                         <img class="mt-1" src="/resources/static/img/user_profile.png" alt="마이페이지" style="height: 20px;">
                     </a>
                 </th:block>
+                <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a class="p-2 mr-2 mt-2" th:href="@{/admin/dashboard}" style="text-decoration: none; color: black;">
+                        대시보드
+                    </a>
+                    <a class="p-2 mr-2 mt-2" th:href="@{/logout}" style="text-decoration: none; color: black;">
+                        로그아웃
+                    </a>
+                </th:block>
             </div>
-
-            <div>
-                <div class="d-flex justify-content-between bg-white mb-3">
-                    <div class="d-flex">
-                        <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">로맨스</a>
-                        <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">로판</a>
-                        <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">판타지</a>
-                        <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">무협</a>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <div class="category-wrapper">
-                            <button class="category-button" onclick="toggleDropdown(event)">
-                                <img src="/resources/static/img/menu.png" alt="메뉴" style="height: 15px; "> 전체 카테고리
-                            </button>
-                            <div class="dropdown-menu" id="dropdown">
-                                <div class="tabs">
-                                    <button class="tab-button active" onclick="switchTab(event, 0)">로맨스</button>
-                                    <button class="tab-button" onclick="switchTab(event, 1)">로판</button>
-                                    <button class="tab-button" onclick="switchTab(event, 2)">판타지</button>
-                                    <button class="tab-button" onclick="switchTab(event, 3)">무협</button>
-                                </div>
-        
-                                <div class="tab-content active">
-                                    <div class="sub-category">
-                                        <div class="mb-2 mt-2">현대물</div>
-                                        <div class="mb-2 mt-2">역사/시대물</div>
+            <th:block sec:authorize="!hasRole('ROLE_ADMIN')">
+                <div>
+                    <div class="d-flex justify-content-between bg-white mb-3">
+                        <div class="d-flex">
+                            <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">로맨스</a>
+                            <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">로판</a>
+                            <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">판타지</a>
+                            <a class="p-2 ml-3" th:href="@{/}" style="text-decoration: none; color: black;">무협</a>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <div class="category-wrapper">
+                                <button class="category-button" onclick="toggleDropdown(event)">
+                                    <img src="/resources/static/img/menu.png" alt="메뉴" style="height: 15px; "> 전체 카테고리
+                                </button>
+                                <div class="dropdown-menu" id="dropdown">
+                                    <div class="tabs">
+                                        <button class="tab-button active" onclick="switchTab(event, 0)">로맨스</button>
+                                        <button class="tab-button" onclick="switchTab(event, 1)">로판</button>
+                                        <button class="tab-button" onclick="switchTab(event, 2)">판타지</button>
+                                        <button class="tab-button" onclick="switchTab(event, 3)">무협</button>
                                     </div>
-                                </div>
-                                <div class="tab-content">
-                                    <div class="sub-category">
-                                        <div>
-                                            <div class="mb-2 mt-2">동양풍</div>
-                                            <div class="mb-2 mt-2">서양풍</div>
-                                        </div>
-                                        <div>
-                                            <div class="mb-2 mt-2">가상세계</div>
+            
+                                    <div class="tab-content active">
+                                        <div class="sub-category">
+                                            <div class="mb-2 mt-2">현대물</div>
+                                            <div class="mb-2 mt-2">역사/시대물</div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="tab-content">
-                                    <div class="sub-category">
-                                        <div>
-                                            <div class="mb-2 mt-2">정통 판타지</div>
-                                            <div class="mb-2 mt-2">퓨전 판타지</div>
-                                            <div class="mb-2 mt-2">현대 판타지</div>
-                                            <div class="mb-2 mt-2">게임 판타지</div>
-                                        </div>
-                                        <div>
-                                            <div class="mb-2 mt-2">대체 역사</div>
-                                            <div class="mb-2 mt-2">스포츠</div>
+                                    <div class="tab-content">
+                                        <div class="sub-category">
+                                            <div>
+                                                <div class="mb-2 mt-2">동양풍</div>
+                                                <div class="mb-2 mt-2">서양풍</div>
+                                            </div>
+                                            <div>
+                                                <div class="mb-2 mt-2">가상세계</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="tab-content">
-                                    <div class="sub-category">
-                                        <div class="mb-2 mt-2">정통 무협</div>
-                                        <div class="mb-2 mt-2">신무협</div>
+                                    <div class="tab-content">
+                                        <div class="sub-category">
+                                            <div>
+                                                <div class="mb-2 mt-2">정통 판타지</div>
+                                                <div class="mb-2 mt-2">퓨전 판타지</div>
+                                                <div class="mb-2 mt-2">현대 판타지</div>
+                                                <div class="mb-2 mt-2">게임 판타지</div>
+                                            </div>
+                                            <div>
+                                                <div class="mb-2 mt-2">대체 역사</div>
+                                                <div class="mb-2 mt-2">스포츠</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content">
+                                        <div class="sub-category">
+                                            <div class="mb-2 mt-2">정통 무협</div>
+                                            <div class="mb-2 mt-2">신무협</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <a th:href="@{/order/checkout/point}" class="p-2 mr-3" style="text-decoration: none; color: black;"><img class="mb-1" src="/resources/static/img/P.png" alt="포인트"
+                                    style="height: 20px;">포인트 충전</a>
                         </div>
-                        <a th:href="@{/order/checkout/point}" class="p-2 mr-3" style="text-decoration: none; color: black;"><img class="mb-1" src="/resources/static/img/P.png" alt="포인트"
-                                style="height: 20px;">포인트 충전</a>
                     </div>
                 </div>
-            </div>
+            </th:block>
         </div>
     </div>
     <hr class="my-hr3">

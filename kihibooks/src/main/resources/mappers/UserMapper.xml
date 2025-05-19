@@ -21,13 +21,17 @@
         select count(*) from user where ur_nickname = #{nickName}
     </select>
     <insert id="insertUserWithPw">
-        insert into user(ur_email, ur_pw, ur_nickname) values (#{ur_email}, #{ur_pw}, #{ur_nickname})
+        insert into user(ur_email, ur_pw, ur_nickname, ur_provider)
+        values (#{ur_email}, #{ur_pw}, #{ur_nickname}, #{ur_provider})
     </insert>
     <insert id="insertUserWithoutPw">
-        insert into user(ur_email, ur_nickname, ur_year, ur_gender)
-        values (#{ur_email}, #{ur_nickname}, #{ur_year}, #{ur_gender})
+        insert into user(ur_email, ur_nickname, ur_year, ur_gender, ur_provider)
+        values (#{ur_email}, #{ur_nickname}, #{ur_year}, #{ur_gender}, #{ur_provider})
     </insert>
     <update id="updatePw">
         update user set ur_pw = #{ur_pw} where ur_email = #{ur_email}
     </update>
+    <select id="selectUserByEmailAndProvider" resultType="UserVO">
+        select * from user where ur_email = #{email} and ur_provider = #{provider}
+    </select>
 </mapper>

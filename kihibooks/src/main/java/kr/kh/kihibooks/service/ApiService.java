@@ -170,7 +170,10 @@ public class ApiService {
             throw new RuntimeException("카카오 사용자 정보 파싱 오류 또는 필수 정보 동의 필요");
         }
 
-        UserVO existingUser = userDAO.selectEmail(email);
+        // 카카오 사용자임을 명시
+        String provider = "KAKAO";
+
+        UserVO existingUser = userDAO.selectUserByEmailAndProvider(email, provider);
 
         UserDetails userDetails;
 
@@ -182,6 +185,7 @@ public class ApiService {
             newUser.setUr_email(email);
             newUser.setUr_nickname(nickname);
             newUser.setUr_year(birthyear);
+            newUser.setUr_provider(provider); // 제공자 정보 저장
             
             if (gender != null) {
                 if (gender.equals("female")) {
