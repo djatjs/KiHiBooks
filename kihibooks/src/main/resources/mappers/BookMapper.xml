@@ -37,4 +37,30 @@
         ORDER BY BO_PUBLISH_DATE DESC
     </select>
 
+    <select id="selectFilteredNewBooks" resultType="BookVO">
+        SELECT 
+            BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, AU_NAME
+        FROM 
+            book
+        JOIN 
+            author ON book.BO_AU_NUM = author.AU_NUM
+        WHERE 
+            BO_PUBLISH_DATE >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+        <if test="adultYN != null">
+            AND BO_ADULT = #{adultYN}
+        </if>
+        <if test="finYN != null">
+            AND BO_FIN = #{finYN}
+        </if>
+        <choose>
+            <when test="order == 'popular'">
+                ORDER BY BO_TOTAL_RATING DESC, BO_REVIEW_COUNT DESC
+            </when>
+            <otherwise>
+                ORDER BY BO_PUBLISH_DATE DESC
+            </otherwise>
+        </choose>
+    </select>
+    
+
 </mapper>

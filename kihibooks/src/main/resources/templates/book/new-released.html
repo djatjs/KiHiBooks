@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout.html}">
+
+<head>
+	<meta charset="UTF-8">
+	<title>키히 신작</title>
+	<style>
+		.filter-bar {
+			display: flex;
+			gap: 12px;
+			flex-wrap: wrap;
+			padding: 20px;
+			justify-content: flex-start;
+		}
+		.filter-btn {
+			padding: 6px 12px;
+			border: 1px solid #ccc;
+			border-radius: 16px;
+			background-color: #f9f9f9;
+			cursor: pointer;
+			font-size: 14px;
+		}
+		.filter-btn.active {
+			background-color: #333;
+			color: #fff;
+			border-color: #333;
+		}
+		.book-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 20px;
+			padding: 20px;
+		}
+		.book-item {
+			border: 1px solid #eee;
+			border-radius: 8px;
+			padding: 12px;
+			background-color: #fff;
+		}
+		.book-item img {
+			width: 100%;
+			height: auto;
+			border-radius: 4px;
+		}
+		.book-title {
+			margin-top: 8px;
+			font-size: 16px;
+			font-weight: bold;
+		}
+	</style>
+</head>
+
+<body>
+	<div layout:fragment="content" class="container">
+		<h2>신작 웹소설</h2>
+
+		<!-- 필터 바 -->
+		<div class="filter-bar">
+			<button class="filter-btn" onclick="applyFilter('latest')">최신순</button>
+			<button class="filter-btn" onclick="applyFilter('popular')">인기순</button>
+			<button class="filter-btn" onclick="toggleAdult()">성인작품만 보기</button>
+			<button class="filter-btn" onclick="toggleFinished()">완결작품만 보기</button>
+		</div>
+
+		<!-- 도서 리스트 -->
+		<div id="bookGrid" class="book-grid">
+			<!-- JS로 데이터 바인딩 -->
+		</div>
+	</div>
+
+	<script>
+		let order = 'latest';
+		let adult = null;
+		let fin = null;
+
+		function applyFilter(selectedOrder) {
+			order = selectedOrder;
+			loadBooks();
+		}
+
+		function toggleAdult() {
+			adult = (adult === true) ? null : true;
+			loadBooks();
+		}
+
+		function toggleFinished() {
+			fin = (fin === true) ? null : true;
+			loadBooks();
+		}
+
+		function loadBooks() {
+			$.ajax({
+				url: '/book/new-released',
+				method: 'GET',
+				data: {
+					order: order,
+					adult: adult,
+					fin: fin
+				},
+				success: function(data) {
+					const grid = document.getElementById('bookGrid');
+					grid.innerHTML = '';
+					data.forEach(book => {
+						const div = document.createElement('div');
+						div.className = 'book-item';
+						div.innerHTML = `
+							<img src="/resources/static/covers/cover${book.bo_code}.png" alt="${book.bo_title}">
+							<div class="book-title">${book.bo_title}</div>
+						`;
+						grid.appendChild(div);
+					});
+				},
+				error: function() {
+					alert('도서 목록을 불러오는 데 실패했습니다.');
+				}
+			});
+		}
+
+		$(document).ready(function () {
+			loadBooks();
+		});
+	</script>
+</body>
+
+</html>

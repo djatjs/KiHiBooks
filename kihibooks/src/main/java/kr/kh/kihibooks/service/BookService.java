@@ -29,6 +29,15 @@ public class BookService {
     public List<BookVO> getNewBooks() {
         return bookDAO.selectNewBooks();
     }
+
+    public List<BookVO> getFilteredNewBooks(String order, String adult, String fin) {
+        return bookDAO.selectFilteredNewBooks(order, adult, fin);
+    }
+    
+
+    public List<BookVO> getBestBookList(String order, String term, Boolean adult, Boolean fin) {
+        return bookDAO.selectTopBooks();
+    }
     
 
 }

@@ -6,12 +6,14 @@ import kr.kh.kihibooks.model.vo.BookVO;
 
 public interface BookDAO {
 
-    List<BookVO> selectBookList(int ur_num);	
+	List<BookVO> selectBookList(int ur_num);	
 
-    List<BookVO> selectTopBooks();
+	List<BookVO> selectTopBooks();
 
 	List<BookVO> selectWaitFreeBooks();
 
 	List<BookVO> selectNewBooks();
+
+	List<BookVO> selectFilteredNewBooks(String order, String adultYN, String finYN);
     
 }
