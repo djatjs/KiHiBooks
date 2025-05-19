@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.kh.kihibooks.model.vo.BookVO;
+import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.service.BookService;
 
 
@@ -74,31 +75,21 @@ public class BookController {
     }
 
     @GetMapping("/book/new-released")
-    public String newBookPage(
+    public String newReleased(
+        @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "latest") String order,
-        @RequestParam(required = false) Boolean adult,
-        @RequestParam(required = false) Boolean fin,
+        @RequestParam(required = false) String adult,
         Model model) {
 
-        String adultYN = (adult == null) ? null : (adult ? "Y" : "N");
-        String finYN = (fin == null) ? null : (fin ? "Y" : "N");
-        
-        List<BookVO> bookList = bookService.getFilteredNewBooks(order, adultYN, finYN);
-        model.addAttribute("bookList", bookList);
-        model.addAttribute("order", order); // 인기순, 최신순 구별하기 위한 용도
+        PageInfo<BookVO> pageInfo = bookService.getFilteredBooks(page, order, adult);
+
+        model.addAttribute("bookList", pageInfo.getContent());
+        model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("order", order);
         model.addAttribute("adult", adult);
-        model.addAttribute("fin", fin);
-        System.out.println(order + adultYN + finYN);
+
         return "book/new-released";
     }
-
-    // @GetMapping("/book/best")
-    // public String bestBookPage(@RequestParam(defaultValue = "today") String term, Model model) {
-    //     List<BookVO> bestList = bookService.getBestBookList(term);
-    //     model.addAttribute("bookList", bestList);
-    //     model.addAttribute("term", term); // 오늘/주간/월간 중 어떤 기간인지
-    //     return "book/best";
-    // }
 
 
     

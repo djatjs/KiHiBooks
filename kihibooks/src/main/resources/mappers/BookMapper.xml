@@ -37,21 +37,26 @@
         ORDER BY BO_PUBLISH_DATE DESC
     </select>
 
-    <select id="selectFilteredNewBooks" resultType="BookVO">
+    <select id="selectFilteredBooks" resultType="BookVO">
         SELECT 
-            BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, AU_NAME
+            BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, AU_NAME,
+            BO_ADULT, BO_FIN, BO_PUBLISH_DATE
         FROM 
             book
         JOIN 
             author ON book.BO_AU_NUM = author.AU_NUM
         WHERE 
             BO_PUBLISH_DATE >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-        <if test="adultYN != null and adultYN != ''">
-            AND BO_ADULT = #{adultYN}
+        
+        <if test="adultYN != null">
+            <if test="adultYN == 'Y'">
+                AND BO_ADULT = 'Y'
+            </if>
+            <if test="adultYN == 'N'">
+                AND BO_ADULT = 'N'
+            </if>
         </if>
-        <if test="finYN != null and finYN != ''">
-            AND BO_FIN = #{finYN}
-        </if>
+
         <choose>
             <when test="order == 'popular'">
                 ORDER BY BO_TOTAL_RATING DESC, BO_REVIEW_COUNT DESC
@@ -60,6 +65,26 @@
                 ORDER BY BO_PUBLISH_DATE DESC
             </otherwise>
         </choose>
+
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countFilteredBooks" resultType="int">
+        SELECT 
+            COUNT(*)
+        FROM 
+            book
+        WHERE 
+            BO_PUBLISH_DATE >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+
+        <if test="adultYN != null">
+            <if test="adultYN == 'Y'">
+                AND BO_ADULT = 'Y'
+            </if>
+            <if test="adultYN == 'N'">
+                AND BO_ADULT = 'N'
+            </if>
+        </if>
     </select>
     
 

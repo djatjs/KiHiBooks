@@ -1,6 +1,7 @@
 package kr.kh.kihibooks.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import kr.kh.kihibooks.model.vo.BookVO;
 
@@ -14,6 +15,8 @@ public interface BookDAO {
 
 	List<BookVO> selectNewBooks();
 
-	List<BookVO> selectFilteredNewBooks(String order, String adultYN, String finYN);
+	List<BookVO> selectFilteredBooks(Map<String, Object> map);
+
+	int countFilteredBooks(Map<String, Object> map);
     
 }

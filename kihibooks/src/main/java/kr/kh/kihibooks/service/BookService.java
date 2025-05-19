@@ -1,18 +1,31 @@
 package kr.kh.kihibooks.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.kh.kihibooks.dao.BookDAO;
 import kr.kh.kihibooks.model.vo.BookVO;
+import kr.kh.kihibooks.pagination.PageInfo;
+import kr.kh.kihibooks.utils.PaginationUtils;
+
+import static kr.kh.kihibooks.utils.PageConstants.*;
+
 
 @Service
 public class BookService {
 
     @Autowired
     BookDAO bookDAO;
+
+    @Autowired
+    SqlSession sqlSession;
+
+    private final String NAMESPACE = "kr.kh.kihibooks.dao.BookDAO.";
 
     public List<BookVO> getTopBooks() {
         return bookDAO.selectTopBooks();
@@ -30,14 +43,20 @@ public class BookService {
         return bookDAO.selectNewBooks();
     }
 
-    public List<BookVO> getFilteredNewBooks(String order, String adult, String fin) {
-        return bookDAO.selectFilteredNewBooks(order, adult, fin);
-    }
-    
+    public PageInfo<BookVO> getFilteredBooks(int page, String order, String adult) {
+        int offset = (page - 1) * PAGE_SIZE;
 
-    public List<BookVO> getBestBookList(String order, String term, Boolean adult, Boolean fin) {
-        return bookDAO.selectTopBooks();
+        Map<String, Object> map = new HashMap<>();
+        map.put("offset", offset);
+        map.put("limit", PAGE_SIZE);
+        map.put("order", order);
+        map.put("adultYN", adult);
+
+        List<BookVO> books = bookDAO.selectFilteredBooks(map);
+        int totalCount = bookDAO.countFilteredBooks(map);
+
+        return PaginationUtils.paginate(books, totalCount, page, PAGE_SIZE, BLOCK_SIZE);
     }
-    
+
 
 }

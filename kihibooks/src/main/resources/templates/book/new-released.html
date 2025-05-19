@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html 
-	xmlns:th="http://www.thymeleaf.org"
+	xmlns:th="http://www.thymeleaf.org" 
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layout/layout.html}">
 
 <head>
 	<meta charset="UTF-8">
-	<title>키히 신작</title>
+	<title layout:fragment="title">신작 웹소설</title>
 	<style>
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 24px;
+		}
 		.filter-header {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			padding: 20px;
-			border-bottom: 1px solid #ddd;
+			margin-bottom: 20px;
 		}
 		.filter-left, .filter-right {
 			display: flex;
@@ -31,115 +35,75 @@
 		}
 		.filter-btn.active {
 			background-color: #111;
-			color: #fff;
-			border-color: #111;
+			color: white;
 		}
 		.book-grid {
 			display: grid;
-			grid-template-columns: repeat(3, 1fr);
+			grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 			gap: 20px;
-			padding: 20px;
+			margin-top: 20px;
 		}
-		.book-item {
-			border: 1px solid #eee;
-			border-radius: 8px;
-			padding: 12px;
-			background-color: #fff;
-		}
-		.book-item img {
+		.book-card img {
 			width: 100%;
-			height: auto;
 			border-radius: 4px;
 		}
-		.book-title {
-			margin-top: 8px;
-			font-size: 16px;
+		.title {
 			font-weight: bold;
+			font-size: 16px;
+			margin-top: 8px;
+		}
+		.author, .genre {
+			font-size: 13px;
+			color: #666;
+		}
+		.pagination {
+			display: flex;
+			justify-content: center;
+			margin-top: 30px;
+			gap: 8px;
+		}
+		.pagination a {
+			padding: 6px 12px;
+			border: 1px solid #ddd;
+			text-decoration: none;
+			color: #333;
+			border-radius: 4px;
+		}
+		.pagination a.active {
+			background-color: #111;
+			color: white;
+			border-color: #111;
 		}
 	</style>
 </head>
 
 <body>
-	<div layout:fragment="content" class="container">
-		<h2 style="padding-left: 20px; padding-top: 20px;">신작 웹소설</h2>
+<div layout:fragment="content">
 
-		<!-- 필터 헤더 -->
+	<section class="container">
+
+		<!-- 🔍 필터 & 정렬 -->
 		<div class="filter-header">
-			<!-- 좌측: 인기순 / 최신순 -->
+			<!-- 정렬 -->
 			<div class="filter-left">
-				<a th:href="@{/book/new-released(order='popular', adult=${adult}, fin=${fin})}"
-				   th:classappend="${order == 'popular'} ? 'active'" class="filter-btn">인기순</a>
-				<a th:href="@{/book/new-released(order='latest', adult=${adult}, fin=${fin})}"
-				   th:classappend="${order == 'latest'} ? 'active'" class="filter-btn">최신순</a>
+				<a th:href="@{/book/new-released(page=1, order='latest', adult=${adult})}"
+				   th:classappend="${order == 'latest'} ? 'active' : ''"
+				   class="filter-btn">최신순</a>
+				<a th:href="@{/book/new-released(page=1, order='popular', adult=${adult})}"
+				   th:classappend="${order == 'popular'} ? 'active' : ''"
+				   class="filter-btn">인기순</a>
 			</div>
 
-			<!-- 우측: 성인작품만 / 성인작품 제외 -->
-			<form id="filterForm" method="get" action="/book/new-released" class="filter-right">
-				<input type="hidden" name="order" th:value="${order}" />
-
-				<label class="filter-btn">
-					<input type="checkbox" id="adultTrue" value="true"
-						   th:checked="${adult == true}" /> 성인작품만
-				</label>
-
-				<label class="filter-btn">
-					<input type="checkbox" id="adultFalse" value="false"
-						   th:checked="${adult == false}" /> 성인작품 제외
-				</label>
-			</form>
-		</div>
-
-		<!-- 도서 목록 -->
-		<div class="book-grid">
-			<div class="book-item" th:each="book : ${bookList}">
-				<img th:src="@{'/resources/static/covers/cover' + ${book.bo_code} + '.png'}"
-					 th:alt="${book.bo_title}" />
-				<div class="book-title" th:text="${book.bo_title}">도서 제목</div>
+			<!-- 성인물 필터 -->
+			<div class="filter-right">
+				<a th:href="@{/book/new-released(page=1, order=${order}, adult='Y')}"
+				   th:classappend="${adult == 'Y'} ? 'active' : ''"
+				   class="filter-btn">성인물만</a>
+				<a th:href="@{/book/new-released(page=1, order=${order}, adult='N')}"
+				   th:classappend="${adult == 'N'} ? 'active' : ''"
+				   class="filter-btn">성인물 제외</a>
+				<a th:href="@{/book/new-released(page=1, order=${order})}"
+				   th:classappend="${adult == null} ? 'active' : ''"
+				   class="filter-btn">전체</a>
 			</div>
 		</div>
-	</div>
-
-	<script>
-		document.addEventListener("DOMContentLoaded", () => {
-			console.log("🔥 필터 스크립트 로드됨");
-			const form = document.getElementById("filterForm");
-			const adultTrue = document.getElementById("adultTrue");
-			const adultFalse = document.getElementById("adultFalse");
-
-			const updateAndSubmit = (event) => {
-				console.log("✅ 필터 클릭됨:", event.target.id);
-
-				// 동시에 두 개 체크 방지
-				if (adultTrue.checked && adultFalse.checked) {
-					if (event.target === adultTrue) {
-						adultFalse.checked = false;
-					} else {
-						adultTrue.checked = false;
-					}
-				}
-
-				// 모든 name 제거
-				adultTrue.removeAttribute("name");
-				adultFalse.removeAttribute("name");
-
-				// 체크된 쪽만 name 부여
-				if (adultTrue.checked) {
-					adultTrue.setAttribute("name", "adult");
-				} else if (adultFalse.checked) {
-					adultFalse.setAttribute("name", "adult");
-				}
-
-				console.log("📤 submit adult=", 
-					adultTrue.checked ? "true" : 
-					adultFalse.checked ? "false" : "없음"
-				);
-
-				form.submit(); // requestSubmit 도 가능
-			};
-
-			adultTrue.addEventListener("change", updateAndSubmit);
-			adultFalse.addEventListener("change", updateAndSubmit);
-		});
-	</script>
-</body>
-</html>
