@@ -12,6 +12,7 @@ import jakarta.mail.internet.MimeMessage;
 import kr.kh.kihibooks.dao.UserDAO;
 import kr.kh.kihibooks.model.vo.EmailVO;
 import kr.kh.kihibooks.model.vo.UserVO;
+import kr.kh.kihibooks.utils.CustomUser;
 
 @Service
 public class UserService {
@@ -28,12 +29,16 @@ public class UserService {
 	@Value("${spring.mail.username}")
 	private String setfrom; //보내는 이의 이메일
 
-	public boolean checkPw(String id, String pw) {
-		if(id == null || pw == null) {
+	public boolean checkPw(CustomUser customUser, String pw) {
+		if(customUser == null ) {
 			return false;
 		}
 
-		return userDAO.checkPw(id, pw) == null;
+		if(!passwordEncoder.matches(pw, customUser.getUser().getUr_pw())){
+			return false;
+		}
+
+		return true;
 	}
 
     public boolean sendEmail(EmailVO email) {

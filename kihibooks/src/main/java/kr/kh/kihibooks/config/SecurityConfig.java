@@ -21,7 +21,7 @@ public class SecurityConfig {
         http.csrf(csrf ->csrf.disable())
         
             .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("account/mykihi")
+                .requestMatchers("account/mykihi", "edit/checkPw")
                 .authenticated()
                 .anyRequest()
                 .permitAll()  // 그 외 요청은 인증 필요
