@@ -61,7 +61,7 @@
 			flex-direction: column;
 			justify-content: space-between;
 			width: 200px;
-			padding: 35px 25px 25px 25px;
+			padding: 30px 25px 25px 25px;
 			background: #fff4ed;
 			vertical-align: top;
 			min-height: 250px;
@@ -191,6 +191,24 @@
 			color: #666;
 			font-size: 13px;
 		}
+
+		.nickname{
+			text-decoration: none;
+			color: #333;
+			font-size: 20px;
+			font-weight: 800;
+		}
+
+		.nickname:hover{
+			text-decoration: none;
+			color: #333;
+		}
+
+		.email{
+			font-size: 13px;
+			color: #736763;
+			font-weight: 500;
+		}
 	</style>
 </head>
 
@@ -226,8 +244,13 @@
 			<div class="mykihi-home">
 				<div class="account-info">
 					<div class="info-email">
-						<div th:text="${user.ur_nickname}+'님'" ></div>
-						<div th:text="${user.ur_email}">이메일</div>
+						<div>
+							<a class="nickname" th:href="@{/account/modify}">
+								<span th:text="${user.ur_nickname}+'님'" ></span>
+								<img src="/resources/static/img/next.png" alt="next" style="height: 15px;" class="mb-1">
+							</a>
+						</div>
+						<div class="email" th:text="${user.ur_email}"></div>
 					</div>
 					<form th:action="@{/logout}" method="post">
 						<button class="logoutBtn">로그아웃</button>

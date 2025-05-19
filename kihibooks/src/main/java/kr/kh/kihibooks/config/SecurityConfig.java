@@ -21,7 +21,7 @@ public class SecurityConfig {
         http.csrf(csrf ->csrf.disable())
         
             .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("account/mykihi")
+                .requestMatchers("account/mykihi", "edit/checkPw")
                 .authenticated()
                 .requestMatchers("/admin/**")
                 .hasRole(UserRole.ADMIN.name())
