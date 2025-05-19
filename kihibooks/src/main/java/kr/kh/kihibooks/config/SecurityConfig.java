@@ -23,6 +23,8 @@ public class SecurityConfig {
             .authorizeHttpRequests((requests) -> requests
                 .requestMatchers("account/mykihi")
                 .authenticated()
+                .requestMatchers("/admin/**")
+                .hasRole(UserRole.ADMIN.name())
                 .anyRequest()
                 .permitAll()  // 그 외 요청은 인증 필요
             )

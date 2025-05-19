@@ -20,8 +20,8 @@ public class CustomUser extends User {
 	}
 	public CustomUser(UserVO vo) {
 		super(	vo.getUr_email(),
-				vo.getUr_pw(), 
-				Arrays.asList(new SimpleGrantedAuthority(vo.getUr_authority())));
+				vo.getUr_pw(),
+				Arrays.asList(new SimpleGrantedAuthority("ROLE_"+vo.getUr_authority())));
 		this.user = vo;
 	}
 }

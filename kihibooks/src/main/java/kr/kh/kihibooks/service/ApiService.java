@@ -239,10 +239,10 @@ public class ApiService {
             // UserVO의 getUr_authority() 메소드가 String을 반환한다고 가정합니다.
             String authority = userVO.getUr_authority();
             // 권한 문자열 앞에 "ROLE_" 접두사 추가 (Spring Security 관례)
-            authorities.add(new SimpleGrantedAuthority(authority.toUpperCase())); // 예: "USER" -> "ROLE_USER"
+            authorities.add(new SimpleGrantedAuthority("ROLE_"+authority.toUpperCase())); // 예: "USER" -> "ROLE_USER"
         } else {
              // 권한 정보가 없는 경우 기본 권한을 추가할 수 있습니다. (예: ROLE_ANONYMOUS 또는 기본 ROLE_USER)
-             authorities.add(new SimpleGrantedAuthority("USER")); // 권한이 없다면 기본 USER 권한 부여
+             authorities.add(new SimpleGrantedAuthority("ROLE_USER")); // 권한이 없다면 기본 USER 권한 부여
         }
 
 
