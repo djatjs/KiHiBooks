@@ -259,14 +259,14 @@
 				<div class="asset-info">
 					<div class="table-wrapper">
 						<div class="table-cell">
-							<a th:href="@{/}" class="assetBtn point">
+							<a th:href="@{/order/checkout/point}" class="assetBtn point">
 								<div class="info-point mt-5">
 									<img src="/resources/static/img/P.png" alt="포인트" style="height: 30px">
 									<div class="bold mt-1">키히 포인트</div>
 									<div class="val bold" th:text="${user.ur_point} + '원'"></div>
 									</div>
 							</a>
-							<a class="charge" th:href="@{/}" style="color: #736763; font-weight: 600; font-size: 13px;">충전 내역
+							<a class="charge" th:href="@{/order/history_point}" style="color: #736763; font-weight: 600; font-size: 13px;">충전 내역
 								<span class="val">»</span>
 							</a>
 						</div>

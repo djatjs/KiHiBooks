@@ -316,6 +316,16 @@
 			border-top: 1px solid #e6e6e6;
 		}
 
+		.bottom-content>div:not(:first-of-type) {
+			padding-top: 8px;
+			padding-bottom: 8px;
+			border-top: 1px solid #e6e6e6;
+		}
+
+		.bottom-content>div:last-of-type {
+			border-bottom: 1px solid #e6e6e6;
+		}
+
 		.content-area {
 			padding-bottom: 8px;
 			display: flex;
@@ -501,14 +511,6 @@
 			margin-right: 3px;
 		}
 
-		.metadata {
-			color: #666;
-			font-size: 12px;
-			line-height: 1em;
-			margin: 0;
-			padding: 0;
-		}
-
 		.meta-wrapper {
 			font-size: 14px;
 			overflow-wrap: break-word;
@@ -606,7 +608,8 @@
 			display: inline-block;
 		}
 
-		.all-checkbox, .episode-check {
+		.all-checkbox,
+		.episode-check {
 			width: 18px;
 			height: 18px;
 			border: 1px solid #c2bcb9;
@@ -746,20 +749,20 @@
 			justify-content: space-between;
 		}
 
-		.table-wrap{
+		.table-wrap {
 			border-bottom: none;
 			display: table;
 			width: 100%;
 		}
 
-		.epi-checkbox{
+		.epi-checkbox {
 			vertical-align: middle;
 			width: 28px;
 			text-align: left;
 			display: table-cell;
 		}
 
-		.epi-info{
+		.epi-info {
 			margin: 0;
 			position: relative;
 			vertical-align: middle;
@@ -767,7 +770,7 @@
 			display: table-cell;
 		}
 
-		.info-title-with-badge{
+		.info-title-with-badge {
 			margin: 0;
 			padding: 0;
 			margin-right: 5px;
@@ -777,18 +780,19 @@
 			font-weight: 700;
 		}
 
-		.badge-list{
+		.badge-list {
 			margin-right: 1px;
 			float: left;
 			display: block;
 		}
 
-		.free-badge{
+		.free-badge {
 			float: left;
 			margin-right: 2px;
+			display: block;
 		}
 
-		.epi-title{
+		.epi-title {
 			color: #000;
 			font-size: 13px;
 			line-height: 16px;
@@ -796,30 +800,25 @@
 			margin-bottom: 8px;
 		}
 
-		.info-list-wrapper{
+		.info-list-wrapper {
 			list-style-type: none;
 			margin: 0;
 			padding: 0;
 			display: flex;
 		}
 
-		.info-epi-date{
-			padding-right: 6px;
+		.info-epi-date {
+			padding-right: 3px;
 			position: relative;
 			margin-top: 4px;
 		}
 
-		.info-epi-date::before{
-			margin: 0 5px;
-			width: 1px;
-		}
-
-		.info-page-cnt{
-			padding-left: 6px;
+		.info-page-cnt {
+			padding: 0 3px;
 			position: relative;
 		}
-		
-		.epi-label{
+
+		.epi-label {
 			position: absolute;
 			width: 100%;
 			height: 100%;
@@ -827,9 +826,17 @@
 			left: 0;
 			vertical-align: middle;
 			cursor: pointer;
+			z-index: 3;
+			transition: color .2x;
 		}
 
-		.direct-view-wrapper{
+		.epi-label:hover {
+			color: #4d4440;
+		}
+
+
+
+		.direct-view-wrapper {
 			vertical-align: middle;
 			padding: 7px 10px;
 			text-align: right;
@@ -837,12 +844,688 @@
 			display: table-cell;
 		}
 
-		.direct-view-btn{
+		.direct-view-btn {
 			font-size: 13px;
 			padding: 8px 14px;
 			margin: 7px 0 7px 4px;
 			position: relative;
 			z-index: 5;
+			color: #918580;
+			box-sizing: border-box;
+			border-radius: 4px;
+			font-weight: 700;
+			display: inline-block;
+			text-align: center;
+			cursor: pointer;
+			background: #fff;
+			border: 1px solid #d9d2d1;
+		}
+
+		.direct-view-btn:hover {
+			text-decoration: none;
+			color: #918580;
+		}
+
+		.list-more-button {
+			position: relative;
+		}
+
+		.list-more-button::before {
+			content: '';
+			display: block;
+			position: absolute;
+			width: 100%;
+			height: 1px;
+			background: #fff;
+			top: -1px;
+			left: 0;
+			z-index: 1;
+		}
+
+		.more-button {
+			padding: 16px 0 14px 0;
+			width: 100%;
+			height: 56px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: relative;
+			border-radius: 6px;
+			border: 1px solid #ccc;
+			margin-top: 0;
+			background: #fff;
+		}
+
+		.more-button-text {
+			display: flex;
+			align-items: center;
+			font-size: 16px;
+			font-weight: 700;
+			color: #141414;
+			line-height: 16px;
+		}
+
+		.upper-wrapper {
+			font-size: 14px;
+			overflow-wrap: break-word;
+			word-break: break-word;
+			line-height: normal;
+			margin: 0;
+			padding: 0;
+			color: #000;
+			font-weight: 400;
+		}
+
+		.upper-wrap {
+			padding: 0 30px;
+			box-sizing: border-box;
+		}
+
+		.upper {
+			display: grid;
+			gap: 8px;
+			margin-bottom: 80px;
+			box-sizing: border-box;
+		}
+
+		.up-wrap {
+			padding: 16px 20px;
+			border: 1px solid #e6e6e6;
+			background: #fafafa;
+			font-size: 15px;
+			line-height: 24px;
+			text-align: left;
+			border-radius: 4px;
+		}
+
+		.upper-text {
+			color: #555;
+			box-sizing: border-box;
+		}
+
+		.keyword-wrapper {
+			font-size: 14px;
+			overflow-wrap: break-word;
+			word-break: break-word;
+			line-height: normal;
+			margin: 0;
+			padding: 0;
+			color: #fff;
+			font-weight: 400;
+		}
+
+		.keyword-wrap {
+			padding: 0 30px;
+		}
+
+		.keyword-title {
+			display: flex;
+			align-items: center;
+			color: #141414;
+			font-size: 22px;
+			font-weight: 700;
+			line-height: 26px;
+			padding-top: 6px;
+			padding-bottom: 16px;
+		}
+
+		.keyword-list {
+			display: flex;
+			flex-wrap: wrap;
+			margin: -3px;
+			padding-bottom: 16px;
+		}
+
+		.keyword {
+			padding: 3px;
+		}
+
+		.keyword-btn {
+			background: #f0f0f0;
+			border-radius: 4px;
+			padding: 8px 10px;
+			color: #141414;
+			cursor: pointer;
+			appearance: none;
+			box-shadow: none;
+			border: 0;
+			margin: 0;
+		}
+
+		.keyword-name {
+			position: relative;
+			display: flex;
+			font-size: 15px;
+			font-weight: 600;
+			line-height: 18px;
+		}
+
+		.other-keyword {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			padding: 8px 9px 8px 13px;
+		}
+
+		.other-kw {
+			color: #787878;
+			font-size: 16px;
+			font-weight: 700;
+			line-height: 18px;
+		}
+
+		.other-keyword:hover {
+			text-decoration: none;
+		}
+
+		.description-wrapper {
+			font-size: 14px;
+			overflow-wrap: break-word;
+			word-break: break-word;
+			line-height: normal;
+			margin: 0;
+			padding: 0;
+			color: #000;
+			font-weight: 400;
+		}
+
+		.description-wrap {
+			padding: 0 30px;
+		}
+
+		.d-book-title {
+			color: #141414;
+			font-size: 20px;
+			font-weight: 500;
+			padding: 6px 0 3px;
+		}
+
+		.wrapper-title {
+			color: #141414;
+			font-size: 22px;
+			font-weight: 700;
+			line-height: 26px;
+			padding-top: 6px;
+			padding-bottom: 16px;
+		}
+
+		.descript-wrapper {
+			position: relative;
+			color: #555;
+			font-size: 15px;
+			font-weight: 400;
+			line-height: 23px;
+			text-align: left;
+		}
+
+		.descript-wrap {
+			position: relative;
+			max-height: none;
+			padding: 0px;
+			overflow: hidden;
+			font-size: 15px;
+			font-weight: 400;
+			line-height: 24px;
+			text-align: left;
+			color: rgb(85, 85, 85);
+		}
+
+		.descript-wrap::after {
+			content: '';
+			position: absolute;
+			bottom: 0px;
+			left: 0px;
+			right: 0px;
+			height: 216px;
+			user-select: none;
+			pointer-events: none;
+			background: none;
+		}
+
+		.author-wrapper {
+			font-size: 14px;
+			overflow-wrap: break-word;
+			word-break: break-word;
+			line-height: normal;
+			margin: 0;
+			padding: 0;
+			color: #000;
+			font-weight: 400;
+		}
+
+		.author-wrap {
+			padding: 0 30px;
+		}
+
+		.au-wrapper {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.au-wrap {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			row-gap: 8px;
+			margin-bottom: 16px;
+		}
+
+		.au-name {
+			display: flex;
+			align-items: flex-end;
+			max-width: 100%;
+			flex-wrap: wrap;
+			gap: 4px;
+			margin-right: 10px;
+		}
+
+		.au-name-text {
+			font-size: 22px;
+			line-height: 26px;
+			font-weight: 700;
+			flex-shrink: 0;
+			color: #141414;
+		}
+
+		.au-name:hover {
+			text-decoration: none;
+		}
+
+		.au-profile {
+			margin-bottom: 0px;
+			display: flex;
+			color: #555;
+			font-size: 15px;
+			line-height: 18px;
+			font-weight: 400;
+		}
+
+		.profile-text {
+			display: inline-block;
+			color: #a5a5a5;
+			min-width: 26px;
+			font-weight: 600;
+			flex: 0 0 auto;
+			margin-right: 20px;
+		}
+
+		.au-profile-text {
+			display: inline-block;
+		}
+
+		.au-text {
+			margin-bottom: 8px;
+			display: block;
+		}
+
+		.au-update {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			padding: 12px 0;
+			border-bottom: 1px solid #f0f0f0;
+			font-weight: 400;
+			font-size: 14px;
+			line-height: 17px;
+			color: #787878;
+		}
+
+		.au-update-date {
+			color: #a5a5a5;
+		}
+
+		.au-other-book {
+			padding-top: 16px;
+		}
+
+		.au-other-book-title {
+			display: flex;
+			justify-content: space-between;
+			padding: 7px 0 11px;
+			font-weight: 700;
+			font-size: 18px;
+			line-height: 21px;
+			columns: #141414;
+		}
+
+		.au-other-more {
+			font-size: 16px;
+			font-weight: 500;
+			line-height: 19px;
+			color: #a5a5a5;
+		}
+
+		.other-book-list {
+			position: relative;
+			width: 100%;
+		}
+
+		.book-list {
+			display: flex;
+			flex-wrap: nowrap;
+			overflow: hidden;
+		}
+
+		.books {
+			display: flex;
+			flex: 1 0 auto;
+		}
+
+		.books-ul {
+			display: flex;
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		.book-li {
+			width: 141px;
+			min-height: 298px;
+			flex: 0 0 auto;
+			margin-right: 6px;
+		}
+
+		.book {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.book-img {
+			position: relative;
+			align-items: stretch;
+			width: 100%;
+			padding-bottom: 144.80519480519482%;
+		}
+
+		.bo-img {
+			border-radius: 4px;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			max-height: 100%;
+			cursor: pointer;
+		}
+
+		.bo-image {
+			position: relative;
+			width: 100%;
+			padding-bottom: 144.80519480519482%;
+			inset: 0;
+			border-radius: 4px;
+			outline: 1px solid rgba(0, 0, 0, 0.04);
+			outline-offset: -1px;
+			background: rgba(0, 0, 0, 0.04);
+		}
+
+		.book-info {
+			margin-top: 10px;
+			min-height: 84px;
+			padding-right: 10px;
+			width: 100%;
+		}
+
+		.bo-title {
+			display: inline-flex;
+		}
+
+		.b-title {
+			display: -webkit-box;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			word-wrap: break-word;
+			white-space: normal;
+			max-height: clac(19px * 2);
+			line-height: 19px;
+			font-size: 16px;
+			word-break: break-all;
+			color: #141414;
+			font-weight: 500;
+		}
+
+		.b-title:hover {
+			text-decoration: none;
+			color: #141414;
+		}
+
+		.book-author {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.bo-author {
+			margin-top: 6px;
+			font-size: 14px;
+			line-height: 17px;
+			display: block;
+			color: #787878;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			overflow-wrap: break-word;
+		}
+
+		.b-author {
+			color: #787878;
+		}
+
+		.b-author:hover {
+			color: #b8b8b8;
+			text-decoration: none;
+		}
+
+		.bo-rating {
+			margin-top: 7px;
+			font-size: 13px;
+			line-height: 16px;
+			display: flex;
+			align-items: center;
+			color: #dc3232;
+			overflow-wrap: break-word;
+		}
+
+		.b-rating-cnt {
+			margin-left: 1px;
+			color: #787878;
+		}
+
+		.book-click {
+			display: none;
+			position: absolute;
+			inset: 0;
+			text-decoration: none;
+		}
+
+		.review-wrapper {
+			font-size: 14px;
+			overflow-wrap: break-word;
+			word-break: break-word;
+			line-height: normal;
+			margin: 0;
+			padding: 0;
+			color: #000;
+			font-weight: 400;
+		}
+
+		.review-wrap {
+			padding: 0 30px;
+		}
+
+		.rv-wrapper {
+			width: 100%;
+			margin: 80px 0;
+			color: #141414;
+		}
+
+		.rv-overview {
+			display: flex;
+			padding: 8px 0 15px;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.rv-rating {
+			display: flex;
+			align-items: center;
+		}
+
+		.rv-rating-text {
+			color: #000;
+			font-size: 48px;
+			font-weight: 600;
+			line-height: 57px;
+		}
+
+		.rv-rating-img {
+			display: grid;
+			gap: 4px;
+			align-items: center;
+			margin-left: 12px;
+			margin-bottom: 8px;
+		}
+
+		.rating-img-text {
+			font-size: 15px;
+			font-weight: 700;
+			line-height: 17px;
+		}
+
+		.rating-star {
+			display: flex;
+		}
+
+		.rating-star>img {
+			margin-right: 4px;
+		}
+
+		.rv-rating-cnt {
+			display: grid;
+			justify-content: end;
+			gap: 4px;
+			color: #787878;
+			text-align: right;
+			font-size: 15px;
+			line-height: 18px;
+		}
+
+		.rating-cnt {
+			font-weight: 500;
+		}
+
+		.rating-bunpo {
+			display: flex;
+			align-items: center;
+			position: relative;
+			cursor: pointer;
+			user-select: none;
+		}
+
+		.bunpo-check {
+			display: none;
+		}
+
+		.bunpo-text {
+			font-weight: 600;
+		}
+
+		.bunpo-table {
+			pointer-events: none;
+			opacity: 1;
+			position: absolute;
+			top: calc(100% + 6px);
+			right: 0;
+			z-index: 10;
+			background: #fff;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			color: #787878;
+			cursor: default;
+			font-size: 12px;
+			font-weight: 600;
+			line-height: 14px;
+			transition: opacity 0.3s;
+			user-select: text;
+			cursor: default;
+		}
+
+		.rate-bunpo {
+			display: grid;
+			grid-template-columns: 9px 1fr;
+			align-items: center;
+			gap: 6px 10px;
+			padding: 12px 16px;
+			text-align: center;
+		}
+
+		.bunpo {
+			width: 72px;
+			height: 6px;
+			background: #e6e6e6;
+			border-radius: 999px;
+			overflow: hidden;
+		}
+
+		.rate-bunpo-percent {
+			height: 100%;
+			background: #e54c43;
+		}
+
+		.rv-record{
+			padding: 0 0 30px;
+		}
+
+		.rv-record-star{
+			display: grid;
+			justify-content: center;
+			gap: 20px;
+			border-top: 1px solid #e6e6e6;
+			margin: 0;
+			padding: 40px;
+		}
+
+		.record-star-text{
+			color: #a5a5a5;
+			text-align: center;
+			font-size: 15px;
+			font-weight: 500;
+			line-height: 18px;
+		}
+
+		.record-star{
+			display: flex;
+			flex-direction: row-reverse;
+		}
+
+		.record-star>label>input[type='radio']{
+			display: none;
+		}
+
+		.record-star label{
+			cursor: pointer;
+			position: relative;
+		}
+
+		.record-star input{
+			display: noen;
+		}
+
+		.record-star-img{
+			filter: brightness(0) saturate(100%) invert(90%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+			height: 48px;
+			margin: 0 3px;
+		}
+
+		.record-star label:hover~label .record-star-img,
+		.record-star label:hover .record-star-img,
+		.record-star-img.selected {
+			filter: brightness(0) saturate(100%) invert(16%) sepia(98%) saturate(2874%) hue-rotate(-5deg) brightness(92%) contrast(95%);
 		}
 	</style>
 </head>
@@ -951,7 +1634,7 @@
 													<div class="wait-for-free">
 														<span class="wff-text">1일 마다 1편 기다리면 무료</span>
 														<button class="infoBtn">
-															<img src="resources/static/img/info.png" alt="i아이콘" style="height: 20px;">
+															<img src="resources/static/img/info.png" alt="i아이콘" style="height: 18px;">
 														</button>
 													</div>
 													<div class="wff-state">
@@ -967,7 +1650,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="metadata">
+						<div id="metadata">
 							<div class="meta-wrapper">
 								<div class="meata-wrap">
 									<div class="meta">
@@ -1048,15 +1731,15 @@
 																<ul class="info-list-wrapper">
 																	<li class="info-ep-date">2023.05.02</li>
 																	<!-- 아마도 전체 페이지 들어가야할듯? ↓ -->
-																	<li class="info-page-cnt">약 4.5천 자</li>
+																	<li class="info-page-cnt">| 약 4.5천 자</li>
 																	<!-- 소장한 경우만 아래 배지 추가 -->
-																	<li class="info-status">소장</li>
+																	<li class="info-status">| 소장</li>
 																</ul>
 															</div>
 														</div>
-													</div>
-													<div class="direct-view-wrapper">
-														<a th:href="@{/}" data-book-id="ep_code" class="direct-view-btn">보기</a>
+														<div class="direct-view-wrapper">
+															<a th:href="@{/}" data-book-id="ep_code" class="direct-view-btn">보기</a>
+														</div>
 													</div>
 												</div>
 											</li>
@@ -1065,16 +1748,426 @@
 									<div class="list-more-button">
 										<button type="button" class="more-button">
 											<span class="more-button-text">더보기</span>
-											<span class="more-button-icon">∨</span>
+											<img src="/resources/static/img/expand.png" alt="더보기" style="height: 20px;">
 										</button>
 									</div>
 								</div>
 							</form>
 						</div>
+						<div>
+							<div id="UpperPanelList">
+								<div class="upper-wrapper">
+									<div class="upper-wrap">
+										<div class="upper">
+											<div class="up-wrap">
+												<div class="upper-text">
+													본 도서는 출판사의 요청으로 무료 회차를 부분별로 서비스하고 있습니다.
+													<br>
+													기본 무료 회차는 총 27화(1~25화, 246화, 388화) 입니다. 도서 이용에 참고 부탁드립니다.
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="keyWord">
+								<div class="keyword-wrapper">
+									<div class="keyword-wrap">
+										<div style="margin-bottom: 80px;">
+											<h2 class="keyword-title">이 작품의 키워드</h2>
+											<div class="keyword-list">
+												<div class="keyword">
+													<button class="keyword-btn">
+														<span class="keyword-name">
+															<span>#현대판타지</span>
+														</span>
+													</button>
+												</div>
+											</div>
+											<a class="other-keyword" th:href="@{/}">
+												<span class="other-kw">다른 키워드로 검색</span>
+												<img class="ml-1" src="/resources/static/img/next.png" alt=">" style="height: 13px;">
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="description">
+								<div class="description-wrapper">
+									<div class="description-wrap">
+										<div style="margin-bottom: 80px;">
+											<div class="d-book-title">이세계 착각 헌터</div>
+											<h2 class="wrapper-title">작품 소개</h2>
+											<div class="descript-wrapper">
+												<div class="descript-wrap">
+													<div>
+														<div>
+															[나는 F급 헌터로 환생했다.
+															<br>
+															...쟤들이 그렇게 취급을 안 해줘서 문제지.]
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="author">
+								<div class="author-wrapper">
+									<div class="author-wrap">
+										<div style="margin-bottom: 80px;">
+											<h2 class="wrapper-title">작가 프로필</h2>
+											<div>
+												<div class="au-wrapper">
+													<div class="au-wrap">
+														<a th:href="@{/}" class="au-name">
+															<span class="au-name-text">대대원</span>
+														</a>
+													</div>
+													<div class="au-profile">
+														<span class="profile-text">소개</span>
+														<div class="au-profile-text">
+															<div class="au-text">소개글~</div>
+														</div>
+													</div>
+												</div>
+												<div class="au-update">
+													<div class="au-update-date">2025.01.08 업데이트</div>
+												</div>
+												<div class="au-other-book">
+													<div class="au-other-book-title">
+														작가의 대표 작품
+														<a th:href="@{/}" class="au-other-more">더보기</a>
+													</div>
+													<div class="other-books">
+														<div class="other-book-list">
+															<div class="book-list">
+																<div class="books">
+																	<ul class="books-ul">
+																		<li class="book-li">
+																			<div class="book">
+																				<div class="book-img">
+																					<a th:href="@{/}" class="bo-img">
+																						<img src="" alt="도서 이미지">
+																						<span class="bo-image"></span>
+																					</a>
+																				</div>
+																				<div class="book-info">
+																					<div class="bo-title">
+																						<!-- bo-img와 동일한 링크 -->
+																						<a th:href="@{/}" class="b-title">이세계 착각 헌터</a>
+																					</div>
+																					<div class="book-author">
+																						<span class="bo-author">
+																							<a th:href="@{/}" class="b-author">대대원</a>
+																						</span>
+																						<span class="bo-rating">
+																							<img class="star-img mb-1" src="/resources/static/img/star.png" alt="별"
+																								style="height: 12px; margin-right: 2px;">4.9
+																							<span class="b-rating-cnt">(12,996)</span>
+																						</span>
+																					</div>
+																				</div>
+																				<!-- bo-img 와 동일한 링크 -->
+																				<a th:href="@{/}" class="book-click"></a>
+																			</div>
+																		</li>
+																	</ul>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="review">
+								<div class="review-wrapper">
+									<div class="review-wrap">
+										<div class="rv-wrapper">
+											<h2 class="wrapper-title">리뷰</h2>
+											<div class="rv-overview">
+												<div class="rv-rating">
+													<h3 class="rv-rating-text">4.9</h3>
+													<div class="rv-rating-img">
+														<span class="rating-img-text">구매자 별점</span>
+														<div class="rating-star">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 15px;">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 15px;">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 15px;">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 15px;">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 15px;">
+														</div>
+													</div>
+												</div>
+												<div class="rv-rating-cnt">
+													<div class="rating-cnt">12,996명 평가</div>
+													<label class="rating-bunpo">
+														<input type="checkbox" class="bunpo-check">
+														<span class="bunpo-text">별점 분포 보기</span>
+														<img class="ml-2" src="/resources/static/img/down-triangle.png" alt="아래 삼각형"
+															style="height: 10px;">
+														<button type="button" class="bunpo-table">
+															<div class="rate-bunpo">
+																<div>5</div>
+																<div class="bunpo">
+																	<!-- width에 별점 비율 값 넣으면 됨 -->
+																	<div style="width: 92%;" class="rate-bunpo-percent"></div>
+																</div>
+																<div>4</div>
+																<div class="bunpo">
+																	<!-- width에 별점 비율 값 넣으면 됨 -->
+																	<div style="width: 5%;" class="rate-bunpo-percent"></div>
+																</div>
+																<div>3</div>
+																<div class="bunpo">
+																	<!-- width에 별점 비율 값 넣으면 됨 -->
+																	<div style="width: 1%;" class="rate-bunpo-percent"></div>
+																</div>
+																<div>2</div>
+																<div class="bunpo">
+																	<!-- width에 별점 비율 값 넣으면 됨 -->
+																	<div style="width: 0%;" class="rate-bunpo-percent"></div>
+																</div>
+																<div>1</div>
+																<div class="bunpo">
+																	<!-- width에 별점 비율 값 넣으면 됨 -->
+																	<div style="width: 0%;" class="rate-bunpo-percent"></div>
+																</div>
+															</div>
+														</button>
+													</label>
+												</div>
+											</div>
+											<div class="rv-record">
+												<div class="rv-record-star">
+													<h4 class="record-star-text">이 작품을 평가해 주세요!</h4>
+													<div class="record-star">
+														<label>
+															<input type="radio" name="rating" value="2">
+															<img src="/resources/static/img/star.png" alt="별" class="record-star-img">
+														</label>
+														<label>
+															<input type="radio" name="rating" value="4">
+															<img src="/resources/static/img/star.png" alt="별" class="record-star-img">
+														</label>
+														<label>
+															<input type="radio" name="rating" value="6">
+															<img src="/resources/static/img/star.png" alt="별" class="record-star-img">
+														</label>
+														<label>
+															<input type="radio" name="rating" value="8">
+															<img src="/resources/static/img/star.png" alt="별" class="record-star-img">
+														</label>
+														<label>
+															<input type="radio" name="rating" value="10">
+															<img src="/resources/static/img/star.png" alt="별" class="record-star-img">
+														</label>
+													</div>
+												</div>
+												<div class="rv-text-area">
+													<textarea placeholder="리뷰를 10자 이상 입력해 주세요. 광고 및 욕설, 타인을 비방하는 문구는 비공개될 수 있습니다."
+														class="rv-textarea"></textarea>
+													<form class="rv-regist-form">
+														<label class="spoiler-label">
+															<input type="checkbox" class="spoiler-check">
+															<span class="spoiler-text">스포일러가 있습니다.</span>
+														</label>
+														<button type="submit" class="rv-regist-btn">리뷰 등록</button>
+													</form>
+												</div>
+												<div class="rv-note">
+													<input type="checkbox" id="note_check" class="rv-note-check">
+													<label for="note_check" class="note-check-label">
+														<span>리뷰 작성 유의사항</span>
+														<img src="/resources/static/img/expand.png" alt="펼치기" style="height: 15px;">
+													</label>
+													<div class="note-content">
+														<strong>건전한 리뷰 정착 및 양질의 리뷰를 위해 아래 해당하는 리뷰는 비공개 조치될 수 있음을 안내드립니다.</strong>
+														<ol>
+															<li>타인에게 불쾌감을 주는 욕설</li>
+															<li>비속어가 타인을 비방하는 내용</li>
+															<li>특정 종교, 민족, 계층을 비방하는 내용</li>
+															<li>해당 작품의 줄거리나 키히 서비스 이용과 관련이 없는 내용</li>
+															<li>의미를 알 수 없는 내용</li>
+															<li>광고 및 반복적인 글을 게시하여 서비스 품질을 떨어트리는 내용</li>
+															<li>저작권상 문제의 소지가 있는 내용</li>
+															<li>다른 리뷰에 대한 반박이나 논쟁을 유발하는 내용</li>
+														</ol>
+														<div>* 결말을 예상할 수 있는 리뷰는 자제하여 주시기 바랍니다.</div>
+														<strong>이 외에도 건전한 리뷰 문화 형성을 위한 운영 목적과 취지에 맞지 않는 내용은 담당자에 의해 리뷰가 비공개 처리될 수 있습니다.</strong>
+													</div>
+												</div>
+											</div>
+											<div class="rv-sort-btn">
+												<button type="button" class="buyer" aria-pressed="true">
+													<span>구매자</span>
+													<span>5,124</span>
+												</button>
+												<button type="button" class="all" aria-pressed="false">
+													<span>전체</span>
+													<span>5,551</span>
+												</button>
+											</div>
+											<div class="rv-arrange-btn">
+												<button type="button" aria-pressed="true">최신순</button>
+												<button type="button" aria-pressed="false">공감순</button>
+												<button type="button" aria-pressed="false">별점 높은순</button>
+												<button type="button" aria-pressed="false">별점 낮은순</button>
+											</div>
+											<ul class="rv-ul">
+												<li class="rv-li">
+													<div class="rv-rate">
+														<img src="/resources/static/img/star.png" alt="별" style="height: 10px;">
+														<img src="/resources/static/img/star.png" alt="별" style="height: 10px;">
+														<img src="/resources/static/img/star.png" alt="별" style="height: 10px;">
+														<img src="/resources/static/img/star.png" alt="별" style="height: 10px;">
+														<img src="/resources/static/img/star.png" alt="별" style="height: 10px;">
+													</div>
+													<div class="rv-content">
+														<p class="content-text">433화보고 하차함.</p>
+													</div>
+													<div class="rv-bottom">
+														<div class="rv-writer-date">
+															<div class="rv-writer">
+																<img src="/resources/static/img/buyer.png" alt="구매자 배지" style="height: 35px;">
+																<div class="rv-nick">nickname</div>
+															</div>
+															<div class="rv-date">
+																<div class="rv-date-text">2025.05.18</div>
+															</div>
+														</div>
+														<div class="rv-right-btn">
+															<button type="button" class="rv-comment">
+																댓글
+																<span class="rv-comment-cnt">0</span>
+															</button>
+															<button type="button" class="rv-like">
+																<img src="/resources/static/img/thumb_up.png" alt="공감 버튼" style="height: 18px;">
+																<span class="rv-like-cnt">0</span>
+															</button>
+														</div>
+													</div>
+												</li>
+											</ul>
+											<div class="review-more-btn">
+												<button type="button" class="rv-more-btn">
+													<span class="rmb-text">
+														더보기
+														<img src="/resources/static/img/expand.png" alt="더보기 버튼" style="height: 20px;">
+													</span>
+												</button>
+											</div>
+											<div class="buyer-standard">
+												<input type="checkbox" id="buyer_check" class="buyer-check">
+												<label for="buyer_check" class="standard-title">
+													<span>구매자 표시 기준은 무엇인가요?</span>
+												</label>
+												<div class="standard-content">
+													<strong>'구매자' 표시는 유료 작품 결제 후 다운로드 한 경우에만 표시됩니다.</strong>
+													<dl class="standard-dl">
+														<dt>무료 작품 (프로모션 등으로 무료로 전환된 작품 포함)</dt>
+														<dd>'구매자'로 표시되지 않습니다.</dd>
+														<dt>시리즈 내 무료 작품</dt>
+														<dd>'구매자'로 표시되지 않습니다. 하지만 같은 시리즈의 유료 작품을 결제한 뒤 리뷰를 수정하거나 재등록하면 '구매자'로 표시됩니다.</dd>
+														<dt>영구 삭제</dt>
+														<dd>작품을 영구 삭제해도 '구매자' 표시는 남아있습니다.</dd>
+														<dt>결제 취소</dt>
+														<dd>'구매자' 표시가 자동으로 사라집니다.</dd>
+													</dl>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="recommend-list">
+								<div class="recommend-wrapper">
+									<div class="recommend-wrap">
+										<div>
+											<h2 class="wrap-title">
+												<span>현대 판타지 베스트</span>
+												<a th:href="@{/}" class="best-more-btn">더보기</a>
+											</h2>
+											<div class="best-list-wrapper">
+												<div class="best-list-wrap">
+													<div class="best-list">
+														<div class="bst-list">
+															<ul class="bst-ul">
+																<li class="bst-li">
+																	<div class="bst-book">
+																		<div class="b-book-img-wrap">
+																			<a th:href="@{/}" class="b-book-img">
+																				<img src="" alt="책 표지">
+																			</a>
+																		</div>
+																		<div class="b-book-info-wrap">
+																			<div class="b-book-title">
+																				<a th:href="@{/}" class="bb-title">이세계 착각 헌터</a>
+																			</div>
+																			<div class="b-book-info">
+																				<span class="b-book-author">
+																					<a th:href="b-book-author-name">대대원</a>
+																				</span>
+																				<span class="b-book-rating">
+																					<img class="b-rating-img" src="/resources/static/img/star.png" alt="별점"
+																						style="height: 15px;">4.9
+																					<span class="b-rating-cnt">(12,996)</span>
+																				</span>
+																			</div>
+																		</div>
+																	</div>
+																</li>
+															</ul>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="aside">
+						<div class="side-bar">
+							<a th:href="@{/}" class="side-banner">
+								<img src="" alt="배너 이미지" class="banner-img">
+							</a>
+						</div>
+						<div class="best-list-top10">
+							<a th:href="@{/}" class="best-list-title">
+								현대 판타지 베스트
+								<img style="height: 10px;" src="/resources/static/img/next.png" alt=">">
+							</a>
+							<ol class="best-list-ol">
+								<li>
+									<a th:href="@{/}" class="b-list">
+										<span class="b-list-title">이세계 착각 헌터</span>
+									</a>
+								</li>
+							</ol>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		<script>
+			const stars = document.querySelectorAll('.record-star label');
+
+			stars.forEach((star, index)=>{
+				star.addEventListener('click', ()=>{
+					stars.forEach(s=> s.querySelector('img').classList.remove('selected'));
+
+					for(let i = index; i < stars.length; i++) {
+						stars[i].querySelector('img').classList.add('selected');
+					}
+				});
+			});
+		</script>
 	</main>
 </body>
 
