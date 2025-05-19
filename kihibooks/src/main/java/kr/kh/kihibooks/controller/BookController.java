@@ -80,12 +80,15 @@ public class BookController {
         @RequestParam(required = false) Boolean fin,
         Model model) {
 
-        String adultYN = (adult != null && adult) ? "Y" : null;
-        String finYN = (fin != null && fin) ? "Y" : null;
+        String adultYN = (adult == null) ? null : (adult ? "Y" : "N");
+        String finYN = (fin == null) ? null : (fin ? "Y" : "N");
         
         List<BookVO> bookList = bookService.getFilteredNewBooks(order, adultYN, finYN);
         model.addAttribute("bookList", bookList);
-        model.addAttribute("order", order); // 최신순, 인기순 정렬 용도
+        model.addAttribute("order", order); // 인기순, 최신순 구별하기 위한 용도
+        model.addAttribute("adult", adult);
+        model.addAttribute("fin", fin);
+        System.out.println(order + adultYN + finYN);
         return "book/new-released";
     }
 

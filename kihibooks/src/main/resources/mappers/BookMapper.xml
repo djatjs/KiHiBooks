@@ -46,10 +46,10 @@
             author ON book.BO_AU_NUM = author.AU_NUM
         WHERE 
             BO_PUBLISH_DATE >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-        <if test="adultYN != null">
+        <if test="adultYN != null and adultYN != ''">
             AND BO_ADULT = #{adultYN}
         </if>
-        <if test="finYN != null">
+        <if test="finYN != null and finYN != ''">
             AND BO_FIN = #{finYN}
         </if>
         <choose>
