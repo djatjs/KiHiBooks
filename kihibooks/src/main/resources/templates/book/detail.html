@@ -6,6 +6,20 @@
 	<meta charset="UTF-8">
 	<title>KiHiBooks</title>
 	<style>
+		.page-detail {
+			width: 1170px;
+			padding: 0;
+			box-sizing: border-box;
+			margin: 0 auto;
+			border-top: none;
+		}
+
+		.detail-wrap {
+			display: flex;
+			width: 100%;
+
+		}
+
 		.detail-content {
 			width: 100%;
 			background: #fff;
@@ -166,8 +180,20 @@
 			padding: 0;
 		}
 
-		.star-img {
+		.red {
 			filter: brightness(0) saturate(100%) invert(16%) sepia(98%) saturate(2874%) hue-rotate(-5deg) brightness(92%) contrast(95%);
+		}
+
+		.gray {
+			filter: brightness(0) saturate(100%) invert(90%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+		}
+
+		.orange {
+			filter: brightness(0) saturate(110%) invert(61%) sepia(60%) saturate(387%) hue-rotate(328deg) brightness(101%) contrast(101%);
+		}
+
+		.dark-gray {
+			filter: brightness(0) saturate(100%) invert(56%) sepia(6%) saturate(275%) hue-rotate(6deg) brightness(95%) contrast(84%);
 		}
 
 		.rate-score {
@@ -293,7 +319,6 @@
 		}
 
 		.plusBtn {
-			filter: brightness(0) saturate(110%) invert(61%) sepia(60%) saturate(387%) hue-rotate(328deg) brightness(101%) contrast(101%);
 			margin-top: 2px;
 		}
 
@@ -519,10 +544,6 @@
 			margin: 0;
 			padding: 0;
 			color: black;
-		}
-
-		.meta-wrap {
-			padding: 0 30px;
 		}
 
 		.meta {
@@ -1477,11 +1498,11 @@
 			background: #e54c43;
 		}
 
-		.rv-record{
+		.rv-record {
 			padding: 0 0 30px;
 		}
 
-		.rv-record-star{
+		.rv-record-star {
 			display: grid;
 			justify-content: center;
 			gap: 20px;
@@ -1490,7 +1511,7 @@
 			padding: 40px;
 		}
 
-		.record-star-text{
+		.record-star-text {
 			color: #a5a5a5;
 			text-align: center;
 			font-size: 15px;
@@ -1498,26 +1519,25 @@
 			line-height: 18px;
 		}
 
-		.record-star{
+		.record-star {
 			display: flex;
 			flex-direction: row-reverse;
 		}
 
-		.record-star>label>input[type='radio']{
+		.record-star>label>input[type='radio'] {
 			display: none;
 		}
 
-		.record-star label{
+		.record-star label {
 			cursor: pointer;
 			position: relative;
 		}
 
-		.record-star input{
+		.record-star input {
 			display: noen;
 		}
 
-		.record-star-img{
-			filter: brightness(0) saturate(100%) invert(90%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+		.record-star-img {
 			height: 48px;
 			margin: 0 3px;
 		}
@@ -1527,601 +1547,1244 @@
 		.record-star-img.selected {
 			filter: brightness(0) saturate(100%) invert(16%) sepia(98%) saturate(2874%) hue-rotate(-5deg) brightness(92%) contrast(95%);
 		}
+
+		.rv-text-area {
+			display: grid;
+			gap: 10px;
+			margin: 0;
+			padding: 14px 16px 16px;
+			border-radius: 6px;
+			border: 1px solid #e6e6e6;
+		}
+
+		.rv-textarea {
+			opacity: 1;
+			height: 72px !important;
+			width: 100%;
+			min-height: 72px;
+			border: none;
+			resize: vertical;
+			font-size: 15px;
+			line-height: 24px;
+		}
+
+		.rv-textarea::placeholder {
+			color: #b8b8b8;
+		}
+
+		.rv-regist-form {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			width: 100%;
+		}
+
+		.spoiler-label {
+			display: flex;
+			align-items: center;
+			color: #787878;
+			cursor: pointer;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 17px;
+		}
+
+		.spoiler-text {
+			margin-left: 6px;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 17px;
+		}
+
+		.rv-regist-btn {
+			background: #ccc;
+			cursor: default;
+			padding: 9px 18px 8px;
+			border-radius: 4px;
+			color: white;
+			font-size: 14px;
+			font-weight: 600;
+			line-height: 17px;
+			border: 0;
+		}
+
+		.rv-note {
+			display: grid;
+			gap: 10px;
+			padding: 12px 0 0;
+		}
+
+		.rv-note-check {
+			display: none;
+		}
+
+		.note-check-label {
+			display: flex;
+			align-items: center;
+			width: fit-content;
+			color: #787878;
+			cursor: pointer;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 18px;
+			user-select: none;
+		}
+
+		.check-expand {
+			filter: brightness(0) saturate(100%) invert(47%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(95%) contrast(90%);
+		}
+
+		.note-content {
+			padding: 14px 16px;
+			background: #fafafa;
+			border-radius: 6px;
+			font-size: 14px;
+			line-height: 23px;
+			text-align: left;
+		}
+
+		.rv-sort-btn {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			text-align: center;
+			border-top: 2px solid #787878;
+			font-size: 18px;
+			line-height: 22px;
+		}
+
+		.rv-sort-btn button {
+			cursor: pointer;
+			appearance: none;
+			border: none;
+			background: none;
+		}
+
+		.buyer {
+			padding: 19px 0 15px;
+		}
+
+		.buyer[aria-pressed='true'] {
+			border-bottom: 1px solid transparent;
+		}
+
+		.buyer[aria-pressed='false'] {
+			border-bottom: 1px solid #ccc;
+			color: #a5a5a5;
+			background: #f5f5f5;
+		}
+
+		.all {
+			padding: 19px 0 15px;
+			border-left: 1px solid #ccc !important;
+		}
+
+		.all[aria-pressed='true'] {
+			border-bottom: 1px solid transparent;
+		}
+
+		.all[aria-pressed='false'] {
+			border-bottom: 1px solid #ccc;
+			color: #a5a5a5;
+			background: #f5f5f5;
+		}
+
+		.rv-arrange-btn {
+			display: flex;
+			padding: 16px 0;
+		}
+
+		.rv-arrange-btn button {
+			padding: 10px;
+			border-radius: 999px;
+			font-size: 16px;
+			line-height: 19px;
+			appearance: none;
+			border: none;
+			margin-right: 10px;
+		}
+
+		.rv-arrange-btn button[aria-pressed='true'] {
+			background: #141414;
+			color: #fff;
+			font-weight: 700;
+		}
+
+		.rv-arrange-btn button[aria-pressed='false'] {
+			background: #f5f5f5;
+			color: #787878;
+			font-weight: 500;
+		}
+
+		.rv-ul {
+			display: grid;
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		.rv-li {
+			display: grid;
+			gap: 10px;
+			margin: 0;
+			padding: 16px 0;
+			line-height: initial;
+		}
+
+		.rv-rate {
+			display: flex;
+		}
+
+		.rv-rate>img {
+			margin-right: 3px;
+		}
+
+		.rv-content {
+			position: relative;
+			outline: none;
+		}
+
+		.content-text {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-height: calc(24px * 4);
+			line-height: 24px;
+			white-space: pre-line;
+			word-break: break-all;
+			overflow-wrap: anywhere;
+		}
+
+		.rv-content-spoiler {
+			display: grid;
+			justify-content: center;
+			align-items: center;
+			gap: 4px;
+			padding: 28px 10px;
+			background: #fafafa;
+			border-radius: 6px;
+		}
+
+		.content-spoiler {
+			display: flex;
+			align-items: center;
+			margin: auto;
+			color: #a5a5a5;
+		}
+
+		.spoiler-text {
+			color: #787878;
+			font-size: 15px;
+			font-weight: 500;
+			line-height: 24px;
+		}
+
+		.spoiler-view-btn {
+			display: flex;
+			align-items: center;
+			margin: auto;
+			color: #a5a5a5;
+			appearance: none;
+			background: none;
+			border: none;
+		}
+
+		.sv-btn-text {
+			font-size: 15px;
+			font-weight: 500;
+			line-height: 18px;
+		}
+
+		.rv-bottom {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.rv-writer-date {
+			display: grid;
+			gap: 6px;
+			color: #a5a5a5;
+			line-height: 17px;
+		}
+
+		.rv-writer {
+			display: grid;
+			grid-template-columns: auto auto auto;
+			align-items: center;
+			gap: 4px;
+			width: fit-content;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 17px;
+		}
+
+		.rv-date {
+			display: flex;
+			align-items: center;
+			margin: 8.5px 0;
+			color: #a5a5a5;
+			font-size: 15px;
+			font-weight: 600;
+			line-height: 17px;
+		}
+
+		.rv-right-btn {
+			display: flex;
+		}
+
+		.rv-comment {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 8px 7px;
+			border-radius: 4px;
+			border: 1px solid #e6e6e6;
+			background: #fff;
+			color: #787878;
+			font-size: 13px;
+			font-variant-numeric: tabular-nums;
+			font-weight: 500;
+			line-height: 16px;
+			min-width: 65px;
+			user-select: none;
+		}
+
+		.rv-like {
+			display: flex;
+			justify-content: center;
+			padding: 8px 7px;
+			border-radius: 4px;
+			border: 1px solid #e6e6e6;
+			background: #fff;
+			color: #787878;
+			font-variant-numeric: tabular-nums;
+			font-weight: 500;
+			line-height: 16px;
+			margin-left: 6px;
+			min-width: 65px;
+			user-select: none;
+		}
+
+		.rv-ul>li:not(:first-of-type) {
+			border-top: 1px solid #e6e6e6;
+		}
+
+		.rv-more-btn {
+			padding: 18px 0 17px 0;
+			width: 100%;
+			height: 56px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: relative;
+			border-radius: 6px;
+			border: 1px solid #ccc;
+			background: #fff;
+			color: #141414;
+			font-size: 16px;
+			margin-top: 0px;
+		}
+
+		.rmb-text {
+			display: flex;
+			align-items: center;
+			font-size: 16px;
+			font-weight: 700;
+			color: #141414;
+		}
+
+		.buyer-standard {
+			display: grid;
+			gap: 10px;
+			padding: 16px 0 0;
+		}
+
+		.buyer-check {
+			display: none;
+		}
+
+		.standard-title {
+			display: flex;
+			align-items: center;
+			width: fit-content;
+			color: #787878;
+			cursor: pointer;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 18px;
+			user-select: none;
+		}
+
+		.standard-content {
+			padding: 14px 16px;
+			background: #fafafa;
+			border-radius: 6px;
+			font-size: 14px;
+			line-height: 23px;
+			text-align: left;
+		}
+
+		.recommend-wrapper {
+			font-size: 14px;
+			overflow-wrap: break-word;
+			word-break: break-word;
+			line-height: normal;
+			margin: 0;
+			padding: 0;
+			color: #000;
+			font-weight: 400;
+		}
+
+		.recommend-wrap {
+			padding: 0 30px;
+		}
+
+		.best-wrap-title {
+			width: 100%;
+			display: flex;
+			align-items: center;
+			color: #141414;
+			font-size: 22px;
+			font-weight: 700;
+			line-height: 26px;
+			padding-top: 6px;
+			padding-bottom: 16px;
+		}
+
+		.best-more-btn {
+			color: #a5a5a5;
+			font-size: 16px;
+			font-weight: 600;
+			line-height: 19px;
+			margin-left: auto;
+		}
+
+		.best-list-wrap {
+			position: relative;
+			width: 100%;
+		}
+
+		.best-list {
+			display: flex;
+			flex-wrap: nowrap;
+			overflow-x: hidden;
+			overflow-y: hidden;
+		}
+
+		.bst-list {
+			display: flex;
+			flex: 1 0 auto;
+		}
+
+		.bst-ul {
+			display: flex;
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		.bst-li {
+			width: 141px;
+			min-height: 298px;
+			flex: 0 0 auto;
+			margin-right: 6px;
+		}
+
+		.bst-book {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.b-book-img-wrap {
+			position: relative;
+			align-self: stretch;
+			width: 100%;
+			padding-bottom: 144.80519480519482%;
+		}
+
+		.b-book-img {
+			border-radius: 4px;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			max-height: 100%;
+			cursor: pointer;
+		}
+
+		.b-book-info-wrap {
+			margin-top: 10px;
+			min-height: 84px;
+			padding-right: 10px;
+		}
+
+		.b-book-title {
+			display: inline-flex;
+		}
+
+		.bb-title {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			word-wrap: break-word;
+			white-space: normal;
+			max-height: calc(19px * 2);
+			line-height: 19px;
+			font-size: 16px;
+			word-break: break-all;
+			color: #141414;
+		}
+
+		.b-book-info {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.b-book-author {
+			margin-top: 6px;
+			font-size: 14px;
+			line-height: 17px;
+			display: block;
+			color: #787878;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			overflow-wrap: break-word;
+		}
+
+		.b-book-author-name {
+			text-decoration: none;
+			cursor: pointer;
+			color: #141414;
+		}
+
+		.b-book-rating {
+			margin-top: 7px;
+			font-size: 13px;
+			line-height: 16px;
+			display: flex;
+			align-items: center;
+			color: #dc3232;
+		}
+
+		.side-bar {
+			font-size: 14px;
+			overflow-wrap: break-word;
+			word-break: break-word;
+			line-height: normal;
+			margin: 0;
+			padding: 0;
+			border-left: 1px solid #e6e6e6;
+			width: 234px;
+			box-sizing: border-box;
+			height: 100%;
+		}
+
+		.best-list-top10{
+			padding: 30px 0 24px 30px;
+		}
+
+		.best-list-title{
+			display: flex;
+			align-items: center;
+			color: #141414;
+			margin-bottom: 16px;
+			font-size: 14px;
+			font-weight: 700;
+			line-height: 17px;
+			cursor: pointer;
+			transition: opacity 0.4s ease;
+		}
+
+		.best-list-title:hover{
+			text-decoration: none;
+			color: #6b6b6b;
+		}
+
+		.best-list-ol{
+			display: grid;
+			gap: 8px;
+			list-style-type: none;
+			counter-reset: ranking;
+		}
+
+		.b-list{
+			display: grid;
+			grid-template-columns: 17px 1fr;
+			gap: 12px;
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 17px;
+			margin-left: -38px;
+		}
+
+		.b-list:hover{
+			text-decoration: none;
+		}
+
+		.b-list::before{
+			counter-increment: ranking;
+			content: counter(ranking);
+			color: #dc3232;
+			font-weight: 700;
+		}
+
+		.b-list-title{
+			color: #555;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			transition: opacity 0.4s ease;
+		}
 	</style>
 </head>
 
 <body>
 	<main layout:fragment="content" class="container d-flex" style="min-height: 650px;">
 		<div class="content-page">
-			<div class="page-detail">
-				<div class="detail-content">
-					<div class="detail">
-						<div class="grid-left-top1">
-							<div class="grid-left-top2">
-								<div class="grid-left-top3">
-									<div class="grid-left-top4">
-										<div class="thumb-grid">
-											<button type="button" class="thumb">
-												<img class="thumb-img" src="/resources/static/covers/cover1.png"></img>
-											</button>
-										</div>
-										<div class="info-grid">
-											<div class="category">
-												<ul class="cate-ul">
-													<li class="cate-li">
-														<span class="blank"></span>
-														<div class="cate-title">
-															<a th:href="@{/}" class="main-cate-title">판타지 웹소설</a>
-															<img src="/resources/static/img/next.png" alt="next" style="height: 10px;" class="mb-1">
-															<a th:href="@{/}" class="sub-cate-title">현대 판타지</a>
-														</div>
-													</li>
-												</ul>
+			<div id="page_detail" class="page-detail">
+				<div class="detail-wrap">
+					<div class="detail-content">
+						<div class="detail">
+							<div class="grid-left-top1">
+								<div class="grid-left-top2">
+									<div class="grid-left-top3">
+										<div class="grid-left-top4">
+											<div class="thumb-grid">
+												<button type="button" class="thumb">
+													<img class="thumb-img" src="/resources/static/covers/cover1.png"></img>
+												</button>
 											</div>
-											<h3 class="book-title">이세계 착각 헌터</h3>
-											<div class="rating-content">
-												<ul class="rating-ul">
-													<li class="rating-li">
-														<button type="button" class="total-rating">
-															<img src="resources/static/img/star.png" alt="별" class="star-img" style="height: 15px;">
-															<div class="rate-score">4.9점</div>
-															<div class="rate-cnt">(12,896)</div>
-														</button>
-													</li>
-													<li class="like-li">
-														<span class="likes">관심 39,486</span>
-													</li>
-												</ul>
-											</div>
-											<div class="info-content">
-												<div class="author">
-													<ul class="author-ul">
-														<li class="author-li">
-															<a th:href="@{/}" class="author-name">대대원</a> 저
-														</li>
-													</ul>
-												</div>
-												<div class="publisher">
-													<a th:href="@{/}" class="publisher-link">익시드</a> 출판
-												</div>
-												<div class="total-episode">총 507화</div>
-											</div>
-											<div class="interest-content">
-												<button class="interestBtn"><img src="/resources/static/img/plus.png" alt="plus"
-														style="height: 20px;" class="plusBtn">관심</button>
-											</div>
-										</div>
-										<div class="info-bottom-grid">
-											<div class="bottom-content">
-												<div class="content-area">
-													<div class="header-text" style="color: #748198; background-color: #e3edf7;">연재</div>
-													<ul class="serial-ul">
-														<li class="serial-li">
-															<div class="serial-daytitme">매주 (월, 수, 금) 18시</div>
-														</li>
-													</ul>
-												</div>
-												<div class="content-area">
-													<div class="header-text" style="color: #ed6d5e; background: #fce8e6;">공지</div>
-													<ul class="noti-ul">
-														<li class="noti-li">
-															<div class="noti-content">
-																<button type="button" class="noti-title">도서 파일 교체 안내 (2025-04-22)
-																	<!-- 펼친 경우 fold.png 로 변경 -->
-																	<span class="expandBtn">
-																		<img src="/resources/static/img/expand.png" alt="펼치기" style="height: 18px;">
-																	</span>
-																</button>
-																<button type="button" class="noti-content">
-																	<div class="content-wrapper">
-																		<div class="content-wrap">
-																			<b>이세계 착각 헌터 495화는</b>
-																			2025년 4월 22일 본문 내 문장을 수정한 파일로 교체했습니다.<br>
-																			기존 구매자분들께서는 앱 내의 '내 서재'에 다운로드 받은 도서를 삭제하신 후, '구매목록'에서 재다운로드 하시면 수정된 도서로 이용하실 수
-																			있습니다.
-																			도서
-																			이용에 참고 부탁드립니다.<br>
-																			※ 단, 재다운로드 시 기존 도서에 남긴 독서노트(형광펜, 메모, 책갈피)는 초기화되거나 위치가 변경됩니다.
-																		</div>
-																	</div>
-																</button>
+											<div class="info-grid">
+												<div class="category">
+													<ul class="cate-ul">
+														<li class="cate-li">
+															<span class="blank"></span>
+															<div class="cate-title">
+																<a th:href="@{/}" class="main-cate-title">판타지 웹소설</a>
+																<img src="/resources/static/img/next.png" alt="next" style="height: 10px;" class="mb-1">
+																<a th:href="@{/}" class="sub-cate-title">현대 판타지</a>
 															</div>
 														</li>
 													</ul>
 												</div>
-												<div class="content-area">
-													<div class="header-text" style="color: #ffa550; background: #fff3e4;">키다무</div>
-													<div class="wait-for-free">
-														<span class="wff-text">1일 마다 1편 기다리면 무료</span>
-														<button class="infoBtn">
-															<img src="resources/static/img/info.png" alt="i아이콘" style="height: 18px;">
-														</button>
-													</div>
-													<div class="wff-state">
-														<div class="state-text">무료 이용 가능</div>
-													</div>
-												</div>
-											</div>
-											<div class="continue-btn">
-												<a th:href="@{/}" class="continueBtn">이어보기</a>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div id="metadata">
-							<div class="meta-wrapper">
-								<div class="meata-wrap">
-									<div class="meta">
-										<div class="m-wrap">
-											<div class="wrap-title">업데이트</div>
-											<span class="wrap-date">2025.05.12 업데이트</span>
-										</div>
-										<div class="m-wrap">
-											<div class="wrap-title">출간 정보</div>
-											<span class="wrap-date">2023.05.02 출간</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="episode-area">
-							<form action="/order/checkout" method="post" class="form-episode-list">
-								<div class="epi-line"></div>
-								<div class="list-module">
-									<div class="option-wrap">
-										<ul class="option-left">
-											<li class="select-all-wrap">
-												<input type="checkbox" id="select_all" class="all-checkbox">
-												<label for="select_all" class="all-label">전체 선택</label>
-											</li>
-											<li class="option-item">
-												<button type="button" class="sort-btn">
-													<img src="resources/static/img/transfer.png" alt="정렬 아이콘"
-														style="height: 13px;  filter: brightness(0) saturate(100%) invert(56%) sepia(6%) saturate(275%) hue-rotate(6deg) brightness(95%) contrast(84%);">
-													<span class="sort-text">신간부터</span>
-												</button>
-											</li>
-										</ul>
-										<div class="option-right">
-											<ul class="right-ul">
-												<li class="option-item">
-													<p class="option-info">
-														<span class="info-vol">총 <span>0</span>화</span>
-														<span style="color: #ff7f50;">0원</span>
-													</p>
-												</li>
-												<li class="option-item">
-													<ul class="oi-ul">
-														<li class="btn-item">
-															<button type="button" class="cart-btn">
-																<img src="resources/static/img/cart.png" alt="카트 아이콘" style="height: 15px;"> 카트
+												<h3 class="book-title">이세계 착각 헌터</h3>
+												<div class="rating-content">
+													<ul class="rating-ul">
+														<li class="rating-li">
+															<button type="button" class="total-rating">
+																<img src="resources/static/img/star.png" alt="별" class="red" style="height: 15px;">
+																<div class="rate-score">4.9점</div>
+																<div class="rate-cnt">(12,896)</div>
 															</button>
 														</li>
-														<li class="btn-item">
-															<button type="button" class="select-buy-btn">선택 소장</button>
+														<li class="like-li">
+															<span class="likes">관심 39,486</span>
 														</li>
 													</ul>
+												</div>
+												<div class="info-content">
+													<div class="author">
+														<ul class="author-ul">
+															<li class="author-li">
+																<a th:href="@{/}" class="author-name">대대원</a> 저
+															</li>
+														</ul>
+													</div>
+													<div class="publisher">
+														<a th:href="@{/}" class="publisher-link">익시드</a> 출판
+													</div>
+													<div class="total-episode">총 507화</div>
+												</div>
+												<div class="interest-content">
+													<button class="interestBtn"><img src="/resources/static/img/plus.png" alt="plus"
+															style="height: 20px;" class="plusBtn orange">관심</button>
+												</div>
+											</div>
+											<div class="info-bottom-grid">
+												<div class="bottom-content">
+													<div class="content-area">
+														<div class="header-text" style="color: #748198; background-color: #e3edf7;">연재</div>
+														<ul class="serial-ul">
+															<li class="serial-li">
+																<div class="serial-daytitme">매주 (월, 수, 금) 18시</div>
+															</li>
+														</ul>
+													</div>
+													<div class="content-area">
+														<div class="header-text" style="color: #ed6d5e; background: #fce8e6;">공지</div>
+														<ul class="noti-ul">
+															<li class="noti-li">
+																<div class="noti-content">
+																	<button type="button" class="noti-title">도서 파일 교체 안내 (2025-04-22)
+																		<!-- 펼친 경우 fold.png 로 변경 -->
+																		<span class="expandBtn">
+																			<img src="/resources/static/img/expand.png" alt="펼치기" style="height: 18px;">
+																		</span>
+																	</button>
+																	<button type="button" class="noti-content">
+																		<div class="content-wrapper">
+																			<div class="content-wrap">
+																				<b>이세계 착각 헌터 495화는</b>
+																				2025년 4월 22일 본문 내 문장을 수정한 파일로 교체했습니다.<br>
+																				기존 구매자분들께서는 앱 내의 '내 서재'에 다운로드 받은 도서를 삭제하신 후, '구매목록'에서 재다운로드 하시면 수정된 도서로 이용하실 수
+																				있습니다.
+																				도서
+																				이용에 참고 부탁드립니다.<br>
+																				※ 단, 재다운로드 시 기존 도서에 남긴 독서노트(형광펜, 메모, 책갈피)는 초기화되거나 위치가 변경됩니다.
+																			</div>
+																		</div>
+																	</button>
+																</div>
+															</li>
+														</ul>
+													</div>
+													<div class="content-area">
+														<div class="header-text" style="color: #ffa550; background: #fff3e4;">키다무</div>
+														<div class="wait-for-free">
+															<span class="wff-text">1일 마다 1편 기다리면 무료</span>
+															<button class="infoBtn">
+																<img src="resources/static/img/info.png" alt="i아이콘" style="height: 18px;">
+															</button>
+														</div>
+														<div class="wff-state">
+															<div class="state-text">무료 이용 가능</div>
+														</div>
+													</div>
+												</div>
+												<div class="continue-btn">
+													<a th:href="@{/}" class="continueBtn">이어보기</a>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div id="metadata">
+								<div class="meta-wrapper">
+									<div class="meata-wrap" style="padding: 0 30px;">
+										<div class="meta">
+											<div class="m-wrap">
+												<div class="wrap-title">업데이트</div>
+												<span class="wrap-date">2025.05.12 업데이트</span>
+											</div>
+											<div class="m-wrap">
+												<div class="wrap-title">출간 정보</div>
+												<span class="wrap-date">2023.05.02 출간</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="episode-area">
+								<form action="/order/checkout" method="post" class="form-episode-list">
+									<div class="epi-line"></div>
+									<div class="list-module">
+										<div class="option-wrap">
+											<ul class="option-left">
+												<li class="select-all-wrap">
+													<input type="checkbox" id="select_all" class="all-checkbox">
+													<label for="select_all" class="all-label">전체 선택</label>
+												</li>
+												<li class="option-item">
+													<button type="button" class="sort-btn">
+														<img src="resources/static/img/transfer.png" class="dark-gray" alt="정렬 아이콘"
+															style="height: 13px;">
+														<span class="sort-text">신간부터</span>
+													</button>
 												</li>
 											</ul>
+											<div class="option-right">
+												<ul class="right-ul">
+													<li class="option-item">
+														<p class="option-info">
+															<span class="info-vol">총 <span>0</span>화</span>
+															<span style="color: #ff7f50;">0원</span>
+														</p>
+													</li>
+													<li class="option-item">
+														<ul class="oi-ul">
+															<li class="btn-item">
+																<button type="button" class="cart-btn">
+																	<img src="resources/static/img/cart.png" alt="카트 아이콘" style="height: 15px;"> 카트
+																</button>
+															</li>
+															<li class="btn-item">
+																<button type="button" class="select-buy-btn">선택 소장</button>
+															</li>
+														</ul>
+													</li>
+												</ul>
+											</div>
 										</div>
-									</div>
-									<div class="list-wrapper">
-										<ul class="list-ul">
-											<!-- data-id : ep_code | data-price : ep_price | data-volume : ep_code에서 도서코드 제거 -->
-											<li class="epi-list" data-id="ep_code" data-price="0" data-volume="1">
-												<div class="epi-list-wrapper">
-													<div class="table-wrap">
-														<div class="epi-checkbox">
-															<input type="checkbox" id="bookEP_CODE" class="episode-check">
-															<label for="bookEP_CODE" class="epi-label"></label>
-														</div>
-														<div class="epi-info">
-															<div class="info-title-with-badge">
-																<!-- 무료 회차가 아닌 경우 무료 배지 미노출 | 키다무 도서 & 무료X 회차인 경우 clock_badge로 노출 -->
-																<div class="badge-list">
-																	<div class="free-badge">
-																		<img src="resources/static/img/free.png" alt="무료 배지" style="height: 18px;">
+										<div class="list-wrapper">
+											<ul class="list-ul">
+												<!-- data-id : ep_code | data-price : ep_price | data-volume : ep_code에서 도서코드 제거 -->
+												<li class="epi-list" data-id="ep_code" data-price="0" data-volume="1">
+													<div class="epi-list-wrapper">
+														<div class="table-wrap">
+															<div class="epi-checkbox">
+																<input type="checkbox" id="bookEP_CODE" class="episode-check">
+																<label for="bookEP_CODE" class="epi-label"></label>
+															</div>
+															<div class="epi-info">
+																<div class="info-title-with-badge">
+																	<!-- 무료 회차가 아닌 경우 무료 배지 미노출 | 키다무 도서 & 무료X 회차인 경우 clock_badge로 노출 -->
+																	<div class="badge-list">
+																		<div class="free-badge">
+																			<img src="resources/static/img/free.png" alt="무료 배지" style="height: 18px;">
+																		</div>
 																	</div>
+																	<div class="epi-title">이세계 착각 헌터 2화</div>
 																</div>
-																<div class="epi-title">이세계 착각 헌터 2화</div>
-															</div>
-															<div>
-																<ul class="info-list-wrapper">
-																	<li class="info-ep-date">2023.05.02</li>
-																	<!-- 아마도 전체 페이지 들어가야할듯? ↓ -->
-																	<li class="info-page-cnt">| 약 4.5천 자</li>
-																	<!-- 소장한 경우만 아래 배지 추가 -->
-																	<li class="info-status">| 소장</li>
-																</ul>
-															</div>
-														</div>
-														<div class="direct-view-wrapper">
-															<a th:href="@{/}" data-book-id="ep_code" class="direct-view-btn">보기</a>
-														</div>
-													</div>
-												</div>
-											</li>
-										</ul>
-									</div>
-									<div class="list-more-button">
-										<button type="button" class="more-button">
-											<span class="more-button-text">더보기</span>
-											<img src="/resources/static/img/expand.png" alt="더보기" style="height: 20px;">
-										</button>
-									</div>
-								</div>
-							</form>
-						</div>
-						<div>
-							<div id="UpperPanelList">
-								<div class="upper-wrapper">
-									<div class="upper-wrap">
-										<div class="upper">
-											<div class="up-wrap">
-												<div class="upper-text">
-													본 도서는 출판사의 요청으로 무료 회차를 부분별로 서비스하고 있습니다.
-													<br>
-													기본 무료 회차는 총 27화(1~25화, 246화, 388화) 입니다. 도서 이용에 참고 부탁드립니다.
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div id="keyWord">
-								<div class="keyword-wrapper">
-									<div class="keyword-wrap">
-										<div style="margin-bottom: 80px;">
-											<h2 class="keyword-title">이 작품의 키워드</h2>
-											<div class="keyword-list">
-												<div class="keyword">
-													<button class="keyword-btn">
-														<span class="keyword-name">
-															<span>#현대판타지</span>
-														</span>
-													</button>
-												</div>
-											</div>
-											<a class="other-keyword" th:href="@{/}">
-												<span class="other-kw">다른 키워드로 검색</span>
-												<img class="ml-1" src="/resources/static/img/next.png" alt=">" style="height: 13px;">
-											</a>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div id="description">
-								<div class="description-wrapper">
-									<div class="description-wrap">
-										<div style="margin-bottom: 80px;">
-											<div class="d-book-title">이세계 착각 헌터</div>
-											<h2 class="wrapper-title">작품 소개</h2>
-											<div class="descript-wrapper">
-												<div class="descript-wrap">
-													<div>
-														<div>
-															[나는 F급 헌터로 환생했다.
-															<br>
-															...쟤들이 그렇게 취급을 안 해줘서 문제지.]
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div id="author">
-								<div class="author-wrapper">
-									<div class="author-wrap">
-										<div style="margin-bottom: 80px;">
-											<h2 class="wrapper-title">작가 프로필</h2>
-											<div>
-												<div class="au-wrapper">
-													<div class="au-wrap">
-														<a th:href="@{/}" class="au-name">
-															<span class="au-name-text">대대원</span>
-														</a>
-													</div>
-													<div class="au-profile">
-														<span class="profile-text">소개</span>
-														<div class="au-profile-text">
-															<div class="au-text">소개글~</div>
-														</div>
-													</div>
-												</div>
-												<div class="au-update">
-													<div class="au-update-date">2025.01.08 업데이트</div>
-												</div>
-												<div class="au-other-book">
-													<div class="au-other-book-title">
-														작가의 대표 작품
-														<a th:href="@{/}" class="au-other-more">더보기</a>
-													</div>
-													<div class="other-books">
-														<div class="other-book-list">
-															<div class="book-list">
-																<div class="books">
-																	<ul class="books-ul">
-																		<li class="book-li">
-																			<div class="book">
-																				<div class="book-img">
-																					<a th:href="@{/}" class="bo-img">
-																						<img src="" alt="도서 이미지">
-																						<span class="bo-image"></span>
-																					</a>
-																				</div>
-																				<div class="book-info">
-																					<div class="bo-title">
-																						<!-- bo-img와 동일한 링크 -->
-																						<a th:href="@{/}" class="b-title">이세계 착각 헌터</a>
-																					</div>
-																					<div class="book-author">
-																						<span class="bo-author">
-																							<a th:href="@{/}" class="b-author">대대원</a>
-																						</span>
-																						<span class="bo-rating">
-																							<img class="star-img mb-1" src="/resources/static/img/star.png" alt="별"
-																								style="height: 12px; margin-right: 2px;">4.9
-																							<span class="b-rating-cnt">(12,996)</span>
-																						</span>
-																					</div>
-																				</div>
-																				<!-- bo-img 와 동일한 링크 -->
-																				<a th:href="@{/}" class="book-click"></a>
-																			</div>
-																		</li>
+																<div>
+																	<ul class="info-list-wrapper">
+																		<li class="info-ep-date">2023.05.02</li>
+																		<!-- 아마도 전체 페이지 들어가야할듯? ↓ -->
+																		<li class="info-page-cnt">| 약 4.5천 자</li>
+																		<!-- 소장한 경우만 아래 배지 추가 -->
+																		<li class="info-status">| 소장</li>
 																	</ul>
 																</div>
 															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div id="review">
-								<div class="review-wrapper">
-									<div class="review-wrap">
-										<div class="rv-wrapper">
-											<h2 class="wrapper-title">리뷰</h2>
-											<div class="rv-overview">
-												<div class="rv-rating">
-													<h3 class="rv-rating-text">4.9</h3>
-													<div class="rv-rating-img">
-														<span class="rating-img-text">구매자 별점</span>
-														<div class="rating-star">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 15px;">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 15px;">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 15px;">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 15px;">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 15px;">
-														</div>
-													</div>
-												</div>
-												<div class="rv-rating-cnt">
-													<div class="rating-cnt">12,996명 평가</div>
-													<label class="rating-bunpo">
-														<input type="checkbox" class="bunpo-check">
-														<span class="bunpo-text">별점 분포 보기</span>
-														<img class="ml-2" src="/resources/static/img/down-triangle.png" alt="아래 삼각형"
-															style="height: 10px;">
-														<button type="button" class="bunpo-table">
-															<div class="rate-bunpo">
-																<div>5</div>
-																<div class="bunpo">
-																	<!-- width에 별점 비율 값 넣으면 됨 -->
-																	<div style="width: 92%;" class="rate-bunpo-percent"></div>
-																</div>
-																<div>4</div>
-																<div class="bunpo">
-																	<!-- width에 별점 비율 값 넣으면 됨 -->
-																	<div style="width: 5%;" class="rate-bunpo-percent"></div>
-																</div>
-																<div>3</div>
-																<div class="bunpo">
-																	<!-- width에 별점 비율 값 넣으면 됨 -->
-																	<div style="width: 1%;" class="rate-bunpo-percent"></div>
-																</div>
-																<div>2</div>
-																<div class="bunpo">
-																	<!-- width에 별점 비율 값 넣으면 됨 -->
-																	<div style="width: 0%;" class="rate-bunpo-percent"></div>
-																</div>
-																<div>1</div>
-																<div class="bunpo">
-																	<!-- width에 별점 비율 값 넣으면 됨 -->
-																	<div style="width: 0%;" class="rate-bunpo-percent"></div>
-																</div>
+															<div class="direct-view-wrapper">
+																<a th:href="@{/}" data-book-id="ep_code" class="direct-view-btn">보기</a>
 															</div>
-														</button>
-													</label>
-												</div>
-											</div>
-											<div class="rv-record">
-												<div class="rv-record-star">
-													<h4 class="record-star-text">이 작품을 평가해 주세요!</h4>
-													<div class="record-star">
-														<label>
-															<input type="radio" name="rating" value="2">
-															<img src="/resources/static/img/star.png" alt="별" class="record-star-img">
-														</label>
-														<label>
-															<input type="radio" name="rating" value="4">
-															<img src="/resources/static/img/star.png" alt="별" class="record-star-img">
-														</label>
-														<label>
-															<input type="radio" name="rating" value="6">
-															<img src="/resources/static/img/star.png" alt="별" class="record-star-img">
-														</label>
-														<label>
-															<input type="radio" name="rating" value="8">
-															<img src="/resources/static/img/star.png" alt="별" class="record-star-img">
-														</label>
-														<label>
-															<input type="radio" name="rating" value="10">
-															<img src="/resources/static/img/star.png" alt="별" class="record-star-img">
-														</label>
-													</div>
-												</div>
-												<div class="rv-text-area">
-													<textarea placeholder="리뷰를 10자 이상 입력해 주세요. 광고 및 욕설, 타인을 비방하는 문구는 비공개될 수 있습니다."
-														class="rv-textarea"></textarea>
-													<form class="rv-regist-form">
-														<label class="spoiler-label">
-															<input type="checkbox" class="spoiler-check">
-															<span class="spoiler-text">스포일러가 있습니다.</span>
-														</label>
-														<button type="submit" class="rv-regist-btn">리뷰 등록</button>
-													</form>
-												</div>
-												<div class="rv-note">
-													<input type="checkbox" id="note_check" class="rv-note-check">
-													<label for="note_check" class="note-check-label">
-														<span>리뷰 작성 유의사항</span>
-														<img src="/resources/static/img/expand.png" alt="펼치기" style="height: 15px;">
-													</label>
-													<div class="note-content">
-														<strong>건전한 리뷰 정착 및 양질의 리뷰를 위해 아래 해당하는 리뷰는 비공개 조치될 수 있음을 안내드립니다.</strong>
-														<ol>
-															<li>타인에게 불쾌감을 주는 욕설</li>
-															<li>비속어가 타인을 비방하는 내용</li>
-															<li>특정 종교, 민족, 계층을 비방하는 내용</li>
-															<li>해당 작품의 줄거리나 키히 서비스 이용과 관련이 없는 내용</li>
-															<li>의미를 알 수 없는 내용</li>
-															<li>광고 및 반복적인 글을 게시하여 서비스 품질을 떨어트리는 내용</li>
-															<li>저작권상 문제의 소지가 있는 내용</li>
-															<li>다른 리뷰에 대한 반박이나 논쟁을 유발하는 내용</li>
-														</ol>
-														<div>* 결말을 예상할 수 있는 리뷰는 자제하여 주시기 바랍니다.</div>
-														<strong>이 외에도 건전한 리뷰 문화 형성을 위한 운영 목적과 취지에 맞지 않는 내용은 담당자에 의해 리뷰가 비공개 처리될 수 있습니다.</strong>
-													</div>
-												</div>
-											</div>
-											<div class="rv-sort-btn">
-												<button type="button" class="buyer" aria-pressed="true">
-													<span>구매자</span>
-													<span>5,124</span>
-												</button>
-												<button type="button" class="all" aria-pressed="false">
-													<span>전체</span>
-													<span>5,551</span>
-												</button>
-											</div>
-											<div class="rv-arrange-btn">
-												<button type="button" aria-pressed="true">최신순</button>
-												<button type="button" aria-pressed="false">공감순</button>
-												<button type="button" aria-pressed="false">별점 높은순</button>
-												<button type="button" aria-pressed="false">별점 낮은순</button>
-											</div>
-											<ul class="rv-ul">
-												<li class="rv-li">
-													<div class="rv-rate">
-														<img src="/resources/static/img/star.png" alt="별" style="height: 10px;">
-														<img src="/resources/static/img/star.png" alt="별" style="height: 10px;">
-														<img src="/resources/static/img/star.png" alt="별" style="height: 10px;">
-														<img src="/resources/static/img/star.png" alt="별" style="height: 10px;">
-														<img src="/resources/static/img/star.png" alt="별" style="height: 10px;">
-													</div>
-													<div class="rv-content">
-														<p class="content-text">433화보고 하차함.</p>
-													</div>
-													<div class="rv-bottom">
-														<div class="rv-writer-date">
-															<div class="rv-writer">
-																<img src="/resources/static/img/buyer.png" alt="구매자 배지" style="height: 35px;">
-																<div class="rv-nick">nickname</div>
-															</div>
-															<div class="rv-date">
-																<div class="rv-date-text">2025.05.18</div>
-															</div>
-														</div>
-														<div class="rv-right-btn">
-															<button type="button" class="rv-comment">
-																댓글
-																<span class="rv-comment-cnt">0</span>
-															</button>
-															<button type="button" class="rv-like">
-																<img src="/resources/static/img/thumb_up.png" alt="공감 버튼" style="height: 18px;">
-																<span class="rv-like-cnt">0</span>
-															</button>
 														</div>
 													</div>
 												</li>
 											</ul>
-											<div class="review-more-btn">
-												<button type="button" class="rv-more-btn">
-													<span class="rmb-text">
-														더보기
-														<img src="/resources/static/img/expand.png" alt="더보기 버튼" style="height: 20px;">
-													</span>
-												</button>
-											</div>
-											<div class="buyer-standard">
-												<input type="checkbox" id="buyer_check" class="buyer-check">
-												<label for="buyer_check" class="standard-title">
-													<span>구매자 표시 기준은 무엇인가요?</span>
-												</label>
-												<div class="standard-content">
-													<strong>'구매자' 표시는 유료 작품 결제 후 다운로드 한 경우에만 표시됩니다.</strong>
-													<dl class="standard-dl">
-														<dt>무료 작품 (프로모션 등으로 무료로 전환된 작품 포함)</dt>
-														<dd>'구매자'로 표시되지 않습니다.</dd>
-														<dt>시리즈 내 무료 작품</dt>
-														<dd>'구매자'로 표시되지 않습니다. 하지만 같은 시리즈의 유료 작품을 결제한 뒤 리뷰를 수정하거나 재등록하면 '구매자'로 표시됩니다.</dd>
-														<dt>영구 삭제</dt>
-														<dd>작품을 영구 삭제해도 '구매자' 표시는 남아있습니다.</dd>
-														<dt>결제 취소</dt>
-														<dd>'구매자' 표시가 자동으로 사라집니다.</dd>
-													</dl>
+										</div>
+										<div class="list-more-button">
+											<button type="button" class="more-button">
+												<span class="more-button-text">더보기</span>
+												<img src="/resources/static/img/expand.png" alt="더보기" style="height: 20px;">
+											</button>
+										</div>
+									</div>
+								</form>
+							</div>
+							<div>
+								<div id="UpperPanelList">
+									<div class="upper-wrapper">
+										<div class="upper-wrap">
+											<div class="upper">
+												<div class="up-wrap">
+													<div class="upper-text">
+														본 도서는 출판사의 요청으로 무료 회차를 부분별로 서비스하고 있습니다.
+														<br>
+														기본 무료 회차는 총 27화(1~25화, 246화, 388화) 입니다. 도서 이용에 참고 부탁드립니다.
+													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-							</div>
-							<div id="recommend-list">
-								<div class="recommend-wrapper">
-									<div class="recommend-wrap">
-										<div>
-											<h2 class="wrap-title">
-												<span>현대 판타지 베스트</span>
-												<a th:href="@{/}" class="best-more-btn">더보기</a>
-											</h2>
-											<div class="best-list-wrapper">
-												<div class="best-list-wrap">
-													<div class="best-list">
-														<div class="bst-list">
-															<ul class="bst-ul">
-																<li class="bst-li">
-																	<div class="bst-book">
-																		<div class="b-book-img-wrap">
-																			<a th:href="@{/}" class="b-book-img">
-																				<img src="" alt="책 표지">
-																			</a>
-																		</div>
-																		<div class="b-book-info-wrap">
-																			<div class="b-book-title">
-																				<a th:href="@{/}" class="bb-title">이세계 착각 헌터</a>
-																			</div>
-																			<div class="b-book-info">
-																				<span class="b-book-author">
-																					<a th:href="b-book-author-name">대대원</a>
-																				</span>
-																				<span class="b-book-rating">
-																					<img class="b-rating-img" src="/resources/static/img/star.png" alt="별점"
-																						style="height: 15px;">4.9
-																					<span class="b-rating-cnt">(12,996)</span>
-																				</span>
-																			</div>
-																		</div>
+								<div id="keyWord">
+									<div class="keyword-wrapper">
+										<div class="keyword-wrap">
+											<div style="margin-bottom: 80px;">
+												<h2 class="keyword-title">이 작품의 키워드</h2>
+												<div class="keyword-list">
+													<div class="keyword">
+														<button class="keyword-btn">
+															<span class="keyword-name">
+																<span>#현대판타지</span>
+															</span>
+														</button>
+													</div>
+												</div>
+												<a class="other-keyword" th:href="@{/}">
+													<span class="other-kw">다른 키워드로 검색</span>
+													<img class="ml-1" src="/resources/static/img/next.png" alt=">" style="height: 13px;">
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div id="description">
+									<div class="description-wrapper">
+										<div class="description-wrap">
+											<div style="margin-bottom: 80px;">
+												<div class="d-book-title">이세계 착각 헌터</div>
+												<h2 class="wrapper-title">작품 소개</h2>
+												<div class="descript-wrapper">
+													<div class="descript-wrap">
+														<div>
+															<div>
+																[나는 F급 헌터로 환생했다.
+																<br>
+																...쟤들이 그렇게 취급을 안 해줘서 문제지.]
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div id="author">
+									<div class="author-wrapper">
+										<div class="author-wrap">
+											<div style="margin-bottom: 80px;">
+												<h2 class="wrapper-title">작가 프로필</h2>
+												<div>
+													<div class="au-wrapper">
+														<div class="au-wrap">
+															<a th:href="@{/}" class="au-name">
+																<span class="au-name-text">대대원</span>
+															</a>
+														</div>
+														<div class="au-profile">
+															<span class="profile-text">소개</span>
+															<div class="au-profile-text">
+																<div class="au-text">소개글~</div>
+															</div>
+														</div>
+													</div>
+													<div class="au-update">
+														<div class="au-update-date">2025.01.08 업데이트</div>
+													</div>
+													<div class="au-other-book">
+														<div class="au-other-book-title">
+															작가의 대표 작품
+															<a th:href="@{/}" class="au-other-more">더보기</a>
+														</div>
+														<div class="other-books">
+															<div class="other-book-list">
+																<div class="book-list">
+																	<div class="books">
+																		<ul class="books-ul">
+																			<li class="book-li">
+																				<div class="book">
+																					<div class="book-img">
+																						<a th:href="@{/}" class="bo-img">
+																							<img src="" alt="도서 이미지">
+																							<span class="bo-image"></span>
+																						</a>
+																					</div>
+																					<div class="book-info">
+																						<div class="bo-title">
+																							<!-- bo-img와 동일한 링크 -->
+																							<a th:href="@{/}" class="b-title">이세계 착각 헌터</a>
+																						</div>
+																						<div class="book-author">
+																							<span class="bo-author">
+																								<a th:href="@{/}" class="b-author">대대원</a>
+																							</span>
+																							<span class="bo-rating">
+																								<img class="red mb-1" src="/resources/static/img/star.png" alt="별"
+																									style="height: 12px; margin-right: 2px;">4.9
+																								<span class="b-rating-cnt">(12,996)</span>
+																							</span>
+																						</div>
+																					</div>
+																					<!-- bo-img 와 동일한 링크 -->
+																					<a th:href="@{/}" class="book-click"></a>
+																				</div>
+																			</li>
+																		</ul>
 																	</div>
-																</li>
-															</ul>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div id="review">
+									<div class="review-wrapper">
+										<div class="review-wrap">
+											<div class="rv-wrapper">
+												<h2 class="wrapper-title">리뷰</h2>
+												<div class="rv-overview">
+													<div class="rv-rating">
+														<h3 class="rv-rating-text">4.9</h3>
+														<div class="rv-rating-img">
+															<span class="rating-img-text">구매자 별점</span>
+															<div class="rating-star">
+																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;" class="red">
+																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;" class="red">
+																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;" class="red">
+																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;" class="red">
+																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;" class="red">
+															</div>
+														</div>
+													</div>
+													<div class="rv-rating-cnt">
+														<div class="rating-cnt">12,996명 평가</div>
+														<label class="rating-bunpo">
+															<input type="checkbox" class="bunpo-check">
+															<span class="bunpo-text">별점 분포 보기</span>
+															<img class="ml-2" src="/resources/static/img/down-triangle.png" alt="아래 삼각형"
+																style="height: 10px;">
+															<button type="button" class="bunpo-table">
+																<div class="rate-bunpo">
+																	<div>5</div>
+																	<div class="bunpo">
+																		<!-- width에 별점 비율 값 넣으면 됨 -->
+																		<div style="width: 92%;" class="rate-bunpo-percent"></div>
+																	</div>
+																	<div>4</div>
+																	<div class="bunpo">
+																		<!-- width에 별점 비율 값 넣으면 됨 -->
+																		<div style="width: 5%;" class="rate-bunpo-percent"></div>
+																	</div>
+																	<div>3</div>
+																	<div class="bunpo">
+																		<!-- width에 별점 비율 값 넣으면 됨 -->
+																		<div style="width: 1%;" class="rate-bunpo-percent"></div>
+																	</div>
+																	<div>2</div>
+																	<div class="bunpo">
+																		<!-- width에 별점 비율 값 넣으면 됨 -->
+																		<div style="width: 0%;" class="rate-bunpo-percent"></div>
+																	</div>
+																	<div>1</div>
+																	<div class="bunpo">
+																		<!-- width에 별점 비율 값 넣으면 됨 -->
+																		<div style="width: 0%;" class="rate-bunpo-percent"></div>
+																	</div>
+																</div>
+															</button>
+														</label>
+													</div>
+												</div>
+												<div class="rv-record">
+													<div class="rv-record-star">
+														<h4 class="record-star-text">이 작품을 평가해 주세요!</h4>
+														<div class="record-star">
+															<label>
+																<input type="radio" name="rating" value="2">
+																<img src="/resources/static/img/star.png" alt="별" class="record-star-img gray">
+															</label>
+															<label>
+																<input type="radio" name="rating" value="4">
+																<img src="/resources/static/img/star.png" alt="별" class="record-star-img gray">
+															</label>
+															<label>
+																<input type="radio" name="rating" value="6">
+																<img src="/resources/static/img/star.png" alt="별" class="record-star-img gray">
+															</label>
+															<label>
+																<input type="radio" name="rating" value="8">
+																<img src="/resources/static/img/star.png" alt="별" class="record-star-img gray">
+															</label>
+															<label>
+																<input type="radio" name="rating" value="10">
+																<img src="/resources/static/img/star.png" alt="별" class="record-star-img gray">
+															</label>
+														</div>
+													</div>
+													<div class="rv-text-area">
+														<textarea placeholder="리뷰를 10자 이상 입력해 주세요. 광고 및 욕설, 타인을 비방하는 문구는 비공개될 수 있습니다."
+															class="rv-textarea"></textarea>
+														<form class="rv-regist-form">
+															<label class="spoiler-label">
+																<input type="checkbox" class="spoiler-check">
+																<span class="spoiler-text">스포일러가 있습니다.</span>
+															</label>
+															<button type="submit" class="rv-regist-btn">리뷰 등록</button>
+														</form>
+													</div>
+													<div class="rv-note">
+														<input type="checkbox" id="note_check" class="rv-note-check">
+														<label for="note_check" class="note-check-label">
+															<span>리뷰 작성 유의사항</span>
+															<img src="/resources/static/img/expand.png" alt="펼치기"
+																style="width: 20px; margin-left: 3px;" class="check-expand">
+														</label>
+														<div class="note-content">
+															<strong>건전한 리뷰 정착 및 양질의 리뷰를 위해 아래 해당하는 리뷰는 비공개 조치될 수 있음을 안내드립니다.</strong>
+															<ol style="list-style-type: decimal; list-style-position: outside; margin-left: -25px;">
+																<li>타인에게 불쾌감을 주는 욕설</li>
+																<li>비속어가 타인을 비방하는 내용</li>
+																<li>특정 종교, 민족, 계층을 비방하는 내용</li>
+																<li>해당 작품의 줄거리나 키히 서비스 이용과 관련이 없는 내용</li>
+																<li>의미를 알 수 없는 내용</li>
+																<li>광고 및 반복적인 글을 게시하여 서비스 품질을 떨어트리는 내용</li>
+																<li>저작권상 문제의 소지가 있는 내용</li>
+																<li>다른 리뷰에 대한 반박이나 논쟁을 유발하는 내용</li>
+															</ol>
+															<div style="margin-top: -15px;">* 결말을 예상할 수 있는 리뷰는 자제하여 주시기 바랍니다.</div>
+															<strong>이 외에도 건전한 리뷰 문화 형성을 위한 운영 목적과 취지에 맞지 않는 내용은 담당자에 의해 리뷰가 비공개 처리될 수 있습니다.</strong>
+														</div>
+													</div>
+												</div>
+												<div class="rv-sort-btn">
+													<button type="button" class="buyer" aria-pressed="true">
+														<span style="font-weight: 700;">구매자</span>
+														<span style="font-weight: 600;">5,124</span>
+													</button>
+													<button type="button" class="all" aria-pressed="false">
+														<span style="font-weight: 700;">전체</span>
+														<span style="font-weight: 600;">5,551</span>
+													</button>
+												</div>
+												<div class="rv-arrange-btn">
+													<button type="button" aria-pressed="true">최신순</button>
+													<button type="button" aria-pressed="false">공감순</button>
+													<!-- 전체 버튼 선택한 경우 별점 관련 필터버튼 미노출 -->
+													<button type="button" aria-pressed="false">별점 높은순</button>
+													<button type="button" aria-pressed="false">별점 낮은순</button>
+												</div>
+												<ul class="rv-ul">
+													<li class="rv-li">
+														<div class="rv-rate d-flex">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
+														</div>
+														<div class="rv-content">
+															<p class="content-text">433화보고 하차함.</p>
+														</div>
+														<div class="rv-bottom">
+															<div class="rv-writer-date">
+																<div class="rv-writer">
+																	<img src="/resources/static/img/buyer.png" alt="구매자 배지" style="height: 35px;"
+																		class="dark-gray">
+																	<div class="rv-nick">nickname</div>
+																</div>
+																<div class="rv-date">
+																	<div class="rv-date-text">2025.05.18</div>
+																</div>
+															</div>
+															<div class="rv-right-btn">
+																<button aria-pressed="false" type="button" class="rv-comment">
+																	댓글
+																	<span class="ml-1">0</span>
+																</button>
+																<button aria-pressed="false" type="button" class="rv-like">
+																	<img src="/resources/static/img/thumb_up.png" alt="공감 버튼" style="height: 18px;">
+																	<span class="rv-like-cnt">0</span>
+																</button>
+															</div>
+														</div>
+													</li>
+													<li class="rv-li">
+														<div class="rv-rate d-flex">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
+															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
+														</div>
+														<div class="rv-content-spoiler">
+															<div class="content-spoiler">
+																<img src="/resources/static/img/exclamation.png" alt="i 아이콘" style="height: 23px;"
+																	class="dark-gray">
+																<span class="spoiler-text">스포일러가 있는 리뷰입니다.</span>
+															</div>
+															<button type="button" class="spoiler-view-btn">
+																<span class="sv-btn-text">리뷰 보기</span>
+																<img src="/resources/static/img/next.png" alt=">"
+																	style="height: 12px; margin-bottom: 2px;" class="dark-gray ml-1">
+															</button>
+														</div>
+														<div class="rv-bottom">
+															<div class="rv-writer-date">
+																<div class="rv-writer">
+																	<img src="/resources/static/img/buyer.png" alt="구매자 배지" style="height: 35px;"
+																		class="dark-gray">
+																	<div class="rv-nick">nickname</div>
+																</div>
+																<div class="rv-date">
+																	<div class="rv-date-text">2025.05.18</div>
+																</div>
+															</div>
+															<div class="rv-right-btn">
+																<button aria-pressed="false" type="button" class="rv-comment">
+																	댓글
+																	<span class="ml-1">0</span>
+																</button>
+																<button aria-pressed="false" type="button" class="rv-like">
+																	<img src="/resources/static/img/thumb_up.png" alt="공감 버튼" style="height: 18px;">
+																	<span class="rv-like-cnt">0</span>
+																</button>
+															</div>
+														</div>
+													</li>
+												</ul>
+												<div class="review-more-btn">
+													<button type="button" class="rv-more-btn">
+														<span class="rmb-text">
+															더보기
+															<img src="/resources/static/img/expand.png" alt="더보기 버튼" style="height: 23px;">
+														</span>
+													</button>
+												</div>
+												<div class="buyer-standard">
+													<input type="checkbox" id="buyer_check" class="buyer-check">
+													<label for="buyer_check" class="standard-title">
+														<span>구매자 표시 기준은 무엇인가요?</span>
+														<img src="/resources/static/img/expand.png" alt="확정 아이콘" class="dark-gray"
+															style="height: 20px;">
+													</label>
+													<div class="standard-content">
+														<strong style="color: #141414;">'구매자' 표시는 유료 작품 결제 후 다운로드 한 경우에만 표시됩니다.</strong>
+														<dl class="standard-dl">
+															<dt>무료 작품 (프로모션 등으로 무료로 전환된 작품 포함)</dt>
+															<dd>'구매자'로 표시되지 않습니다.</dd>
+															<dt>시리즈 내 무료 작품</dt>
+															<dd>'구매자'로 표시되지 않습니다. 하지만 같은 시리즈의 유료 작품을 결제한 뒤 리뷰를 수정하거나 재등록하면 '구매자'로 표시됩니다.</dd>
+															<dt>영구 삭제</dt>
+															<dd>작품을 영구 삭제해도 '구매자' 표시는 남아있습니다.</dd>
+															<dt>결제 취소</dt>
+															<dd>'구매자' 표시가 자동으로 사라집니다.</dd>
+														</dl>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div id="recommend-list">
+									<div class="recommend-wrapper">
+										<div class="recommend-wrap">
+											<div style="margin-bottom: 80px;">
+												<h2 class="best-wrap-title">
+													<span>현대 판타지 베스트</span>
+													<a th:href="@{/}" class="best-more-btn">더보기</a>
+												</h2>
+												<div class="best-list-wrapper">
+													<div class="best-list-wrap">
+														<div class="best-list">
+															<div class="bst-list">
+																<ul class="bst-ul">
+																	<li class="bst-li">
+																		<div class="bst-book">
+																			<div class="b-book-img-wrap">
+																				<a th:href="@{/}" class="b-book-img">
+																					<img src="" alt="책 표지">
+																				</a>
+																			</div>
+																			<div class="b-book-info-wrap">
+																				<div class="b-book-title">
+																					<a th:href="@{/}" class="bb-title">이세계 착각 헌터</a>
+																				</div>
+																				<div class="b-book-info">
+																					<span class="b-book-author">
+																						<a th:href="@{/}" class="b-book-author-name">대대원</a>
+																					</span>
+																					<span class="b-book-rating">
+																						<img class="b-rating-img red" src="/resources/static/img/star.png" alt="별점"
+																							style="height: 13px; margin-right: 2px; margin-bottom: 2px;">4.9
+																						<span class="b-rating-cnt"
+																							style="margin-left: 1px; color: #787878;">(12,996)</span>
+																					</span>
+																				</div>
+																			</div>
+																		</div>
+																	</li>
+																</ul>
+															</div>
 														</div>
 													</div>
 												</div>
@@ -2134,22 +2797,26 @@
 					</div>
 					<div id="aside">
 						<div class="side-bar">
-							<a th:href="@{/}" class="side-banner">
-								<img src="" alt="배너 이미지" class="banner-img">
-							</a>
-						</div>
-						<div class="best-list-top10">
-							<a th:href="@{/}" class="best-list-title">
-								현대 판타지 베스트
-								<img style="height: 10px;" src="/resources/static/img/next.png" alt=">">
-							</a>
-							<ol class="best-list-ol">
-								<li>
-									<a th:href="@{/}" class="b-list">
-										<span class="b-list-title">이세계 착각 헌터</span>
+							<div>
+								<div class="side-banner">
+									<a th:href="@{/}" class="side-banner-wrap">
+										<img src="" alt="배너 이미지" class="banner-img">
 									</a>
-								</li>
-							</ol>
+								</div>
+								<div class="best-list-top10">
+									<a th:href="@{/}" class="best-list-title">
+										현대 판타지 베스트
+										<img style="height: 9px; margin-left: 2px;" src="/resources/static/img/next.png" alt=">">
+									</a>
+									<ol class="best-list-ol">
+										<li style="line-height: initial;">
+											<a th:href="@{/}" class="b-list">
+												<span class="b-list-title">이세계 착각 헌터</span>
+											</a>
+										</li>
+									</ol>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -2158,11 +2825,11 @@
 		<script>
 			const stars = document.querySelectorAll('.record-star label');
 
-			stars.forEach((star, index)=>{
-				star.addEventListener('click', ()=>{
-					stars.forEach(s=> s.querySelector('img').classList.remove('selected'));
+			stars.forEach((star, index) => {
+				star.addEventListener('click', () => {
+					stars.forEach(s => s.querySelector('img').classList.remove('selected'));
 
-					for(let i = index; i < stars.length; i++) {
+					for (let i = index; i < stars.length; i++) {
 						stars[i].querySelector('img').classList.add('selected');
 					}
 				});
