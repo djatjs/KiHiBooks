@@ -6,13 +6,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.kh.kihibooks.model.vo.BookVO;
+import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.service.BookService;
 
 
@@ -69,5 +73,28 @@ public class BookController {
     public String bookDetail(){
         return "book/detail";
     }
+    // 신간
+    @GetMapping("/book/new-released")
+    public String newReleased(
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "latest") String order,
+        @RequestParam(required = false) String adult,
+        Model model) {
+        
+        if(order == null || order.isEmpty()){
+            order = "recent";
+        }
+        
+        PageInfo<BookVO> pageInfo = bookService.getFilteredBooks(page, order, adult);
+
+        model.addAttribute("bookList", pageInfo.getContent());
+        model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("order", order);
+        model.addAttribute("adult", adult);
+
+        return "book/new-released";
+    }
+
+
     
 }

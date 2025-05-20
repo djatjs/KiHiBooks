@@ -22,4 +22,5 @@ public class BookVO {
     String bo_sc_code;
     int bo_pi_num;
     int bo_au_num;
+    String bo_author;
 }
