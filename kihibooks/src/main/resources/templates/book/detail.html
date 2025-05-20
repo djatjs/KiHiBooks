@@ -534,6 +534,13 @@
 			line-height: 22px;
 			white-space: nowrap;
 			margin-right: 3px;
+			transition: background 0.4s ease;
+		}
+
+		.continueBtn:hover{
+			text-decoration: none;
+			color: #fff;
+			background: #f57343;
 		}
 
 		.meta-wrapper {
@@ -2125,6 +2132,10 @@
 			text-decoration: none;
 		}
 
+		.b-list:hover>span{
+			color: #aaa;
+		}
+
 		.b-list::before{
 			counter-increment: ranking;
 			content: counter(ranking);
@@ -2462,7 +2473,7 @@
 																				<div class="book">
 																					<div class="book-img">
 																						<a th:href="@{/}" class="bo-img">
-																							<img src="" alt="도서 이미지">
+																							<img src="/resources/static/covers/cover1.png" alt="도서 이미지">
 																							<span class="bo-image"></span>
 																						</a>
 																					</div>
@@ -2762,7 +2773,7 @@
 																		<div class="bst-book">
 																			<div class="b-book-img-wrap">
 																				<a th:href="@{/}" class="b-book-img">
-																					<img src="" alt="책 표지">
+																					<img src="/resources/static/covers/cover1.png" alt="책 표지">
 																				</a>
 																			</div>
 																			<div class="b-book-info-wrap">
@@ -2800,7 +2811,7 @@
 							<div>
 								<div class="side-banner">
 									<a th:href="@{/}" class="side-banner-wrap">
-										<img src="" alt="배너 이미지" class="banner-img">
+										<img src="/resources/static/covers/cover1.png" alt="배너 이미지" class="banner-img" style="width: 100%;">
 									</a>
 								</div>
 								<div class="best-list-top10">
