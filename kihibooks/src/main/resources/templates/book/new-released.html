@@ -7,6 +7,9 @@
   <meta charset="UTF-8">
   <title>신작 웹소설</title>
   <style>
+		h3{
+			margin-bottom: 30px;
+		}
     .container {
       max-width: 1200px;
       margin: 0 auto;
@@ -187,6 +190,7 @@
 
 <body>
 	<section class="container" layout:fragment="content">
+		<h3>키히 웹소설 신간</h3>
 		<!-- 필터 영역 -->
 		<div class="filter-header">
 			<!-- 좌측: 정렬 -->
@@ -252,21 +256,23 @@
 				th:href="@{/book/new-released(page=${pageInfo.currentPage + 1}, order=${order}, adult=${adult})}">&raquo;</a>
 		</div>
 	</section>
-	<script>
-		function filterAdult(type){
-			const url = new URL(window.location.href);
-			const params = url.searchParams;
-			const current = params.get('adult');
+	<div layout:fragment="script">
+		<script>
+			function filterAdult(type){
+				const url = new URL(window.location.href);
+				const params = url.searchParams;
+				const current = params.get('adult');
 
-			if(current === type){
-				params.delete('adult'); //성인 토글 해제
-			} else{
-				params.set('adult', type); // 선택
+				if(current === type){
+					params.delete('adult'); //성인 토글 해제
+				} else{
+					params.set('adult', type); // 선택
+				}
+
+				params.set('page', 1); // 필터 바뀌면 1페이지로
+				window.location.href = `${url.pathname}?${params.toString()}`;
 			}
-
-			params.set('page', 1); // 필터 바뀌면 1페이지로
-			window.location.href = `${url.pathname}?${params.toString()}`;
-		}
-	</script>
+		</script>
+	</div>
 </body>
 </html>
