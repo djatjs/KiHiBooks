@@ -123,7 +123,7 @@ public class UserService {
     }
 
     public boolean checkEmail(String email) {
-		UserVO count = userDAO.selectUserByEmailAndProvider(email, "EMAIL");
+		UserVO count = userDAO.selectEmail(email);
 		if(count != null){
 			return false;
 		}
@@ -144,9 +144,10 @@ public class UserService {
 			return false;
 		}
 		//이미 가입된 계정인지 확인
-		if(userDAO.selectUserByEmailAndProvider(user.getUr_email(), "EMAIL") != null){
+		if(userDAO.selectEmail(user.getUr_email()) != null){
 			return false;
 		}
+
 
 		//비번 암호화
 		String encPw = passwordEncoder.encode(user.getUr_pw());
@@ -177,15 +178,5 @@ public class UserService {
 		
 		return userDAO.updatePw(user);
     }
-
-	public UserVO getCurrentUser() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth == null || !auth.isAuthenticated()) {
-			return null;
-		}
-		System.out.println(auth);
-		String userEmail = auth.getName();
-		return selectUser(userEmail);
-	}
 
 }

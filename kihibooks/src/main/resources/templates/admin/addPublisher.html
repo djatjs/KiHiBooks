@@ -149,6 +149,7 @@ layout:decorate="~{layout/layout.html}">
                 <!-- 권한 필드 추가 (요구사항에 '권한 : publisher' 언급) -->
                 <!-- 권한은 백엔드에서 설정하는 것이 일반적이지만, 폼으로 전달하려면 hidden 필드 사용 -->
                 <input type="hidden" name="ur_authority" id="ur_authority" th:value="PUBLISHER">
+                <input type="hidden" name="ur_nickname" id="ur_nickname">
 
                 <div class="button-group"> <!-- 버튼들을 감싸는 div 추가 -->
                     <button type="submit">등록</button>
@@ -159,6 +160,9 @@ layout:decorate="~{layout/layout.html}">
                 // 이메일 입력 시 비밀번호 hidden 필드에 자동 복사
                 document.getElementById("ur_email").addEventListener("input", function () {
                     document.getElementById("ur_pw").value = this.value;
+                });
+                document.getElementById("pu_name").addEventListener("input", function () {
+                    document.getElementById("ur_nickname").value = this.value;
                 });
             </script>
 		</div>

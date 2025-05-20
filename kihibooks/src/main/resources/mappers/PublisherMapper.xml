@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.kh.kihibooks.dao.PublisherDAO">
+    <select id="selectPublisher" resultType="PublisherVO">
+        select * from publisher where pu_name = #{pu_name}
+    </select>
+    <insert id="insertPublisher">
+        insert into publisher(pu_name, pu_code)
+        values(#{pu_name}, #{pu_code})
+    </insert>
+    <select id="selectAllPublishers" resultType="PublisherVO">
+        SELECT p.PU_CODE, p.PU_NAME, u.UR_EMAIL FROM publisher p
+        JOIN publisher_id pi ON p.PU_CODE = pi.PI_PU_CODE
+        JOIN user u ON pi.PI_UR_NUM = u.UR_NUM
+        ORDER BY p.PU_CODE ASC;
+    </select>
+    <select id="selectPublisherId" resultType="PublisherIdVO">
+        select * from publisher_id where pi_ur_num = #{pi_ur_num} and pi_pu_code = #{pi_pu_code}
+    </select>
+    <insert id="insertPublisherId">
+        insert into publisher_id(pi_ur_num, pi_pu_code, pi_authority) values(#{pi_ur_num}, #{pi_pu_code}, #{pi_authority})
+    </insert>
+</mapper>

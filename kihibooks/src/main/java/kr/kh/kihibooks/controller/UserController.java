@@ -45,7 +45,8 @@ public class UserController {
 
 	@GetMapping("/account/mykihi")
     public String mypage(Model model) {
-        UserVO user = userService.getCurrentUser();
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserVO user = userService.selectUser(userDetails.getUsername());
         model.addAttribute("user", user);
         return "user/mypage";
     }
