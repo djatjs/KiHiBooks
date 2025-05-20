@@ -116,11 +116,13 @@ layout:decorate="~{layout/layout.html}">
 			<h1>📊 관리자 대시보드</h1>
 			<!-- 대시보드 요약 정보 -->
 			<div class="dashboard-summary">
-				<div class="summary-card">
-					<div class="card-title">출판사</div>
-					<!-- <div class="card-value" th:text="${publisherCount}">0</div> -->
-					<div class="card-value">0</div>
-				</div>
+				<!-- <a th:href="/admin/publishers"> -->
+					<div class="summary-card">
+						<div class="card-title">출판사</div>
+						<!-- <div class="card-value" th:text="${publisherCount}">0</div> -->
+						<div class="card-value" th:text="${count}"></div>
+					</div>
+				<!-- </a> -->
 				<!-- <div class="summary-card">
 					<div class="card-title">에디터</div>
 					<div class="card-value">0</div>

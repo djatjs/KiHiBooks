@@ -27,7 +27,10 @@ public class AdminController {
     PublisherService publisherService;
 
     @GetMapping("/dashboard")
-    public String dashboard() {
+    public String dashboard(Model model) {
+        List<PublisherVO> publishers = publisherService.getAllPublishers();
+        int count = publishers.size();
+        model.addAttribute("count", count);
         return "admin/dashboard";
     }
     @GetMapping("/publishers")
