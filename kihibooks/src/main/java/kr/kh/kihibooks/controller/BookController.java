@@ -80,10 +80,13 @@ public class BookController {
         @RequestParam(defaultValue = "latest") String order,
         @RequestParam(required = false) String adult,
         Model model) {
+            
+        System.out.println(order);
         
-        if(order == null || order.isEmpty()){
+        if(order == null || order.equals("latest")){
             order = "recent";
         }
+
         
         PageInfo<BookVO> pageInfo = bookService.getFilteredBooks(page, order, adult);
 

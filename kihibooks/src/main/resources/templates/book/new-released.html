@@ -196,9 +196,9 @@
 			<!-- 좌측: 정렬 -->
 			<div class="sort-options">
 				<a th:href="@{/book/new-released(page=1, order='recent', adult=${adult})}"
-					th:class="'sort-option ' + (${order} == 'recent' ? 'active' : '')">최신순</a>
+					th:class="'sort-option ' + (${order} eq 'recent' ? 'active' : '')">최신순</a>
 				<a th:href="@{/book/new-released(page=1, order='popular', adult=${adult})}"
-					th:class="'sort-option ' + (${order} == 'popular' ? 'active' : '')">인기순</a>
+					th:class="'sort-option ' + (${order} eq 'popular' ? 'active' : '')">인기순</a>
 			</div>
 
 			<!-- 우측: 성인 필터 -->
