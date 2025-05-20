@@ -8,8 +8,6 @@ layout:decorate="~{layout/layout.html}">
 <title>KiHiBooks - 출판사 등록</title> <!-- 타이틀 수정 -->
 
 <style>
-	/* 사용자 선택 방지 스타일 (기존 코드 유지) */
-	/* 이 스타일은 main 태그 자체에 적용되므로 전역 CSS와 충돌 가능성이 적습니다. */
 	main {
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -19,86 +17,85 @@ layout:decorate="~{layout/layout.html}">
 
 	/* 이 페이지에만 적용될 스타일들 */
 
-	/* 전체 컨테이너 스타일 - 고유 클래스를 사용하여 다른 .container에 영향받지 않도록 함 */
     .publisher-add-form.container {
-        max-width: 500px; /* 폼에 적합한 최대 너비 설정 */
-        margin: 30px auto; /* 상하 여백 및 가운데 정렬 */
-        padding: 30px; /* 내부 여백 */
-        background-color: #ffffff; /* 배경색을 흰색으로 설정 */
-        border-radius: 8px; /* 모서리 둥글게 */
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* 은은한 그림자 추가 */
+        max-width: 500px;
+        margin: 30px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
 
     /* 페이지 제목 스타일 */
     .publisher-add-form h1 {
-        color: #2c3e50; /* 제목 색상 */
-        border-bottom: 2px solid #ff7f50; /* 아래쪽 경계선 */
-        padding-bottom: 10px; /* 경계선과 텍스트 사이 여백 */
-        margin-bottom: 30px; /* 아래 여백 */
-        font-size: 2em; /* 제목 폰트 크기 */
-        text-align: center; /* 제목 가운데 정렬 */
+        color: #2c3e50;
+        border-bottom: 2px solid #ff7f50;
+        padding-bottom: 10px;
+        margin-bottom: 30px;
+        font-size: 2em;
+        text-align: center;
     }
 
     /* 폼 그룹 (레이블과 입력 필드 묶음) 스타일 */
     .publisher-add-form .form-group {
-        margin-bottom: 20px; /* 아래 여백 */
+        margin-bottom: 20px;
     }
 
     /* 레이블 스타일 */
     .publisher-add-form label {
-        display: block; /* 블록 요소로 만들어 입력 필드 위에 위치 */
-        margin-bottom: 8px; /* 아래 여백 */
-        font-weight: bold; /* 글씨 두껍게 */
-        color: #555; /* 텍스트 색상 */
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #555;
     }
 
     /* 입력 필드 스타일 */
     .publisher-add-form input[type="text"],
     .publisher-add-form input[type="email"],
-    .publisher-add-form input[type="password"] { /* 비밀번호 필드도 포함 (요구사항에 있음) */
-        width: 100%; /* 부모 요소 너비에 맞춤 */
-        padding: 10px 12px; /* 내부 여백 */
-        border: 1px solid #ccc; /* 경계선 */
-        border-radius: 4px; /* 모서리 둥글게 */
-        box-sizing: border-box; /* 패딩과 경계선을 너비에 포함 */
-        font-size: 1em; /* 폰트 크기 */
+    .publisher-add-form input[type="password"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 1em;
     }
 
     /* 버튼 스타일 컨테이너 */
     .publisher-add-form .button-group {
-        margin-top: 30px; /* 위 여백 */
-        text-align: right; /* 버튼 우측 정렬 */
+        margin-top: 30px;
+        text-align: right;
     }
 
     /* 등록 버튼 스타일 */
     .publisher-add-form button[type="submit"] {
-        background-color: #ff7f50; /* 배경색 */
-        color: white; /* 텍스트 색상 */
-        padding: 10px 20px; /* 내부 여백 */
-        border: none; /* 경계선 제거 */
-        border-radius: 5px; /* 모서리 둥글게 */
-        cursor: pointer; /* 마우스 오버 시 손가락 모양 */
-        font-size: 1.1em; /* 폰트 크기 */
-        transition: background-color 0.2s ease-in-out; /* 호버 효과 */
+        background-color: #ff7f50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.1em;
+        transition: background-color 0.2s ease-in-out;
     }
     .publisher-add-form button[type="submit"]:hover {
-        background-color: #ff6347; /* 호버 시 색상 변경 */
+        background-color: #ff6347;
     }
 
     /* 취소 버튼 스타일 */
     .publisher-add-form button[type="button"] {
-        background-color: #6c757d; /* 회색 배경색 */
-        color: white; /* 텍스트 색상 */
-        padding: 10px 20px; /* 내부 여백 */
-        border: none; /* 경계선 제거 */
-        border-radius: 5px; /* 모서리 둥글게 */
-        cursor: pointer; /* 마우스 오버 시 손가락 모양 */
-        font-size: 1.1em; /* 폰트 크기 */
-        margin-left: 10px; /* 좌측 여백 */
-        transition: background-color 0.2s ease-in-out; /* 호버 효과 */
+        background-color: #6c757d;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.1em;
+        margin-left: 10px;
+        transition: background-color 0.2s ease-in-out;
     }
     .publisher-add-form button[type="button"]:hover {
-    background-color: #5a6268; /* 호버 시 색상 변경 */
+    background-color: #5a6268;
     }
 
 	@media (max-width: 800px) {
@@ -125,11 +122,8 @@ layout:decorate="~{layout/layout.html}">
 </style>
 </head>
 <body>
-	<!-- main 태그의 layout:fragment="content"는 유지 -->
 	<main layout:fragment="content">
-        <!-- container 클래스에 publisher-add-form 고유 클래스 추가 -->
 		<div class="container publisher-add-form">
-            <!-- 출판사 이름, 출판사 email, 비밀번호(출판사 email과 동일), 권한 : publisher, 출판사코드  -->
             <h1>출판사 등록</h1>
             <form th:action="@{/admin/addPublisher}" method="post">
                 <div class="form-group">
@@ -140,20 +134,14 @@ layout:decorate="~{layout/layout.html}">
                     <label for="ur_email">출판사 이메일:</label>
                     <input type="email" id="ur_email" name="ur_email" required>
                 </div>
-                <!-- 비밀번호 필드 추가 (요구사항에 '비밀번호(출판사 email과 동일)' 언급) -->
-                <!-- 보안상 비밀번호는 별도로 입력받거나 랜덤 생성 후 전달하는 것이 좋습니다. -->
-                <!-- 여기서는 임시로 이메일과 동일하게 설정하도록 hidden 필드를 추가합니다. -->
                 <!-- 실제로는 백엔드에서 이메일을 기반으로 비밀번호를 설정하거나, 사용자에게 초기 비밀번호를 발급해야 합니다. -->
                 <input type="hidden" name="ur_pw" id="ur_pw">
-
-                <!-- 권한 필드 추가 (요구사항에 '권한 : publisher' 언급) -->
-                <!-- 권한은 백엔드에서 설정하는 것이 일반적이지만, 폼으로 전달하려면 hidden 필드 사용 -->
                 <input type="hidden" name="ur_authority" id="ur_authority" th:value="PUBLISHER">
                 <input type="hidden" name="ur_nickname" id="ur_nickname">
 
-                <div class="button-group"> <!-- 버튼들을 감싸는 div 추가 -->
+                <div class="button-group">
                     <button type="submit">등록</button>
-                    <button type="button" onclick="location.href='/admin/publishers'">취소</button> <!-- 목록 페이지로 이동하도록 수정 -->
+                    <button type="button" onclick="location.href='/admin/publishers'">취소</button>
                 </div>
             </form>
             <script>
