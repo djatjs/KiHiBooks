@@ -73,14 +73,18 @@ public class BookController {
     public String bookDetail(){
         return "book/detail";
     }
-
+    // 신간
     @GetMapping("/book/new-released")
     public String newReleased(
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "latest") String order,
         @RequestParam(required = false) String adult,
         Model model) {
-
+        
+        if(order == null || order.isEmpty()){
+            order = "recent";
+        }
+        
         PageInfo<BookVO> pageInfo = bookService.getFilteredBooks(page, order, adult);
 
         model.addAttribute("bookList", pageInfo.getContent());

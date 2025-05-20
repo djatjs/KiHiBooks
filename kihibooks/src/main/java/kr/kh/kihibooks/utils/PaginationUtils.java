@@ -17,12 +17,12 @@ public class PaginationUtils {
      * @return PageInfo<T>
      */
     
-		 public static <T> PageInfo<T> paginate(List<T> content, int totalCount, int page, int pageSize, int blockSize) {
+	public static <T> PageInfo<T> paginate(List<T> list, int totalCount, int currentPage, int pageSize, int blockSize) {
         int totalPages = (int) Math.ceil((double) totalCount / pageSize);
-        int startPage = ((page - 1) / blockSize) * blockSize + 1;
+        int startPage = ((currentPage - 1) / blockSize) * blockSize + 1;
         int endPage = Math.min(startPage + blockSize - 1, totalPages);
 
-        return new PageInfo<>(content, page, totalPages, startPage, endPage);
+        return new PageInfo<>(list, totalCount, currentPage, pageSize, blockSize, totalPages, startPage, endPage);
     }
 		
 }
