@@ -167,12 +167,28 @@ layout:decorate="~{layout/layout.html}">
 				</div>
 
 				<!-- 필요하다면 다른 요약 정보 카드 추가 가능 (예: 총 매출, 최근 정산 금액 등) -->
-				<!--
+				
 				<div class="summary-card">
-					<div class="card-title">총 매출 (예정)</div>
-					<div class="card-value">0원</div>
+					<div class="card-title">연재 중 도서</div>
+					<!-- <div class="card-value" th:text="${ongoingBookCount != null ? ongoingBookCount : '로딩 중...'}">0</div> -->
+					<div class="card-value">0</div>
 				</div>
-				-->
+				<div class="summary-card">
+					<div class="card-title">완결 도서</div>
+					<!-- <div class="card-value" th:text="${completedBookCount != null ? completedBookCount : '로딩 중...'}">0</div> -->
+					<div class="card-value">0</div>
+				</div>
+				<div class="summary-card">
+					<div class="card-title">총 무료 회차</div>
+					<!-- <div class="card-value" th:text="${freeEpisodeCount != null ? freeEpisodeCount : '로딩 중...'}">0</div> -->
+					<div class="card-value">0</div>
+				</div>
+				<div class="summary-card">
+					<div class="card-title">총 유료 회차</div>
+					<!-- <div class="card-value" th:text="${paidEpisodeCount != null ? paidEpisodeCount : '로딩 중...'}">0</div> -->
+					<div class="card-value">0</div>
+				</div>
+				
 			</div>
 
 			<!-- 주요 기능 바로가기 섹션 -->
