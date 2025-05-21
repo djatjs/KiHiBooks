@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import kr.kh.kihibooks.model.vo.BookVO;
+import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
 
 public interface BookDAO {
 
@@ -36,5 +37,14 @@ public interface BookDAO {
 	int countBestBooks(@Param("range")String range, 
 											@Param("adultYN")String adultYN, 
 											@Param("finished")String finished);
+
+	List<KeywordCategoryVO> selectKeywordCategories();
+
+	List<BookVO> selectBooksByKeywords(@Param("keywordIds")List<Integer> keywordIds, 
+																		@Param("sort")String sort, 
+																		@Param("limit")int limit, 
+																		@Param("offset")int offset);
+
+	int countBooksByKeywords(@Param("keywordIds")List<Integer> keywordIds);
     
 }

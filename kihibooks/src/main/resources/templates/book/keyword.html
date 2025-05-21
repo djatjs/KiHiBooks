@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+	<head>
+		<meta charset="UTF-8">
+		<title>키워드 검색</title>
+		<style>
+			.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+			.keyword-category { margin-bottom: 24px; }
+			.category-title { font-weight: bold; margin-bottom: 8px; font-size: 16px; }
+			.keyword-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+			.keyword-btn {
+				padding: 6px 12px; border: 1px solid #ccc; border-radius: 16px;
+				background-color: #f9f9f9; cursor: pointer; font-size: 14px; color: #333;
+			}
+			.keyword-btn.active { background-color: #111; color: white; }
+			.clear-btn {
+				margin-left: auto; font-size: 13px; color: crimson; cursor: pointer;
+			}
+		</style>
+	</head>
+
+	<body>
+		<section class="container" layout:fragment="content">
+
+			<h3>키워드 검색</h3>
+
+			<form id="keywordFilterForm" method="get" action="/book/search">
+				<input type="hidden" name="sort" th:value="${sort}" />
+
+				<!-- 전체 해제 버튼 -->
+				<div style="text-align: right; margin-bottom: 8px;">
+					<span class="clear-btn" onclick="clearAll()">전체 해제</span>
+				</div>
+
+				<!-- 카테고리별 키워드 -->
+				<div th:each="category : ${categoryList}" class="keyword-category">
+					<div class="category-title" th:text="${category.kc_name}">카테고리명</div>
+					<div class="keyword-buttons">
+						<button type="button"
+										class="keyword-btn"
+										th:each="keyword : ${category.keywords}"
+										th:text="${keyword.kw_name}"
+										th:classappend="${selectedKeywordIds.contains(keyword.kw_num)} ? 'active'"
+										th:attr="data-id=${keyword.kw_num}"
+										onclick="toggleKeyword(this)">
+							키워드명
+						</button>
+					</div>
+				</div>
+
+				<!-- 선택된 키워드를 hidden input으로 -->
+				<input type="hidden" name="keywords" id="keywords" th:value="${selectedKeywordIds}" />
+			</form>
+
+			<!-- 도서 리스트 & 페이지네이션은 이후 작성 -->
+		</section>
+
+		<div layout:fragment="script">
+			<script>
+				const selectedKeywords = new Set();
+
+				function toggleKeyword(btn) {
+					const id = btn.getAttribute("data-id");
+					if (selectedKeywords.has(id)) {
+						selectedKeywords.delete(id);
+						btn.classList.remove("active");
+					} else {
+						selectedKeywords.add(id);
+						btn.classList.add("active");
+					}
+					updateHiddenField();
+				}
+
+				function clearAll() {
+					selectedKeywords.clear();
+					document.querySelectorAll('.keyword-btn').forEach(btn => btn.classList.remove('active'));
+					updateHiddenField();
+				}
+
+				function updateHiddenField() {
+					document.getElementById("keywords").value = Array.from(selectedKeywords).join(',');
+					document.getElementById("keywordFilterForm").submit(); // 자동 submit
+				}
+			</script>
+		</div>
+	</body>
+</html>

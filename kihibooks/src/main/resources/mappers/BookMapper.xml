@@ -146,11 +146,65 @@
         <if test="finished != null and finished != ''">
             AND BO_FIN = #{finished}
         </if>
-
     </select>
 
-
-
-    
+    <!-- 키워드 검색 도서 리스트 -->
+    <select id="selectBooksByKeywords" resultType="BookVO">
+        SELECT 
+            BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_TOTAL_EPISODE,
+            BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_ADULT, BO_FIN, BO_PUBLISH_DATE,
+            AU_NAME AS bo_author
+        FROM 
+            book
+        JOIN 
+            author ON BO_AU_NUM = AU_NUM
+        <if test="keywordIds != null and keywordIds.size() > 0">
+            JOIN (
+                SELECT DISTINCT BK_BO_CODE
+                FROM book_keyword
+                WHERE BK_KW_NUM IN
+                <foreach item="id" collection="keywordIds" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+                GROUP BY BK_BO_CODE
+                HAVING COUNT(DISTINCT BK_KW_NUM) = #{keywordIds.size}
+            ) filtered ON BO_CODE = filtered.BK_BO_CODE
+        </if>
+        <choose>
+            <when test="sort == 'popular'">
+                ORDER BY BO_REVIEW_COUNT DESC
+            </when>
+            <when test="sort == 'rating'">
+                ORDER BY BO_TOTAL_RATING DESC
+            </when>
+            <when test="sort == 'review'">
+                ORDER BY BO_REVIEW_COUNT DESC
+            </when>
+            <otherwise>
+                ORDER BY BO_PUBLISH_DATE DESC
+            </otherwise>
+        </choose>
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    <!-- 키워드 검색 도서 개수 -->
+    <select id="countBooksByKeywords" resultType="int">
+        SELECT COUNT(*)
+        FROM (
+            SELECT BO_CODE
+            FROM book
+            <if test="keywordIds != null and keywordIds.size() > 0">
+                JOIN (
+                    SELECT BK_BO_CODE
+                    FROM book_keyword
+                    WHERE BK_KW_NUM IN
+                    <foreach item="id" collection="keywordIds" open="(" close=")" separator=",">
+                        #{id}
+                    </foreach>
+                    GROUP BY BK_BO_CODE
+                    HAVING COUNT(DISTINCT BK_KW_NUM) = #{keywordIds.size}
+                ) filtered ON BO_CODE = filtered.BK_BO_CODE
+            </if>
+        ) AS result
+    </select>
 
 </mapper>
