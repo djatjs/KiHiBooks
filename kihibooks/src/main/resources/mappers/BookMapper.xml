@@ -87,7 +87,8 @@
         JOIN 
             author ON BO_AU_NUM = AU_NUM
         LEFT JOIN
-            review ON RV_BO_CODE = BO_CODE
+            review 
+            ON RV_BO_CODE = BO_CODE
         <!-- 날짜 필터: 오늘 / 주간 / 월간 -->
         <choose>
             <when test="range == 'day'">

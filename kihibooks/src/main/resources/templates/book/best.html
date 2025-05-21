@@ -135,6 +135,41 @@
     .highlight-rating {
       color: crimson;
     }
+
+		.pagination {
+      display: flex;
+      justify-content: center;
+			align-items: center;
+      margin-top: 30px;
+      gap: 6px;
+			flex-wrap: wrap;
+    }
+
+    .pagination a {
+      display: inline-flex;
+			justify-content: center;
+			align-items: center;
+			min-width: 32px;
+			height: 32px;
+			padding: 0 8px;
+			border: 1px solid #ddd;
+			color: #333;
+			text-decoration: none;
+			border-radius: 4px;
+			font-size: 14px;
+			line-height: 1;
+			box-sizing: border-box;
+    }
+
+    .pagination a:hover {
+      background-color: #f0f0f0;
+    }
+
+    .pagination a.active {
+      background-color: #111;
+      color: white;
+      border-color: #111;
+    }
   </style>
 </head>
 
@@ -189,7 +224,20 @@
 				</div>
 			</div>
 
-		<!-- 페이지네이션은 신간과 동일하게 처리 -->
+		 	<!-- 페이지네이션 추가 -->
+			<div class="pagination" th:if="${pageInfo.totalPages > 1}">
+				<a th:if="${pageInfo.currentPage > 1}"
+					th:href="@{/book/best(page=${pageInfo.currentPage - 1}, range=${range}, adultYN=${adultYN}, finished=${finished})}">&laquo;</a>
+
+				<span th:each="i : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}">
+					<a th:href="@{/book/best(page=${i}, range=${range}, adultYN=${adultYN}, finished=${finished})}"
+						th:class="${pageInfo.currentPage == i} ? 'active' : ''"
+						th:text="${i}">1</a>
+				</span>
+
+				<a th:if="${pageInfo.currentPage < pageInfo.totalPages}"
+					th:href="@{/book/best(page=${pageInfo.currentPage + 1}, range=${range}, adultYN=${adultYN}, finished=${finished})}">&raquo;</a>
+			</div>
 		</section>
 		<div layout:fragment="script">
 			<script>

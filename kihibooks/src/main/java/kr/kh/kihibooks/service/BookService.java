@@ -62,7 +62,7 @@ public class BookService {
 
         List<BookVO> content = bookDAO.selectBestBooks(offset, size, range, adultYN, finished);
 
-        return PaginationUtils.paginate(content, page, totalPages, startPage, endPage);
+        return PaginationUtils.paginate(content, total, page, size, BLOCK_SIZE);
     }
 
 

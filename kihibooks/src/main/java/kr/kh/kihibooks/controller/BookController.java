@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.service.BookService;
+import kr.kh.kihibooks.utils.PageConstants;
 
 
 @Controller
@@ -108,8 +109,9 @@ public class BookController {
         if(range == null || range.isEmpty()){
             range = "day";
         }
-        int size = 10;
+        int size = PageConstants.PAGE_SIZE;
         PageInfo<BookVO> pageInfo = bookService.getBestBooks(page, size, range, adultYN, finished);
+        System.out.println(pageInfo.getTotalPages());
 
         model.addAttribute("bookList", pageInfo.getContent());
         model.addAttribute("pageInfo", pageInfo);
