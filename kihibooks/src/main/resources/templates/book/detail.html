@@ -2220,6 +2220,178 @@
 			white-space: nowrap;
 			transition: opacity 0.4s ease;
 		}
+
+		.popup-wrapper {
+			margin-top: -157.601px;
+			box-shadow: 0 5px 8px 3px rgba(0, 0, 0, .3);
+			position: fixed;
+			left: 50%;
+			top: 50%;
+			box-sizing: border-box;
+			width: 300px;
+			margin-left: -150px;
+			border: 3px solid #000;
+			background: #fff;
+			border-radius: 3px;
+			z-index: 1000;
+		}
+
+		.popup-wrapper.active {
+			display: block;
+		}
+
+		.popup-header {
+			background: #464343;
+			display: table;
+			width: 100%;
+		}
+
+		.header-title-wrapper {
+			display: table-cell;
+			vertical-align: middle;
+		}
+
+		.header-title {
+			padding: 10px;
+			font-size: 14px;
+			font-weight: 700;
+			color: #d9d2d1;
+		}
+
+		.close-btn-wrapper {
+			text-align: right;
+			display: table-cell;
+			vertical-align: middle;
+		}
+
+		.close-btn {
+			color: #c4bbb8;
+			padding: 10px;
+			appearance: none;
+			border: none;
+			background: none;
+		}
+
+		.indent-hidden {
+			position: absolute;
+			display: inline-block;
+			height: 0;
+			width: 0;
+			text-indent: -9999px;
+			overflow: hidden;
+		}
+
+		.icon-close {
+			font-size: 15px;
+			vertical-align: -15%;
+			filter: brightness(0) invert(35%) sepia(0%) saturate(100%) hue-rotate(0deg) brightness(145%) contrast(100%);
+		}
+
+		.popup-body {
+			padding: 30px 0 25px 0;
+			text-align: center;
+		}
+
+		.main-description {
+			padding: 0 15px;
+			font-size: 16px;
+			font-weight: 700;
+			line-height: 1.4em;
+			color: #000;
+			margin-bottom: 0;
+		}
+
+		.rental-period {
+			margin-top: 3px;
+			padding: 0 15px;
+			font-size: 16px;
+			font-weight: 700;
+			line-height: 1.3em;
+			color: #ff7f50;
+			letter-spacing: -0.03em;
+			margin-bottom: 0;
+		}
+
+		.checkout-btns {
+			padding-top: 8px;
+		}
+
+		.checkout-coupon {
+			display: block;
+			width: 200px;
+			margin: 12px auto 0 auto;
+			position: relative;
+			border: 1px solid #d9d3d1;
+			border-radius: 4px;
+			overflow: hidden;
+			transition: border-color .2s;
+		}
+
+		.coupon-select {
+			border: none;
+			width: 100%;
+			cursor: pointer;
+			height: 37px;
+			line-height: 37px;
+			font-size: 12px;
+			color: #303538;
+			text-indent: 10px;
+			background-color: #fff;
+			vertical-align: middle;
+			outline: 0;
+		}
+		
+		.select-arrow{
+			display: block;
+			position: absolute;
+			right: 0;
+			top: 0;
+			pointer-events: none;
+			width: 28px;
+			height: 37px;
+			line-height: 37px;
+			background: #fff;
+			text-align: center;
+		}
+
+		.payment-free-rent-coupon{
+			display: block;
+			width: 200px;
+			margin: 10px auto 0 auto;
+			padding: 10px 10px;
+			appearance: none;
+			outline: 0;
+			text-decoration: none;
+			box-sizing: border-box;
+			border-radius: 4px;
+			font-weight: 700;
+			text-align: center;
+			vertical-align: baseline;
+			cursor: pointer;
+			transition: background .2s, color .2s;
+			color: #fff;
+			background: #ff7f50;
+			border: 1px solid #ed6d5e;
+			box-shadow: 0 1px 0 rgba(31, 140, 230, .3);
+			font-size: 13px;
+		}
+
+		.text-button{
+			padding: 5px 10px;
+			margin-top: 15px;
+			font-size: 12px;
+			font-weight: 700;
+			color: #918480;
+			transition: color .2s;
+			appearance: none;
+			border: none;
+			background: none;
+		}
+
+		.show-another-payment{
+			display: flex;
+			margin: 20px auto 0 auto;
+		}
 	</style>
 </head>
 
@@ -2946,6 +3118,48 @@
 									</ol>
 								</div>
 							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="base_popup_and_spinner_wrapper">
+			<div id="serial_popup">
+				<div class="popup-wrapper serial-checkout-popup">
+					<div class="popup-header">
+						<div class="header-title-wrapper">
+							<div class="header-title">무료로 보기</div>
+						</div>
+						<div class="close-btn-wrapper">
+							<button type="button" class="close-btn serial-checkout-popup-close-btn">
+								<span class="indent-hidden">닫기</span>
+								<img class="icon-close" src="/resources/static/img/X.png" alt="닫기" style="height: 20px;">
+							</button>
+						</div>
+					</div>
+					<div class="popup-body serial-checkout-wrapper">
+						<div class="checkout-description">
+							<p class="main-description checkout-book-title">이세계 착각 헌터 1화</p>
+							<p class="rental-period">
+								대여 기간 :
+								<span class="rental-period-text">3</span>일
+							</p>
+						</div>
+						<div class="checkout-btns">
+							<div class="checkout-coupon">
+								<label for="checkout-coupon-select" class="indent-hidden">이용권 선택</label>
+								<select id="checkout_coupon_select" class="coupon-select free-rent-coupon-list" title="이용권 선택" style="border: none;">
+									<option value="wait_free">기다리면 무료 (1장 남음)</option>
+								</select>
+								<div class="select-arrow">
+									<img class="dark-gray" src="/resources/static/img/down-triangle.png" alt="펼치기" style="height: 9px;">
+								</div>
+							</div>
+							<button type="button" class="payment-free-rent-coupon">무료로 보기</button>
+							<button type="button" class="text-button show-another-payment">
+								다른 방법으로 결제
+								<div class="icon-arrow-right">»</div>
+							</button>
 						</div>
 					</div>
 				</div>
