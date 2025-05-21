@@ -439,7 +439,7 @@
 			border: 0;
 		}
 
-		.noti-title:hover{
+		.noti-title:hover {
 			color: #949494;
 		}
 
@@ -693,6 +693,10 @@
 			border: 1px solid #d9d4d1;
 		}
 
+		.sort-btn:hover {
+			background: #f5f5f5;
+		}
+
 		.option-right {
 			margin: 0;
 			padding: 0;
@@ -736,8 +740,7 @@
 			margin: 0;
 		}
 
-		.cart-btn,
-		.select-buy-btn {
+		.cart-btn {
 			padding: 8px 11px;
 			margin: 0;
 			appearance: none;
@@ -754,6 +757,26 @@
 			color: #918480;
 			background: #fff;
 			border: 1px solid #d9d3d1;
+			font-size: 12px;
+		}
+
+		.select-buy-btn {
+			padding: 8px 11px;
+			margin: 0;
+			appearance: none;
+			outline: 0;
+			text-decoration: none;
+			box-sizing: border-box;
+			border-radius: 4px;
+			font-weight: 700;
+			display: inline-block;
+			text-align: center;
+			cursor: pointer;
+			line-height: 1em;
+			vertical-align: baseline;
+			color: #ffffff;
+			background: #ff7f50;
+			border: 1px solid #ff7f50;
 			font-size: 12px;
 		}
 
@@ -1229,7 +1252,7 @@
 			color: #a5a5a5;
 		}
 
-		.au-other-more:hover{
+		.au-other-more:hover {
 			text-decoration: none;
 			color: #a5a5a5;
 		}
@@ -1541,6 +1564,43 @@
 			cursor: default;
 		}
 
+		.recorded-text-wrap {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 18px;
+			display: none;
+		}
+
+		.recorded-text {
+			font-size: 16px;
+			font-weight: 600;
+			line-height: 19px;
+		}
+
+		.recorded-star {
+			color: rgb(229, 76, 67);
+		}
+
+		.cancel-rating-btn {
+			color: rgb(165, 165, 165);
+			font-size: 13px;
+			font-weight: 500;
+			line-height: 16px;
+			margin-left: 10px;
+			cursor: pointer;
+			appearance: none;
+			background: none;
+			border: none;
+		}
+
+		.recorded-blank {
+			width: 1px;
+			height: 10px;
+			background: rgb(240, 240, 240);
+			margin-left: 10px;
+		}
+
 		.record-star {
 			display: flex;
 			flex-direction: row-reverse;
@@ -1686,11 +1746,11 @@
 			padding: 19px 0 15px;
 		}
 
-		.buyer[aria-pressed='true'] {
+		.rv-sort-btn button[aria-pressed='true'] {
 			border-bottom: 1px solid transparent;
 		}
 
-		.buyer[aria-pressed='false'] {
+		.rv-sort-btn button[aria-pressed='false'] {
 			border-bottom: 1px solid #ccc;
 			color: #a5a5a5;
 			background: #f5f5f5;
@@ -1699,16 +1759,6 @@
 		.all {
 			padding: 19px 0 15px;
 			border-left: 1px solid #ccc !important;
-		}
-
-		.all[aria-pressed='true'] {
-			border-bottom: 1px solid transparent;
-		}
-
-		.all[aria-pressed='false'] {
-			border-bottom: 1px solid #ccc;
-			color: #a5a5a5;
-			background: #f5f5f5;
 		}
 
 		.rv-arrange-btn {
@@ -2253,7 +2303,8 @@
 																	<button type="button" class="noti-title">도서 파일 교체 안내 (2025-04-22)
 																		<!-- 펼친 경우 fold.png 로 변경 -->
 																		<span class="expandBtn">
-																			<img id="noti_icon" src="/resources/static/img/expand.png" alt="펼치기" style="height: 18px;">
+																			<img id="noti_icon" src="/resources/static/img/expand.png" alt="펼치기"
+																				style="height: 18px;">
 																		</span>
 																	</button>
 																	<button type="button" class="noti-content none">
@@ -2321,9 +2372,9 @@
 													<label for="select_all" class="all-label">전체 선택</label>
 												</li>
 												<li class="option-item">
-													<button type="button" class="sort-btn">
+													<button type="button" onclick="clickSortBtn(this)" class="sort-btn">
 														<img src="resources/static/img/transfer.png" class="dark-gray" alt="정렬 아이콘"
-															style="height: 13px;">
+															style="height: 14px; width: 11px; margin-bottom: 1px;">
 														<span class="sort-text">신간부터</span>
 													</button>
 												</li>
@@ -2340,7 +2391,7 @@
 														<ul class="oi-ul">
 															<li class="btn-item">
 																<button type="button" class="cart-btn">
-																	<img src="resources/static/img/cart.png" alt="카트 아이콘" style="height: 15px;"> 카트
+																	<img src="resources/static/img/cart.png" alt="카트 아이콘" style="height: 12px;"> 카트
 																</button>
 															</li>
 															<li class="btn-item">
@@ -2358,8 +2409,43 @@
 													<div class="epi-list-wrapper">
 														<div class="table-wrap">
 															<div class="epi-checkbox">
-																<input type="checkbox" id="bookEP_CODE" class="episode-check">
-																<label for="bookEP_CODE" class="epi-label"></label>
+																<input type="checkbox" id="bookEP_CODE1" class="episode-check">
+																<label for="bookEP_CODE1" class="epi-label"></label>
+															</div>
+															<div class="epi-info">
+																<div class="info-title-with-badge">
+																	<!-- 무료 회차가 아닌 경우 무료 배지 미노출 | 키다무 도서 & 무료X 회차인 경우 clock_badge로 노출 -->
+																	<div class="badge-list">
+																		<div class="free-badge">
+																			<img src="resources/static/img/free.png" alt="무료 배지" style="height: 18px;">
+																		</div>
+																	</div>
+																	<div class="epi-title">이세계 착각 헌터 1화</div>
+																</div>
+																<div>
+																	<ul class="info-list-wrapper">
+																		<li class="info-ep-date">2023.05.02</li>
+																		<!-- 아마도 전체 페이지 들어가야할듯? ↓ -->
+																		<li class="info-page-cnt">| 약 4.5천 자</li>
+																		<!-- 소장한 경우만 아래 배지 추가 -->
+																		<li class="info-status">|
+																			<span style="color: #ff7f50;">소장</span>
+																		</li>
+																	</ul>
+																</div>
+															</div>
+															<div class="direct-view-wrapper">
+																<a th:href="@{/}" data-book-id="ep_code" class="direct-view-btn">보기</a>
+															</div>
+														</div>
+													</div>
+												</li>
+												<li class="epi-list" data-id="ep_code" data-price="0" data-volume="2">
+													<div class="epi-list-wrapper">
+														<div class="table-wrap">
+															<div class="epi-checkbox">
+																<input type="checkbox" id="bookEP_CODE2" class="episode-check">
+																<label for="bookEP_CODE2" class="epi-label"></label>
 															</div>
 															<div class="epi-info">
 																<div class="info-title-with-badge">
@@ -2591,17 +2677,16 @@
 												<div class="rv-record">
 													<div class="rv-record-star">
 														<h4 class="record-star-text">이 작품을 평가해 주세요!</h4>
+														<div class="recorded-text-wrap">
+															<div class="recorded-text">내가 남긴 별점
+																<span class="recorded-star"></span>
+															</div>
+															<div class="recorded-blank"></div>
+															<button type="button" class="cancel-rating-btn">취소</button>
+														</div>
 														<div class="record-star">
 															<label>
-																<input type="radio" name="rating" value="2">
-																<img src="/resources/static/img/star.png" alt="별" class="record-star-img gray">
-															</label>
-															<label>
-																<input type="radio" name="rating" value="4">
-																<img src="/resources/static/img/star.png" alt="별" class="record-star-img gray">
-															</label>
-															<label>
-																<input type="radio" name="rating" value="6">
+																<input type="radio" name="rating" value="10">
 																<img src="/resources/static/img/star.png" alt="별" class="record-star-img gray">
 															</label>
 															<label>
@@ -2609,7 +2694,15 @@
 																<img src="/resources/static/img/star.png" alt="별" class="record-star-img gray">
 															</label>
 															<label>
-																<input type="radio" name="rating" value="10">
+																<input type="radio" name="rating" value="6">
+																<img src="/resources/static/img/star.png" alt="별" class="record-star-img gray">
+															</label>
+															<label>
+																<input type="radio" name="rating" value="4">
+																<img src="/resources/static/img/star.png" alt="별" class="record-star-img gray">
+															</label>
+															<label>
+																<input type="radio" name="rating" value="2">
 																<img src="/resources/static/img/star.png" alt="별" class="record-star-img gray">
 															</label>
 														</div>
@@ -2709,6 +2802,9 @@
 															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
 															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
 														</div>
+														<div class="rv-content" hidden>
+															<p class="content-text">433화보고 하차함.</p>
+														</div>
 														<div class="rv-content-spoiler">
 															<div class="content-spoiler">
 																<img src="/resources/static/img/exclamation.png" alt="i 아이콘" style="height: 23px;"
@@ -2757,8 +2853,8 @@
 													<input type="checkbox" id="buyer_check" class="buyer-check">
 													<label for="buyer_check" class="standard-title">
 														<span>구매자 표시 기준은 무엇인가요?</span>
-														<img id="standard_icon" src="/resources/static/img/expand.png" alt="확정 아이콘" class="dark-gray"
-															style="height: 20px;">
+														<img id="standard_icon" src="/resources/static/img/expand.png" alt="확정 아이콘"
+															class="dark-gray" style="height: 20px;">
 													</label>
 													<div class="standard-content none">
 														<strong style="color: #141414;">'구매자' 표시는 유료 작품 결제 후 다운로드 한 경우에만 표시됩니다.</strong>
@@ -2868,13 +2964,44 @@
 				});
 			});
 
+			const starRadios = document.querySelectorAll('input[name="rating"]');
+			const recordStarText = document.querySelector('.record-star-text');
+			const recordedTextWrap = document.querySelector('.recorded-text-wrap');
+			const recordedStar = document.querySelector('.recorded-star');
+			const cancelBtn = document.querySelector('.cancel-rating-btn');
+
+			// 별 클릭 시
+			starRadios.forEach(radio => {
+				radio.addEventListener('change', function () {
+					const value = parseInt(this.value, 10);
+					const displayValue = (value / 2).toFixed(1);
+					recordedStar.textContent = displayValue;
+
+					recordStarText.style.display = 'none';
+					recordedTextWrap.style.display = 'flex'; // flex or block depending on your layout
+				});
+			});
+
+			// 취소 버튼 클릭 시
+			cancelBtn.addEventListener('click', function () {
+				// 별점 선택 해제
+				starRadios.forEach(radio => radio.checked = false);
+
+				// selected 클래스 제거
+				stars.forEach(star => {
+					star.querySelector('img').classList.remove('selected');
+				});
+
+				recordedTextWrap.style.display = 'none';
+				recordStarText.style.display = 'block';
+			});
+
 			document.addEventListener("DOMContentLoaded", function () {
 				const ratingLabel = document.querySelector(".rating-bunpo");
 				const bunpoTable = document.querySelector(".bunpo-table");
 				const bunpoIcon = document.getElementById("bunpo_table_icon");
 
 				ratingLabel.addEventListener("click", function (e) {
-					// input 클릭 방지 (토글 방해될 수 있어서)
 					if (e.target.classList.contains("bunpo-check")) return;
 
 					if (bunpoTable.classList.contains("none")) {
@@ -2894,8 +3021,8 @@
 				const standardContent = document.querySelector(".standard-content");
 				const standardIcon = document.getElementById("standard_icon")
 
-				standardTitle.addEventListener("click", function(){
-					if(standardContent.classList.contains("none")){
+				standardTitle.addEventListener("click", function () {
+					if (standardContent.classList.contains("none")) {
 						standardContent.classList.remove("none");
 						standardIcon.src = "/resources/static/img/fold.png";
 						standardIcon.alt = "접기";
@@ -2910,8 +3037,8 @@
 				const notiContent = document.querySelector(".noti-content");
 				const notiIcon = document.getElementById("noti_icon")
 
-				notiTitle.addEventListener("click", function(){
-					if(notiContent.classList.contains("none")){
+				notiTitle.addEventListener("click", function () {
+					if (notiContent.classList.contains("none")) {
 						notiContent.classList.remove("none");
 						notiIcon.src = "/resources/static/img/fold.png";
 						notiIcon.alt = "접기";
@@ -2926,8 +3053,8 @@
 				const noteContent = document.querySelector(".note-content");
 				const noteIcon = document.getElementById("note_icon")
 
-				noteCheckLabel.addEventListener("click", function(){
-					if(noteContent.classList.contains("none")){
+				noteCheckLabel.addEventListener("click", function () {
+					if (noteContent.classList.contains("none")) {
 						noteContent.classList.remove("none");
 						noteIcon.src = "/resources/static/img/fold.png";
 						noteIcon.alt = "접기";
@@ -2937,6 +3064,82 @@
 						noteIcon.alt = "펼치기";
 					}
 				})
+
+				// 회차 목록 체크 박스 선택 관련
+				const selectAllCheckbox = document.getElementById("select_all");
+				const episodeCheckboxes = document.querySelectorAll(".episode-check");
+
+				selectAllCheckbox.addEventListener("change", function () {
+					const isChecked = selectAllCheckbox.checked;
+					episodeCheckboxes.forEach(checkbox => {
+						checkbox.checked = isChecked;
+					});
+				});
+
+				episodeCheckboxes.forEach(checkbox => {
+					checkbox.addEventListener("change", function () {
+						const allChecked = Array.from(episodeCheckboxes).every(cb => cb.checked);
+						selectAllCheckbox.checked = allChecked;
+					});
+				});
+
+			});
+
+			// 최신순/공감순/별점높은순/별점낮은순 클릭 시
+			const arrangeButtons = document.querySelectorAll('.rv-arrange-btn button');
+
+			arrangeButtons.forEach(button => {
+				button.addEventListener('click', function () {
+					arrangeButtons.forEach(btn => btn.setAttribute('aria-pressed', 'false'));
+
+					this.setAttribute('aria-pressed', 'true');
+				});
+			});
+
+			// 구매자/전체 클릭 시
+			const sortBtns = document.querySelectorAll(".rv-sort-btn button");
+
+			sortBtns.forEach(button => {
+				button.addEventListener('click', function () {
+					sortBtns.forEach(btn => btn.setAttribute('aria-pressed', 'false'));
+
+					this.setAttribute('aria-pressed', 'true');
+				})
+			})
+
+			// 스포일러 댓글 -> 리뷰 보기 클릭 시
+			const spoilerButtons = document.querySelectorAll('.spoiler-view-btn');
+
+			spoilerButtons.forEach(button => {
+				button.addEventListener('click', function () {
+					const rvContent = this.closest('.rv-content-spoiler').previousElementSibling;
+					const rvSpoiler = this.closest('.rv-content-spoiler');
+
+					if (rvContent && rvSpoiler) {
+						rvContent.removeAttribute('hidden');
+						rvSpoiler.setAttribute('hidden', 'true');
+					}
+				});
+			});
+
+			function clickSortBtn(btn) {
+				const sortText = btn.querySelector('.sort-text');
+				const currentText = sortText.textContent.trim();
+				sortText.textContent = currentText === '신간부터' ? '1권부터' : '신간부터';
+			};
+
+			const textarea = document.querySelector('.rv-textarea');
+			const submitBtn = document.querySelector('.rv-regist-btn');
+
+			textarea.addEventListener('input', () => {
+				const textLength = textarea.value.trim().length;
+				if (textLength >= 10) {
+					submitBtn.style.backgroundColor = '#ff7f50'; // 변경될 색
+					submitBtn.disabled = false;
+				} else {
+					submitBtn.style.backgroundColor = '#ccc'; // 기본색
+					submitBtn.disabled = true;
+				}
 			});
 		</script>
 	</main>
