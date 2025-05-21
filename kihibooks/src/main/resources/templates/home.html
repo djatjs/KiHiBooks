@@ -618,11 +618,15 @@
 				<div id="lastUpdatedText" class="last-updated">최근 갱신: -</div>
 			</div>	
 			<div class="ranking-body">
-				<button id="prevBtn" onclick="prevPage()" class="side-nav left"><</button>
+				<button id="prevBtn" onclick="prevPage()" class="side-nav left">
+					<img src="/resources/static/img/back.png" alt="이전">
+				</button>
 
 				<div id="bookGrid" class="book-grid"></div>
 				
-				<button id="nextBtn" onclick="nextPage()" class="side-nav right">></button>
+				<button id="nextBtn" onclick="nextPage()" class="side-nav right">
+					<img src="/resources/static/img/next.png" alt="다음" style="margin-left: 2px;">
+				</button>
 			</div>
 			<script>
 				let books =[];
@@ -725,9 +729,13 @@
 				<div class="wait-see-more">더 보기</div>
 			</div>
 			<div class="waitfree-slider-wrapper">
-				<button class="waitfree-arrow left" id="prevArrow" onclick="scrollWaitfree(-3)"><</button>
+				<button class="waitfree-arrow left" id="prevArrow" onclick="scrollWaitfree(-3)">
+					<img src="/resources/static/img/back.png" alt="이전">
+				</button>
 				<div class="waitfree-track" id="waitfreeGrid"></div>
-				<button class="waitfree-arrow right" id="nextArrow" onclick="scrollWaitfree(3)">></button>
+				<button class="waitfree-arrow right" id="nextArrow" onclick="scrollWaitfree(3)">
+					<img src="/resources/static/img/next.png" alt="다음" style="margin-left: 2px;">
+				</button>
 			</div>
 		</section>
 		<script>
@@ -793,11 +801,15 @@
 					<div class="best-see-more">더 보기</div>
 				</div>	
 				<div class="best-body">
-					<button id="bestPrevBtn" onclick="prevBestPage()" class="side-nav left"><</button>
+					<button id="bestPrevBtn" onclick="prevBestPage()" class="side-nav left">
+						<img src="/resources/static/img/back.png" alt="이전">
+					</button>
 	
 					<div id="bestBookGrid" class="book-grid"></div>
 					
-					<button id="bestNextBtn" onclick="nextBestPage()" class="side-nav right">></button>
+					<button id="bestNextBtn" onclick="nextBestPage()" class="side-nav right">
+						<img src="/resources/static/img/next.png" alt="다음" style="margin-left: 2px;">
+					</button>
 				</div>
 				<script>
 					let bestBooks =[];
@@ -936,9 +948,13 @@
 				<div class="new-see-more">더 보기</div>
 			</div>
 			<div class="new-publish-slider-wrapper">
-				<button class="new-publish-arrow left" id="newPublishPrevArrow" onclick="scrollNewPublish(-3)"><</button>
+				<button class="new-publish-arrow left" id="newPublishPrevArrow" onclick="scrollNewPublish(-3)">
+					<img src="/resources/static/img/back.png" alt="이전">
+				</button>
 				<div class="new-publish-track" id="newPublishGrid"></div>
-				<button class="new-publish-arrow right" id="newPublishNextArrow" onclick="scrollNewPublish(3)">></button>
+				<button class="new-publish-arrow right" id="newPublishNextArrow" onclick="scrollNewPublish(3)">
+					<img src="/resources/static/img/next.png" alt="다음" style="margin-left: 2px;">
+				</button>
 			</div>
 		</div>
 		<script>
