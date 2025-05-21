@@ -189,7 +189,7 @@
 		}
 
 		.orange {
-			filter: brightness(0) saturate(110%) invert(61%) sepia(60%) saturate(387%) hue-rotate(328deg) brightness(101%) contrast(101%);
+			filter: brightness(0) saturate(130%) invert(38%) sepia(95%) saturate(750%) hue-rotate(-5deg) brightness(115%) contrast(110%);
 		}
 
 		.dark-gray {
@@ -873,6 +873,14 @@
 			position: relative;
 		}
 
+		.info-price {
+			color: #ff7f50;
+			font-weight: 700;
+			font-size: 13px;
+			margin: 0;
+			margin-top: 6px;
+		}
+
 		.epi-label {
 			position: absolute;
 			width: 100%;
@@ -916,9 +924,31 @@
 			border: 1px solid #d9d2d1;
 		}
 
+		.buy-book-btn {
+			font-size: 13px;
+			padding: 8px 14px;
+			margin: 7px 0 7px 4px;
+			position: relative;
+			z-index: 5;
+			color: #fff;
+			box-sizing: border-box;
+			border-radius: 4px;
+			font-weight: 700;
+			display: inline-block;
+			text-align: center;
+			cursor: pointer;
+			background: #ff7f50;
+			border: 1px solid #f57343;
+		}
+
 		.direct-view-btn:hover {
 			text-decoration: none;
 			color: #918580;
+		}
+
+		.buy-book-btn:hover {
+			text-decoration: none;
+			color: #fff;
 		}
 
 		.list-more-button {
@@ -2221,6 +2251,10 @@
 			transition: opacity 0.4s ease;
 		}
 
+		.serial-checkout-popup {
+			display: none;
+		}
+
 		.popup-wrapper {
 			margin-top: -157.601px;
 			box-shadow: 0 5px 8px 3px rgba(0, 0, 0, .3);
@@ -2233,7 +2267,7 @@
 			border: 3px solid #000;
 			background: #fff;
 			border-radius: 3px;
-			z-index: 1000;
+			z-index: 10000;
 		}
 
 		.popup-wrapper.active {
@@ -2340,8 +2374,8 @@
 			vertical-align: middle;
 			outline: 0;
 		}
-		
-		.select-arrow{
+
+		.select-arrow {
 			display: block;
 			position: absolute;
 			right: 0;
@@ -2354,7 +2388,7 @@
 			text-align: center;
 		}
 
-		.payment-free-rent-coupon{
+		.orange-btn {
 			display: block;
 			width: 200px;
 			margin: 10px auto 0 auto;
@@ -2372,11 +2406,10 @@
 			color: #fff;
 			background: #ff7f50;
 			border: 1px solid #ed6d5e;
-			box-shadow: 0 1px 0 rgba(31, 140, 230, .3);
 			font-size: 13px;
 		}
 
-		.text-button{
+		.text-button {
 			padding: 5px 10px;
 			margin-top: 15px;
 			font-size: 12px;
@@ -2388,10 +2421,86 @@
 			background: none;
 		}
 
-		.show-another-payment{
+		.show-another-payment {
 			display: flex;
 			margin: 20px auto 0 auto;
 		}
+
+		.sub-description {
+			margin-top: 10px;
+			padding: 0 15px;
+			color: #4d4340;
+			line-height: 1.48em;
+			font-size: 12px;
+		}
+
+		.white-btn {
+			display: block;
+			width: 200px;
+			margin: 10px auto 0 auto;
+			padding: 10px 10px;
+			appearance: none;
+			outline: 0;
+			text-decoration: none;
+			box-sizing: border-box;
+			border-radius: 4px;
+			font-weight: 700;
+			text-align: center;
+			vertical-align: baseline;
+			cursor: pointer;
+			transition: background .2s, color .2s;
+			color: #a59b98;
+			background: #fff;
+			border: 1px solid #a59b98;
+			font-size: 13px;
+		}
+
+		#full_page_spinner {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 9999;
+			pointer-events: all;
+		}
+
+		#full_page_spinner.active {
+			display: block;
+		}
+
+		.spinner-dimmed-bg {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(255, 255, 255, .7);
+		}
+
+		.checkout-price{
+			margin-top: 3px;
+			padding: 0 15px;
+			font-size: 16px;
+			font-weight: 700;
+			line-height: 1.3em;
+			color: #ff7f50;
+		}
+
+		.point-list{
+			margin: 0;
+			padding: 0;
+			margin-top: 12px;
+			list-style-type: none;
+		}
+
+		.kihi-point{
+			color: #4d4340;
+			padding-top: 7px;
+			font-size: 12px;
+		}
+		
 	</style>
 </head>
 
@@ -2624,7 +2733,8 @@
 																	<!-- 무료 회차가 아닌 경우 무료 배지 미노출 | 키다무 도서 & 무료X 회차인 경우 clock_badge로 노출 -->
 																	<div class="badge-list">
 																		<div class="free-badge">
-																			<img src="resources/static/img/free.png" alt="무료 배지" style="height: 18px;">
+																			<img class="orange" src="resources/static/img/clock_badge.png" alt="키다무 배지"
+																				style="height: 18px;">
 																		</div>
 																	</div>
 																	<div class="epi-title">이세계 착각 헌터 2화</div>
@@ -2634,15 +2744,49 @@
 																		<li class="info-ep-date">2023.05.02</li>
 																		<!-- 아마도 전체 페이지 들어가야할듯? ↓ -->
 																		<li class="info-page-cnt">| 약 4.5천 자</li>
-																		<!-- 소장한 경우만 아래 배지 추가 -->
-																		<li class="info-status">|
-																			<span style="color: #ff7f50;">소장</span>
-																		</li>
 																	</ul>
+																	<p class="info-price">
+																		<span>100</span>원
+																	</p>
 																</div>
 															</div>
 															<div class="direct-view-wrapper">
-																<a th:href="@{/}" data-book-id="ep_code" class="direct-view-btn">보기</a>
+																<a data-book-id="ep_code" class="buy-book-btn">소장</a>
+															</div>
+														</div>
+													</div>
+												</li>
+												<li class="epi-list" data-id="ep_code" data-price="0" data-volume="3">
+													<div class="epi-list-wrapper">
+														<div class="table-wrap">
+															<div class="epi-checkbox">
+																<input type="checkbox" id="bookEP_CODE3" class="episode-check">
+																<label for="bookEP_CODE3" class="epi-label"></label>
+															</div>
+															<div class="epi-info">
+																<div class="info-title-with-badge">
+																	<!-- 무료 회차가 아닌 경우 무료 배지 미노출 | 키다무 도서 & 무료X 회차인 경우 clock_badge로 노출 -->
+																	<div class="badge-list">
+																		<div class="free-badge">
+																			<img class="orange" src="resources/static/img/clock_badge.png" alt="키다무 배지"
+																				style="height: 18px;">
+																		</div>
+																	</div>
+																	<div class="epi-title">이세계 착각 헌터 3화</div>
+																</div>
+																<div>
+																	<ul class="info-list-wrapper">
+																		<li class="info-ep-date">2023.05.02</li>
+																		<!-- 아마도 전체 페이지 들어가야할듯? ↓ -->
+																		<li class="info-page-cnt">| 약 4.5천 자</li>
+																	</ul>
+																	<p class="info-price">
+																		<span>100</span>원
+																	</p>
+																</div>
+															</div>
+															<div class="direct-view-wrapper">
+																<a data-book-id="ep_code" class="buy-book-btn">소장</a>
 															</div>
 														</div>
 													</div>
@@ -3124,8 +3268,11 @@
 			</div>
 		</div>
 		<div id="base_popup_and_spinner_wrapper">
+			<div id="full_page_spinner">
+				<div class="spinner-dimmed-bg"></div>
+			</div>
 			<div id="serial_popup">
-				<div class="popup-wrapper serial-checkout-popup">
+				<div class="popup-wrapper serial-checkout-popup" id="seiral_free_rent_coupon_popup">
 					<div class="popup-header">
 						<div class="header-title-wrapper">
 							<div class="header-title">무료로 보기</div>
@@ -3148,18 +3295,122 @@
 						<div class="checkout-btns">
 							<div class="checkout-coupon">
 								<label for="checkout-coupon-select" class="indent-hidden">이용권 선택</label>
-								<select id="checkout_coupon_select" class="coupon-select free-rent-coupon-list" title="이용권 선택" style="border: none;">
+								<select id="checkout_coupon_select" class="coupon-select free-rent-coupon-list" title="이용권 선택"
+									style="border: none;">
 									<option value="wait_free">기다리면 무료 (1장 남음)</option>
 								</select>
 								<div class="select-arrow">
 									<img class="dark-gray" src="/resources/static/img/down-triangle.png" alt="펼치기" style="height: 9px;">
 								</div>
 							</div>
-							<button type="button" class="payment-free-rent-coupon">무료로 보기</button>
+							<button type="button" class="orange-btn payment-free-rent-coupon">무료로 보기</button>
 							<button type="button" class="text-button show-another-payment">
 								다른 방법으로 결제
 								<div class="icon-arrow-right">»</div>
 							</button>
+						</div>
+					</div>
+				</div>
+				<div class="popup-wrapper serial-checkout-popup" id="serial_checkout_by_others_popup">
+					<div class="popup-header">
+						<div class="header-title-wrapper">
+							<div class="header-title">결제하기</div>
+						</div>
+						<div class="close-btn-wrapper">
+							<button type="button" class="close-btn">
+								<span class="indent-hidden">닫기</span>
+								<img class="icon-close" src="/resources/static/img/X.png" alt="닫기" style="height: 20px;">
+							</button>
+						</div>
+					</div>
+					<div class="popup-body">
+						<div class="checkout-description">
+							<p class="main-description">결제 가능한 키히포인트가 없습니다.</p>
+							<p class="sub-description">키히포인트를 충전하고 결제없이 편하게 감상하세요.<br>포인트 적립 혜택도 놓치지 마세요!</p>
+						</div>
+						<div class="checkout-btns">
+							<button type="button" class="orange-btn payment-charge-cash-and-payment-book">충전하고 결제</button>
+							<button type="button" class="white-btn payment-book">일반 결제</button>
+						</div>
+					</div>
+				</div>
+				<div class="popup-wrapper serial-checkout-popup" id="serial_checkout_point_popup">
+					<div class="popup-header">
+						<div class="header-title-wrapper">
+							<div class="header-title">결제하기</div>
+						</div>
+						<div class="close-btn-wrapper">
+							<button type="button" class="close-btn">
+								<span class="indent-hidden">닫기</span>
+								<img class="icon-close" src="/resources/static/img/X.png" alt="닫기" style="height: 20px;">
+							</button>
+						</div>
+					</div>
+					<div class="popup-body">
+						<div class="checkout-description">
+							<p class="main-description">이세계 착각 헌터 3화</p>
+							<p class="checkout-price">결제 금액 : 
+								<span class="total-price">0</span>원
+							</p>
+							<ul class="point-list">
+								<li class="kihi-point">키히포인트 사용:
+									<strong>
+										<span class="usable-point">0</span>원
+									</strong>
+									(<span class="user-kihi-point">0</span>원 보유)
+								</li>
+							</ul>
+						</div>
+						<div class="checkout-btns">
+							<button type="button" class="orange-btn payment-book-point-immediate-view">결제하고 바로보기</button>
+							<button type="button" class="white-btn payment-book-point">결제하고 다음에 보기</button>
+						</div>
+					</div>
+				</div>
+				<div class="popup-wrapper serial-checkout-popup" id="already_exists_popup">
+					<div class="popup-header">
+						<div class="header-title-wrapper">
+							<div class="header-title">결제하기</div>
+						</div>
+						<div class="close-btn-wrapper">
+							<button type="button" class="close-btn">
+								<span class="indent-hidden">닫기</span>
+								<img class="icon-close" src="/resources/static/img/X.png" alt="닫기" height="20px">
+							</button>
+						</div>
+					</div>
+					<div class="popup-body">
+						<div class="checkout-description">
+							<p class="main-description">이미 구매한 작품입니다.</p>
+						</div>
+						<div class="checkout-btns">
+							<button type="button" class="orange-btn serial-book-direct-view-btn">보기</button>
+							<button type="button" class="white-btn serial-checkout-popup-close-btn">닫기</button>
+						</div>
+					</div>
+				</div>
+				<div class="popup-wrapper serial-checkout-popup" id="expired_next_popup">
+					<div class="popup-header">
+						<div class="header-title-wrapper">
+							<div class="header-title">이어보기</div>
+						</div>
+						<div class="close-btn-wrapper">
+							<button type="button" class="close-btn">
+								<span class="indent-hidden">닫기</span>
+								<img class="icon-close" src="/resources/static/img/X.png" alt="닫기" style="height: 20px;">
+							</button>
+						</div>
+					</div>
+					<div class="popup-body">
+						<div class="checkout-description">
+							<p class="main-description">작품 제목</p>
+							<p class="sub-description">
+								대여기간이 만료되었습니다.<br>다음화를 보시겠습니까?
+							</p>
+						</div>
+						<div class="checkout-btns">
+							<button type="button" class="orange-btn next-epi-btn">다음화 보기</button>
+							<button type="button" class="white-btn re-view-btn">다시 보기</button>
 						</div>
 					</div>
 				</div>
@@ -3354,6 +3605,36 @@
 					submitBtn.style.backgroundColor = '#ccc'; // 기본색
 					submitBtn.disabled = true;
 				}
+			});
+
+			const dimmed = document.getElementById('full_page_spinner');
+			const freePopup = document.getElementById('seiral_free_rent_coupon_popup');
+			const otherPopup = document.getElementById('serial_checkout_by_others_popup');
+
+			// 소장 버튼 클릭 시 첫 팝업 열기
+			document.querySelectorAll('.buy-book-btn').forEach(btn => {
+				btn.addEventListener('click', function (e) {
+					e.preventDefault();
+					freePopup.classList.add('active');
+					dimmed.classList.add('active');
+				});
+			});
+
+			// "다른 방법으로 결제" 버튼 클릭 시 첫 팝업 닫고 두 번째 팝업 열기
+			document.querySelector('.show-another-payment')?.addEventListener('click', function () {
+				freePopup.classList.remove('active');
+				otherPopup.classList.add('active');
+				dimmed.classList.add('active');
+			});
+
+			// 모든 팝업 닫기 버튼 동작
+			document.querySelectorAll('.close-btn').forEach(btn => {
+				btn.addEventListener('click', function () {
+					document.querySelectorAll('.popup-wrapper').forEach(popup => {
+						popup.classList.remove('active');
+					});
+					dimmed.classList.remove('active');
+				});
 			});
 		</script>
 	</main>
