@@ -76,6 +76,80 @@
             AND BO_ADULT = #{adultYN}
         </if>
     </select>
+    <select id="selectBestBooks" resultType="BookVO">
+        SELECT 
+            BO_CODE, BO_TITLE, BO_TOTAL_RATING, COUNT(RV_NUM) AS BO_REVIEW_COUNT,
+            BO_FIN, BO_ADULT, BO_PUBLISH_DATE,
+            BO_TOTAL_EPISODE,
+            AU_NAME AS bo_author
+        FROM 
+            book
+        JOIN 
+            author ON BO_AU_NUM = AU_NUM
+        LEFT JOIN
+            review ON RV_BO_CODE = BO_CODE
+        <!-- 날짜 필터: 오늘 / 주간 / 월간 -->
+        <choose>
+            <when test="range == 'day'">
+                AND DATE(RV_DATE) = CURDATE()
+            </when>
+            <when test="range == 'week'">
+                AND RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+            </when>
+            <when test="range == 'month'">
+                AND RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+            </when>
+        </choose>
+
+        WHERE 
+            1=1
+        <!-- 성인 필터 -->
+        <if test="adultYN != null and adultYN != ''">
+            AND BO_ADULT = #{adultYN}
+        </if>
+        <!-- 완결 필터 -->
+        <if test="finished != null and finished != ''">
+            AND BO_FIN = #{finished}
+        </if>
+
+
+        GROUP BY BO_CODE
+        ORDER BY COUNT(RV_NUM) DESC, BO_TOTAL_RATING DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+    <select id="countBestBooks" resultType="int">
+        SELECT 
+            COUNT(DISTINCT BO_CODE)
+        FROM 
+            book
+        LEFT JOIN
+            review ON RV_BO_CODE = BO_CODE
+        <choose>
+            <when test="range == 'day'">
+            AND DATE(RV_DATE) = CURDATE()
+            </when>
+            <when test="range == 'week'">
+            AND RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+            </when>
+            <when test="range == 'month'">
+            AND RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+            </when>
+        </choose>
+
+        WHERE 
+            1=1
+        <if test="adultYN != null and adultYN != ''">
+            AND BO_ADULT = #{adultYN}
+        </if>
+
+        <if test="finished != null and finished != ''">
+            AND BO_FIN = #{finished}
+        </if>
+
+    </select>
+
+
+
     
 
 </mapper>

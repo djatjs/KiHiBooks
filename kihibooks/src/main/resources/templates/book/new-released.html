@@ -126,6 +126,12 @@
 			align-items: center;
 			gap: 6px;
 		}
+
+		.rating {
+			color: #e63946; /* 빨간색 계열 */
+			font-weight: bold;
+		}
+
 		
     .badge.complete {
        background-color: #555;
@@ -233,7 +239,7 @@
 						<span class="badge complete" th:if="${book.bo_fin == 'Y'}">완결</span>
 					</p>
 					<p class="meta">
-						<span th:text="'★ ' + ${book.bo_total_rating/1000} ">평점</span>
+						<span class="rating" th:text="'★ ' + ${book.bo_total_rating/1000.0} ">평점</span>
 						<span class="separator">|</span>
 						<span th:text="'(' + ${book.bo_review_count} + ')'">(0)</span>
 					</p>
