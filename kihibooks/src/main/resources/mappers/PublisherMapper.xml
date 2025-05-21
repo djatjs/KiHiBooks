@@ -20,4 +20,7 @@
     <insert id="insertPublisherId">
         insert into publisher_id(pi_ur_num, pi_pu_code, pi_authority) values(#{pi_ur_num}, #{pi_pu_code}, #{pi_authority})
     </insert>
+    <select id="selectPublisherIdByNum" resultType="PublisherIdVO">
+        select pi_pu_code FROM publisher_id WHERE pi_ur_num = #{ur_num}
+    </select>
 </mapper>

@@ -16,5 +16,7 @@ public interface PublisherDAO {
     PublisherIdVO selectPublisherId(PublisherIdVO publisherId);
     
     boolean insertPublisherId(PublisherIdVO publisherId);
+
+    PublisherIdVO selectPublisherIdByNum(int ur_num);
     
 }
