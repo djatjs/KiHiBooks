@@ -415,7 +415,7 @@
 			color: #141414;
 		}
 
-		.noti-content {
+		.noti-contents {
 			display: block;
 			width: 100%;
 			margin: 0;
@@ -437,6 +437,10 @@
 			appearance: none;
 			background: none;
 			border: 0;
+		}
+
+		.noti-title:hover{
+			color: #949494;
 		}
 
 		.expandBtn {
@@ -537,7 +541,7 @@
 			transition: background 0.4s ease;
 		}
 
-		.continueBtn:hover{
+		.continueBtn:hover {
 			text-decoration: none;
 			color: #fff;
 			background: #f57343;
@@ -1225,6 +1229,11 @@
 			color: #a5a5a5;
 		}
 
+		.au-other-more:hover{
+			text-decoration: none;
+			color: #a5a5a5;
+		}
+
 		.other-book-list {
 			position: relative;
 			width: 100%;
@@ -1445,6 +1454,7 @@
 
 		.rating-cnt {
 			font-weight: 500;
+			cursor: default;
 		}
 
 		.rating-bunpo {
@@ -1461,6 +1471,10 @@
 
 		.bunpo-text {
 			font-weight: 600;
+		}
+
+		.none {
+			display: none;
 		}
 
 		.bunpo-table {
@@ -1524,6 +1538,7 @@
 			font-size: 15px;
 			font-weight: 500;
 			line-height: 18px;
+			cursor: default;
 		}
 
 		.record-star {
@@ -1619,6 +1634,7 @@
 			display: grid;
 			gap: 10px;
 			padding: 12px 0 0;
+			cursor: default;
 		}
 
 		.rv-note-check {
@@ -1758,6 +1774,7 @@
 			white-space: pre-line;
 			word-break: break-all;
 			overflow-wrap: anywhere;
+			cursor: default;
 		}
 
 		.rv-content-spoiler {
@@ -1768,6 +1785,7 @@
 			padding: 28px 10px;
 			background: #fafafa;
 			border-radius: 6px;
+			cursor: default;
 		}
 
 		.content-spoiler {
@@ -1822,6 +1840,7 @@
 			font-size: 14px;
 			font-weight: 500;
 			line-height: 17px;
+			cursor: default;
 		}
 
 		.rv-date {
@@ -1832,6 +1851,7 @@
 			font-size: 15px;
 			font-weight: 600;
 			line-height: 17px;
+			cursor: default;
 		}
 
 		.rv-right-btn {
@@ -2090,11 +2110,11 @@
 			height: 100%;
 		}
 
-		.best-list-top10{
+		.best-list-top10 {
 			padding: 30px 0 24px 30px;
 		}
 
-		.best-list-title{
+		.best-list-title {
 			display: flex;
 			align-items: center;
 			color: #141414;
@@ -2106,19 +2126,19 @@
 			transition: opacity 0.4s ease;
 		}
 
-		.best-list-title:hover{
+		.best-list-title:hover {
 			text-decoration: none;
 			color: #6b6b6b;
 		}
 
-		.best-list-ol{
+		.best-list-ol {
 			display: grid;
 			gap: 8px;
 			list-style-type: none;
 			counter-reset: ranking;
 		}
 
-		.b-list{
+		.b-list {
 			display: grid;
 			grid-template-columns: 17px 1fr;
 			gap: 12px;
@@ -2128,22 +2148,22 @@
 			margin-left: -38px;
 		}
 
-		.b-list:hover{
+		.b-list:hover {
 			text-decoration: none;
 		}
 
-		.b-list:hover>span{
+		.b-list:hover>span {
 			color: #aaa;
 		}
 
-		.b-list::before{
+		.b-list::before {
 			counter-increment: ranking;
 			content: counter(ranking);
 			color: #dc3232;
 			font-weight: 700;
 		}
 
-		.b-list-title{
+		.b-list-title {
 			color: #555;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -2229,14 +2249,14 @@
 														<div class="header-text" style="color: #ed6d5e; background: #fce8e6;">공지</div>
 														<ul class="noti-ul">
 															<li class="noti-li">
-																<div class="noti-content">
+																<div class="noti-contents">
 																	<button type="button" class="noti-title">도서 파일 교체 안내 (2025-04-22)
 																		<!-- 펼친 경우 fold.png 로 변경 -->
 																		<span class="expandBtn">
-																			<img src="/resources/static/img/expand.png" alt="펼치기" style="height: 18px;">
+																			<img id="noti_icon" src="/resources/static/img/expand.png" alt="펼치기" style="height: 18px;">
 																		</span>
 																	</button>
-																	<button type="button" class="noti-content">
+																	<button type="button" class="noti-content none">
 																		<div class="content-wrapper">
 																			<div class="content-wrap">
 																				<b>이세계 착각 헌터 495화는</b>
@@ -2357,7 +2377,7 @@
 																		<!-- 아마도 전체 페이지 들어가야할듯? ↓ -->
 																		<li class="info-page-cnt">| 약 4.5천 자</li>
 																		<!-- 소장한 경우만 아래 배지 추가 -->
-																		<li class="info-status" >|
+																		<li class="info-status">|
 																			<span style="color: #ff7f50;">소장</span>
 																		</li>
 																	</ul>
@@ -2534,9 +2554,9 @@
 														<label class="rating-bunpo">
 															<input type="checkbox" class="bunpo-check">
 															<span class="bunpo-text">별점 분포 보기</span>
-															<img class="ml-2" src="/resources/static/img/down-triangle.png" alt="아래 삼각형"
-																style="height: 10px;">
-															<button type="button" class="bunpo-table">
+															<img id="bunpo_table_icon" class="ml-2" src="/resources/static/img/down-triangle.png"
+																alt="아래 삼각형" style="height: 10px;">
+															<button type="button" class="bunpo-table none">
 																<div class="rate-bunpo">
 																	<div>5</div>
 																	<div class="bunpo">
@@ -2609,10 +2629,10 @@
 														<input type="checkbox" id="note_check" class="rv-note-check">
 														<label for="note_check" class="note-check-label">
 															<span>리뷰 작성 유의사항</span>
-															<img src="/resources/static/img/expand.png" alt="펼치기"
+															<img id="note_icon" src="/resources/static/img/expand.png" alt="펼치기"
 																style="width: 20px; margin-left: 3px;" class="check-expand">
 														</label>
-														<div class="note-content">
+														<div class="note-content none">
 															<strong>건전한 리뷰 정착 및 양질의 리뷰를 위해 아래 해당하는 리뷰는 비공개 조치될 수 있음을 안내드립니다.</strong>
 															<ol style="list-style-type: decimal; list-style-position: outside; margin-left: -25px;">
 																<li>타인에게 불쾌감을 주는 욕설</li>
@@ -2737,10 +2757,10 @@
 													<input type="checkbox" id="buyer_check" class="buyer-check">
 													<label for="buyer_check" class="standard-title">
 														<span>구매자 표시 기준은 무엇인가요?</span>
-														<img src="/resources/static/img/expand.png" alt="확정 아이콘" class="dark-gray"
+														<img id="standard_icon" src="/resources/static/img/expand.png" alt="확정 아이콘" class="dark-gray"
 															style="height: 20px;">
 													</label>
-													<div class="standard-content">
+													<div class="standard-content none">
 														<strong style="color: #141414;">'구매자' 표시는 유료 작품 결제 후 다운로드 한 경우에만 표시됩니다.</strong>
 														<dl class="standard-dl">
 															<dt>무료 작품 (프로모션 등으로 무료로 전환된 작품 포함)</dt>
@@ -2846,6 +2866,77 @@
 						stars[i].querySelector('img').classList.add('selected');
 					}
 				});
+			});
+
+			document.addEventListener("DOMContentLoaded", function () {
+				const ratingLabel = document.querySelector(".rating-bunpo");
+				const bunpoTable = document.querySelector(".bunpo-table");
+				const bunpoIcon = document.getElementById("bunpo_table_icon");
+
+				ratingLabel.addEventListener("click", function (e) {
+					// input 클릭 방지 (토글 방해될 수 있어서)
+					if (e.target.classList.contains("bunpo-check")) return;
+
+					if (bunpoTable.classList.contains("none")) {
+						// none이 있으면 -> 보이게
+						bunpoTable.classList.remove("none");
+						bunpoIcon.src = "/resources/static/img/up-triangle.png";
+						bunpoIcon.alt = "위 삼각형";
+					} else {
+						// none이 없으면 -> 숨기기
+						bunpoTable.classList.add("none");
+						bunpoIcon.src = "/resources/static/img/down-triangle.png";
+						bunpoIcon.alt = "아래 삼각형";
+					}
+				});
+
+				const standardTitle = document.querySelector(".standard-title");
+				const standardContent = document.querySelector(".standard-content");
+				const standardIcon = document.getElementById("standard_icon")
+
+				standardTitle.addEventListener("click", function(){
+					if(standardContent.classList.contains("none")){
+						standardContent.classList.remove("none");
+						standardIcon.src = "/resources/static/img/fold.png";
+						standardIcon.alt = "접기";
+					} else {
+						standardContent.classList.add("none");
+						standardIcon.src = "/resources/static/img/expand.png";
+						standardIcon.alt = "펼치기";
+					}
+				})
+
+				const notiTitle = document.querySelector(".noti-title");
+				const notiContent = document.querySelector(".noti-content");
+				const notiIcon = document.getElementById("noti_icon")
+
+				notiTitle.addEventListener("click", function(){
+					if(notiContent.classList.contains("none")){
+						notiContent.classList.remove("none");
+						notiIcon.src = "/resources/static/img/fold.png";
+						notiIcon.alt = "접기";
+					} else {
+						notiContent.classList.add("none");
+						notiIcon.src = "/resources/static/img/expand.png";
+						notiIcon.alt = "펼치기";
+					}
+				})
+
+				const noteCheckLabel = document.querySelector(".note-check-label");
+				const noteContent = document.querySelector(".note-content");
+				const noteIcon = document.getElementById("note_icon")
+
+				noteCheckLabel.addEventListener("click", function(){
+					if(noteContent.classList.contains("none")){
+						noteContent.classList.remove("none");
+						noteIcon.src = "/resources/static/img/fold.png";
+						noteIcon.alt = "접기";
+					} else {
+						noteContent.classList.add("none");
+						noteIcon.src = "/resources/static/img/expand.png";
+						noteIcon.alt = "펼치기";
+					}
+				})
 			});
 		</script>
 	</main>
