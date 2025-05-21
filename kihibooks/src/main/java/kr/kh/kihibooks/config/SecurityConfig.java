@@ -28,8 +28,10 @@ public class SecurityConfig {
         http.csrf(csrf ->csrf.disable())
         
             .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("account/mykihi", "edit/checkPw")
+                .requestMatchers("edit/checkPw")
                 .authenticated()
+                .requestMatchers("/account/mykihi")
+                .hasRole(UserRole.USER.name())
                 .requestMatchers("/admin/**")
                 .hasRole(UserRole.ADMIN.name())
                 .anyRequest()
