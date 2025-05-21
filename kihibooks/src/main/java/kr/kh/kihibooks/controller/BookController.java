@@ -98,6 +98,28 @@ public class BookController {
         return "book/new-released";
     }
 
+    @GetMapping("/book/best")
+    public String bestBooks(
+        @RequestParam(defaultValue = "1") int page,
+        @RequestParam(defaultValue = "day") String range,
+        @RequestParam(required = false) String adultYN,
+        @RequestParam(required = false) String finished,
+        Model model) {
+        if(range == null || range.isEmpty()){
+            range = "day";
+        }
+        int size = 10;
+        PageInfo<BookVO> pageInfo = bookService.getBestBooks(page, size, range, adultYN, finished);
+
+        model.addAttribute("bookList", pageInfo.getContent());
+        model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("range", range);
+        model.addAttribute("adultYN", adultYN);
+        model.addAttribute("finished", finished);
+
+        return "book/best";
+    }
+
 
     
 }

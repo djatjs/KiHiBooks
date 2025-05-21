@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>베스트 웹소설</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .filter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .sort-options {
+      display: flex;
+      gap: 16px;
+      font-size: 15px;
+    }
+
+    .sort-option {
+      cursor: pointer;
+      color: #aaa;
+      text-decoration: none;
+    }
+		.sort-option:hover{
+			color: #aaa;
+			text-decoration: none;
+		}
+
+    .sort-option.active {
+      color: #111;
+      font-weight: bold;
+    }
+
+    .filter-options {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .filter-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .filter-checkbox input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+    }
+
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 20px;
+    }
+
+    .book-card {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .thumb-wrapper {
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+      display: block;
+    }
+
+    .thumb-wrapper img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+
+    .badge {
+      position: absolute;
+      font-size: 12px;
+      padding: 2px 6px;
+      color: white;
+      border-radius: 4px;
+      background-color: red;
+    }
+
+    .badge.adult {
+      top: 6px;
+      right: 6px;
+    }
+
+    .badge.complete {
+      background-color: #555;
+      color: white;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      position: static;
+    }
+
+    .title {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .meta-ep {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .meta {
+      font-size: 13px;
+      color: #999;
+      display: flex;
+      gap: 4px;
+    }
+
+    .highlight-rating {
+      color: crimson;
+    }
+  </style>
+</head>
+
+	<body>
+		<section class="container" layout:fragment="content">
+			<!-- 필터 헤더 -->
+			<div class="filter-header">
+				<!-- 좌측: 정렬 탭 -->
+				<div class="sort-options">
+					<a th:href="@{/book/best(page=1, range='day', adultYN=${adultYN}, finished=${finished})}"
+						th:class="'sort-option ' + ('day' == ${range} ? 'active' : '')">오늘의 베스트</a>
+					<a th:href="@{/book/best(page=1, range='week', adultYN=${adultYN}, finished=${finished})}"
+						th:class="'sort-option ' + ('week' == ${range} ? 'active' : '')">주간 베스트</a>
+					<a th:href="@{/book/best(page=1, range='month', adultYN=${adultYN}, finished=${finished})}"
+						th:class="'sort-option ' + ('month' == ${range} ? 'active' : '')">월간 베스트</a>
+				</div>
+
+				<!-- 우측: 필터 -->
+				<div class="filter-options">
+					<label class="filter-checkbox">
+						<input type="checkbox" th:checked="${adultYN} == 'Y'" onclick="filterAdult('Y')"> 성인
+					</label>
+					<label class="filter-checkbox">
+						<input type="checkbox" th:checked="${adultYN} == 'N'" onclick="filterAdult('N')"> 성인제외
+					</label>
+					<label class="filter-checkbox">
+						<input type="checkbox" th:checked="${finished} == 'Y'" onclick="filterFin('Y')"> 완결
+					</label>
+				</div>
+			</div>
+
+			<!-- 작품 리스트 -->
+			<div class="book-grid">
+				<div class="book-card" th:each="book : ${bookList}">
+					<a th:href="@{/book/detail/{id}(id=${book.bo_code})}" class="thumb-wrapper">
+						<img th:src="@{/resources/static/img/default_thumb.png}" alt="thumbnail">
+						<span class="badge adult" th:if="${book.bo_adult == 'Y'}">19</span>
+					</a>
+					<div class="info">
+						<p class="title" th:text="${book.bo_title}">소설 제목</p>
+						<p class="author" th:text="${book.bo_author}">작가 이름</p>
+						<p class="meta-ep">
+							<span th:text="'총 ' + ${book.bo_total_episode} + '화'">총 회차</span>
+							<span class="badge complete" th:if="${book.bo_fin == 'Y'}">완결</span>
+						</p>
+						<p class="meta">
+							<span class="highlight-rating" th:text="'★ ' + ${#numbers.formatDecimal(book.bo_total_rating / 1000.0, 1, 1)}">평점</span>
+							<span class="separator">|</span>
+							<span th:text="'(' + ${book.bo_review_count} + ')'">(0)</span>
+						</p>
+					</div>
+				</div>
+			</div>
+
+		<!-- 페이지네이션은 신간과 동일하게 처리 -->
+		</section>
+		<div layout:fragment="script">
+			<script>
+				function filterAdult(type) {
+					console.log(type);
+					const url = new URL(window.location.href);
+					const params = url.searchParams;
+					const current = params.get("adultYN");
+					if (current === type) {
+						params.delete("adultYN");
+					} else {
+						params.set("adultYN", type);
+					}
+					params.set("page", 1);
+					window.location.href = `${url.pathname}?${params.toString()}`;
+				}
+
+				function filterFin(type) {
+					console.log(type);
+					const url = new URL(window.location.href);
+					const params = url.searchParams;
+					const current = params.get("finished");
+					if (current === type) {
+						params.delete("finished");
+					} else {
+						params.set("finished", type);
+					}
+					params.set("page", 1);
+					window.location.href = `${url.pathname}?${params.toString()}`;
+				}
+			</script>
+		</div>
+	</body>
+</html>

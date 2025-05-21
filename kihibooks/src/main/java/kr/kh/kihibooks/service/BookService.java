@@ -52,5 +52,18 @@ public class BookService {
         return PaginationUtils.paginate(books, totalCount, page, PAGE_SIZE, BLOCK_SIZE);
     }
 
+    public PageInfo<BookVO> getBestBooks(int page, int size, String range, String adultYN, String finished) {
+        int offset = (page - 1) * size;
+        int total = bookDAO.countBestBooks(range, adultYN, finished);
+
+        int totalPages = (int)Math.ceil((double)total / size);
+        int startPage = Math.max(1, page - 2);
+        int endPage = Math.min(totalPages, page + 2);
+
+        List<BookVO> content = bookDAO.selectBestBooks(offset, size, range, adultYN, finished);
+
+        return PaginationUtils.paginate(content, page, totalPages, startPage, endPage);
+    }
+
 
 }

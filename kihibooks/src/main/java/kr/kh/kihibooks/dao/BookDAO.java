@@ -1,7 +1,6 @@
 package kr.kh.kihibooks.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -27,5 +26,15 @@ public interface BookDAO {
 												@Param("adultYN") String adultYN
 
 	);
+
+	List<BookVO> selectBestBooks(@Param("offset")int offset, 
+															@Param("size")int size, // Mapper의 Limit 에 사용됨
+															@Param("range")String range, // 오늘의/주간/월간 베스트 
+															@Param("adultYN")String adultYN, 
+															@Param("finished")String finished);
+
+	int countBestBooks(@Param("range")String range, 
+											@Param("adultYN")String adultYN, 
+											@Param("finished")String finished);
     
 }
