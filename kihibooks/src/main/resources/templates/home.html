@@ -698,7 +698,7 @@
 								<a href="${detailUrl}" class="book-title">${book.bo_title}</a>
 								<div class="book-meta">${book.bo_author || '작가 미정'} · ${book.bo_free_info || '무료'}</div>
 								<div class="book-rating">
-									★${book.bo_total_rating / 1000} |	리뷰 ${book.bo_review_count}
+									★${(book.bo_total_rating / 1000).toFixed(1)} |	리뷰 ${book.bo_review_count}
 								</div>
 							</div>
 						`;
@@ -778,7 +778,7 @@
 									</a>
 									<a href="${detailUrl}" class="waitfree-title-text">${book.bo_title}</a>
 									<div class="waitfree-author">${book.bo_author || '작가 미정'}</div>
-									<div class="book-rating">★${book.bo_total_rating / 1000} | 리뷰 ${book.bo_review_count}</div>
+									<div class="book-rating">★${(book.bo_total_rating / 1000).toFixed(1)} | 리뷰 ${book.bo_review_count}</div>
 								</div>
 							`;
 							$grid.append(html);
@@ -866,7 +866,7 @@
 									<a href="${detailUrl}" class="book-title">${book.bo_title}</a>
 									<div class="book-meta">${book.bo_author || '작가 미정'} · ${book.bo_free_info || '무료'}</div>
 									<div class="book-rating">
-										★${book.bo_total_rating / 1000} |	리뷰 ${book.bo_review_count}
+										★${(book.bo_total_rating / 1000).toFixed(1)} |	리뷰 ${book.bo_review_count}
 									</div>
 								</div>
 							`;
@@ -997,7 +997,7 @@
 										</a>
 										<a href="${detailUrl}" class="new-publish-title-text">${book.bo_title}</a>
 										<div class="new-publish-author">${book.bo_author || '작가 미정'}</div>
-										<div class="book-rating">★${book.bo_total_rating / 1000} | 리뷰 ${book.bo_review_count}</div>
+										<div class="book-rating">★${(book.bo_total_rating / 1000).toFixed(1)} | 리뷰 ${book.bo_review_count}</div>
 									</div>
 								`;
 								$grid.append(html);
