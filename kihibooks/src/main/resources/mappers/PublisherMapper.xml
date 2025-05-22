@@ -12,6 +12,7 @@
         SELECT p.PU_CODE, p.PU_NAME, u.UR_EMAIL FROM publisher p
         JOIN publisher_id pi ON p.PU_CODE = pi.PI_PU_CODE
         JOIN user u ON pi.PI_UR_NUM = u.UR_NUM
+        where pi.pi_authority = 'SUPER'
         ORDER BY p.PU_CODE ASC;
     </select>
     <select id="selectPublisherId" resultType="PublisherIdVO">
@@ -30,4 +31,15 @@
     <select id="getLatestPuCode" resultType="String">
         select max(pi_pu_code) from publisher_id
     </select>
+    <select id="selectEditorList" resultType="EditorVO">
+        SELECT u.UR_NICKNAME AS ur_nickname, u.UR_EMAIL AS ur_email, u.UR_NUM AS ur_num, p.PU_NAME AS pu_name, pi.PI_PU_CODE AS pu_code
+        FROM publisher_id pi
+        JOIN user u ON pi.PI_UR_NUM = u.UR_NUM
+        JOIN publisher p ON pi.PI_PU_CODE = p.PU_CODE
+        WHERE pi.PI_PU_CODE = #{puCode} and pi.PI_AUTHORITY = 'EDITOR'
+        ORDER BY ur_nickname ASC;
+    </select>
+    <delete id="deleteEditorByUserNum">
+        DELETE FROM publisher_id WHERE pi_ur_num = #{userNum}
+    </delete>
 </mapper>

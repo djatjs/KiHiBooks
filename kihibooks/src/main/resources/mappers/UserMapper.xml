@@ -34,7 +34,10 @@
     <select id="selectUserByNickName" resultType="UserVO">
         select * from user where ur_nickname = #{nickName} and ur_del = "N" and ur_authority = "USER"
     </select>
-    <update id="updateAthourity">
+    <update id="updateAthourityToPublisher">
         update user set ur_authority = 'PUBLISHER' WHERE (ur_num = #{userNum});
+    </update>
+    <update id="updateAuthorityToUser">
+        update user set ur_authority = 'USER' WHERE (ur_num = #{userNum});
     </update>
 </mapper>

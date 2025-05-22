@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kr.kh.kihibooks.dao.PublisherDAO;
 import kr.kh.kihibooks.dao.UserDAO;
+import kr.kh.kihibooks.model.vo.EditorVO;
 import kr.kh.kihibooks.model.vo.PublisherIdVO;
 import kr.kh.kihibooks.model.vo.PublisherVO;
 
@@ -77,12 +78,29 @@ public class PublisherService {
             throw new IllegalArgumentException("userNum 또는 puCode가 잘못됨");
         }
         // USER권한 -> PUBLISHER
-        if (!userDAO.updateAthourity(userNum)) {
+        if (!userDAO.updateAthourityToPublisher(userNum)) {
             throw new RuntimeException("권한 업데이트 실패");
         }
         // 출판사 소속 에디터로 등록
         if (!publisherDAO.insertEditor(userNum, puCode)) {
             throw new RuntimeException("에디터 등록 실패");
+        }
+        return true;
+    }
+
+    public List<EditorVO> getEditorList(String puCode) {
+        return publisherDAO.selectEditorList(puCode);
+    }
+
+    @Transactional
+    public boolean deleteEditor(int userNum) {
+        // 1. 출판사 ID 테이블에서 해당 유저 삭제
+        if (!publisherDAO.deleteEditorByUserNum(userNum)) {
+            throw new RuntimeException("에디터 삭제 실패");
+        }
+        // 2. 권한을 다시 USER로 되돌리기
+        if (!userDAO.updateAuthorityToUser(userNum)) {
+            throw new RuntimeException("권한 복구 실패");
         }
         return true;
     }

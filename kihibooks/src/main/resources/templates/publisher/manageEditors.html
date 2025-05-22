@@ -220,15 +220,13 @@ layout:decorate="~{layout/layout.html}">
                 </thead>
                 <!-- editors 리스트가 비어있지 않을 때 -->
                 <tbody th:if="${editors != null and !editors.isEmpty()}">
-                    <tr th:each="editor: ${editors}">
-                        <td th:text="${editor.pu_code}"></td>
+                    <tr th:each="editor, count: ${editors}">
+                        <td th:text="${count.count}"></td>
                         <td th:text="${editor.ur_nickname}"></td>
                         <td th:text="${editor.ur_email}"></td>
                         <td th:text="${editor.pu_name}"></td>
                         <td>
-                            <!-- 삭제 버튼에 데이터 속성 추가하여 ID 전달 -->
-                            <button class="btn btn-danger btn-sm delete-btn" th:data-id="${editor.pu_code}">삭제</button>
-                            <!-- <button class="btn btn-danger btn-sm delete-btn"></button> -->
+                            <button class="btn btn-danger btn-sm delete-btn" th:data-user-id="${editor.ur_num}">삭제</button>
                         </td>
                     </tr>
                 </tbody>
@@ -354,6 +352,30 @@ layout:decorate="~{layout/layout.html}">
                 });
             </script>
 
+            <script>
+                // 에디터 계정 삭제 버튼 클릭시 이벤트 처리
+                $(".delete-btn").on("click",function() {
+                    const userNum = $(this).data("user-id");
+                    alert(userNum);
+                    if(!confirm("정말 삭제하시겠습니까?")) return;
+                    $.ajax({
+                        url: "/publisher/deleteEditor",
+                        method: "POST",
+                        data: { userNum: userNum },
+                        success: function (response) {
+                            if (response) {
+                                alert("에디터 삭제 완료");
+                                location.reload();
+                            } else {
+                                alert("에디터 삭제 실패");
+                            }
+                        },
+                        error: function () {
+                            alert("서버 통신 오류");
+                        }
+                    });
+                })
+            </script>
         </div>
 	</main>
 

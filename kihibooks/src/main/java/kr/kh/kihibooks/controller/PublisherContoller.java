@@ -1,16 +1,23 @@
 package kr.kh.kihibooks.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import kr.kh.kihibooks.model.vo.EditorVO;
+import kr.kh.kihibooks.model.vo.PublisherVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 import kr.kh.kihibooks.service.PublisherService;
 import kr.kh.kihibooks.service.UserService;
+import kr.kh.kihibooks.utils.CustomUser;
 
 
 @Controller
@@ -28,7 +35,14 @@ public class PublisherContoller {
     }
 
     @GetMapping("/publisher/editors")
-    public String editors() {
+    public String editors(Model model,Authentication auth) {
+        CustomUser user = (CustomUser) auth.getPrincipal();
+        // 출판사 코드 추출
+        String puCode = user.getPu_code();
+        List<EditorVO> editors = publisherService.getEditorList(puCode);
+        System.out.println(editors);
+        
+        model.addAttribute("editors", editors);
         return "publisher/manageEditors";
     }
     
@@ -48,6 +62,18 @@ public class PublisherContoller {
     public boolean addEditor(@RequestParam int userNum, String puCode) {
         try {
             return publisherService.addEditor(userNum, puCode);
+        } catch (Exception e) {
+            System.out.println("트랜잭션 실패: " + e.getMessage());
+            return false;
+        }
+    }
+
+    @ResponseBody
+    @PostMapping("/publisher/deleteEditor")
+    public boolean deleteEditor(@RequestParam int userNum) {
+        System.out.println(userNum);
+        try {
+            return publisherService.deleteEditor(userNum);
         } catch (Exception e) {
             System.out.println("트랜잭션 실패: " + e.getMessage());
             return false;

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import kr.kh.kihibooks.model.vo.EditorVO;
 import kr.kh.kihibooks.model.vo.PublisherIdVO;
 import kr.kh.kihibooks.model.vo.PublisherVO;
 
@@ -24,5 +25,9 @@ public interface PublisherDAO {
     boolean insertEditor(@Param("userNum")int userNum, @Param("puCode")String puCode);
 
     String getLatestPuCode();
+
+    List<EditorVO> selectEditorList(String puCode);
+
+    boolean deleteEditorByUserNum(int userNum);
     
 }

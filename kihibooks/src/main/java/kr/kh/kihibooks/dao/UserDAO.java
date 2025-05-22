@@ -26,6 +26,8 @@ public interface UserDAO {
 
     UserVO selectUserByNickName(@Param("nickName")String nickName);
 
-    boolean updateAthourity(@Param("userNum")int userNum);
+    boolean updateAthourityToPublisher(@Param("userNum")int userNum);
+
+    boolean updateAuthorityToUser(@Param("userNum")int userNum);
 	
 }
