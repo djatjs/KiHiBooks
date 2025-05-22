@@ -217,4 +217,9 @@ public class UserController {
     public String history(){
         return "/user/history";
     }
+
+    @GetMapping("/cart")
+    public String cart(){
+        return "/user/cart";
+    }
 }
