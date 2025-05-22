@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.kh.kihibooks.dao.BookDAO">
+    <resultMap id="bookWithKeywords" type="BookVO">
+        <!-- BookVO 기본 필드 매핑 -->
+        <id property="bo_code" column="bo_code" />
+        <result property="bo_title" column="bo_title" />
+        <result property="bo_author" column="bo_author" />
+        <result property="bo_total_episode" column="bo_total_episode" />
+        <result property="bo_total_rating" column="bo_total_rating" />
+        <result property="bo_review_count" column="bo_review_count" />
+        <result property="bo_description" column="bo_description" />
+        <result property="bo_adult" column="bo_adult" />
+
+        <!-- KeywordVO 리스트 매핑 -->
+        <collection property="keywordList" ofType="KeywordVO">
+            <result property="kw_num" column="kw_num"/>
+            <result property="kw_name" column="kw_name"/>
+        </collection>
+    </resultMap>
     <select id="selectBookList" resultType="BookVO">
         select book.* from book
         join recent_view on bo_code = rc_bo_code
@@ -81,7 +98,7 @@
             BO_CODE, BO_TITLE, BO_TOTAL_RATING, COUNT(RV_NUM) AS BO_REVIEW_COUNT,
             BO_FIN, BO_ADULT, BO_PUBLISH_DATE,
             BO_TOTAL_EPISODE,
-            AU_NAME AS bo_author
+            AU_NAME AS bo_author,
         FROM 
             book
         JOIN 
@@ -149,15 +166,20 @@
     </select>
 
     <!-- 키워드 검색 도서 리스트 -->
-    <select id="selectBooksByKeywords" resultType="BookVO">
+    <select id="selectBooksByKeywords" resultMap="bookWithKeywords">
         SELECT 
             BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_TOTAL_EPISODE,
             BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_ADULT, BO_FIN, BO_PUBLISH_DATE,
-            AU_NAME AS bo_author
+            AU_NAME AS bo_author,
+            KW_NUM AS kw_num, KW_NAME AS kw_name
         FROM 
             book
         JOIN 
             author ON BO_AU_NUM = AU_NUM
+        LEFT JOIN
+            book_keyword ON BK_BO_CODE = BO_CODE
+        LEFT JOIN
+            keyword ON KW_NUM = BK_KW_NUM
         <if test="keywordIds != null and keywordIds.size() > 0">
             JOIN (
                 SELECT DISTINCT BK_BO_CODE
@@ -167,7 +189,7 @@
                     #{id}
                 </foreach>
                 GROUP BY BK_BO_CODE
-                HAVING COUNT(DISTINCT BK_KW_NUM) = #{keywordIds.size}
+                HAVING COUNT(DISTINCT BK_KW_NUM) = #{keywordCount}
             ) filtered ON BO_CODE = filtered.BK_BO_CODE
         </if>
         <choose>
@@ -201,7 +223,7 @@
                         #{id}
                     </foreach>
                     GROUP BY BK_BO_CODE
-                    HAVING COUNT(DISTINCT BK_KW_NUM) = #{keywordIds.size}
+                    HAVING COUNT(DISTINCT BK_KW_NUM) = #{keywordCount}
                 ) filtered ON BO_CODE = filtered.BK_BO_CODE
             </if>
         ) AS result

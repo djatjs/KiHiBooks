@@ -1,161 +1,337 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout.html}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/layout.html}">
 
 <head>
   <meta charset="UTF-8">
   <title>키워드 검색</title>
   <style>
-    .filter-box { margin-bottom: 24px; }
-    .filter-category { font-weight: bold; margin-top: 16px; }
-    .filter-keyword {
-      display: inline-block;
-      padding: 6px 12px;
-      margin: 6px 8px 6px 0;
-      border: 1px solid #ccc;
-      border-radius: 16px;
-      background-color: #f9f9f9;
-      cursor: pointer;
+    .keyword-table {
+      width: 100%;
+      border-top: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+      border-collapse: collapse;
       font-size: 14px;
+      table-layout: fixed;
     }
-    .filter-keyword.selected {
-      background-color: #111;
-      color: white;
-    }
-    .sort-tabs {
-      margin: 24px 0 16px;
-      display: flex;
-      gap: 12px;
-    }
-    .sort-tab {
-      font-size: 14px;
-      color: #888;
-      cursor: pointer;
-      text-decoration: none;
-    }
-    .sort-tab.active {
-      color: #000;
+
+    .keyword-table th {
+      width: 120px;
+      text-align: left;
+      padding: 20px;
+      background: #f9f9f9;
+      border-right: 1px solid #ddd;
       font-weight: bold;
     }
+
+    .keyword-table td {
+      padding: 10px;
+    }
+
+    .keyword-scroll-wrapper {
+      display: flex;
+      align-items: center;
+    }
+
+    .keyword-scroll {
+      display: flex;
+      overflow-x: auto;
+      flex: 1;
+      gap: 8px;
+      padding: 4px 0;
+      scrollbar-width: none;
+    }
+
+    .keyword-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .keyword-tag {
+      background-color: #f5f5f5;
+      border-radius: 16px;
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .keyword-tag.selected {
+      background-color: #ff7f50;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .arrow-btn {
+      width: 28px;
+      height: 28px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .arrow-btn img {
+      width: 14px;
+      height: 14px;
+    }
+
     .reset-btn {
-      margin-top: 10px;
+      margin-top: 16px;
       font-size: 13px;
-      color: crimson;
+      color: #ff7f50;
       background: none;
       border: none;
       cursor: pointer;
       display: none;
     }
+
     .reset-btn.visible {
       display: inline-block;
     }
-    .book-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 20px;
+
+    .selected-keyword-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .book-card { padding: 10px; border: 1px solid #eee; border-radius: 8px; }
+
+    .selected-keyword {
+      background-color: #ffe3da;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .selected-keyword .remove-btn {
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .no-result-box {
+      text-align: center;
+      margin: 80px 0;
+    }
+
+    .no-result-img {
+      width: 300px;
+      opacity: 0.3;
+    }
+
+    .no-result-msg {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #999;
+    }
   </style>
 </head>
 
 <body>
   <section class="container" layout:fragment="content">
-    <h3>키워드로 찾기</h3>
+    <h3>웹소설 키워드 검색</h3>
 
-    <!-- 키워드 필터 -->
-    <div class="filter-box" id="keywordFilter">
-      <div th:each="category : ${keywordCategories}">
-        <div class="filter-category" th:text="${category.kc_name}">카테고리</div>
-        <div>
-          <span th:each="keyword : ${category.keywordList}"
-                th:text="${keyword.kw_name}"
-                th:data-id="${keyword.kw_num}"
-                class="filter-keyword"
-                th:classappend="${selectedKeywordIds != null and selectedKeywordIds.contains(keyword.kw_num)} ? 'selected' : ''"
-                onclick="toggleKeyword(this)">
-          </span>
-        </div>
-      </div>
+    <table class="keyword-table">
+      <tbody>
+        <tr th:each="category, stat : ${keywordCategories}">
+          <th th:text="${category.kc_name}">카테고리</th>
+          <td>
+            <div class="keyword-scroll-wrapper">
+              <button class="arrow-btn left" th:attr="data-target='kw-scroll-' + ${stat.index}"
+                onclick="scrollKeywordRow(this, -1)">
+                <img src="/resources/static/img/back.png" alt="이전">
+              </button>
+              <div class="keyword-scroll" th:attr="id='kw-scroll-' + ${stat.index}">
+                <span th:each="keyword : ${category.keywordList}" th:text="${keyword.kw_name}"
+                  th:data-id="${keyword.kw_num}" th:data-name="${keyword.kw_name}" class="keyword-tag"
+                  th:classappend="${selectedKeywordIds != null and selectedKeywordIds.contains(keyword.kw_num)} ? 'selected' : ''"
+                  onclick="toggleKeyword(this)">
+                </span>
+              </div>
+              <button class="arrow-btn right" th:attr="data-target='kw-scroll-' + ${stat.index}"
+                onclick="scrollKeywordRow(this, 1)">
+                <img src="/resources/static/img/next.png" alt="다음">
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
-      <button id="resetBtn" class="reset-btn" onclick="resetKeywords()">전체 해제</button>
-    </div>
-
-    <!-- 정렬 탭 -->
-    <div class="sort-tabs">
-      <a th:href="@{/book/search-by-keywords(sort='recent', keywordIds=${selectedKeywordIds})}" th:class="'sort-tab ' + (${sort}=='recent' ? 'active' : '')">최신순</a>
-      <a th:href="@{/book/search-by-keywords(sort='popular', keywordIds=${selectedKeywordIds})}" th:class="'sort-tab ' + (${sort}=='popular' ? 'active' : '')">인기순</a>
-      <a th:href="@{/book/search-by-keywords(sort='rating', keywordIds=${selectedKeywordIds})}" th:class="'sort-tab ' + (${sort}=='rating' ? 'active' : '')">별점순</a>
-      <a th:href="@{/book/search-by-keywords(sort='review', keywordIds=${selectedKeywordIds})}" th:class="'sort-tab ' + (${sort}=='review' ? 'active' : '')">리뷰순</a>
-    </div>
-
-    <!-- 도서 리스트 -->
-    <div>
-      <p th:text="'총 ' + ${pageInfo.totalCount} + '개의 작품이 있습니다.'">총 0개</p>
-      <div class="book-grid">
-        <div class="book-card" th:each="book : ${bookList}">
-          <p th:text="${book.bo_title}">제목</p>
-          <p th:text="${book.bo_author}">작가</p>
-        </div>
+    <div id="selectedKeywordsContainer" style="margin-top: 30px; display: none;">
+      <h4>선택된 키워드</h4>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div id="selectedKeywords" class="selected-keyword-list"></div>
+        <button id="resetBtn" class="reset-btn visible" onclick="resetKeywords()">전체해제</button>
       </div>
     </div>
 
-    <!-- 페이지네이션 -->
-    <div class="pagination" th:if="${pageInfo.totalPages > 1}">
-      <a th:if="${pageInfo.currentPage > 1}"
-         th:href="@{/book/search-by-keywords(page=${pageInfo.currentPage - 1}, keywordIds=${selectedKeywordIds}, sort=${sort})}">&laquo;</a>
 
-      <span th:each="i : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}">
-        <a th:href="@{/book/search-by-keywords(page=${i}, keywordIds=${selectedKeywordIds}, sort=${sort})}"
-           th:class="${pageInfo.currentPage == i} ? 'active' : ''"
-           th:text="${i}">1</a>
-      </span>
+    <!-- 결과 없음 안내 -->
+    <div th:if="${selectedKeywordIds == null or #lists.isEmpty(selectedKeywordIds)}" class="no-result-box">
+      <img src="/resources/static/img/emptykeyword.png" class="no-result-img">
+      <div class="no-result-msg">키워드를 선택해 작품을 검색해보세요</div>
+    </div>
 
-      <a th:if="${pageInfo.currentPage < pageInfo.totalPages}"
-         th:href="@{/book/search-by-keywords(page=${pageInfo.currentPage + 1}, keywordIds=${selectedKeywordIds}, sort=${sort})}">&raquo;</a>
+    <div th:if="${selectedKeywordIds != null and not #lists.isEmpty(selectedKeywordIds)} and ${bookList == null or #lists.isEmpty(bookList)}" class="no-result-box">
+      <!-- <img src="/resources/static/img/empty-search.png" class="no-result-img"> -->
+      <div class="no-result-msg">선택한 키워드에 해당하는 작품이 없습니다. </div>
+      <div class="no-result-msg">원하는 키워드를 다시 검색해보세요.  </div>
+    </div>
+
+    <!-- 결과 출력 -->
+    <div th:if="${selectedKeywordIds != null and not #lists.isEmpty(selectedKeywordIds)} and ${bookList != null and not #lists.isEmpty(bookList)}">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px;">
+        <div th:text="${pageInfo.totalCount} + '개의 작품'"></div>
+        <select onchange="changeSort(this.value)">
+          <option value="recent" th:selected="${sort == 'recent'}">최신순</option>
+          <option value="popular" th:selected="${sort == 'popular'}">인기순</option>
+          <option value="rating" th:selected="${sort == 'rating'}">평점순</option>
+          <option value="review" th:selected="${sort == 'review'}">리뷰많은 순</option>
+        </select>
+      </div>
+      <!-- 썸네일 수정 코드 ' + ${book.bo_code} + ' -->
+      <div th:each="book : ${bookList}" style="display: flex; padding: 20px 0; border-bottom: 1px solid #eee; gap: 16px;">
+        <div style="width: 100px; height: 140px; flex-shrink: 0; position: relative;">
+          <img th:src="@{'/resources/static/img/default_thumb.png'}" alt="썸네일" 
+            style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
+          <div th:if="${book.bo_adult == 1}"
+            style="position: absolute; top: 4px; right: 4px; background: red; color: white; font-size: 11px; padding: 2px 6px; border-radius: 10px;">19</div>
+        </div>
+        <div style="flex: 1;">
+          <div style="font-size: 16px; font-weight: bold;" th:text="${book.bo_title}">제목</div>
+          <div style="font-size: 13px; color: #666;" th:text="${book.bo_author} + ' · 총 ' + ${book.bo_total_episode} + '화'">작가정보</div>
+          <div style="font-size: 13px; color: #d00; margin: 4px 0;">
+            ★<span th:text="${#numbers.formatDecimal(book.bo_total_rating / 1000.0, 1, 1)}">4.8</span>
+            <span style="color: #999;">(<span th:text="${book.bo_review_count}">리뷰 수</span>)</span>
+          </div>
+          <div style="font-size: 13px; color: #333; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:text="${book.bo_description}">
+            작품 설명...
+          </div>
+          <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px;">
+            <span th:each="kw : ${book.keywordList}" th:text="'#' + ${kw.kw_name}"
+              th:classappend="${selectedKeywordIds != null and selectedKeywordIds.contains(kw.kw_num)} ? 'selected-keyword' : 'keyword-tag'"
+              style="background-color: #f0f0f0; border-radius: 14px; font-size: 12px; padding: 4px 8px; color: #555;"></span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- 키워드 선택 스크립트 -->
-	<div layout:fragment="script">
-		<script>
-			function toggleKeyword(element) {
-				element.classList.toggle('selected');
-				const id = element.dataset.id;
-				const url = new URL(window.location.href);
-				const params = url.searchParams;
-				const selected = new Set(params.getAll("keywordIds"));
+  <div layout:fragment="script">
+    <script>
+      function toggleKeyword(el) {
+        el.classList.toggle('selected');
 
-				if (element.classList.contains('selected')) {
-					selected.add(id);
-				} else {
-					selected.delete(id);
-				}
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        const id = el.dataset.id;
 
-				params.delete("keywordIds");
-				selected.forEach(val => params.append("keywordIds", val));
-				params.set("page", 1);
-				window.location.href = `${url.pathname}?${params.toString()}`;
-			}
+        // 기존 키워드 리스트 가져오기
+        let keywordIds = params.getAll("keywordIds");
 
-			function resetKeywords() {
-				const url = new URL(window.location.href);
-				const params = url.searchParams;
-				params.delete("keywordIds");
-				params.set("page", 1);
-				window.location.href = `${url.pathname}?${params.toString()}`;
-			}
+        // 클릭한 아이디 추가/제거
+        if (el.classList.contains("selected")) {
+          if (!keywordIds.includes(id)) keywordIds.push(id);
+        } else {
+          keywordIds = keywordIds.filter(kw => kw !== id);
+        }
 
-			// 전체 해제 버튼 표시 여부
-			window.onload = function () {
-				const resetBtn = document.getElementById("resetBtn");
-				const url = new URL(window.location.href);
-				const hasKeyword = url.searchParams.getAll("keywordIds").length > 0;
-				if (hasKeyword) {
-					resetBtn.classList.add("visible");
-				}
-			};
-		</script>
-	</div>
+        // 새 파라미터 구성
+        const newParams = new URLSearchParams();
+        console.log(newParams.toString());
+        keywordIds.forEach(kw => newParams.append("keywordIds", kw));
+        console.log(newParams.toString());
+        newParams.set("sort", params.get("sort") || "recent");
+        newParams.set("page", "1");
+        console.log(newParams.toString());
+
+        // 이동
+        window.location.href = `${url.pathname}?${newParams.toString()}`;
+      }
+
+
+      function resetKeywords() {
+        const url = new URL(window.location.href);
+        const params = url.searchParams;
+        params.delete("keywordIds");
+        params.set("page", 1);
+        window.location.href = `${url.pathname}?${params.toString()}`;
+      }
+
+      function scrollKeywordRow(btn, direction) {
+        const targetId = btn.dataset.target;
+        const scrollDiv = document.getElementById(targetId);
+        if (!scrollDiv) return;
+        const amount = 180 * direction;
+        scrollDiv.scrollBy({ left: amount, behavior: 'smooth' });
+        setTimeout(() => updateArrows(scrollDiv, targetId), 300);
+      }
+
+      function updateArrows(container, id) {
+        const leftBtn = document.querySelector(`.arrow-btn.left[data-target="${id}"]`);
+        const rightBtn = document.querySelector(`.arrow-btn.right[data-target="${id}"]`);
+        if (leftBtn) leftBtn.style.display = container.scrollLeft <= 10 ? 'none' : 'flex';
+        if (rightBtn) rightBtn.style.display = (container.scrollLeft + container.offsetWidth >= container.scrollWidth - 10) ? 'none' : 'flex';
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.keyword-scroll').forEach(div => {
+          updateArrows(div, div.id);
+        });
+
+        const selectedExists = document.querySelector('.keyword-tag.selected');
+        if (selectedExists) {
+          document.getElementById('resetBtn').classList.add('visible');
+        }
+
+        const selectedContainer = document.getElementById("selectedKeywordsContainer");
+        const selectedList = document.getElementById("selectedKeywords");
+        const urlParams = new URLSearchParams(window.location.search);
+        const keywordIds = urlParams.getAll("keywordIds");
+
+        if (keywordIds.length > 0) {
+          selectedContainer.style.display = "block";
+
+          document.querySelectorAll(".keyword-tag").forEach(span => {
+            const name = span.textContent;
+            const id = span.dataset.id.toString();
+            if (keywordIds.includes(id)) {
+              const div = document.createElement("div");
+              div.className = "selected-keyword";
+              div.innerHTML = `${name} <button class="remove-btn" data-id="${id}">&times;</button>`;
+              selectedList.appendChild(div);
+            }
+          });
+
+          selectedList.addEventListener("click", (e) => {
+            if (e.target.classList.contains("remove-btn")) {
+              const idToRemove = e.target.dataset.id;
+              const remainIds = keywordIds.filter(id => id !== idToRemove);
+              const newParams = new URLSearchParams();
+              remainIds.forEach(id => newParams.append("keywordIds", id));
+              newParams.set("page", 1);
+              window.location.href = `${window.location.pathname}?${newParams.toString()}`;
+            }
+          });
+        }
+      });
+
+      function changeSort(value) {
+        const url = new URL(window.location.href);
+        url.searchParams.set("sort", value);
+        url.searchParams.set("page", 1);
+        window.location.href = url.toString();
+      }
+    </script>
+  </div>
 </body>
 </html>

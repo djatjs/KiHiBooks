@@ -43,8 +43,9 @@ public interface BookDAO {
 	List<BookVO> selectBooksByKeywords(@Param("keywordIds")List<Integer> keywordIds, 
 																		@Param("sort")String sort, 
 																		@Param("limit")int limit, 
-																		@Param("offset")int offset);
+																		@Param("offset")int offset, 
+																		@Param("keywordCount")int keywordCount);
 
-	int countBooksByKeywords(@Param("keywordIds")List<Integer> keywordIds);
+	int countBooksByKeywords(@Param("keywordIds")List<Integer> keywordIds, @Param("keywordCount")int keywordCount);
     
 }

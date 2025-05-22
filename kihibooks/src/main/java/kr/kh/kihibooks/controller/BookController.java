@@ -2,6 +2,7 @@ package kr.kh.kihibooks.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,9 +143,13 @@ public class BookController {
         PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
         model.addAttribute("pageInfo", pageInfo);
         model.addAttribute("bookList", pageInfo.getContent());
-
+        System.out.println(pageInfo.getContent().size());
+        for(BookVO b : pageInfo.getContent()){
+            System.out.println(b.getBo_title());
+        }
+        
         // 현재 선택 상태 전달
-        model.addAttribute("selectedKeywordIds", keywordIds);
+        model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
         model.addAttribute("sort", sort);
 
         return "book/keyword";

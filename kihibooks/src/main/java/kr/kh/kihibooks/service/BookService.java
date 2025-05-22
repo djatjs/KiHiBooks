@@ -1,5 +1,6 @@
 package kr.kh.kihibooks.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,9 +63,12 @@ public class BookService {
     }
 
     public PageInfo<BookVO> getBooksByKeywords(List<Integer> keywordIds, String sort, int page) {
+        if(keywordIds == null){
+            keywordIds = new ArrayList<>();
+        }
         int offset = (page - 1) * PAGE_SIZE;
-        List<BookVO> books = bookDAO.selectBooksByKeywords(keywordIds, sort, PAGE_SIZE, offset);
-        int totalCount = bookDAO.countBooksByKeywords(keywordIds);
+        List<BookVO> books = bookDAO.selectBooksByKeywords(keywordIds, sort, PAGE_SIZE, offset, keywordIds.size());
+        int totalCount = bookDAO.countBooksByKeywords(keywordIds, keywordIds.size());
 
         return PaginationUtils.paginate(books, totalCount, page, PAGE_SIZE, BLOCK_SIZE);
     }
