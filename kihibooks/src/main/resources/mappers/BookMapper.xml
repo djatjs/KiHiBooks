@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.kh.kihibooks.dao.BookDAO">
+    <resultMap id="bookWithKeywords" type="BookVO">
+        <!-- BookVO 기본 필드 매핑 -->
+        <id property="bo_code" column="bo_code" />
+        <result property="bo_title" column="bo_title" />
+        <result property="bo_author" column="bo_author" />
+        <result property="bo_total_episode" column="bo_total_episode" />
+        <result property="bo_total_rating" column="bo_total_rating" />
+        <result property="bo_review_count" column="bo_review_count" />
+        <result property="bo_description" column="bo_description" />
+        <result property="bo_adult" column="bo_adult" />
+
+        <!-- KeywordVO 리스트 매핑 -->
+        <collection property="keywordList" ofType="KeywordVO">
+            <result property="kw_num" column="kw_num"/>
+            <result property="kw_name" column="kw_name"/>
+        </collection>
+    </resultMap>
     <select id="selectBookList" resultType="BookVO">
         select book.* from book
         join recent_view on bo_code = rc_bo_code
@@ -76,6 +93,140 @@
             AND BO_ADULT = #{adultYN}
         </if>
     </select>
-    
+    <select id="selectBestBooks" resultType="BookVO">
+        SELECT 
+            BO_CODE, BO_TITLE, BO_TOTAL_RATING, COUNT(RV_NUM) AS BO_REVIEW_COUNT,
+            BO_FIN, BO_ADULT, BO_PUBLISH_DATE,
+            BO_TOTAL_EPISODE,
+            AU_NAME AS bo_author,
+        FROM 
+            book
+        JOIN 
+            author ON BO_AU_NUM = AU_NUM
+        LEFT JOIN
+            review 
+            ON RV_BO_CODE = BO_CODE
+        <!-- 날짜 필터: 오늘 / 주간 / 월간 -->
+        <choose>
+            <when test="range == 'day'">
+                AND DATE(RV_DATE) = CURDATE()
+            </when>
+            <when test="range == 'week'">
+                AND RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+            </when>
+            <when test="range == 'month'">
+                AND RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+            </when>
+        </choose>
+
+        WHERE 
+            1=1
+        <!-- 성인 필터 -->
+        <if test="adultYN != null and adultYN != ''">
+            AND BO_ADULT = #{adultYN}
+        </if>
+        <!-- 완결 필터 -->
+        <if test="finished != null and finished != ''">
+            AND BO_FIN = #{finished}
+        </if>
+
+
+        GROUP BY BO_CODE
+        ORDER BY COUNT(RV_NUM) DESC, BO_TOTAL_RATING DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+    <select id="countBestBooks" resultType="int">
+        SELECT 
+            COUNT(DISTINCT BO_CODE)
+        FROM 
+            book
+        LEFT JOIN
+            review ON RV_BO_CODE = BO_CODE
+        <choose>
+            <when test="range == 'day'">
+            AND DATE(RV_DATE) = CURDATE()
+            </when>
+            <when test="range == 'week'">
+            AND RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+            </when>
+            <when test="range == 'month'">
+            AND RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+            </when>
+        </choose>
+
+        WHERE 
+            1=1
+        <if test="adultYN != null and adultYN != ''">
+            AND BO_ADULT = #{adultYN}
+        </if>
+
+        <if test="finished != null and finished != ''">
+            AND BO_FIN = #{finished}
+        </if>
+    </select>
+
+    <!-- 키워드 검색 도서 리스트 -->
+    <select id="selectBooksByKeywords" resultMap="bookWithKeywords">
+        SELECT 
+            BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_TOTAL_EPISODE,
+            BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_ADULT, BO_FIN, BO_PUBLISH_DATE,
+            AU_NAME AS bo_author,
+            KW_NUM AS kw_num, KW_NAME AS kw_name
+        FROM 
+            book
+        JOIN 
+            author ON BO_AU_NUM = AU_NUM
+        LEFT JOIN
+            book_keyword ON BK_BO_CODE = BO_CODE
+        LEFT JOIN
+            keyword ON KW_NUM = BK_KW_NUM
+        <if test="keywordIds != null and keywordIds.size() > 0">
+            JOIN (
+                SELECT DISTINCT BK_BO_CODE
+                FROM book_keyword
+                WHERE BK_KW_NUM IN
+                <foreach item="id" collection="keywordIds" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+                GROUP BY BK_BO_CODE
+                HAVING COUNT(DISTINCT BK_KW_NUM) = #{keywordCount}
+            ) filtered ON BO_CODE = filtered.BK_BO_CODE
+        </if>
+        <choose>
+            <when test="sort == 'popular'">
+                ORDER BY BO_REVIEW_COUNT DESC
+            </when>
+            <when test="sort == 'rating'">
+                ORDER BY BO_TOTAL_RATING DESC
+            </when>
+            <when test="sort == 'review'">
+                ORDER BY BO_REVIEW_COUNT DESC
+            </when>
+            <otherwise>
+                ORDER BY BO_PUBLISH_DATE DESC
+            </otherwise>
+        </choose>
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    <!-- 키워드 검색 도서 개수 -->
+    <select id="countBooksByKeywords" resultType="int">
+        SELECT COUNT(*)
+        FROM (
+            SELECT BO_CODE
+            FROM book
+            <if test="keywordIds != null and keywordIds.size() > 0">
+                JOIN (
+                    SELECT BK_BO_CODE
+                    FROM book_keyword
+                    WHERE BK_KW_NUM IN
+                    <foreach item="id" collection="keywordIds" open="(" close=")" separator=",">
+                        #{id}
+                    </foreach>
+                    GROUP BY BK_BO_CODE
+                    HAVING COUNT(DISTINCT BK_KW_NUM) = #{keywordCount}
+                ) filtered ON BO_CODE = filtered.BK_BO_CODE
+            </if>
+        ) AS result
+    </select>
 
 </mapper>

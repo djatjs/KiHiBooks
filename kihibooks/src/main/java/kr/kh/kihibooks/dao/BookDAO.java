@@ -1,11 +1,11 @@
 package kr.kh.kihibooks.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
 import kr.kh.kihibooks.model.vo.BookVO;
+import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
 
 public interface BookDAO {
 
@@ -27,5 +27,25 @@ public interface BookDAO {
 												@Param("adultYN") String adultYN
 
 	);
+
+	List<BookVO> selectBestBooks(@Param("offset")int offset, 
+															@Param("size")int size, // Mapper의 Limit 에 사용됨
+															@Param("range")String range, // 오늘의/주간/월간 베스트 
+															@Param("adultYN")String adultYN, 
+															@Param("finished")String finished);
+
+	int countBestBooks(@Param("range")String range, 
+											@Param("adultYN")String adultYN, 
+											@Param("finished")String finished);
+
+	List<KeywordCategoryVO> selectKeywordCategories();
+
+	List<BookVO> selectBooksByKeywords(@Param("keywordIds")List<Integer> keywordIds, 
+																		@Param("sort")String sort, 
+																		@Param("limit")int limit, 
+																		@Param("offset")int offset, 
+																		@Param("keywordCount")int keywordCount);
+
+	int countBooksByKeywords(@Param("keywordIds")List<Integer> keywordIds, @Param("keywordCount")int keywordCount);
     
 }

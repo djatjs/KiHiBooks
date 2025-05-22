@@ -580,13 +580,13 @@
 		</script>
 		<!-- 버튼 : 신작 / 베스트 / 매일랜덤티켓 / 키다무 / 출석체크 -->
 		<div class="button-container">
-			<a th:href="@{/}" class="button-wrapper">
+			<a th:href="@{/book/new-released}" class="button-wrapper">
 				<div class="round-button">
 					<img src="/resources/static/img/N.png" alt="신작" class="button-icon">
 				</div>
 				<div class="button-text">신작</div>
 			</a>
-			<a th:href="@{/}" class="button-wrapper">
+			<a th:href="@{/book/best}" class="button-wrapper">
 				<div class="round-button">
 					<img src="/resources/static/img/best.png" alt="베스트" class="button-icon">
 				</div>
@@ -618,11 +618,15 @@
 				<div id="lastUpdatedText" class="last-updated">최근 갱신: -</div>
 			</div>	
 			<div class="ranking-body">
-				<button id="prevBtn" onclick="prevPage()" class="side-nav left"><</button>
+				<button id="prevBtn" onclick="prevPage()" class="side-nav left">
+					<img src="/resources/static/img/back.png" alt="이전">
+				</button>
 
 				<div id="bookGrid" class="book-grid"></div>
 				
-				<button id="nextBtn" onclick="nextPage()" class="side-nav right">></button>
+				<button id="nextBtn" onclick="nextPage()" class="side-nav right">
+					<img src="/resources/static/img/next.png" alt="다음" style="margin-left: 2px;">
+				</button>
 			</div>
 			<script>
 				let books =[];
@@ -694,7 +698,7 @@
 								<a href="${detailUrl}" class="book-title">${book.bo_title}</a>
 								<div class="book-meta">${book.bo_author || '작가 미정'} · ${book.bo_free_info || '무료'}</div>
 								<div class="book-rating">
-									★${book.bo_total_rating / 1000} |	리뷰 ${book.bo_review_count}
+									★${(book.bo_total_rating / 1000).toFixed(1)} |	리뷰 ${book.bo_review_count}
 								</div>
 							</div>
 						`;
@@ -725,9 +729,13 @@
 				<div class="wait-see-more">더 보기</div>
 			</div>
 			<div class="waitfree-slider-wrapper">
-				<button class="waitfree-arrow left" id="prevArrow" onclick="scrollWaitfree(-3)"><</button>
+				<button class="waitfree-arrow left" id="prevArrow" onclick="scrollWaitfree(-3)">
+					<img src="/resources/static/img/back.png" alt="이전">
+				</button>
 				<div class="waitfree-track" id="waitfreeGrid"></div>
-				<button class="waitfree-arrow right" id="nextArrow" onclick="scrollWaitfree(3)">></button>
+				<button class="waitfree-arrow right" id="nextArrow" onclick="scrollWaitfree(3)">
+					<img src="/resources/static/img/next.png" alt="다음" style="margin-left: 2px;">
+				</button>
 			</div>
 		</section>
 		<script>
@@ -770,7 +778,7 @@
 									</a>
 									<a href="${detailUrl}" class="waitfree-title-text">${book.bo_title}</a>
 									<div class="waitfree-author">${book.bo_author || '작가 미정'}</div>
-									<div class="book-rating">★${book.bo_total_rating / 1000} | 리뷰 ${book.bo_review_count}</div>
+									<div class="book-rating">★${(book.bo_total_rating / 1000).toFixed(1)} | 리뷰 ${book.bo_review_count}</div>
 								</div>
 							`;
 							$grid.append(html);
@@ -793,11 +801,15 @@
 					<div class="best-see-more">더 보기</div>
 				</div>	
 				<div class="best-body">
-					<button id="bestPrevBtn" onclick="prevBestPage()" class="side-nav left"><</button>
+					<button id="bestPrevBtn" onclick="prevBestPage()" class="side-nav left">
+						<img src="/resources/static/img/back.png" alt="이전">
+					</button>
 	
 					<div id="bestBookGrid" class="book-grid"></div>
 					
-					<button id="bestNextBtn" onclick="nextBestPage()" class="side-nav right">></button>
+					<button id="bestNextBtn" onclick="nextBestPage()" class="side-nav right">
+						<img src="/resources/static/img/next.png" alt="다음" style="margin-left: 2px;">
+					</button>
 				</div>
 				<script>
 					let bestBooks =[];
@@ -854,7 +866,7 @@
 									<a href="${detailUrl}" class="book-title">${book.bo_title}</a>
 									<div class="book-meta">${book.bo_author || '작가 미정'} · ${book.bo_free_info || '무료'}</div>
 									<div class="book-rating">
-										★${book.bo_total_rating / 1000} |	리뷰 ${book.bo_review_count}
+										★${(book.bo_total_rating / 1000).toFixed(1)} |	리뷰 ${book.bo_review_count}
 									</div>
 								</div>
 							`;
@@ -880,7 +892,7 @@
 						loadBestBooks();
 					})
 					document.querySelector(".best-see-more").addEventListener("click", function() {
-						location.href = "/"; // 이동하고 싶은 주소
+						location.href = "/book/best"; // 이동하고 싶은 주소
 					});
 
 				</script>
@@ -924,7 +936,7 @@
 			</div>
 			<script>
 				document.querySelector(".keyword-see-more").addEventListener("click", function() {
-						location.href = "/";
+						location.href = "/book/keyword";
 					});
 			</script>
 		</div>
@@ -936,9 +948,13 @@
 				<div class="new-see-more">더 보기</div>
 			</div>
 			<div class="new-publish-slider-wrapper">
-				<button class="new-publish-arrow left" id="newPublishPrevArrow" onclick="scrollNewPublish(-3)"><</button>
+				<button class="new-publish-arrow left" id="newPublishPrevArrow" onclick="scrollNewPublish(-3)">
+					<img src="/resources/static/img/back.png" alt="이전">
+				</button>
 				<div class="new-publish-track" id="newPublishGrid"></div>
-				<button class="new-publish-arrow right" id="newPublishNextArrow" onclick="scrollNewPublish(3)">></button>
+				<button class="new-publish-arrow right" id="newPublishNextArrow" onclick="scrollNewPublish(3)">
+					<img src="/resources/static/img/next.png" alt="다음" style="margin-left: 2px;">
+				</button>
 			</div>
 		</div>
 		<script>
@@ -981,7 +997,7 @@
 										</a>
 										<a href="${detailUrl}" class="new-publish-title-text">${book.bo_title}</a>
 										<div class="new-publish-author">${book.bo_author || '작가 미정'}</div>
-										<div class="book-rating">★${book.bo_total_rating / 1000} | 리뷰 ${book.bo_review_count}</div>
+										<div class="book-rating">★${(book.bo_total_rating / 1000).toFixed(1)} | 리뷰 ${book.bo_review_count}</div>
 									</div>
 								`;
 								$grid.append(html);
@@ -994,7 +1010,7 @@
 				});
 				
 				document.querySelector(".new-see-more").addEventListener("click", function() {
-					location.href = "/"; // 이동하고 싶은 주소
+					location.href = "/book/new-released"; // 이동하고 싶은 주소
 				});
 			</script>
 		</div>
