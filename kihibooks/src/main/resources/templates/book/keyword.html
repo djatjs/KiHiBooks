@@ -2,88 +2,160 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout.html}">
-	<head>
-		<meta charset="UTF-8">
-		<title>키워드 검색</title>
-		<style>
-			.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
-			.keyword-category { margin-bottom: 24px; }
-			.category-title { font-weight: bold; margin-bottom: 8px; font-size: 16px; }
-			.keyword-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
-			.keyword-btn {
-				padding: 6px 12px; border: 1px solid #ccc; border-radius: 16px;
-				background-color: #f9f9f9; cursor: pointer; font-size: 14px; color: #333;
+
+<head>
+  <meta charset="UTF-8">
+  <title>키워드 검색</title>
+  <style>
+    .filter-box { margin-bottom: 24px; }
+    .filter-category { font-weight: bold; margin-top: 16px; }
+    .filter-keyword {
+      display: inline-block;
+      padding: 6px 12px;
+      margin: 6px 8px 6px 0;
+      border: 1px solid #ccc;
+      border-radius: 16px;
+      background-color: #f9f9f9;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .filter-keyword.selected {
+      background-color: #111;
+      color: white;
+    }
+    .sort-tabs {
+      margin: 24px 0 16px;
+      display: flex;
+      gap: 12px;
+    }
+    .sort-tab {
+      font-size: 14px;
+      color: #888;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .sort-tab.active {
+      color: #000;
+      font-weight: bold;
+    }
+    .reset-btn {
+      margin-top: 10px;
+      font-size: 13px;
+      color: crimson;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: none;
+    }
+    .reset-btn.visible {
+      display: inline-block;
+    }
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 20px;
+    }
+    .book-card { padding: 10px; border: 1px solid #eee; border-radius: 8px; }
+  </style>
+</head>
+
+<body>
+  <section class="container" layout:fragment="content">
+    <h3>키워드로 찾기</h3>
+
+    <!-- 키워드 필터 -->
+    <div class="filter-box" id="keywordFilter">
+      <div th:each="category : ${keywordCategories}">
+        <div class="filter-category" th:text="${category.kc_name}">카테고리</div>
+        <div>
+          <span th:each="keyword : ${category.keywordList}"
+                th:text="${keyword.kw_name}"
+                th:data-id="${keyword.kw_num}"
+                class="filter-keyword"
+                th:classappend="${selectedKeywordIds != null and selectedKeywordIds.contains(keyword.kw_num)} ? 'selected' : ''"
+                onclick="toggleKeyword(this)">
+          </span>
+        </div>
+      </div>
+
+      <button id="resetBtn" class="reset-btn" onclick="resetKeywords()">전체 해제</button>
+    </div>
+
+    <!-- 정렬 탭 -->
+    <div class="sort-tabs">
+      <a th:href="@{/book/search-by-keywords(sort='recent', keywordIds=${selectedKeywordIds})}" th:class="'sort-tab ' + (${sort}=='recent' ? 'active' : '')">최신순</a>
+      <a th:href="@{/book/search-by-keywords(sort='popular', keywordIds=${selectedKeywordIds})}" th:class="'sort-tab ' + (${sort}=='popular' ? 'active' : '')">인기순</a>
+      <a th:href="@{/book/search-by-keywords(sort='rating', keywordIds=${selectedKeywordIds})}" th:class="'sort-tab ' + (${sort}=='rating' ? 'active' : '')">별점순</a>
+      <a th:href="@{/book/search-by-keywords(sort='review', keywordIds=${selectedKeywordIds})}" th:class="'sort-tab ' + (${sort}=='review' ? 'active' : '')">리뷰순</a>
+    </div>
+
+    <!-- 도서 리스트 -->
+    <div>
+      <p th:text="'총 ' + ${pageInfo.totalCount} + '개의 작품이 있습니다.'">총 0개</p>
+      <div class="book-grid">
+        <div class="book-card" th:each="book : ${bookList}">
+          <p th:text="${book.bo_title}">제목</p>
+          <p th:text="${book.bo_author}">작가</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 페이지네이션 -->
+    <div class="pagination" th:if="${pageInfo.totalPages > 1}">
+      <a th:if="${pageInfo.currentPage > 1}"
+         th:href="@{/book/search-by-keywords(page=${pageInfo.currentPage - 1}, keywordIds=${selectedKeywordIds}, sort=${sort})}">&laquo;</a>
+
+      <span th:each="i : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}">
+        <a th:href="@{/book/search-by-keywords(page=${i}, keywordIds=${selectedKeywordIds}, sort=${sort})}"
+           th:class="${pageInfo.currentPage == i} ? 'active' : ''"
+           th:text="${i}">1</a>
+      </span>
+
+      <a th:if="${pageInfo.currentPage < pageInfo.totalPages}"
+         th:href="@{/book/search-by-keywords(page=${pageInfo.currentPage + 1}, keywordIds=${selectedKeywordIds}, sort=${sort})}">&raquo;</a>
+    </div>
+  </section>
+
+  <!-- 키워드 선택 스크립트 -->
+	<div layout:fragment="script">
+		<script>
+			function toggleKeyword(element) {
+				element.classList.toggle('selected');
+				const id = element.dataset.id;
+				const url = new URL(window.location.href);
+				const params = url.searchParams;
+				const selected = new Set(params.getAll("keywordIds"));
+
+				if (element.classList.contains('selected')) {
+					selected.add(id);
+				} else {
+					selected.delete(id);
+				}
+
+				params.delete("keywordIds");
+				selected.forEach(val => params.append("keywordIds", val));
+				params.set("page", 1);
+				window.location.href = `${url.pathname}?${params.toString()}`;
 			}
-			.keyword-btn.active { background-color: #111; color: white; }
-			.clear-btn {
-				margin-left: auto; font-size: 13px; color: crimson; cursor: pointer;
+
+			function resetKeywords() {
+				const url = new URL(window.location.href);
+				const params = url.searchParams;
+				params.delete("keywordIds");
+				params.set("page", 1);
+				window.location.href = `${url.pathname}?${params.toString()}`;
 			}
-		</style>
-	</head>
 
-	<body>
-		<section class="container" layout:fragment="content">
-
-			<h3>키워드 검색</h3>
-
-			<form id="keywordFilterForm" method="get" action="/book/search">
-				<input type="hidden" name="sort" th:value="${sort}" />
-
-				<!-- 전체 해제 버튼 -->
-				<div style="text-align: right; margin-bottom: 8px;">
-					<span class="clear-btn" onclick="clearAll()">전체 해제</span>
-				</div>
-
-				<!-- 카테고리별 키워드 -->
-				<div th:each="category : ${categoryList}" class="keyword-category">
-					<div class="category-title" th:text="${category.kc_name}">카테고리명</div>
-					<div class="keyword-buttons">
-						<button type="button"
-										class="keyword-btn"
-										th:each="keyword : ${category.keywords}"
-										th:text="${keyword.kw_name}"
-										th:classappend="${selectedKeywordIds.contains(keyword.kw_num)} ? 'active'"
-										th:attr="data-id=${keyword.kw_num}"
-										onclick="toggleKeyword(this)">
-							키워드명
-						</button>
-					</div>
-				</div>
-
-				<!-- 선택된 키워드를 hidden input으로 -->
-				<input type="hidden" name="keywords" id="keywords" th:value="${selectedKeywordIds}" />
-			</form>
-
-			<!-- 도서 리스트 & 페이지네이션은 이후 작성 -->
-		</section>
-
-		<div layout:fragment="script">
-			<script>
-				const selectedKeywords = new Set();
-
-				function toggleKeyword(btn) {
-					const id = btn.getAttribute("data-id");
-					if (selectedKeywords.has(id)) {
-						selectedKeywords.delete(id);
-						btn.classList.remove("active");
-					} else {
-						selectedKeywords.add(id);
-						btn.classList.add("active");
-					}
-					updateHiddenField();
+			// 전체 해제 버튼 표시 여부
+			window.onload = function () {
+				const resetBtn = document.getElementById("resetBtn");
+				const url = new URL(window.location.href);
+				const hasKeyword = url.searchParams.getAll("keywordIds").length > 0;
+				if (hasKeyword) {
+					resetBtn.classList.add("visible");
 				}
-
-				function clearAll() {
-					selectedKeywords.clear();
-					document.querySelectorAll('.keyword-btn').forEach(btn => btn.classList.remove('active'));
-					updateHiddenField();
-				}
-
-				function updateHiddenField() {
-					document.getElementById("keywords").value = Array.from(selectedKeywords).join(',');
-					document.getElementById("keywordFilterForm").submit(); // 자동 submit
-				}
-			</script>
-		</div>
-	</body>
+			};
+		</script>
+	</div>
+</body>
 </html>

@@ -1,9 +1,14 @@
 package kr.kh.kihibooks.model.vo;
 
+import java.util.List;
+
 import lombok.Data;
 
 @Data
 public class KeywordCategoryVO {
-	int KC_NUM;
-	String KC_NAME;
+	int kc_num;
+	String kc_name;
+
+	List<KeywordVO> keywordList;
+
 }

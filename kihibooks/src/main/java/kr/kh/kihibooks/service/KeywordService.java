@@ -15,7 +15,7 @@ public class KeywordService {
 	KeywordDAO keywordDAO;
 
 	public List<KeywordCategoryVO> getAllKeywordCategories() {
-		return keywordDAO.selectKeywordCategories();
+    return keywordDAO.selectKeywordCategories();
 	}
 	
 }
