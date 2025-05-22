@@ -23,8 +23,9 @@ public class MemberDetailService implements UserDetailsService{
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		UserVO user = userDao.selectEmail(username);
-		String publisher = null;
+		String authority = null;
 		String pi_pu_code = "";
+		String pu_code = null;
 		if(user != null){
 			PublisherIdVO publisherId = new PublisherIdVO();
 			publisherId.setPi_ur_num(user.getUr_num());
@@ -33,14 +34,15 @@ public class MemberDetailService implements UserDetailsService{
 			if(tmp != null){
 				pi_pu_code = tmp.getPi_pu_code();
 				publisherId.setPi_pu_code(pi_pu_code);
-
-				publisher = publisherDAO.selectPublisherId(publisherId).getPi_authority();
+				
+				authority = publisherDAO.selectPublisherId(publisherId).getPi_authority();
+				pu_code = publisherDAO.selectPublisherId(publisherId).getPi_pu_code();
 			}
 			else{
-				publisher = user.getUr_authority();
+				authority = user.getUr_authority();
 			}
 		}
-		return user == null ? null : new CustomUser(user, publisher);
+		return user == null ? null : new CustomUser(user, authority, pu_code);
 	}
 
 }

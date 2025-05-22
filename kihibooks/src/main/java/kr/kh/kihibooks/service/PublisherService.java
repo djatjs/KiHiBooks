@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.kh.kihibooks.dao.PublisherDAO;
+import kr.kh.kihibooks.dao.UserDAO;
 import kr.kh.kihibooks.model.vo.PublisherIdVO;
 import kr.kh.kihibooks.model.vo.PublisherVO;
 
@@ -14,6 +16,9 @@ public class PublisherService {
 
     @Autowired
     PublisherDAO publisherDAO;
+
+    @Autowired
+    UserDAO userDAO;
 
     public boolean signup(String pu_name) {
         // 등록할 때 4자리의 숫자 코드를 만들어서 pu_code에 넣기
@@ -32,8 +37,18 @@ public class PublisherService {
     private String generateCode() {
         // 4자리의 숫자 코드를 생성하는 로직 구현
         // db에 0000부터 시작하여 최근 항목에서 1씩 증가하는 코드를 생성
+        String latestCode = publisherDAO.getLatestPuCode();
+        int nextCode = 1;
+        if (latestCode != null) {
+            try {
+                nextCode = Integer.parseInt(latestCode) + 1;
+            } catch (NumberFormatException e) {
+                throw new RuntimeException("코드 형식 오류: " + latestCode);
+            }
+        }
         
-        return "1234"; // 예시 코드
+        // 4자리로 포맷팅 (0001, 0002, ..., 9999)
+        return String.format("%04d", nextCode);
     }
 
     public List<PublisherVO> getAllPublishers() {
@@ -55,6 +70,20 @@ public class PublisherService {
         }
         return publisherDAO.insertPublisherId(publisherId);
     }
-    
-    
+
+    @Transactional
+    public boolean addEditor(int userNum, String puCode) {
+        if (userNum == 0 || puCode == null) {
+            throw new IllegalArgumentException("userNum 또는 puCode가 잘못됨");
+        }
+        // USER권한 -> PUBLISHER
+        if (!userDAO.updateAthourity(userNum)) {
+            throw new RuntimeException("권한 업데이트 실패");
+        }
+        // 출판사 소속 에디터로 등록
+        if (!publisherDAO.insertEditor(userNum, puCode)) {
+            throw new RuntimeException("에디터 등록 실패");
+        }
+        return true;
+    }
 }

@@ -23,5 +23,9 @@ public interface UserDAO {
     boolean insertUserWithoutPw(UserVO user);
 
     boolean updatePw(UserVO user);
+
+    UserVO selectUserByNickName(@Param("nickName")String nickName);
+
+    boolean updateAthourity(@Param("userNum")int userNum);
 	
 }

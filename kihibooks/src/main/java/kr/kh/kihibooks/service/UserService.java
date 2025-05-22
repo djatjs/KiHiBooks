@@ -179,4 +179,14 @@ public class UserService {
 		return userDAO.updatePw(user);
     }
 
+    public UserVO getUserByNickName(String searchInput) {
+		if(searchInput == null){
+			return null;
+		}
+		//System.out.println(searchInput)
+		return userDAO.selectUserByNickName(searchInput);
+    }
+
+
 }
+

@@ -199,8 +199,10 @@ layout:decorate="~{layout/layout.html}">
 </head>
 <body>
 	<main layout:fragment="content">
-        <!-- container 클래스에 editor-management 고유 클래스 추가 -->
-		<div class="container editor-management">
+        <!-- 해당 출판사에 등록하기 위한 출판사코드 대기 -->
+        <input type="hidden" id="pu_code" th:value="${#authentication.principal?.pu_code}">
+		
+        <div class="container editor-management">
 			<h2 class="mb-3" style="font-weight: bold;">📊 에디터 계정 관리</h2>
 			<div class="editor-add-section">
             
@@ -253,8 +255,105 @@ layout:decorate="~{layout/layout.html}">
                 <p id="search-initial-message">검색어를 입력하고 '사용자 검색' 버튼을 눌러주세요.</p>
             </div>
             <script>
-                
+                //유저 검색 버튼 클릭 시
+                $("#search-user-button").on('click', function(){
+                    //유저 검색 입력값 가져오기
+                    var searchInput = $("#user-search-input").val();
+                    //입력 안했다면
+                    if(searchInput.length === 0){
+                        alert("검색어를 입력하세요");
+                        return;
+                    }
+                    $.ajax({
+                        url: "/publisher/searchUser",
+                        method: "POST",
+                        data: searchInput,
+                        contentType: "text/plain",
+                        // dataType: "json",
+                        success: function(response) {
+                            if (response && response.ur_nickname) {
+                                displaySearchResults(response);
+                            }
+                            else{
+                                alert("유저 검색 실패 : 존재하지 않는 사용자");
+                                $("#search-results-area").html("검색 결과가 없습니다.");
+                            }
+                        },
+                        error: function(error) {
+
+                        }
+                    })
+
+                })
             </script>
+            
+            <script>
+                function displaySearchResults(user){
+                    alert(user.ur_num);
+                    const $resultsArea = $("#search-results-area");
+                    $resultsArea.empty();
+
+                    const userItemHtml = `
+                        <div class="d-flex justify-content-between">
+                            <span class="user-info">
+                                닉네임: ${user.ur_nickname}
+                                (${maskEmail(user.ur_email)}) <!-- UR_NUM 값을 함께 표시 -->
+                            </span>
+                            <button class="btn btn-sm add-editor-button" id="add-editor-button" data-user-id="${user.ur_num}">
+                                에디터로 추가
+                            </button>
+                        </div>
+                    `;
+                    // 검색 결과 항목을 검색 결과 영역에 추가
+                    $resultsArea.append(userItemHtml); // 검색 결과 영역에 항목 추가
+                    
+                }
+                // 이메일 마스킹 함수 (남겨둘 글자 수 지정 가능)
+                function maskEmail(email, visibleCharsCount = 2) {
+                    if (!email) return '';
+
+                    const atIndex = email.indexOf('@');
+
+                    const username = email.substring(0, atIndex);
+                    const domain = email.substring(atIndex);
+
+                    // 유효한 visibleCharsCount 계산 (0보다 작으면 0, username 길이보다 크면 username 길이)
+                    const actualVisibleChars = Math.max(0, Math.min(visibleCharsCount, username.length));
+
+                    const visiblePart = username.substring(0, actualVisibleChars);
+                    const maskedPart = '*'.repeat(username.length - actualVisibleChars);
+
+                    return `${visiblePart}${maskedPart}${domain}`;
+                }
+            </script>
+
+            <script>
+                $(document).on("click", ".add-editor-button", function() {
+                    const userNum = $(this).data("user-id");
+                    const puCode = $("#pu_code").val();
+                    console.log(userNum); // 사용자 ID를 확인하는 코드
+                    $.ajax({
+                        url: "/publisher/addEditor",
+                        type: "POST",
+                        data:
+                        {
+                            userNum: userNum,
+                            puCode : puCode
+                        },
+                        success: function(response) {
+                            console.log(response);
+                            if(response){
+                                alert("추가되었습니다.");
+                                location.reload();
+                            }else{
+                                alert("추가에 실패했습니다.");
+                            }
+                        }
+                    })
+
+                });
+            </script>
+
         </div>
 	</main>
 

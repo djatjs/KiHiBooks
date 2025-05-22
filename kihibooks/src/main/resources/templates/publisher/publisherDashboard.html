@@ -145,7 +145,7 @@ layout:decorate="~{layout/layout.html}">
 		<div class="publisher-dashboard">
 			<div class="d-flex justify-content-between">
 				<h1>📊 출판사 대시보드</h1>
-				<p th:text="${#authentication.principal?.publisher}"></p>
+				<p th:text="${#authentication.principal?.authority}"></p>
 			</div>
 
 			<!-- 요약 정보 섹션 -->
@@ -153,7 +153,7 @@ layout:decorate="~{layout/layout.html}">
 
 				<!-- 에디터 수 요약 카드 -->
 				<!-- SUPER 권한에게만 총 에디터 수를 보여주는 카드 -->
-				<div class="summary-card" sec:authorize="hasAuthority('SUPER')">
+				<div class="summary-card" th:if="${#authentication.principal?.authority == 'SUPER'}">
 					<div class="card-title">총 에디터 수</div>
 					<!-- 서버에서 가져온 에디터 수 표시 -->
 					<!-- <div class="card-value" th:text="${editorCount != null ? editorCount : '로딩 중...'}">0</div> -->
@@ -169,7 +169,7 @@ layout:decorate="~{layout/layout.html}">
 					<!-- 예시: 15 -->
 				</div>
 				<!-- EDITOR 권한에게만 본인 관련 정보나 통계를 보여주는 카드 (예시) -->
-				<th:block th:if="${#authentication.principal?.publisher == 'EDITOR'}">
+				<th:block th:if="${#authentication.principal?.authority == 'EDITOR'}">
 					<div class="summary-card">
 						<div class="card-title">내가 등록한 도서</div>
 						<!-- <div class="card-value" th:text="${myBookCount}"></div> -->
@@ -204,11 +204,11 @@ layout:decorate="~{layout/layout.html}">
 				<h2>🚀 바로가기</h2>
 				<div class="link-buttons">
 					<!-- 에디터 관리 페이지로 이동하는 버튼 -->
-					<th:block th:if="${#authentication.principal?.publisher == 'SUPER'}">
+					<th:block th:if="${#authentication.principal?.authority == 'SUPER'}">
 						<a th:href="@{/publisher/editors}" class="link-button">에디터 관리</a>
 					</th:block>
 					<!-- 신규 도서 등록 페이지로 이동하는 버튼 -->
-					<th:block th:if="${#authentication.principal?.publisher == 'EDITOR'}">
+					<th:block th:if="${#authentication.principal?.authority == 'EDITOR'}">
 						<a th:href="@{/editor/my-content}" class="link-button">내 콘텐츠 관리</a>
 					</th:block>
 					<a th:href="@{/account/modify}" class="link-button">계정 설정</a>

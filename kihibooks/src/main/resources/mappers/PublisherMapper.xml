@@ -23,4 +23,11 @@
     <select id="selectPublisherIdByNum" resultType="PublisherIdVO">
         select pi_pu_code FROM publisher_id WHERE pi_ur_num = #{ur_num}
     </select>
+    <insert id="insertEditor">
+        insert into publisher_id (pi_authority, pi_pu_code, pi_ur_num)
+        values("EDITOR", #{puCode}, #{userNum})
+    </insert>
+    <select id="getLatestPuCode" resultType="String">
+        select max(pi_pu_code) from publisher_id
+    </select>
 </mapper>
