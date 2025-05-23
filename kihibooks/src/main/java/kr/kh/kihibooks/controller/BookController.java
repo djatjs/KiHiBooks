@@ -155,7 +155,7 @@ public class BookController {
 
     @GetMapping("/book/keyword")
     public String searchBooksByKeywords(
-            @RequestParam(required = false) List<Integer> keywordIds,
+            @RequestParam(required = false) List<String> keywordIds,
             @RequestParam(defaultValue = "recent") String sort,
             @RequestParam(defaultValue = "1") int page,
             Model model) {

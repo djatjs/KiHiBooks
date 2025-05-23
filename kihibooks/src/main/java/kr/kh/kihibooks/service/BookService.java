@@ -66,7 +66,7 @@ public class BookService {
         return PaginationUtils.paginate(content, total, page, size, BLOCK_SIZE);
     }
 
-    public PageInfo<BookVO> getBooksByKeywords(List<Integer> keywordIds, String sort, int page) {
+    public PageInfo<BookVO> getBooksByKeywords(List<String> keywordIds, String sort, int page) {
         if (keywordIds == null) {
             keywordIds = new ArrayList<>();
         }
