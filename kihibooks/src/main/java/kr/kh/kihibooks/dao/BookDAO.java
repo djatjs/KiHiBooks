@@ -43,13 +43,13 @@ public interface BookDAO {
 
 	List<KeywordCategoryVO> selectKeywordCategories();
 
-	List<BookVO> selectBooksByKeywords(@Param("keywordIds")List<Integer> keywordIds, 
+	List<BookVO> selectBooksByKeywords(@Param("keywordIds")List<String> keywordIds, 
 																		@Param("sort")String sort, 
 																		@Param("limit")int limit, 
 																		@Param("offset")int offset, 
 																		@Param("keywordCount")int keywordCount);
 
-	int countBooksByKeywords(@Param("keywordIds")List<Integer> keywordIds, @Param("keywordCount")int keywordCount);
+	int countBooksByKeywords(@Param("keywordIds")List<String> keywordIds, @Param("keywordCount")int keywordCount);
 
 	BookVO selectBook(String bo_code);
 
@@ -58,5 +58,7 @@ public interface BookDAO {
 	List<ReviewVO> selectReviewList(String bo_code);
 
     List<SubCategoryVO> selectSubCategory(int mainCategoryValue);
+	
+	boolean insertReview(ReviewVO review);
     
 }

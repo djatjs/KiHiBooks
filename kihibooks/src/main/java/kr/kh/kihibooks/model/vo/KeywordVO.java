@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class KeywordVO {
-	private int kw_num;
+	private String kw_code;
 	private String kw_name;
 }

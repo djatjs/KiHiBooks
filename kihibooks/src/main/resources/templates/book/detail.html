@@ -180,7 +180,8 @@
 			padding: 0;
 		}
 
-		.red {
+		.red,
+		.red-star {
 			filter: brightness(0) saturate(100%) invert(16%) sepia(98%) saturate(2874%) hue-rotate(-5deg) brightness(92%) contrast(95%);
 		}
 
@@ -189,7 +190,11 @@
 		}
 
 		.orange {
-			filter: brightness(0) saturate(130%) invert(38%) sepia(95%) saturate(750%) hue-rotate(-5deg) brightness(115%) contrast(110%);
+			filter: brightness(0) saturate(100%) invert(38%) sepia(95%) saturate(750%) hue-rotate(-5deg) brightness(115%) contrast(110%);
+		}
+
+		.tomato {
+			filter: brightness(0) saturate(100%) invert(60%) sepia(120%) saturate(200%) hue-rotate(320deg) contrast(90%)
 		}
 
 		.dark-gray {
@@ -2880,53 +2885,96 @@
 												<h2 class="wrapper-title">리뷰</h2>
 												<div class="rv-overview">
 													<div class="rv-rating">
-														<h3 class="rv-rating-text" th:text="${book.bo_total_rating / book.bo_review_count / 2}"></h3>
+														<h3 class="rv-rating-text" id="ratingText"></h3>
+														<script th:inline="javascript">
+															let totalRating = [[${ book.bo_total_rating }]];
+															let reviewCount = [[${ book.bo_review_count }]];
+
+															let ratingText = "-";
+															if (reviewCount > 0) {
+																var average = (totalRating / reviewCount) / 2;
+																ratingText = average.toFixed(1); // 소수점 1자리
+															}
+
+															document.getElementById("ratingText").textContent = ratingText;
+														</script>
 														<div class="rv-rating-img">
 															<span class="rating-img-text">구매자 별점</span>
 															<div class="rating-star">
-																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;" class="red">
-																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;" class="red">
-																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;" class="red">
-																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;" class="red">
-																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;" class="red">
+																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;"
+																	class="star-icon">
+																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;"
+																	class="star-icon">
+																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;"
+																	class="star-icon">
+																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;"
+																	class="star-icon">
+																<img src="/resources/static/img/star.png" alt="별" style="height: 15px;"
+																	class="star-icon">
 															</div>
 														</div>
+														<script>
+															const rating = parseFloat(average.toFixed(1)); // 예: [[${ratingText}]]로 Thymeleaf에서 넘겨줄 수 있음
+															const starIcon = document.querySelectorAll('.rating-star .star-icon');
+
+															starIcon.forEach((star, index) => {
+																if (index < Math.floor(rating)) {
+																	star.classList.add('red');
+																} else if (index < rating) {
+																	star.classList.add('tomato');
+																} else {
+																	star.classList.add('gray');
+																}
+															});
+														</script>
 													</div>
 													<div class="rv-rating-cnt">
-														<div class="rating-cnt">12,996명 평가</div>
+														<div class="rating-cnt" th:text="${book.bo_review_count}+'명 평가'"></div>
 														<label class="rating-bunpo">
 															<input type="checkbox" class="bunpo-check">
 															<span class="bunpo-text">별점 분포 보기</span>
 															<img id="bunpo_table_icon" class="ml-2" src="/resources/static/img/down-triangle.png"
 																alt="아래 삼각형" style="height: 10px;">
 															<button type="button" class="bunpo-table none">
+																<script th:inline="javascript">
+																	/*<![CDATA[*/
+																	let ratingRatio = /*[[${rating}]]*/ {};
+																	/*]]>*/
+																</script>
 																<div class="rate-bunpo">
 																	<div>5</div>
 																	<div class="bunpo">
-																		<!-- width에 별점 비율 값 넣으면 됨 -->
-																		<div style="width: 92%;" class="rate-bunpo-percent"></div>
+																		<div id="rate5" class="rate-bunpo-percent"></div>
 																	</div>
 																	<div>4</div>
 																	<div class="bunpo">
-																		<!-- width에 별점 비율 값 넣으면 됨 -->
-																		<div style="width: 5%;" class="rate-bunpo-percent"></div>
+																		<div id="rate4" class="rate-bunpo-percent"></div>
 																	</div>
 																	<div>3</div>
 																	<div class="bunpo">
-																		<!-- width에 별점 비율 값 넣으면 됨 -->
-																		<div style="width: 1%;" class="rate-bunpo-percent"></div>
+																		<div id="rate3" class="rate-bunpo-percent"></div>
 																	</div>
 																	<div>2</div>
 																	<div class="bunpo">
-																		<!-- width에 별점 비율 값 넣으면 됨 -->
-																		<div style="width: 0%;" class="rate-bunpo-percent"></div>
+																		<div id="rate2" class="rate-bunpo-percent"></div>
 																	</div>
 																	<div>1</div>
 																	<div class="bunpo">
-																		<!-- width에 별점 비율 값 넣으면 됨 -->
-																		<div style="width: 0%;" class="rate-bunpo-percent"></div>
+																		<div id="rate1" class="rate-bunpo-percent"></div>
 																	</div>
 																</div>
+																<script>
+																	// 페이지 로드 후 실행
+																	document.addEventListener('DOMContentLoaded', function () {
+																		// 각 별점 div에 width 스타일 적용
+																		for (let i = 1; i <= 5; i++) {
+																			let elem = document.getElementById('rate' + i);
+																			if (elem && ratingRatio[i]) {
+																				elem.style.width = ratingRatio[i] + '%';
+																			}
+																		}
+																	});
+																</script>
 															</button>
 														</label>
 													</div>
@@ -2999,6 +3047,45 @@
 														</div>
 													</div>
 												</div>
+												<script th:inline="javascript">
+													$(".rv-regist-form").submit(function(e){
+														e.preventDefault();
+
+														const content = $(".rv-textarea").val();
+														const rating = $("input[name='rating']:checked").val();
+
+														if(!rating) {
+															alert("별점을 선택해주세요.");
+															return;
+														}
+
+														if(content.length < 10) {
+															alert("리뷰는 10자 이상 입력해주세요.");
+															return;
+														}
+
+														const review = {
+																rv_bo_code : '[[${book.bo_code}]]',
+																rv_content : content,
+																rv_rating : rating
+														}
+
+														$.ajax({
+															url : "/review/insert",
+															method : "post",
+															data : JSON.stringify(review),
+															contentType : "application/json",
+															success : function(data){
+																if(data) {
+																	alert("리뷰 등록 완료");
+																	$(".rv-textarea").val('');
+																} else{
+																	alert("리뷰 등록 실패");
+																}
+															}
+														});
+													});
+												</script>
 												<div class="rv-sort-btn">
 													<button type="button" class="buyer" aria-pressed="true">
 														<span style="font-weight: 700;">구매자</span>
@@ -3006,7 +3093,7 @@
 													</button>
 													<button type="button" class="all" aria-pressed="false">
 														<span style="font-weight: 700;">전체</span>
-														<span style="font-weight: 600;">5,551</span>
+														<span style="font-weight: 600;" th:text="${book.bo_review_count}"></span>
 													</button>
 												</div>
 												<div class="rv-arrange-btn">
@@ -3018,26 +3105,27 @@
 												</div>
 												<ul class="rv-ul" th:each="review : ${rvList}">
 													<li class="rv-li">
-														<div class="rv-rate d-flex">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
+														<div class="rv-rate d-flex red" style="font-weight: 700;">
+															<img src="/resources/static/img/star.png" alt="별" class="red"
+																style="height: 13px; margin-top: 1px;">
+															<span th:text="${review.rv_rating * 1.0 / 2}"></span>
 														</div>
-														<div class="rv-content">
+														<div class="rv-content" th:attr="hidden=${review.rv_spoiler == 'Y'}">
 															<p class="content-text" th:text="${review.rv_content}"></p>
 														</div>
-														<div class="rv-content-spoiler" hidden>
+														<div class="rv-content-spoiler" th:attr="hidden=${review.rv_spoiler != 'Y'}">
+															<div class="rv-content" hidden>
+																<p class="content-text" th:text="${review.rv_content}"></p>
+															</div>
 															<div class="content-spoiler">
 																<img src="/resources/static/img/exclamation.png" alt="i 아이콘" style="height: 23px;"
-																	class="dark-gray">
+																	class="dark-gray" />
 																<span class="spoiler-text">스포일러가 있는 리뷰입니다.</span>
 															</div>
 															<button type="button" class="spoiler-view-btn">
 																<span class="sv-btn-text">리뷰 보기</span>
 																<img src="/resources/static/img/next.png" alt=">"
-																	style="height: 12px; margin-bottom: 2px;" class="dark-gray ml-1">
+																	style="height: 12px; margin-bottom: 2px;" class="dark-gray ml-1" />
 															</button>
 														</div>
 														<div class="rv-bottom">
@@ -3048,7 +3136,8 @@
 																	<div class="rv-nick" th:text="${review.rv_user}"></div>
 																</div>
 																<div class="rv-date">
-																	<div class="rv-date-text" th:text="${#strings.substring(review.rv_date, 0, 10)}"></div>
+																	<div class="rv-date-text" th:text="${#strings.substring(review.rv_date, 0, 10)}">
+																	</div>
 																</div>
 															</div>
 															<div class="rv-right-btn">
