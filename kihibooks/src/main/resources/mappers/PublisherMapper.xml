@@ -31,15 +31,35 @@
     <select id="getLatestPuCode" resultType="String">
         select max(pi_pu_code) from publisher_id
     </select>
-    <select id="selectEditorList" resultType="EditorVO">
+    <!-- <select id="selectEditorList" resultType="EditorVO">
         SELECT u.UR_NICKNAME AS ur_nickname, u.UR_EMAIL AS ur_email, u.UR_NUM AS ur_num, p.PU_NAME AS pu_name, pi.PI_PU_CODE AS pu_code
         FROM publisher_id pi
         JOIN user u ON pi.PI_UR_NUM = u.UR_NUM
         JOIN publisher p ON pi.PI_PU_CODE = p.PU_CODE
         WHERE pi.PI_PU_CODE = #{puCode} and pi.PI_AUTHORITY = 'EDITOR'
         ORDER BY ur_nickname ASC;
-    </select>
+    </select> -->
     <delete id="deleteEditorByUserNum">
         DELETE FROM publisher_id WHERE pi_ur_num = #{userNum}
     </delete>
+    <select id="selectEditorList" resultType="EditorVO">
+        SELECT u.UR_NICKNAME AS ur_nickname,
+            u.UR_EMAIL AS ur_email,
+            u.UR_NUM AS ur_num,
+            p.PU_NAME AS pu_name,
+            pi.PI_PU_CODE AS pu_code
+        FROM publisher_id pi
+        JOIN user u ON pi.PI_UR_NUM = u.UR_NUM
+        JOIN publisher p ON pi.PI_PU_CODE = p.PU_CODE
+        WHERE pi.PI_PU_CODE = #{puCode}
+        AND pi.PI_AUTHORITY = 'EDITOR'
+        ORDER BY ur_nickname ASC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    <select id="selectEditorCount" resultType="int">
+        SELECT COUNT(*)
+        FROM publisher_id
+        WHERE PI_PU_CODE = #{puCode}
+        AND PI_AUTHORITY = 'EDITOR'
+    </select>
 </mapper>

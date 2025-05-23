@@ -26,8 +26,16 @@ public interface PublisherDAO {
 
     String getLatestPuCode();
 
-    List<EditorVO> selectEditorList(String puCode);
+    // List<EditorVO> selectEditorList(String puCode);
 
     boolean deleteEditorByUserNum(int userNum);
-    
+
+    int countEditor(String puCode);
+
+    // List<EditorVO> selectEditorList(String puCode, int offset, int pageSize);
+    List<EditorVO> selectEditorList(@Param("puCode") String puCode,
+                                @Param("limit") int limit,
+                                @Param("offset") int offset);
+
+    int selectEditorCount(@Param("puCode") String puCode);
 }

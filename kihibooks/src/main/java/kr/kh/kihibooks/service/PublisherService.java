@@ -11,6 +11,9 @@ import kr.kh.kihibooks.dao.UserDAO;
 import kr.kh.kihibooks.model.vo.EditorVO;
 import kr.kh.kihibooks.model.vo.PublisherIdVO;
 import kr.kh.kihibooks.model.vo.PublisherVO;
+import kr.kh.kihibooks.pagination.PageInfo;
+import kr.kh.kihibooks.utils.PageConstants;
+import kr.kh.kihibooks.utils.PaginationUtils;
 
 @Controller
 public class PublisherService {
@@ -88,9 +91,9 @@ public class PublisherService {
         return true;
     }
 
-    public List<EditorVO> getEditorList(String puCode) {
-        return publisherDAO.selectEditorList(puCode);
-    }
+    // public List<EditorVO> getEditorList(String puCode) {
+    //     return publisherDAO.selectEditorList(puCode);
+    // }
 
     @Transactional
     public boolean deleteEditor(int userNum) {
@@ -103,5 +106,12 @@ public class PublisherService {
             throw new RuntimeException("권한 복구 실패");
         }
         return true;
+    }
+
+    public List<EditorVO> getEditorList(String puCode, int limit, int offset) {
+        return publisherDAO.selectEditorList(puCode, limit, offset);
+    }
+    public int getEditorCount(String puCode) {
+        return publisherDAO.selectEditorCount(puCode);
     }
 }

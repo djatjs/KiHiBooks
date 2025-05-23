@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +16,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import kr.kh.kihibooks.model.vo.EditorVO;
 import kr.kh.kihibooks.model.vo.PublisherVO;
 import kr.kh.kihibooks.model.vo.UserVO;
+import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.service.PublisherService;
 import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.utils.CustomUser;
+import kr.kh.kihibooks.utils.PageConstants;
+import kr.kh.kihibooks.utils.PaginationUtils;
 
 
 @Controller
@@ -35,16 +39,25 @@ public class PublisherContoller {
     }
 
     @GetMapping("/publisher/editors")
-    public String editors(Model model,Authentication auth) {
+    public String editors(@RequestParam(defaultValue = "1") int page,
+                        Model model, Authentication auth) {
         CustomUser user = (CustomUser) auth.getPrincipal();
-        // 출판사 코드 추출
         String puCode = user.getPu_code();
-        List<EditorVO> editors = publisherService.getEditorList(puCode);
-        System.out.println(editors);
-        
-        model.addAttribute("editors", editors);
+
+        int totalCount = publisherService.getEditorCount(puCode); // 전체 수
+        // int pageSize = PageConstants.PAGE_SIZE;
+        int pageSize = 2;
+        // int blockSize = PageConstants.BLOCK_SIZE;
+        int blockSize = 2;
+        int offset = (page - 1) * pageSize;
+
+        List<EditorVO> editorList = publisherService.getEditorList(puCode, pageSize, offset);
+        PageInfo<EditorVO> pageInfo = PaginationUtils.paginate(editorList, totalCount, page, pageSize, blockSize);
+
+        model.addAttribute("pageInfo", pageInfo);
         return "publisher/manageEditors";
     }
+
     
     @ResponseBody
     @PostMapping("/publisher/searchUser")
@@ -79,6 +92,14 @@ public class PublisherContoller {
             return false;
         }
     }
+
+    @GetMapping("/editor/myContent")
+    public String myContent(@AuthenticationPrincipal CustomUser customUser, Model model) {
+        System.out.println(customUser);
+        model.addAttribute("user", customUser.getUser());
+        return "/publisher/myContent";
+    }
+    
     
     
 }

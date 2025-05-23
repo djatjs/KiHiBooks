@@ -42,6 +42,7 @@ public class MemberDetailService implements UserDetailsService{
 				authority = user.getUr_authority();
 			}
 		}
+		// System.out.println(user+ authority+ pu_code);
 		return user == null ? null : new CustomUser(user, authority, pu_code);
 	}
 

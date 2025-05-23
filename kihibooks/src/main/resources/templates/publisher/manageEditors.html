@@ -178,6 +178,64 @@ layout:decorate="~{layout/layout.html}">
         cursor: pointer;
     }
 
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        padding: 0;
+        list-style: none;
+        border-radius: .25rem;
+    }
+
+    .pagination a,
+    .pagination span a {
+        position: relative;
+        display: block;
+        padding: .5rem .75rem;
+        margin-left: -1px;
+        line-height: 1.25;
+        color: #007bff;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .pagination a:first-child {
+        margin-left: 0;
+        border-top-left-radius: .25rem;
+        border-bottom-left-radius: .25rem;
+    }
+
+    .pagination a:last-child {
+        border-top-right-radius: .25rem;
+        border-bottom-right-radius: .25rem;
+    }
+
+    .pagination a:hover {
+        color: #0056b3;
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+    }
+
+    .pagination .active {
+        z-index: 1;
+        color: #fff;
+        background-color: #ff7f50;
+        border-color: #ff7f50;
+        pointer-events: none;
+    }
+
+    .pagination > a:first-child {
+        margin-right: 5px;
+    }
+
+    .pagination > a:last-child {
+        margin-left: 5px;
+    }
+
+
     @media (max-width: 800px) {
         /* 작은 화면에서 컨테이너 패딩 */
         .editor-management.container {
@@ -219,9 +277,9 @@ layout:decorate="~{layout/layout.html}">
                     </tr>
                 </thead>
                 <!-- editors 리스트가 비어있지 않을 때 -->
-                <tbody th:if="${editors != null and !editors.isEmpty()}">
-                    <tr th:each="editor, count: ${editors}">
-                        <td th:text="${count.count}"></td>
+                <tbody th:if="${pageInfo.content != null and !pageInfo.content.isEmpty()}">
+                    <tr th:each="editor, count : ${pageInfo.content}">
+                        <td th:text="${count.count + (pageInfo.currentPage - 1) * pageInfo.pageSize}"></td>
                         <td th:text="${editor.ur_nickname}"></td>
                         <td th:text="${editor.ur_email}"></td>
                         <td th:text="${editor.pu_name}"></td>
@@ -231,13 +289,29 @@ layout:decorate="~{layout/layout.html}">
                     </tr>
                 </tbody>
                 <!-- editors 리스트가 null이거나 비어있을 때 메시지 -->
-                <tbody th:unless="${editors != null and !editors.isEmpty()}">
+                <tbody th:if="${pageInfo.content == null || pageInfo.content.isEmpty()}">
                     <tr>
-                        <td colspan="5" class="text-center">등록된 출판사가 없습니다.</td>
+                        <td colspan="5" class="text-center">등록된 에디터가 없습니다.</td>
                     </tr>
                 </tbody>
+
             </table>
             
+            <div class="pagination">
+                <a th:if="${pageInfo.startPage > 1}"
+                th:href="@{/publisher/editors(page=${pageInfo.startPage - 1})}">«</a>
+
+                <span th:each="i : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}">
+                    <a th:href="@{/publisher/editors(page=${i})}"
+                    th:classappend="${i == pageInfo.currentPage} ? 'active' : ''"
+                    th:text="${i}"></a>
+                </span>
+
+                <a th:if="${pageInfo.endPage < pageInfo.totalPages}"
+                th:href="@{/publisher/editors(page=${pageInfo.endPage + 1})}">»</a>
+            </div>
+
+
             <h2 style="font-weight: bold;">➕ 새로운 에디터 추가</h2>
             <p>기존에 가입된 사용자를 검색하여 출판사의 에디터로 등록할 수 있습니다.</p>
 

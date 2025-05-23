@@ -209,7 +209,7 @@ layout:decorate="~{layout/layout.html}">
 					</th:block>
 					<!-- 신규 도서 등록 페이지로 이동하는 버튼 -->
 					<th:block th:if="${#authentication.principal?.authority == 'EDITOR'}">
-						<a th:href="@{/editor/my-content}" class="link-button">내 콘텐츠 관리</a>
+						<a th:href="@{/editor/myContent}" class="link-button">내 콘텐츠 관리</a>
 					</th:block>
 					<a th:href="@{/account/modify}" class="link-button">계정 설정</a>
 					<!-- 도서 목록 및 회차 등록/수정 페이지로 이동하는 버튼 -->
