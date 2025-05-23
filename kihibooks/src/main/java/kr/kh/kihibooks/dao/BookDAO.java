@@ -55,5 +55,7 @@ public interface BookDAO {
 	List<EpisodeVO> selectEpisodeList(String bo_code);
 
 	List<ReviewVO> selectReviewList(String bo_code);
+
+	boolean insertReview(ReviewVO review);
     
 }
