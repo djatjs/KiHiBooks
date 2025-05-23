@@ -58,8 +58,16 @@
                         로그아웃
                     </a>
                 </th:block>
+                <th:block sec:authorize="hasRole('ROLE_PUBLISHER')">
+                    <a class="p-2 mr-2 mt-2" th:href="@{/publisher/dashboard}" style="text-decoration: none; color: black;">
+                        대시보드
+                    </a>
+                    <a class="p-2 mr-2 mt-2" th:href="@{/logout}" style="text-decoration: none; color: black;">
+                        로그아웃
+                    </a>
+                </th:block>
             </div>
-            <th:block sec:authorize="!hasRole('ROLE_ADMIN')">
+            <th:block sec:authorize="!hasRole('ROLE_ADMIN') and !hasRole('ROLE_PUBLISHER')">
                 <div>
                     <div class="d-flex justify-content-between bg-white mb-3">
                         <div class="d-flex">

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html
+xmlns:th="http://www.thymeleaf.org"
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{layout/layout.html}">
+<head>
+<meta charset="UTF-8">
+<title>KiHiBooks</title>
+
+<style>
+    main {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    /* 전체 컨테이너 스타일 - 고유 클래스를 사용하여 다른 .container에 영향받지 않도록 함 */
+    .editor-management.container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    /* 페이지 제목 스타일 */
+    .editor-management h2 {
+        color: #2c3e50;
+        border-bottom: 2px solid #ff7f50;
+        padding-bottom: 10px;
+        margin-bottom: 25px !important;
+        font-size: 1.8em;
+    }
+    
+    /* h2 bold 스타일 */
+    .editor-management h2.mb-3 {
+        font-weight: bold;
+    }
+
+    /* 드롭다운(select) 스타일 */
+    .editor-management #editorTypeSelect {
+        border-color: #ced4da;
+        border-radius: 5px;
+        padding: .375rem .75rem;
+        height: calc(1.5em + .75rem + 2px);
+        box-shadow: inset 0 1px 2px rgba(0,0,0,.075);
+    }
+
+    /* 테이블 스타일 */
+    .editor-management .table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 25px !important;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    /* 테이블 헤더 스타일 */
+    .editor-management .table thead th {
+        background-color: #ff7f50 !important;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        vertical-align: middle;
+        padding: 12px 15px;
+        border-bottom: none;
+    }
+
+    /* 테이블 본문 셀 스타일 */
+    .editor-management .table tbody td {
+        vertical-align: middle;
+        padding: 10px 15px;
+        text-align: center;
+    }
+
+    /* 테이블 행 호버 효과 */
+    .editor-management .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    /* 삭제 버튼 스타일 (Bootstrap btn-danger 사용) */
+    .editor-management .table tbody .btn-danger {
+        background-color: #dc3545; /* Bootstrap 기본 danger 색상 */
+        border-color: #dc3545;
+    }
+    .editor-management .table tbody .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+
+    /* '출판사 추가하기' 버튼 스타일 (Bootstrap btn-primary 사용) */
+    .editor-management .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 10px 20px;
+        font-size: 1.1em;
+    }
+    .editor-management .btn-primary:hover {
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+
+    /* 데이터가 없을 때 메시지 스타일 */
+    .editor-management .table tbody tr td.text-center {
+        font-style: italic;
+        color: #6c757d;
+        padding: 20px;
+    }
+
+    /* '출판사 추가하기' 버튼을 감싸는 div 스타일 */
+    .editor-management .text-right {
+        text-align: right !important;
+    }
+    
+    /* '출판사 추가하기' 버튼 스타일 */
+    .addeditorBtn {
+        background-color: #ff7f50;
+        color: #ffffff;
+        text-decoration: no;
+    }
+    .addeditorBtn:hover {
+        background-color: #ff6347;
+        color: #ffffff;
+    }
+    .series-container{
+        margin-bottom: 60px;
+    }
+
+    .series-header {
+        display: flex; justify-content: space-between;
+        align-items: center; margin-bottom: 20px;	padding: 0 10px;
+        margin-top: 50px;
+    }
+
+    .series-header h3 {
+        margin: 0; font-size: 22px;	font-weight: bold;
+    }
+
+    .series-body {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+    .series-slider-wrapper {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .series-track {
+        display: flex;
+        gap: 16px;
+        scroll-behavior: smooth;
+        overflow-x: scroll;
+        padding: 0 20px 8px;
+        scrollbar-width: none;
+    }
+
+    .series-track::-webkit-scrollbar {
+        display: none;
+    }
+
+    .series-item {
+        flex: 0 0 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 13px;
+        color: #333;
+    }
+
+    .series-thumb {
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        border-radius: 4px;
+        overflow: hidden;
+        background-color: #f2f2f2;
+    }
+
+    .series-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .series-title-text {
+        margin-top: 6px;
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-decoration: none !important;
+        color: inherit !important;
+    }
+
+    .series-author {
+        font-size: 12px;
+        color: #666;
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .series-rating {
+        font-size: 12px;
+        color: #d00;
+        margin-top: 2px;
+    }
+
+    .series-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 32px;
+        height: 32px;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        z-index: 10;
+    }
+
+    .series-arrow.left {
+        left: 0;
+    }
+
+    .series-arrow.right {
+        right: 0;
+    }
+    
+    
+    
+    
+    
+    
+
+
+
+    @media (max-width: 800px) {
+        /* 작은 화면에서 컨테이너 패딩 */
+        .editor-management.container {
+            padding: 10px;
+        }
+        /* 작은 화면에서 테이블 셀 패딩 및 폰트 크기 */
+        .editor-management .table thead th,
+        .editor-management .table tbody td {
+            padding: 8px 10px;
+            font-size: 0.9em;
+        }
+        /* 작은 화면에서 '출판사 추가하기' 버튼 패딩 및 폰트 크기 */
+        .editor-management .btn-primary {
+            padding: 8px 15px;
+            font-size: 1em;
+        }
+    }
+</style>
+</head>
+<body>
+	<main layout:fragment="content">
+        <!-- <span th:text="${user.ur_nickname}"></span> -->
+		
+        <div class="container editor-management">
+			<h2 class="mb-3" style="font-weight: bold;">📊 콘텐츠 관리</h2>
+			<div class="editor-add-section">
+                
+            </div>
+            <!-- 연재 중인 작품 -->
+            <div class="series-container">
+                <h4>연재 중인 작품</h4>
+                <div class="series-body">
+
+                </div>
+                <div class="series-slider-wrapper">
+                    <button class="series-arrow left" id="seriesPrevArrow" onclick="scrollNewPublish(-3)">
+                        <img src="/resources/static/img/back.png" alt="이전">
+                    </button>
+                    <div class="series-track" id="seriesGrid"></div>
+                    <button class="series-arrow right" id="seriesNextArrow" onclick="scrollNewPublish(3)">
+                        <img src="/resources/static/img/next.png" alt="다음" style="margin-left: 2px;">
+                    </button>
+                </div>
+            </div>
+
+            <!-- 작품 등록 -->
+
+	</main>
+
+</body>
+</html>

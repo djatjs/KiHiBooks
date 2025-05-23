@@ -12,6 +12,7 @@
         SELECT p.PU_CODE, p.PU_NAME, u.UR_EMAIL FROM publisher p
         JOIN publisher_id pi ON p.PU_CODE = pi.PI_PU_CODE
         JOIN user u ON pi.PI_UR_NUM = u.UR_NUM
+        where pi.pi_authority = 'SUPER'
         ORDER BY p.PU_CODE ASC;
     </select>
     <select id="selectPublisherId" resultType="PublisherIdVO">
@@ -20,4 +21,45 @@
     <insert id="insertPublisherId">
         insert into publisher_id(pi_ur_num, pi_pu_code, pi_authority) values(#{pi_ur_num}, #{pi_pu_code}, #{pi_authority})
     </insert>
+    <select id="selectPublisherIdByNum" resultType="PublisherIdVO">
+        select pi_pu_code FROM publisher_id WHERE pi_ur_num = #{ur_num}
+    </select>
+    <insert id="insertEditor">
+        insert into publisher_id (pi_authority, pi_pu_code, pi_ur_num)
+        values("EDITOR", #{puCode}, #{userNum})
+    </insert>
+    <select id="getLatestPuCode" resultType="String">
+        select max(pi_pu_code) from publisher_id
+    </select>
+    <!-- <select id="selectEditorList" resultType="EditorVO">
+        SELECT u.UR_NICKNAME AS ur_nickname, u.UR_EMAIL AS ur_email, u.UR_NUM AS ur_num, p.PU_NAME AS pu_name, pi.PI_PU_CODE AS pu_code
+        FROM publisher_id pi
+        JOIN user u ON pi.PI_UR_NUM = u.UR_NUM
+        JOIN publisher p ON pi.PI_PU_CODE = p.PU_CODE
+        WHERE pi.PI_PU_CODE = #{puCode} and pi.PI_AUTHORITY = 'EDITOR'
+        ORDER BY ur_nickname ASC;
+    </select> -->
+    <delete id="deleteEditorByUserNum">
+        DELETE FROM publisher_id WHERE pi_ur_num = #{userNum}
+    </delete>
+    <select id="selectEditorList" resultType="EditorVO">
+        SELECT u.UR_NICKNAME AS ur_nickname,
+            u.UR_EMAIL AS ur_email,
+            u.UR_NUM AS ur_num,
+            p.PU_NAME AS pu_name,
+            pi.PI_PU_CODE AS pu_code
+        FROM publisher_id pi
+        JOIN user u ON pi.PI_UR_NUM = u.UR_NUM
+        JOIN publisher p ON pi.PI_PU_CODE = p.PU_CODE
+        WHERE pi.PI_PU_CODE = #{puCode}
+        AND pi.PI_AUTHORITY = 'EDITOR'
+        ORDER BY ur_nickname ASC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    <select id="selectEditorCount" resultType="int">
+        SELECT COUNT(*)
+        FROM publisher_id
+        WHERE PI_PU_CODE = #{puCode}
+        AND PI_AUTHORITY = 'EDITOR'
+    </select>
 </mapper>

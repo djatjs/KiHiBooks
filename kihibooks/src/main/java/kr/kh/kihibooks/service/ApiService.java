@@ -42,6 +42,9 @@ public class ApiService {
     @Autowired
 	UserDAO userDAO;
 
+    @Autowired
+    MemberDetailService memberDetailService;
+
     //1. 인가 코드를 사용하여 카카오로부터 액세스 토큰을 받아옵니다.
     public String getKakaoAccessToken(String code) {
         String tokenRequestUrl = "https://kauth.kakao.com/oauth/token";
@@ -181,6 +184,7 @@ public class ApiService {
 
             UserVO newUser = new UserVO();
             newUser.setUr_email(email);
+            newUser.setUr_pw(email);
             newUser.setUr_nickname(nickname);
             newUser.setUr_year(birthyear);
             
@@ -198,10 +202,12 @@ public class ApiService {
             userDetails = convertUserVoToUserDetails(newUser);
         } else {
             // 기존 사용자일 경우 -> 로그인 처리
-            System.out.println("기존 카카오 사용자 발견: " + email + ", 닉네임: " + existingUser.getUr_nickname());
+            // System.out.println("기존 카카오 사용자 발견: " + email + ", 닉네임: " + existingUser.getUr_nickname());
 
             try {
-                userDetails = convertUserVoToUserDetails(existingUser);
+                userDetails = memberDetailService.loadUserByUsername(email);
+
+                // userDetails = convertUserVoToUserDetails(existingUser);
 
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
                         userDetails,
@@ -210,7 +216,7 @@ public class ApiService {
                 );
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                System.out.println("Spring Security 로그인 처리 완료: " + email);
+                // System.out.println("Spring Security 로그인 처리 완료: " + email);
             } catch (Exception e) {
                 System.err.println("Spring Security 로그인 처리 중 오류 발생: " + e.getMessage());
                 e.printStackTrace();

@@ -25,10 +25,19 @@
         values (#{ur_email}, #{ur_pw}, #{ur_nickname}, #{ur_authority})
     </insert>
     <insert id="insertUserWithoutPw">
-        insert into user(ur_email, ur_nickname, ur_year, ur_gender)
-        values (#{ur_email}, #{ur_nickname}, #{ur_year}, #{ur_gender})
+        insert into user(ur_email, ur_pw, ur_nickname, ur_year, ur_gender)
+        values (#{ur_email}, #{ur_pw}, #{ur_nickname}, #{ur_year}, #{ur_gender})
     </insert>
     <update id="updatePw">
         update user set ur_pw = #{ur_pw} where ur_email = #{ur_email}
+    </update>
+    <select id="selectUserByNickName" resultType="UserVO">
+        select * from user where ur_nickname = #{nickName} and ur_del = "N" and ur_authority = "USER"
+    </select>
+    <update id="updateAthourityToPublisher">
+        update user set ur_authority = 'PUBLISHER' WHERE (ur_num = #{userNum});
+    </update>
+    <update id="updateAuthorityToUser">
+        update user set ur_authority = 'USER' WHERE (ur_num = #{userNum});
     </update>
 </mapper>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html
+xmlns:th="http://www.thymeleaf.org"
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{layout/layout.html}">
+<head>
+<meta charset="UTF-8">
+<title>KiHiBooks</title>
+
+<style>
+    main {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    /* 전체 컨테이너 스타일 - 고유 클래스를 사용하여 다른 .container에 영향받지 않도록 함 */
+    .editor-management.container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+    /* 페이지 제목 스타일 */
+    .editor-management h2 {
+        color: #2c3e50;
+        border-bottom: 2px solid #ff7f50;
+        padding-bottom: 10px;
+        margin-bottom: 25px !important;
+        font-size: 1.8em;
+    }
+    
+    /* h2 bold 스타일 */
+    .editor-management h2.mb-3 {
+        font-weight: bold;
+    }
+
+    /* 드롭다운(select) 스타일 */
+    .editor-management #editorTypeSelect {
+        border-color: #ced4da;
+        border-radius: 5px;
+        padding: .375rem .75rem;
+        height: calc(1.5em + .75rem + 2px);
+        box-shadow: inset 0 1px 2px rgba(0,0,0,.075);
+    }
+
+    /* 테이블 스타일 */
+    .editor-management .table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 25px !important;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    /* 테이블 헤더 스타일 */
+    .editor-management .table thead th {
+        background-color: #ff7f50 !important;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        vertical-align: middle;
+        padding: 12px 15px;
+        border-bottom: none;
+    }
+
+    /* 테이블 본문 셀 스타일 */
+    .editor-management .table tbody td {
+        vertical-align: middle;
+        padding: 10px 15px;
+        text-align: center;
+    }
+
+    /* 테이블 행 호버 효과 */
+    .editor-management .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    /* 삭제 버튼 스타일 (Bootstrap btn-danger 사용) */
+    .editor-management .table tbody .btn-danger {
+        background-color: #dc3545; /* Bootstrap 기본 danger 색상 */
+        border-color: #dc3545;
+    }
+    .editor-management .table tbody .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+
+    /* '출판사 추가하기' 버튼 스타일 (Bootstrap btn-primary 사용) */
+    .editor-management .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 10px 20px;
+        font-size: 1.1em;
+    }
+    .editor-management .btn-primary:hover {
+        background-color: #0069d9;
+        border-color: #0062cc;
+    }
+
+    /* 데이터가 없을 때 메시지 스타일 */
+    .editor-management .table tbody tr td.text-center {
+        font-style: italic;
+        color: #6c757d;
+        padding: 20px;
+    }
+
+    /* '출판사 추가하기' 버튼을 감싸는 div 스타일 */
+    .editor-management .text-right {
+        text-align: right !important;
+    }
+    
+    /* '출판사 추가하기' 버튼 스타일 */
+    .addeditorBtn {
+        background-color: #ff7f50;
+        color: #ffffff;
+        text-decoration: no;
+    }
+    .addeditorBtn:hover {
+        background-color: #ff6347;
+        color: #ffffff;
+    }
+    
+    /* 유저 검색 영역 */
+    .search-area {
+        margin-bottom: 20px;
+    }
+    
+    /* 검색 입력 필드 */
+    #user-search-input {
+        padding: 8px;
+        margin-right: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    
+    /* 검색 버튼 */
+    #search-user-button {
+        padding: 8px 15px;
+        background-color: #5cb85c;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    
+    /* 검색 결과 표시 영역 */
+    .search-results {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        background-color: white;
+        min-height: 100px;
+    }
+    
+    /* 사용자 항목 스타일 */
+    .user-item {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    /* 사용자 추가 버튼 */
+    .add-editor-button {
+        padding: 5px 10px;
+        background-color: #f0ad4e;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        padding: 0;
+        list-style: none;
+        border-radius: .25rem;
+    }
+
+    .pagination a,
+    .pagination span a {
+        position: relative;
+        display: block;
+        padding: .5rem .75rem;
+        margin-left: -1px;
+        line-height: 1.25;
+        color: #007bff;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .pagination a:first-child {
+        margin-left: 0;
+        border-top-left-radius: .25rem;
+        border-bottom-left-radius: .25rem;
+    }
+
+    .pagination a:last-child {
+        border-top-right-radius: .25rem;
+        border-bottom-right-radius: .25rem;
+    }
+
+    .pagination a:hover {
+        color: #0056b3;
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+    }
+
+    .pagination .active {
+        z-index: 1;
+        color: #fff;
+        background-color: #ff7f50;
+        border-color: #ff7f50;
+        pointer-events: none;
+    }
+
+    .pagination > a:first-child {
+        margin-right: 5px;
+    }
+
+    .pagination > a:last-child {
+        margin-left: 5px;
+    }
+
+
+    @media (max-width: 800px) {
+        /* 작은 화면에서 컨테이너 패딩 */
+        .editor-management.container {
+            padding: 10px;
+        }
+        /* 작은 화면에서 테이블 셀 패딩 및 폰트 크기 */
+        .editor-management .table thead th,
+        .editor-management .table tbody td {
+            padding: 8px 10px;
+            font-size: 0.9em;
+        }
+        /* 작은 화면에서 '출판사 추가하기' 버튼 패딩 및 폰트 크기 */
+        .editor-management .btn-primary {
+            padding: 8px 15px;
+            font-size: 1em;
+        }
+    }
+</style>
+</head>
+<body>
+	<main layout:fragment="content">
+        <!-- 해당 출판사에 등록하기 위한 출판사코드 대기 -->
+        <input type="hidden" id="pu_code" th:value="${#authentication.principal?.pu_code}">
+		
+        <div class="container editor-management">
+			<h2 class="mb-3" style="font-weight: bold;">📊 에디터 계정 관리</h2>
+			<div class="editor-add-section">
+            
+        
+        <div class="editor-list mb-4">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>에디터</th>
+                        <th>이메일</th>
+                        <th>소속 출판사</th>
+                        <th>관리</th>
+                    </tr>
+                </thead>
+                <!-- editors 리스트가 비어있지 않을 때 -->
+                <tbody th:if="${pageInfo.content != null and !pageInfo.content.isEmpty()}">
+                    <tr th:each="editor, count : ${pageInfo.content}">
+                        <td th:text="${count.count + (pageInfo.currentPage - 1) * pageInfo.pageSize}"></td>
+                        <td th:text="${editor.ur_nickname}"></td>
+                        <td th:text="${editor.ur_email}"></td>
+                        <td th:text="${editor.pu_name}"></td>
+                        <td>
+                            <button class="btn btn-danger btn-sm delete-btn" th:data-user-id="${editor.ur_num}">삭제</button>
+                        </td>
+                    </tr>
+                </tbody>
+                <!-- editors 리스트가 null이거나 비어있을 때 메시지 -->
+                <tbody th:if="${pageInfo.content == null || pageInfo.content.isEmpty()}">
+                    <tr>
+                        <td colspan="5" class="text-center">등록된 에디터가 없습니다.</td>
+                    </tr>
+                </tbody>
+
+            </table>
+            
+            <div class="pagination">
+                <a th:if="${pageInfo.startPage > 1}"
+                th:href="@{/publisher/editors(page=${pageInfo.startPage - 1})}">«</a>
+
+                <span th:each="i : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}">
+                    <a th:href="@{/publisher/editors(page=${i})}"
+                    th:classappend="${i == pageInfo.currentPage} ? 'active' : ''"
+                    th:text="${i}"></a>
+                </span>
+
+                <a th:if="${pageInfo.endPage < pageInfo.totalPages}"
+                th:href="@{/publisher/editors(page=${pageInfo.endPage + 1})}">»</a>
+            </div>
+
+
+            <h2 style="font-weight: bold;">➕ 새로운 에디터 추가</h2>
+            <p>기존에 가입된 사용자를 검색하여 출판사의 에디터로 등록할 수 있습니다.</p>
+
+            <!-- 유저 검색 영역 -->
+            <div class="search-area">
+                <input type="text" id="user-search-input" class="col-4" placeholder="사용자 닉네임을 입력하세요"/>
+                <button type="button" id="search-user-button">사용자 검색</button>
+            </div>
+
+            <!-- 검색 결과 표시 영역 -->
+            <div class="search-results" id="search-results-area">
+                <!-- 검색 결과를 여기에 동적으로 표시합니다. -->
+                <p id="search-initial-message">검색어를 입력하고 '사용자 검색' 버튼을 눌러주세요.</p>
+            </div>
+            <script>
+                //유저 검색 버튼 클릭 시
+                $("#search-user-button").on('click', function(){
+                    //유저 검색 입력값 가져오기
+                    var searchInput = $("#user-search-input").val();
+                    //입력 안했다면
+                    if(searchInput.length === 0){
+                        alert("검색어를 입력하세요");
+                        return;
+                    }
+                    $.ajax({
+                        url: "/publisher/searchUser",
+                        method: "POST",
+                        data: searchInput,
+                        contentType: "text/plain",
+                        // dataType: "json",
+                        success: function(response) {
+                            if (response && response.ur_nickname) {
+                                displaySearchResults(response);
+                            }
+                            else{
+                                alert("유저 검색 실패 : 존재하지 않는 사용자");
+                                $("#search-results-area").html("검색 결과가 없습니다.");
+                            }
+                        },
+                        error: function(error) {
+
+                        }
+                    })
+
+                })
+            </script>
+            
+            <script>
+                function displaySearchResults(user){
+                    alert(user.ur_num);
+                    const $resultsArea = $("#search-results-area");
+                    $resultsArea.empty();
+
+                    const userItemHtml = `
+                        <div class="d-flex justify-content-between">
+                            <span class="user-info">
+                                닉네임: ${user.ur_nickname}
+                                (${maskEmail(user.ur_email)}) <!-- UR_NUM 값을 함께 표시 -->
+                            </span>
+                            <button class="btn btn-sm add-editor-button" id="add-editor-button" data-user-id="${user.ur_num}">
+                                에디터로 추가
+                            </button>
+                        </div>
+                    `;
+                    // 검색 결과 항목을 검색 결과 영역에 추가
+                    $resultsArea.append(userItemHtml); // 검색 결과 영역에 항목 추가
+                    
+                }
+                // 이메일 마스킹 함수 (남겨둘 글자 수 지정 가능)
+                function maskEmail(email, visibleCharsCount = 2) {
+                    if (!email) return '';
+
+                    const atIndex = email.indexOf('@');
+
+                    const username = email.substring(0, atIndex);
+                    const domain = email.substring(atIndex);
+
+                    // 유효한 visibleCharsCount 계산 (0보다 작으면 0, username 길이보다 크면 username 길이)
+                    const actualVisibleChars = Math.max(0, Math.min(visibleCharsCount, username.length));
+
+                    const visiblePart = username.substring(0, actualVisibleChars);
+                    const maskedPart = '*'.repeat(username.length - actualVisibleChars);
+
+                    return `${visiblePart}${maskedPart}${domain}`;
+                }
+            </script>
+
+            <script>
+                $(document).on("click", ".add-editor-button", function() {
+                    const userNum = $(this).data("user-id");
+                    const puCode = $("#pu_code").val();
+                    console.log(userNum); // 사용자 ID를 확인하는 코드
+                    $.ajax({
+                        url: "/publisher/addEditor",
+                        type: "POST",
+                        data:
+                        {
+                            userNum: userNum,
+                            puCode : puCode
+                        },
+                        success: function(response) {
+                            console.log(response);
+                            if(response){
+                                alert("추가되었습니다.");
+                                location.reload();
+                            }else{
+                                alert("추가에 실패했습니다.");
+                            }
+                        }
+                    })
+
+                });
+            </script>
+
+            <script>
+                // 에디터 계정 삭제 버튼 클릭시 이벤트 처리
+                $(".delete-btn").on("click",function() {
+                    const userNum = $(this).data("user-id");
+                    alert(userNum);
+                    if(!confirm("정말 삭제하시겠습니까?")) return;
+                    $.ajax({
+                        url: "/publisher/deleteEditor",
+                        method: "POST",
+                        data: { userNum: userNum },
+                        success: function (response) {
+                            if (response) {
+                                alert("에디터 삭제 완료");
+                                location.reload();
+                            } else {
+                                alert("에디터 삭제 실패");
+                            }
+                        },
+                        error: function () {
+                            alert("서버 통신 오류");
+                        }
+                    });
+                })
+            </script>
+        </div>
+	</main>
+
+</body>
+</html>
