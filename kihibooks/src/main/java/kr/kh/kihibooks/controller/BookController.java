@@ -10,10 +10,13 @@ import java.util.Map;
 import javax.swing.text.StyledEditorKit.BoldAction;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -24,6 +27,7 @@ import kr.kh.kihibooks.model.vo.ReviewVO;
 import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.service.BookService;
 import kr.kh.kihibooks.service.KeywordService;
+import kr.kh.kihibooks.utils.CustomUser;
 import kr.kh.kihibooks.utils.PageConstants;
 
 
@@ -84,13 +88,23 @@ public class BookController {
         BookVO book = bookService.getBook(bo_code);
         List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
         List<ReviewVO> rvList = bookService.getReviewList(bo_code);
-
+        Map<Integer, Double> rating = bookService.calcRating(rvList);
+        
         model.addAttribute("book", book);
         model.addAttribute("epiList", epiList);
         model.addAttribute("rvList", rvList);
-        System.out.println(rvList);
+        model.addAttribute("rating", rating);
+
         return "book/detail";
     }
+
+    @PostMapping("/review/insert")
+    @ResponseBody
+    public boolean insert(@RequestBody ReviewVO review, @AuthenticationPrincipal CustomUser customUser){
+        System.out.println("컨트롤러"+customUser);
+        return bookService.insertReview(review, customUser);
+    }
+
     // 신간
     @GetMapping("/book/new-released")
     public String newReleased(
