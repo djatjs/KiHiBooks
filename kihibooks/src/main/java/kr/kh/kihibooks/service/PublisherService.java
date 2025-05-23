@@ -26,7 +26,8 @@ public class PublisherService {
 
     public boolean signup(String pu_name) {
         // 등록할 때 4자리의 숫자 코드를 만들어서 pu_code에 넣기
-        String pu_code = generateCode();
+        String pu_code = generatePu_code();
+        System.out.println("새로운 코드 : "+pu_code);
         
         //등록된 출판사인지 확인
         PublisherVO pb = publisherDAO.selectPublisher(pu_name);
@@ -38,22 +39,23 @@ public class PublisherService {
         return publisherDAO.insertPublisher(pu_name, pu_code);
     }
 
-    private String generateCode() {
-        // 4자리의 숫자 코드를 생성하는 로직 구현
-        // db에 0000부터 시작하여 최근 항목에서 1씩 증가하는 코드를 생성
+    private String generatePu_code() {
+        // DB에서 가장 마지막 코드 조회 (예: "P001", "P002", ...)
         String latestCode = publisherDAO.getLatestPuCode();
-        int nextCode = 1;
-        if (latestCode != null) {
+        int nextNumber = 1;
+
+        if (latestCode != null && latestCode.startsWith("P")) {
             try {
-                nextCode = Integer.parseInt(latestCode) + 1;
+                nextNumber = Integer.parseInt(latestCode.substring(1)) + 1;
             } catch (NumberFormatException e) {
                 throw new RuntimeException("코드 형식 오류: " + latestCode);
             }
         }
-        
-        // 4자리로 포맷팅 (0001, 0002, ..., 9999)
-        return String.format("%04d", nextCode);
+
+        // "P" 접두사 + 3자리 숫자 형식 (예: P001, P002, ...)
+        return String.format("P%03d", nextNumber);
     }
+
 
     public List<PublisherVO> getAllPublishers() {
         return publisherDAO.selectAllPublishers();

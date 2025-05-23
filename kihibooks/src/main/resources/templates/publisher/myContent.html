@@ -126,114 +126,128 @@ layout:decorate="~{layout/layout.html}">
         background-color: #ff6347;
         color: #ffffff;
     }
-    
-    /* 유저 검색 영역 */
-    .search-area {
-        margin-bottom: 20px;
-    }
-    
-    /* 검색 입력 필드 */
-    #user-search-input {
-        padding: 8px;
-        margin-right: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-    
-    /* 검색 버튼 */
-    #search-user-button {
-        padding: 8px 15px;
-        background-color: #5cb85c;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    
-    /* 검색 결과 표시 영역 */
-    .search-results {
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 15px;
-        background-color: white;
-        min-height: 100px;
-    }
-    
-    /* 사용자 항목 스타일 */
-    .user-item {
-        padding: 10px 0;
-        border-bottom: 1px solid #eee;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    /* 사용자 추가 버튼 */
-    .add-editor-button {
-        padding: 5px 10px;
-        background-color: #f0ad4e;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
+    .series-container{
+        margin-bottom: 60px;
     }
 
-    .pagination {
-        display: flex;
-        justify-content: center;
-        margin-top: 30px;
-        margin-bottom: 30px;
-        padding: 0;
-        list-style: none;
-        border-radius: .25rem;
+    .series-header {
+        display: flex; justify-content: space-between;
+        align-items: center; margin-bottom: 20px;	padding: 0 10px;
+        margin-top: 50px;
     }
 
-    .pagination a,
-    .pagination span a {
+    .series-header h3 {
+        margin: 0; font-size: 22px;	font-weight: bold;
+    }
+
+    .series-body {
         position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+    .series-slider-wrapper {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .series-track {
+        display: flex;
+        gap: 16px;
+        scroll-behavior: smooth;
+        overflow-x: scroll;
+        padding: 0 20px 8px;
+        scrollbar-width: none;
+    }
+
+    .series-track::-webkit-scrollbar {
+        display: none;
+    }
+
+    .series-item {
+        flex: 0 0 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 13px;
+        color: #333;
+    }
+
+    .series-thumb {
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        border-radius: 4px;
+        overflow: hidden;
+        background-color: #f2f2f2;
+    }
+
+    .series-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         display: block;
-        padding: .5rem .75rem;
-        margin-left: -1px;
-        line-height: 1.25;
-        color: #007bff;
-        background-color: #fff;
-        border: 1px solid #dee2e6;
-        text-decoration: none;
-        transition: all 0.3s ease;
     }
 
-    .pagination a:first-child {
-        margin-left: 0;
-        border-top-left-radius: .25rem;
-        border-bottom-left-radius: .25rem;
+    .series-title-text {
+        margin-top: 6px;
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-decoration: none !important;
+        color: inherit !important;
     }
 
-    .pagination a:last-child {
-        border-top-right-radius: .25rem;
-        border-bottom-right-radius: .25rem;
+    .series-author {
+        font-size: 12px;
+        color: #666;
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .pagination a:hover {
-        color: #0056b3;
-        background-color: #e9ecef;
-        border-color: #dee2e6;
+    .series-rating {
+        font-size: 12px;
+        color: #d00;
+        margin-top: 2px;
     }
 
-    .pagination .active {
-        z-index: 1;
-        color: #fff;
-        background-color: #ff7f50;
-        border-color: #ff7f50;
-        pointer-events: none;
+    .series-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 32px;
+        height: 32px;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        z-index: 10;
     }
 
-    .pagination > a:first-child {
-        margin-right: 5px;
+    .series-arrow.left {
+        left: 0;
     }
 
-    .pagination > a:last-child {
-        margin-left: 5px;
+    .series-arrow.right {
+        right: 0;
     }
+    
+    
+    
+    
+    
+    
+
 
 
     @media (max-width: 800px) {
@@ -264,6 +278,24 @@ layout:decorate="~{layout/layout.html}">
 			<div class="editor-add-section">
                 
             </div>
+            <!-- 연재 중인 작품 -->
+            <div class="series-container">
+                <h4>연재 중인 작품</h4>
+                <div class="series-body">
+
+                </div>
+                <div class="series-slider-wrapper">
+                    <button class="series-arrow left" id="seriesPrevArrow" onclick="scrollNewPublish(-3)">
+                        <img src="/resources/static/img/back.png" alt="이전">
+                    </button>
+                    <div class="series-track" id="seriesGrid"></div>
+                    <button class="series-arrow right" id="seriesNextArrow" onclick="scrollNewPublish(3)">
+                        <img src="/resources/static/img/next.png" alt="다음" style="margin-left: 2px;">
+                    </button>
+                </div>
+            </div>
+
+            <!-- 작품 등록 -->
 
 	</main>
 
