@@ -2794,11 +2794,7 @@
 												<div class="descript-wrapper">
 													<div class="descript-wrap">
 														<div>
-															<div>
-																[나는 F급 헌터로 환생했다.
-																<br>
-																...쟤들이 그렇게 취급을 안 해줘서 문제지.]
-															</div>
+															<span th:text="${book.bo_description}"></span>
 														</div>
 													</div>
 												</div>
@@ -2815,7 +2811,7 @@
 													<div class="au-wrapper">
 														<div class="au-wrap">
 															<a th:href="@{/}" class="au-name">
-																<span class="au-name-text">대대원</span>
+																<span class="au-name-text" th:text="${book.bo_author}"></span>
 															</a>
 														</div>
 														<div class="au-profile">
@@ -2884,7 +2880,7 @@
 												<h2 class="wrapper-title">리뷰</h2>
 												<div class="rv-overview">
 													<div class="rv-rating">
-														<h3 class="rv-rating-text">4.9</h3>
+														<h3 class="rv-rating-text" th:text="${book.bo_total_rating / book.bo_review_count / 2}"></h3>
 														<div class="rv-rating-img">
 															<span class="rating-img-text">구매자 별점</span>
 															<div class="rating-star">
