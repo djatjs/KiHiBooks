@@ -14,7 +14,7 @@
 
         <!-- KeywordVO 리스트 매핑 -->
         <collection property="keywordList" ofType="KeywordVO">
-            <result property="kw_num" column="kw_num"/>
+            <result property="kw_code" column="kw_code"/>
             <result property="kw_name" column="kw_name"/>
         </collection>
     </resultMap>
@@ -98,7 +98,7 @@
             BO_CODE, BO_TITLE, BO_TOTAL_RATING, COUNT(RV_NUM) AS BO_REVIEW_COUNT,
             BO_FIN, BO_ADULT, BO_PUBLISH_DATE,
             BO_TOTAL_EPISODE,
-            AU_NAME AS bo_author,
+            AU_NAME AS bo_author
         FROM 
             book
         JOIN 
@@ -171,7 +171,7 @@
             BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_TOTAL_EPISODE,
             BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_ADULT, BO_FIN, BO_PUBLISH_DATE,
             AU_NAME AS bo_author,
-            KW_NUM AS kw_num, KW_NAME AS kw_name
+            KW_CODE AS KW_CODE, KW_NAME AS kw_name
         FROM 
             book
         JOIN 
@@ -179,17 +179,17 @@
         LEFT JOIN
             book_keyword ON BK_BO_CODE = BO_CODE
         LEFT JOIN
-            keyword ON KW_NUM = BK_KW_NUM
+            keyword ON KW_CODE = BK_KW_CODE
         <if test="keywordIds != null and keywordIds.size() > 0">
             JOIN (
                 SELECT DISTINCT BK_BO_CODE
                 FROM book_keyword
-                WHERE BK_KW_NUM IN
+                WHERE BK_KW_CODE IN
                 <foreach item="id" collection="keywordIds" open="(" close=")" separator=",">
                     #{id}
                 </foreach>
                 GROUP BY BK_BO_CODE
-                HAVING COUNT(DISTINCT BK_KW_NUM) = #{keywordCount}
+                HAVING COUNT(DISTINCT BK_KW_CODE) = #{keywordCount}
             ) filtered ON BO_CODE = filtered.BK_BO_CODE
         </if>
         <choose>
@@ -218,12 +218,12 @@
                 JOIN (
                     SELECT BK_BO_CODE
                     FROM book_keyword
-                    WHERE BK_KW_NUM IN
+                    WHERE BK_KW_CODE IN
                     <foreach item="id" collection="keywordIds" open="(" close=")" separator=",">
                         #{id}
                     </foreach>
                     GROUP BY BK_BO_CODE
-                    HAVING COUNT(DISTINCT BK_KW_NUM) = #{keywordCount}
+                    HAVING COUNT(DISTINCT BK_KW_CODE) = #{keywordCount}
                 ) filtered ON BO_CODE = filtered.BK_BO_CODE
             </if>
         ) AS result

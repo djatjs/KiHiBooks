@@ -2,24 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.kh.kihibooks.dao.KeywordDAO">
 	<resultMap id="KeywordCategoryMap" type="KeywordCategoryVO">
-    <id property="kc_num" column="KC_NUM"/>
+    <id property="kc_code" column="KC_CODE"/>
     <result property="kc_name" column="KC_NAME"/>
     <collection property="keywordList" ofType="KeywordVO">
-        <id property="kw_num" column="KW_NUM"/>
+        <id property="kw_code" column="KW_CODE"/>
         <result property="kw_name" column="KW_NAME"/>
     </collection>
 	</resultMap>
 
 	<select id="selectKeywordCategories" resultMap="KeywordCategoryMap">
 		SELECT 
-				kc.KC_NUM, kc.KC_NAME,
-				kw.KW_NUM, kw.KW_NAME
+				kc.KC_CODE, kc.KC_NAME,
+				kw.KW_CODE, kw.KW_NAME
 		FROM 
-				CategoryOfKeyword kc
+				keyword_category kc
 		LEFT JOIN 
-				Keyword kw ON kc.KC_NUM = kw.KW_KC_NUM
+				Keyword kw ON kc.KC_CODE = kw.KW_KC_CODE
 		ORDER BY 
-				kc.KC_NUM, kw.KW_NUM
+				kc.KC_CODE, kw.KW_CODE
 	</select>
 
 </mapper>

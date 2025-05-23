@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class KeywordCategoryVO {
-	private int kc_num;
+	private String kc_code;
 	private String kc_name;
 
 	private List<KeywordVO> keywordList;
