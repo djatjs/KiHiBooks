@@ -1831,6 +1831,7 @@
 			margin: 0;
 			padding: 16px 0;
 			line-height: initial;
+			border-top: 1px solid #e6e6e6;
 		}
 
 		.rv-rate {
@@ -1932,6 +1933,8 @@
 			font-weight: 600;
 			line-height: 17px;
 			cursor: default;
+			margin: 0;
+			padding: 0;
 		}
 
 		.rv-right-btn {
@@ -1969,10 +1972,6 @@
 			margin-left: 6px;
 			min-width: 65px;
 			user-select: none;
-		}
-
-		.rv-ul>li:not(:first-of-type) {
-			border-top: 1px solid #e6e6e6;
 		}
 
 		.rv-more-btn {
@@ -2479,7 +2478,7 @@
 			background: rgba(255, 255, 255, .7);
 		}
 
-		.checkout-price{
+		.checkout-price {
 			margin-top: 3px;
 			padding: 0 15px;
 			font-size: 16px;
@@ -2488,19 +2487,18 @@
 			color: #ff7f50;
 		}
 
-		.point-list{
+		.point-list {
 			margin: 0;
 			padding: 0;
 			margin-top: 12px;
 			list-style-type: none;
 		}
 
-		.kihi-point{
+		.kihi-point {
 			color: #4d4340;
 			padding-top: 7px;
 			font-size: 12px;
 		}
-		
 	</style>
 </head>
 
@@ -2533,12 +2531,12 @@
 														</li>
 													</ul>
 												</div>
-												<h3 class="book-title">이세계 착각 헌터</h3>
+												<h3 class="book-title" th:text="${book.bo_title}"></h3>
 												<div class="rating-content">
 													<ul class="rating-ul">
 														<li class="rating-li">
 															<button type="button" class="total-rating">
-																<img src="resources/static/img/star.png" alt="별" class="red" style="height: 15px;">
+																<img src="/resources/static/img/star.png" alt="별" class="red" style="height: 15px;">
 																<div class="rate-score">4.9점</div>
 																<div class="rate-cnt">(12,896)</div>
 															</button>
@@ -2552,14 +2550,15 @@
 													<div class="author">
 														<ul class="author-ul">
 															<li class="author-li">
-																<a th:href="@{/}" class="author-name">대대원</a> 저
+																<a th:href="@{/}" class="author-name" th:text="${book.bo_author}"></a>
+																<span class="ml-1"> 저</span>
 															</li>
 														</ul>
 													</div>
 													<div class="publisher">
-														<a th:href="@{/}" class="publisher-link">익시드</a> 출판
+														<a th:href="@{/}" class="publisher-link" th:text="${book.bo_publisher}"></a> 출판
 													</div>
-													<div class="total-episode">총 507화</div>
+													<div class="total-episode" th:text="'총 ' + ${epiList.size()} + '화'"></div>
 												</div>
 												<div class="interest-content">
 													<button class="interestBtn"><img src="/resources/static/img/plus.png" alt="plus"
@@ -2610,7 +2609,7 @@
 														<div class="wait-for-free">
 															<span class="wff-text">1일 마다 1편 기다리면 무료</span>
 															<button class="infoBtn">
-																<img src="resources/static/img/info.png" alt="i아이콘" style="height: 18px;">
+																<img src="/resources/static/img/info.png" alt="i아이콘" style="height: 18px;">
 															</button>
 														</div>
 														<div class="wff-state">
@@ -2632,11 +2631,26 @@
 										<div class="meta">
 											<div class="m-wrap">
 												<div class="wrap-title">업데이트</div>
-												<span class="wrap-date">2025.05.12 업데이트</span>
+												<span class="wrap-date"></span>
 											</div>
 											<div class="m-wrap">
 												<div class="wrap-title">출간 정보</div>
-												<span class="wrap-date">2023.05.02 출간</span>
+												<span class="wrap-date publish-date" th:attr="data-date=${book.bo_publish_date}"></span>
+												<script>
+													var dateSpan = document.querySelector(".publish-date");
+													var rawDateStr = dateSpan.dataset.date;
+
+													if (rawDateStr) {
+														var date = new Date(rawDateStr);
+														var yyyy = date.getFullYear();
+														var mm = String(date.getMonth() + 1).padStart(2, '0');
+														var dd = String(date.getDate()).padStart(2, '0');
+
+														dateSpan.innerText = `${yyyy}.${mm}.${dd} 출간`;
+													} else {
+														dateSpan.innerText = '-';
+													}
+												</script>
 											</div>
 										</div>
 									</div>
@@ -2654,7 +2668,7 @@
 												</li>
 												<li class="option-item">
 													<button type="button" onclick="clickSortBtn(this)" class="sort-btn">
-														<img src="resources/static/img/transfer.png" class="dark-gray" alt="정렬 아이콘"
+														<img src="/resources/static/img/transfer.png" class="dark-gray" alt="정렬 아이콘"
 															style="height: 14px; width: 11px; margin-bottom: 1px;">
 														<span class="sort-text">신간부터</span>
 													</button>
@@ -2672,7 +2686,7 @@
 														<ul class="oi-ul">
 															<li class="btn-item">
 																<button type="button" class="cart-btn">
-																	<img src="resources/static/img/cart.png" alt="카트 아이콘" style="height: 12px;"> 카트
+																	<img src="/resources/static/img/cart.png" alt="카트 아이콘" style="height: 12px;"> 카트
 																</button>
 															</li>
 															<li class="btn-item">
@@ -2684,24 +2698,24 @@
 											</div>
 										</div>
 										<div class="list-wrapper">
-											<ul class="list-ul">
+											<ul class="list-ul" th:each="episode : ${epiList}">
 												<!-- data-id : ep_code | data-price : ep_price | data-volume : ep_code에서 도서코드 제거 -->
-												<li class="epi-list" data-id="ep_code" data-price="0" data-volume="1">
+												<li class="epi-list" data-id="${episode.ep_code}" data-price="${episode.ep_price}">
 													<div class="epi-list-wrapper">
 														<div class="table-wrap">
 															<div class="epi-checkbox">
-																<input type="checkbox" id="bookEP_CODE1" class="episode-check">
-																<label for="bookEP_CODE1" class="epi-label"></label>
+																<input type="checkbox" id="book${episode.ep_code}" class="episode-check">
+																<label for="book${episode.ep_code}" class="epi-label"></label>
 															</div>
 															<div class="epi-info">
 																<div class="info-title-with-badge">
 																	<!-- 무료 회차가 아닌 경우 무료 배지 미노출 | 키다무 도서 & 무료X 회차인 경우 clock_badge로 노출 -->
 																	<div class="badge-list">
 																		<div class="free-badge">
-																			<img src="resources/static/img/free.png" alt="무료 배지" style="height: 18px;">
+																			<img src="/resources/static/img/free.png" alt="무료 배지" style="height: 18px;">
 																		</div>
 																	</div>
-																	<div class="epi-title">이세계 착각 헌터 1화</div>
+																	<div class="epi-title" th:text="${episode.ep_title}"></div>
 																</div>
 																<div>
 																	<ul class="info-list-wrapper">
@@ -2718,76 +2732,6 @@
 															<div class="direct-view-wrapper">
 																<!-- 무료/소장 회차 : 보기 | 유료 회차 : 소장 -->
 																<a th:href="@{/}" data-book-id="ep_code" class="direct-view-btn">보기</a>
-															</div>
-														</div>
-													</div>
-												</li>
-												<li class="epi-list" data-id="ep_code" data-price="0" data-volume="2">
-													<div class="epi-list-wrapper">
-														<div class="table-wrap">
-															<div class="epi-checkbox">
-																<input type="checkbox" id="bookEP_CODE2" class="episode-check">
-																<label for="bookEP_CODE2" class="epi-label"></label>
-															</div>
-															<div class="epi-info">
-																<div class="info-title-with-badge">
-																	<!-- 무료 회차가 아닌 경우 무료 배지 미노출 | 키다무 도서 & 무료X 회차인 경우 clock_badge로 노출 -->
-																	<div class="badge-list">
-																		<div class="free-badge">
-																			<img class="orange" src="resources/static/img/clock_badge.png" alt="키다무 배지"
-																				style="height: 18px;">
-																		</div>
-																	</div>
-																	<div class="epi-title">이세계 착각 헌터 2화</div>
-																</div>
-																<div>
-																	<ul class="info-list-wrapper">
-																		<li class="info-ep-date">2023.05.02</li>
-																		<!-- 아마도 전체 페이지 들어가야할듯? ↓ -->
-																		<li class="info-page-cnt">| 약 4.5천 자</li>
-																	</ul>
-																	<p class="info-price">
-																		<span>100</span>원
-																	</p>
-																</div>
-															</div>
-															<div class="direct-view-wrapper">
-																<a data-book-id="ep_code" class="buy-book-btn">소장</a>
-															</div>
-														</div>
-													</div>
-												</li>
-												<li class="epi-list" data-id="ep_code" data-price="0" data-volume="3">
-													<div class="epi-list-wrapper">
-														<div class="table-wrap">
-															<div class="epi-checkbox">
-																<input type="checkbox" id="bookEP_CODE3" class="episode-check">
-																<label for="bookEP_CODE3" class="epi-label"></label>
-															</div>
-															<div class="epi-info">
-																<div class="info-title-with-badge">
-																	<!-- 무료 회차가 아닌 경우 무료 배지 미노출 | 키다무 도서 & 무료X 회차인 경우 clock_badge로 노출 -->
-																	<div class="badge-list">
-																		<div class="free-badge">
-																			<img class="orange" src="resources/static/img/clock_badge.png" alt="키다무 배지"
-																				style="height: 18px;">
-																		</div>
-																	</div>
-																	<div class="epi-title">이세계 착각 헌터 3화</div>
-																</div>
-																<div>
-																	<ul class="info-list-wrapper">
-																		<li class="info-ep-date">2023.05.02</li>
-																		<!-- 아마도 전체 페이지 들어가야할듯? ↓ -->
-																		<li class="info-page-cnt">| 약 4.5천 자</li>
-																	</ul>
-																	<p class="info-price">
-																		<span>100</span>원
-																	</p>
-																</div>
-															</div>
-															<div class="direct-view-wrapper">
-																<a data-book-id="ep_code" class="buy-book-btn">소장</a>
 															</div>
 														</div>
 													</div>
@@ -3076,7 +3020,7 @@
 													<button type="button" aria-pressed="false">별점 높은순</button>
 													<button type="button" aria-pressed="false">별점 낮은순</button>
 												</div>
-												<ul class="rv-ul">
+												<ul class="rv-ul" th:each="review : ${rvList}">
 													<li class="rv-li">
 														<div class="rv-rate d-flex">
 															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
@@ -3086,43 +3030,9 @@
 															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
 														</div>
 														<div class="rv-content">
-															<p class="content-text">433화보고 하차함.</p>
+															<p class="content-text" th:text="${review.rv_content}"></p>
 														</div>
-														<div class="rv-bottom">
-															<div class="rv-writer-date">
-																<div class="rv-writer">
-																	<img src="/resources/static/img/buyer.png" alt="구매자 배지" style="height: 35px;"
-																		class="dark-gray">
-																	<div class="rv-nick">nickname</div>
-																</div>
-																<div class="rv-date">
-																	<div class="rv-date-text">2025.05.18</div>
-																</div>
-															</div>
-															<div class="rv-right-btn">
-																<button aria-pressed="false" type="button" class="rv-comment">
-																	댓글
-																	<span class="ml-1">0</span>
-																</button>
-																<button aria-pressed="false" type="button" class="rv-like">
-																	<img src="/resources/static/img/thumb_up.png" alt="공감 버튼" style="height: 18px;">
-																	<span class="rv-like-cnt">0</span>
-																</button>
-															</div>
-														</div>
-													</li>
-													<li class="rv-li">
-														<div class="rv-rate d-flex">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
-															<img src="/resources/static/img/star.png" alt="별" style="height: 12px;" class="red">
-														</div>
-														<div class="rv-content" hidden>
-															<p class="content-text">433화보고 하차함.</p>
-														</div>
-														<div class="rv-content-spoiler">
+														<div class="rv-content-spoiler" hidden>
 															<div class="content-spoiler">
 																<img src="/resources/static/img/exclamation.png" alt="i 아이콘" style="height: 23px;"
 																	class="dark-gray">
@@ -3139,10 +3049,10 @@
 																<div class="rv-writer">
 																	<img src="/resources/static/img/buyer.png" alt="구매자 배지" style="height: 35px;"
 																		class="dark-gray">
-																	<div class="rv-nick">nickname</div>
+																	<div class="rv-nick" th:text="${review.rv_user}"></div>
 																</div>
 																<div class="rv-date">
-																	<div class="rv-date-text">2025.05.18</div>
+																	<div class="rv-date-text" th:text="${#strings.substring(review.rv_date, 0, 10)}"></div>
 																</div>
 															</div>
 															<div class="rv-right-btn">
@@ -3350,7 +3260,7 @@
 					<div class="popup-body">
 						<div class="checkout-description">
 							<p class="main-description">이세계 착각 헌터 3화</p>
-							<p class="checkout-price">결제 금액 : 
+							<p class="checkout-price">결제 금액 :
 								<span class="total-price">0</span>원
 							</p>
 							<ul class="point-list">
@@ -3438,7 +3348,7 @@
 								대여 완료했습니다.
 							</p>
 							<p class="left-books-cnt">
-								남은 작품 : 
+								남은 작품 :
 								<strong>
 									총
 									<span class="remain-book-cnt-for-purchase">0</span>

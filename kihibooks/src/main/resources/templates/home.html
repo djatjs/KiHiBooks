@@ -686,7 +686,7 @@
 
 						const imageNum = start + index + 1;
 						const imageUrl = `/resources/static/covers/cover${imageNum}.png`;
-						const detailUrl = `/`; //book/detail?code=${book.bo_code}
+						const detailUrl = `/books/${book.bo_code}`; //book/detail?code=${book.bo_code}
 						const authorUrl = `/`; //book/detail?code=${book.bo_author} 작가 매칭 되면 사용하면 됨
 
 						bookDiv.innerHTML = `

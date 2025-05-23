@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import kr.kh.kihibooks.dao.BookDAO;
 import kr.kh.kihibooks.model.vo.BookVO;
+import kr.kh.kihibooks.model.vo.EpisodeVO;
+import kr.kh.kihibooks.model.vo.ReviewVO;
 import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.utils.PageConstants;
 import kr.kh.kihibooks.utils.PaginationUtils;
@@ -73,5 +75,21 @@ public class BookService {
         return PaginationUtils.paginate(books, totalCount, page, PAGE_SIZE, BLOCK_SIZE);
     }
 
+		public BookVO getBook(String bo_code) {
+			BookVO book = bookDAO.selectBook(bo_code);
+            return book;
+		}
+
+		public List<EpisodeVO> getEpisodeList(String bo_code) {
+			List<EpisodeVO> epiList = bookDAO.selectEpisodeList(bo_code);
+
+            return epiList;
+		}
+
+		public List<ReviewVO> getReviewList(String bo_code) {
+			List<ReviewVO> rvList = bookDAO.selectReviewList(bo_code);
+
+            return rvList;
+		}
 
 }

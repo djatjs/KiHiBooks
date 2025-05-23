@@ -229,4 +229,21 @@
         ) AS result
     </select>
 
+    <select id="selectBook" resultType="BookVO">
+        select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher from book
+	    join `author` on bo_au_num = au_num
+        join `publisher_id` on bo_pi_num = pi_num
+        join `publisher` on pi_pu_code = pu_code
+	    where bo_code = #{bo_code}
+    </select>
+
+    <select id="selectEpisodeList" resultType="EpisodeVO">
+        select * from episode where ep_bo_code = #{bo_code}
+    </select>
+
+    <select id="selectReviewList" resultType="ReviewVO">
+        select *, user.ur_nickname AS rv_user from review
+        join user on rv_ur_num = ur_num
+        where rv_bo_code = #{bo_code}
+    </select>
 </mapper>
