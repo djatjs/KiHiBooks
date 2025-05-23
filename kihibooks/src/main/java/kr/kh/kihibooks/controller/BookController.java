@@ -21,6 +21,7 @@ import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
+import kr.kh.kihibooks.model.vo.SubCategoryVO;
 import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.service.BookService;
 import kr.kh.kihibooks.service.KeywordService;
@@ -165,6 +166,20 @@ public class BookController {
 
         return "book/keyword";
     }
+
+    @ResponseBody
+    @GetMapping("/book/getSubCategory")
+    public List<SubCategoryVO> getSubCategory(@RequestParam int mainCategoryValue) {
+        if(mainCategoryValue == 0){
+            return null;
+        }
+        List<SubCategoryVO> subCategories = bookService.getSubCategory(mainCategoryValue);
+        if(subCategories != null && !subCategories.isEmpty()){
+            return subCategories;
+        }
+        return null;
+    }
+    
     
     
 }

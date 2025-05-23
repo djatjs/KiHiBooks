@@ -13,6 +13,7 @@ import kr.kh.kihibooks.dao.BookDAO;
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
+import kr.kh.kihibooks.model.vo.SubCategoryVO;
 import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.utils.PageConstants;
 import kr.kh.kihibooks.utils.PaginationUtils;
@@ -91,5 +92,9 @@ public class BookService {
 
             return rvList;
 		}
+
+        public List<SubCategoryVO> getSubCategory(int mainCategoryValue) {
+            return bookDAO.selectSubCategory(mainCategoryValue);
+        }
 
 }

@@ -26,6 +26,7 @@ public class MemberDetailService implements UserDetailsService{
 		String authority = null;
 		String pi_pu_code = "";
 		String pu_code = null;
+		int pi_num= 0;
 		if(user != null){
 			PublisherIdVO publisherId = new PublisherIdVO();
 			publisherId.setPi_ur_num(user.getUr_num());
@@ -37,13 +38,14 @@ public class MemberDetailService implements UserDetailsService{
 				
 				authority = publisherDAO.selectPublisherId(publisherId).getPi_authority();
 				pu_code = publisherDAO.selectPublisherId(publisherId).getPi_pu_code();
+				pi_num = publisherDAO.selectPublisherId(publisherId).getPi_num();
 			}
 			else{
 				authority = user.getUr_authority();
 			}
 		}
 		// System.out.println(user+ authority+ pu_code);
-		return user == null ? null : new CustomUser(user, authority, pu_code);
+		return user == null ? null : new CustomUser(user, authority, pu_code, pi_num);
 	}
 
 }

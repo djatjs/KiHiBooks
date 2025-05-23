@@ -18,7 +18,7 @@ public class BookVO {
     private String bo_serial_schedule;
     private String bo_wait_for_free;
     private int bo_wff_date;
-    private Timestamp bo_publish_date;
+    private String bo_publish_date;
     private String bo_adult;
     private String bo_sc_code;
     private int bo_pi_num;

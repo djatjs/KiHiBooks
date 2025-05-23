@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.EditorVO;
 import kr.kh.kihibooks.model.vo.PublisherVO;
 import kr.kh.kihibooks.model.vo.UserVO;
@@ -95,11 +96,23 @@ public class PublisherContoller {
 
     @GetMapping("/editor/myContent")
     public String myContent(@AuthenticationPrincipal CustomUser customUser, Model model) {
-        System.out.println(customUser);
+        // System.out.println(customUser);
         model.addAttribute("user", customUser.getUser());
-        return "/publisher/myContent";
+        return "/publisher/editor_myContent";
     }
     
+    @GetMapping("/editor/registerNew")
+    public String registerNewWork(@AuthenticationPrincipal CustomUser customUser, Model model) {
+        System.out.println(customUser);
+        model.addAttribute("user", customUser);
+        return "/publisher/editor_registerNew";
+    }
+
+    @PostMapping("/editor/registerNew")
+    public String registerNewWorkPost(BookVO book) {
+        System.out.println(book);
+        return "redirect:/editor/myContent";
+    }
     
     
 }

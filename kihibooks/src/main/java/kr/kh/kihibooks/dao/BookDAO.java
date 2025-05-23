@@ -8,6 +8,7 @@ import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
+import kr.kh.kihibooks.model.vo.SubCategoryVO;
 
 public interface BookDAO {
 
@@ -55,5 +56,7 @@ public interface BookDAO {
 	List<EpisodeVO> selectEpisodeList(String bo_code);
 
 	List<ReviewVO> selectReviewList(String bo_code);
+
+    List<SubCategoryVO> selectSubCategory(int mainCategoryValue);
     
 }

@@ -246,4 +246,7 @@
         join user on rv_ur_num = ur_num
         where rv_bo_code = #{bo_code}
     </select>
+    <select id="selectSubCategory" resultType="SubCategoryVO">
+        select * from sub_cate where SC_MC_CODE = #{sc_mc_code}
+    </select>
 </mapper>

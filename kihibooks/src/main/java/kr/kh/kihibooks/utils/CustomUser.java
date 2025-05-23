@@ -16,11 +16,12 @@ public class CustomUser extends User {
 	private UserVO user;
 	private String authority;
 	private String pu_code;
+	private int pi_num;
 	
 	public CustomUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
 		super(username, password, authorities);
 	}
-	public CustomUser(UserVO vo, String authority, String pu_code) {
+	public CustomUser(UserVO vo, String authority, String pu_code, int pi_num) {
 		super(	vo.getUr_email(),
 				vo.getUr_pw(),
 				
@@ -28,5 +29,6 @@ public class CustomUser extends User {
 		this.user = vo;
 		this.authority = authority;
 		this.pu_code = pu_code;
+		this.pi_num = pi_num;
 	}
 }
