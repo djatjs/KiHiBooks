@@ -230,10 +230,12 @@
     </select>
 
     <select id="selectBook" resultType="BookVO">
-        select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher from book
+        select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher, sub_cate.sc_name AS bo_sub_cate, main_cate.mc_name AS bo_main_cate from book
 	    join `author` on bo_au_num = au_num
         join `publisher_id` on bo_pi_num = pi_num
         join `publisher` on pi_pu_code = pu_code
+        join `sub_cate` on bo_sc_code = sc_code
+        join `main_cate` on sc_mc_code = mc_code
 	    where bo_code = #{bo_code}
     </select>
 
