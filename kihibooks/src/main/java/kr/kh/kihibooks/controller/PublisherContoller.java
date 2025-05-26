@@ -15,9 +15,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.EditorVO;
+import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
+import kr.kh.kihibooks.model.vo.KeywordVO;
 import kr.kh.kihibooks.model.vo.PublisherVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 import kr.kh.kihibooks.pagination.PageInfo;
+import kr.kh.kihibooks.service.BookService;
+import kr.kh.kihibooks.service.KeywordService;
 import kr.kh.kihibooks.service.PublisherService;
 import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.utils.CustomUser;
@@ -28,11 +32,20 @@ import kr.kh.kihibooks.utils.PaginationUtils;
 @Controller
 public class PublisherContoller {
 
+    private final BookService bookService;
+
     @Autowired
     UserService userService;
 
     @Autowired
     PublisherService publisherService;
+
+    @Autowired
+    KeywordService keywordService;
+
+    PublisherContoller(BookService bookService) {
+        this.bookService = bookService;
+    }
 
     @GetMapping("/publisher/dashboard")
     public String publisherDashboard() {
@@ -103,14 +116,51 @@ public class PublisherContoller {
     
     @GetMapping("/editor/registerNew")
     public String registerNewWork(@AuthenticationPrincipal CustomUser customUser, Model model) {
-        System.out.println(customUser);
+        // System.out.println(customUser);
+        //모든 키워드 다 가져오기
+        List <KeywordCategoryVO> keywordList = keywordService.getAllKeywordCategories();
         model.addAttribute("user", customUser);
+        model.addAttribute("keywordList", keywordList);
+        // System.out.println(keywordList);
+
         return "/publisher/editor_registerNew";
     }
 
     @PostMapping("/editor/registerNew")
-    public String registerNewWorkPost(BookVO book) {
+    public String registerNewWorkPost(BookVO book, @RequestParam("bo_keywords") List<String> keywordCodes) {
         System.out.println(book);
+        
+        if(book == null || book.getBo_author() == null || book.getBo_title() == null || book.getBo_sc_code()== null || book.getBo_title().isBlank()){
+            return "redirect:/editor/registerNew";
+        }
+        //1. 작가
+        System.out.println(book.getBo_author());
+        int authorNum = bookService.getAuthorNum(book.getBo_author());;
+        if(authorNum == 0){
+            authorNum = bookService.addAuthor(book.getBo_author());
+            if(authorNum == 0){
+                return "redirect:/editor/myContent";
+            }
+        }
+        book.setBo_au_num(authorNum);
+        System.out.println("작가번호 : "+authorNum);
+        //2. 책
+        System.out.println(book.getBo_title());
+        //작가 번호 : authorNum
+        if(!bookService.addBook(book)){
+            return "redirect:/editor/registerNew";
+        }
+
+        // 3. bo_code 다시 받아오기
+        String bo_code = bookService.getBookCode(book.getBo_au_num(), book.getBo_title(), book.getBo_pi_num());
+        System.out.println(bo_code);
+
+        //4. 책코드와 키워드 리시트를 활용하여 키워드 테이블에 추가
+        System.out.println(keywordCodes);
+        if(!bookService.addBookKeyword(bo_code, keywordCodes)){
+            return "redirect:/editor/registerNew";
+        }
+        
         return "redirect:/editor/myContent";
     }
     

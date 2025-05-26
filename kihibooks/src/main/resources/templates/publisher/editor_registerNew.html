@@ -7,6 +7,8 @@
 <head>
     <meta charset="UTF-8">
     <title>KiHiBooks - 새 작품 등록</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
     <style>
         /* 기본적인 컨테이너 스타일 */
         .container {
@@ -36,7 +38,7 @@
             margin-bottom: 20px;
         }
         /* 라벨 스타일 */
-        .form-group label {
+        .form-label {
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
@@ -96,6 +98,46 @@
         .button-group .btn-secondary:hover {
             background-color: #5a6268;
         }
+        /* 키워드 섹션 스타일 */
+        .keyword-list {
+            margin-top: 12px;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #ffffff;
+        }
+
+        .keyword-list h5 {
+            color: #34495e;
+            margin-top: 0;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #cccccc; /* 카테고리 제목 아래 점선 */
+            font-size: 1.1rem;
+        }
+
+        .keyword-list div {
+            margin-bottom: 15px;
+        }
+
+        /* 키워드 버튼 스타일 */
+        .keyword-button {
+            width: 75px;
+            margin: 3px;
+            padding: 5px 10px;
+            font-size: 0.6rem;
+            border-radius: 15px;
+            border: 1px solid #ff7f50 !important;
+            color: #ff7f50;
+            background-color: #ffffff;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .keyword-button:hover {
+            background-color: #ff7f50;
+            color: white;
+        }
+        
     </style>
 </head>
 <body>
@@ -110,48 +152,48 @@
                 <input type="hidden" name="bo_pi_num" th:value="${user.pi_num}">
                 <!-- 작품 제목 -->
                 <div class="form-group">
-                    <label for="boTitle">작품 제목 <span style="color: red;">*</span></label>
-                    <input type="text" id="bo_title" name="bo_title" class="form-control" required> 
+                    <label class="form-label" for="boTitle">작품 제목 <span style="color: red;">*</span></label>
+                    <input type="text" id="bo_title" name="bo_title" class="form-control" required>
+                    <label id="bo_title-error" style="color: red; font-size: 12px; display: none;"></label>
                 </div>
 
                 <!-- 저자명 -->
                 <div class="form-group">
-                    <label for="boAuthor">저자명 <span style="color: red;">*</span></label>
+                    <label class="form-label" for="boAuthor">저자명 <span style="color: red;">*</span></label>
                     <input type="text" id="bo_author" name="bo_author" class="form-control" required>
+                    <label id="bo_author-error" style="color: red; font-size: 12px; display: none;"></label>
                 </div>
 
                 <!-- 장르 선택 (대분류 및 소분류) -->
                 <div class="form-group category-row">
                     <div class="category-group">
-                        <label for="mainCategory">대분류 <span style="color: red;">*</span></label>
+                        <label class="form-label" for="mainCategory">대분류 <span style="color: red;">*</span></label>
                         <select id="mainCategory" name="mainCategory" class="form-control" required>
-                            <option value="">-- 대분류 선택 --</option>
+                            <option value="0">-- 대분류 선택 --</option>
                             <option value="1">로맨스</option>
                             <option value="2">로판</option>
                             <option value="3">판타지</option>
                             <option value="4">무협</option>
                         </select>
                     </div>
-
                     <div class="category-group">
-                        <label for="subCategory">소분류 <span style="color: red;">*</span></label>
-                        <select id="subCategory" name="bo_sc_code" class="form-control" required>
+                        <label class="form-label" for="subCategory">소분류 <span style="color: red;">*</span></label>
+                        <select id="bo_sc_code" name="bo_sc_code" class="form-control" required>
                             <option value="">-- 소분류 선택 --</option>
-                            <!-- 소분류는 JavaScript로 동적으로 추가됩니다. -->
                         </select>
+                        <label id="bo_sc_code-error" style="color: red; font-size: 12px; display: none;"></label>
                     </div>
                 </div>
                 
-
                 <!-- 작품 소개 -->
                 <div class="form-group">
-                    <label for="bo_description">작품 소개</label>
+                    <label class="form-label" for="bo_description">작품 소개</label>
                     <textarea id="bo_description" name="bo_description" class="form-control" rows="6"></textarea>
                 </div>
 
                 <!-- 연재 주기 선택 -->
                 <div class="form-group">
-                    <label for="bo_serial_schedule">연재 주기</label>
+                    <label class="form-label" for="bo_serial_schedule">연재 주기</label>
                     <select id="bo_serial_schedule" name="bo_serial_schedule" class="form-control">
                         <option value="">-- 선택 안함 --</option>
                         <option value="월요연재">월요연재</option>
@@ -167,72 +209,104 @@
 
                 <!-- 연재 시작일 -->
                 <div class="form-group">
-                    <label for="boStartDate">연재 시작일</label>
+                    <label class="form-label" for="boStartDate">연재 시작일</label>
                     <input type="date" id="bo_publish_date" name="bo_publish_date" class="form-control">
                 </div>
 
                 <!-- 성인열람가능 여부 -->
                 <div class="form-group">
-                    <label>성인열람 가능 여부 <span style="color: red;">*</span></label>
+                    <label class="form-label">성인 전용 여부 <span style="color: red;">*</span></label>
                     <div>
-                        <!-- name 속성은 동일하게, value 속성으로 구분 -->
-                        <div class="form-check form-check-inline"> <!-- Bootstrap 인라인 체크박스/라디오 스타일 -->
-                        <input class="form-check-input" type="radio" name="bo_adult" id="adultYes" value="Y" required>
-                        <label class="form-check-label" for="adultYes">예</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="bo_adult" id="adultYes" value="Y" required>
+                            <label class="form-check-label" for="adultYes">예</label>
                         </div>
                         <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="bo_adult" id="adultNo" value="N" required checked> <!-- 기본값 '아니오' 선택 -->
-                        <label class="form-check-label" for="adultNo">아니오</label>
+                            <input class="form-check-input" type="radio" name="bo_adult" id="adultNo" value="N" required checked>
+                            <label class="form-check-label" for="adultNo">아니오</label>
                         </div>
                     </div>
                 </div>
 
                 <!-- 기다무(기다리면 무료) 여부 -->
                 <div class="form-group">
-                    <label>기다무(기다리면 무료) 적용 여부 <span style="color: red;">*</span></label>
+                    <label class="form-label">기다무(기다리면 무료) 적용 여부 <span style="color: red;">*</span></label>
                     <div>
                         <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="bo_wait_free" id="waitFreeYes" value="Y" required>
-                        <label class="form-check-label" for="waitFreeYes">예</label>
+                            <input class="form-check-input" type="radio" name="bo_wait_for_free" id="waitFreeYes" value="Y" required>
+                            <label class="form-check-label" for="waitFreeYes">예</label>
                         </div>
                         <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="bo_wait_free" id="waitFreeNo" value="N" required checked> <!-- 기본값 '아니오' 선택 -->
-                        <label class="form-check-label" for="waitFreeNo">아니오</label>
+                            <input class="form-check-input" type="radio" name="bo_wait_for_free" id="waitFreeNo" value="N" required checked>
+                            <label class="form-check-label" for="waitFreeNo">아니오</label>
                         </div>
                     </div>
                 </div>
-
-                <!-- 기다무 기간 (기다무 여부가 '예'일 때만 보이도록 JavaScript 처리 필요) -->
-                <!-- 이 섹션은 기본적으로 숨겨져 있다가, '기다무 여부' 라디오 버튼 선택에 따라 JavaScript로 보이기/숨기기 처리합니다. -->
-                <div class="form-group" id="waitFreeDurationGroup" style="display: none;"> <!-- 초기 숨김 -->
-                    <label for="bo_wait_free_duration">기다무 기간 (시간 단위) <span style="color: red;">*</span></label>
-                    <!-- 숫자만 입력 가능하도록 type="number" 사용 -->
-                    <!-- min, max, step 속성 등으로 입력 값 제한 가능 -->
-                    <input type="number" id="bo_wait_free_duration" name="bo_wait_free_duration" class="form-control" min="1" value="24"> <!-- 기본값 24시간 -->
-                    <small class="form-text text-muted">예: 24 (24시간마다 무료)</small>
+                <!-- 기다무 기간 (초기엔 숨김) -->
+                <div class="form-group" id="waitFreeDurationGroup" style="display: none;">
+                    <label class="form-label" for="bo_wff_date">기다무 기간<span style="color: red;">*</span></label>
+                    <input type="number" id="bo_wff_date" name="bo_wff_date" class="form-control">
+                    <small class="form-text text-muted">ex) 1 : 1일</small>
                 </div>
 
                 <!-- 무료 회차 수 -->
                 <div class="form-group">
-                    <label for="bo_free_episode_count">무료 회차 수 <span style="color: red;">*</span></label>
-                    <!-- 숫자만 입력 가능하도록 type="number" 사용 -->
-                    <input type="number" id="bo_free_episode_count" name="bo_free_episode_count" class="form-control" required min="0" value="0"> <!-- 기본값 0화 -->
+                    <label class="form-label" for="bo_free_episode">무료 회차 수 <span style="color: red;">*</span></label>
+                    <input type="number" id="bo_free_episode" name="bo_free_episode" class="form-control" required min="0" value="0"> <!-- 기본값 0화 -->
                     <small class="form-text text-muted">처음부터 무료로 제공될 회차 수를 입력하세요.</small>
                 </div>
 
                 <!-- 키워드 -->
                 <div class="form-group">
-                    <label for="bo_keywords">키워드</label>
-                    <input type="text" id="bo_keywords" name="bo_keywords" class="form-control">
-                    <small class="form-text text-muted">쉼표(,)로 구분하여 여러 개의 키워드를 입력하세요. (예: #현대판타지, #먼치킨, #성장형주인공)</small>
+                    <label class="form-label" for="bo_keywords">키워드</label>
+                    <div class="keyword-list">
+                        <h5>선택된 키워드:</h5>
+                        <div class="selected-keywords" id="selected-keywords-area">
+                            <small id="no-keywords-message" class="form-text text-muted">선택된 키워드가 없습니다.</small>
+                        </div>
+                        <th:block th:each="category : ${keywordList}">
+                            <h5 th:text="${category.kc_name}"></h5>
+                            <div>
+                                <th:block th:each="keyword : ${category.keywordList}">
+                                    <button type="button" class="btn keyword-button" th:data-keyword="${keyword.kw_code}" th:data-name="${keyword.kw_name}" th:text="${keyword.kw_name}">
+                                    </button>
+                                </th:block>
+                            </div>
+                        </th:block>
+                    </div>
                 </div>
-
                 <!-- 버튼 그룹 -->
                 <div class="button-group">
                     <button type="submit" class="btn btn-primary">등록</button>
                     <button type="button" class="btn btn-secondary" onclick="history.back()">취소</button>
                 </div>
             </form>
+            <!-- 기다무 라디오 버튼 -->
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const waitFreeYes = document.getElementById("waitFreeYes");
+                    const waitFreeNo = document.getElementById("waitFreeNo");
+                    const waitFreeDurationGroup = document.getElementById("waitFreeDurationGroup");
+                    const boWffDate = document.getElementById("bo_wff_date");
+
+                    function toggleWaitFreeDuration() {
+                        if (waitFreeYes.checked) {
+                            waitFreeDurationGroup.style.display = "block";
+                        } else {
+                            waitFreeDurationGroup.style.display = "none";
+                            boWffDate.value = "0"; // 기본값 1일로 설정
+                        }
+                    }
+
+                    // 초기 상태 설정
+                    toggleWaitFreeDuration();
+
+                    // 이벤트 리스너 등록
+                    waitFreeYes.addEventListener("change", toggleWaitFreeDuration);
+                    waitFreeNo.addEventListener("change", toggleWaitFreeDuration);
+                });
+            </script>
+            <!-- 장르 선택 -->
             <script>
                 $("#mainCategory").on("change", function(){
                     const mainCategoryValue = $(this).val();
@@ -241,7 +315,7 @@
                         type: 'GET',
                         data: {mainCategoryValue},
                         success: function(response){
-                            const $subCategorySelect = $('#subCategory');
+                            const $subCategorySelect = $('#bo_sc_code');
                             $subCategorySelect.empty();
                             $subCategorySelect.append('<option value="">-- 소분류 선택 --</option>');
 
@@ -252,6 +326,86 @@
                             });
                         }
                     })
+                })
+            </script>
+            <!-- 키워드 선택 -->
+            <script>
+                $(document).on("click", ".keyword-button", function () {
+                    const keywordCode = $(this).data("keyword");
+                    const keywordName = $(this).data("name");
+
+                    const selectedArea = $("#selected-keywords-area");
+                    const noMessage = $("#no-keywords-message");
+
+                    // 중복 방지: 이미 선택된 경우
+                    const existing = selectedArea.find(`[data-keyword="${keywordCode}"]`);
+                    if (existing.length > 0) {
+                        // 이미 선택된 버튼 클릭 시 해당 버튼과 input 태그 모두 제거**
+                        existing.next("input[name='bo_keywords']").remove();
+                        existing.remove();
+                    } else {
+                        const newBtn = `<button type="button" class="btn keyword-button selected-keyword-btn" data-keyword="${keywordCode}" data-name="${keywordName}">${keywordName}</button>
+                                        <input type="hidden" name="bo_keywords" value="${keywordCode}">`;
+                        selectedArea.append(newBtn);
+                    }
+
+                    if (selectedArea.find("button").length > 0) {
+                        noMessage.hide();
+                    } else {
+                        noMessage.show();
+                    }
+                });
+
+                $(document).on("click", ".selected-keyword-btn", function () {
+                    const $this = $(this);
+
+                    $this.next("input[name='bo_keywords']").remove();
+                    $this.remove();
+
+                    const selectedArea = $("#selected-keywords-area");
+                    if (selectedArea.find("button").length === 0) {
+                        $("#no-keywords-message").show();
+                    }
+                });
+            </script>
+            <script>
+                $(".register-work-form").validate({
+                    rules : {
+                        bo_title : {
+                            required : true,
+                            maxlength : 50,
+                        },
+                        bo_author : {
+                            required : true,
+                            maxlength : 20,
+                        },
+                        bo_sc_code : {
+                            required : true,
+                        }
+                    },
+                    messages : {
+                        bo_title : {
+                            required : "제목을 입력해주세요.",
+                            maxlength : "50자 이내로 입력해주세요."
+                        },
+                        bo_author: {
+                            required: "작가명을 입력해주세요.",
+                            maxlength: "20자 이내로 입력해주세요."
+                        },
+                        bo_sc_code : {
+                            required : "장르를 선택해주세요."
+                        }
+                    },
+                    errorPlacement: function(error, element) {
+                        const name = element.attr("name");
+                        const target = $(`#${name}-error`);
+                        target.html(error.text()).css("display", "block");
+                    },
+                    success: function(label, element) {
+                        const name = $(element).attr("name");
+                        const target = $(`#${name}-error`);
+                        target.text("").hide(); // 에러 메시지 지우고 숨김
+                    }
                 })
             </script>
         </div>
