@@ -604,3 +604,21 @@ INSERT INTO book_keyword (BK_KW_CODE, BK_BO_CODE) VALUES ("K0021", "B0018");
 INSERT INTO book_keyword (BK_KW_CODE, BK_BO_CODE) VALUES ("K0042", "B0019");
 INSERT INTO book_keyword (BK_KW_CODE, BK_BO_CODE) VALUES ("K0077", "B0019");
 INSERT INTO book_keyword (BK_KW_CODE, BK_BO_CODE) VALUES ("K0054", "B0019");
+
+UPDATE book b
+JOIN (
+    SELECT rv_bo_code AS bo_code,
+           COUNT(*) AS review_count,
+           SUM(rv_rating) AS total_rating
+    FROM review
+    GROUP BY rv_bo_code
+) r ON b.bo_code = r.bo_code
+SET b.bo_review_count = r.review_count,
+    b.bo_total_rating = r.total_rating;
+    
+UPDATE BOOK 
+SET BO_WAIT_FOR_FREE = 'Y'
+WHERE BO_CODE IN (
+  'B0001', 'B0003', 'B0005', 'B0007', 'B0009',
+  'B0011', 'B0013', 'B0015', 'B0017'
+);

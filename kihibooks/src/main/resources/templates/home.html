@@ -771,6 +771,10 @@
 							const imageNum = index + 1;
 							const detailUrl = `/`; //book/detail?code=${book.bo_code}
 							const authorUrl = `/`; //book/detail?code=${book.bo_author} 작가 매칭 되면 사용하면 됨
+							const totalRating = Number(book.bo_total_rating) || 0;
+							const reviewCount = Number(book.bo_review_count) || 0;
+							const avgRating = (reviewCount > 0) ? (totalRating / reviewCount).toFixed(1) : "0.0";
+							console.log(book, totalRating, reviewCount);
 							const html = `
 								<div class="waitfree-item">
 									<a href="${detailUrl}" class="waitfree-thumb">
@@ -778,7 +782,7 @@
 									</a>
 									<a href="${detailUrl}" class="waitfree-title-text">${book.bo_title}</a>
 									<div class="waitfree-author">${book.bo_author || '작가 미정'}</div>
-									<div class="book-rating">★${(book.bo_total_rating / book.bo_review_count).toFixed(1)} | 리뷰 ${book.bo_review_count}</div>
+									<div class="book-rating">★${avgRating} | 리뷰 ${reviewCount}</div>
 								</div>
 							`;
 							$grid.append(html);
