@@ -238,6 +238,13 @@
         join `main_cate` on sc_mc_code = mc_code
 	    where bo_code = #{bo_code}
     </select>
+    
+    <update id="updateRating">
+        update book
+        set bo_total_rating = (select sum(rv_rating) from review where rv_bo_code = #{bo_code}),
+            bo_review_count = (select count(*) from review where rv_bo_code = #{bo_code})
+        where bo_code = #{bo_code}
+    </update>
 
     <select id="selectEpisodeList" resultType="EpisodeVO">
         select * from episode where ep_bo_code = #{bo_code}
@@ -247,11 +254,12 @@
         select *, user.ur_nickname AS rv_user from review
         join user on rv_ur_num = ur_num
         where rv_bo_code = #{bo_code}
+        order by rv_date desc
     </select>
 
     <insert id="insertReview">
-        insert into review(rv_ur_num, rv_rating, rv_content, rv_bo_code, rv_num, rv_ori_num)
-        select #{rv_ur_num}, #{rv_rating}, #{rv_content}, #{rv_bo_code}, ifnull(max(rv_num),0)+1,
+        insert into review(rv_ur_num, rv_rating, rv_content, rv_spoiler, rv_bo_code, rv_num, rv_ori_num)
+        (select #{rv_ur_num}, #{rv_rating}, #{rv_content}, #{rv_spoiler}, #{rv_bo_code}, ifnull(max(rv_num),0)+1,
         <choose>
             <when test="rv_ori_num == 0">
                 ifnull(max(rv_num),0) +1
@@ -260,6 +268,32 @@
                 #{rv_ori_num}
             </otherwise>
         </choose>
-        from review
+        from review)
     </insert>
+
+    <select id="findReviewBySort" resultType="ReviewVO">
+        SELECT r.*, 
+               COALESCE((
+                   SELECT COUNT(*) FROM review_like l 
+                   WHERE l.rl_rv_num = r.rv_num AND l.rl_state = 1
+               ), 0) AS rv_li_count
+        FROM review r
+        WHERE r.rv_bo_code = #{bo_code}
+          AND r.rv_del = 'N'
+
+        <choose>
+            <when test="sort == 'like'">
+                ORDER BY rv_li_count DESC
+            </when>
+            <when test="sort == 'high'">
+                ORDER BY r.rv_rating DESC
+            </when>
+            <when test="sort == 'low'">
+                ORDER BY r.rv_rating ASC
+            </when>
+            <otherwise>
+                ORDER BY r.rv_date DESC
+            </otherwise>
+        </choose>
+    </select>
 </mapper>

@@ -1,0 +1,51 @@
+<div th:fragment="rvListFlag">
+	<ul class="rv-ul" id="rvListFrag" th:each="review : ${rvList}">
+		<li class="rv-li">
+			<div class="rv-rate d-flex red" style="font-weight: 700;">
+				<img src="/resources/static/img/star.png" alt="별" class="red" style="height: 13px; margin-top: 1px;">
+				<span th:text="${review.rv_rating * 1.0 / 2}"></span>
+			</div>
+			<div class="rv-content" th:attr="hidden=${review.rv_spoiler == 'Y'}">
+				<p class="content-text" th:text="${review.rv_content}"></p>
+			</div>
+			<div class="rv-content-spoiler" th:attr="hidden=${review.rv_spoiler != 'Y'}">
+				<div class="rv-content" hidden>
+					<p class="content-text" th:text="${review.rv_content}">
+					</p>
+				</div>
+				<div class="content-spoiler">
+					<img src="/resources/static/img/exclamation.png" alt="i 아이콘" style="height: 23px;" class="dark-gray" />
+					<span class="spoiler-text">스포일러가 있는 리뷰입니다.</span>
+				</div>
+				<button type="button" class="spoiler-view-btn">
+					<span class="sv-btn-text">리뷰 보기</span>
+					<img src="/resources/static/img/next.png" alt=">" style="height: 12px; margin-bottom: 2px;"
+						class="dark-gray ml-1" />
+				</button>
+			</div>
+			<div class="rv-bottom">
+				<div class="rv-writer-date">
+					<div class="rv-writer">
+						<img src="/resources/static/img/buyer.png" alt="구매자 배지" style="height: 35px;" class="dark-gray">
+						<div class="rv-nick" th:text="${review.rv_user}">
+						</div>
+					</div>
+					<div class="rv-date">
+						<div class="rv-date-text" th:text="${#strings.substring(review.rv_date, 0, 10)}">
+						</div>
+					</div>
+				</div>
+				<div class="rv-right-btn">
+					<button aria-pressed="false" type="button" class="rv-comment">
+						댓글
+						<span class="ml-1">0</span>
+					</button>
+					<button aria-pressed="false" type="button" class="rv-like">
+						<img src="/resources/static/img/thumb_up.png" alt="공감 버튼" style="height: 18px;">
+						<span class="rv-like-cnt">0</span>
+					</button>
+				</div>
+			</div>
+		</li>
+	</ul>
+</div>

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import kr.kh.kihibooks.dao.BookDAO;
 import kr.kh.kihibooks.model.vo.BookVO;
+import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
 import kr.kh.kihibooks.pagination.PageInfo;
@@ -79,7 +80,10 @@ public class BookService {
 
     public BookVO getBook(String bo_code) {
         BookVO book = bookDAO.selectBook(bo_code);
-        return book;
+        if(bookDAO.updateRating(bo_code)){
+            return book;
+        }
+        return null;
     }
 
     public List<EpisodeVO> getEpisodeList(String bo_code) {
@@ -112,7 +116,7 @@ public class BookService {
     }
 
     public boolean insertReview(ReviewVO review, CustomUser customUser) {
-        if(review == null || customUser == null || review.getRv_content().isBlank()){
+        if (review == null || customUser == null || review.getRv_content().isBlank()) {
             System.out.println(review);
             System.out.println(customUser);
             return false;
@@ -120,6 +124,10 @@ public class BookService {
         review.setRv_ur_num(customUser.getUser().getUr_num());
         System.out.println(review);
         return bookDAO.insertReview(review);
+    }
+
+    public List<ReviewVO> getRvList(String sort, String bo_code) {
+        return bookDAO.findReviewBySort(sort, bo_code);
     }
 
 }

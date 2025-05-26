@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import kr.kh.kihibooks.model.vo.BookVO;
+import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
@@ -57,5 +58,9 @@ public interface BookDAO {
 	List<ReviewVO> selectReviewList(String bo_code);
 
 	boolean insertReview(ReviewVO review);
-    
+
+	boolean updateRating(String bo_code);
+
+	List<ReviewVO> findReviewBySort(String sort, String bo_code);
+ 
 }
