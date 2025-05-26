@@ -18,12 +18,52 @@
             <result property="kw_name" column="kw_name"/>
         </collection>
     </resultMap>
+    <resultMap id="bookSimpleMap" type="BookVO">
+        <id property="bo_code" column="BO_CODE" />
+        <result property="bo_title" column="BO_TITLE" />
+        <result property="bo_total_rating" column="BO_TOTAL_RATING" />
+        <result property="bo_review_count" column="BO_REVIEW_COUNT" />
+        <result property="bo_publish_date" column="BO_PUBLISH_DATE" />
+    </resultMap>
+    <resultMap id="bookNewMap" type="BookVO">
+        <id property="bo_code" column="BO_CODE" />
+        <result property="bo_title" column="BO_TITLE" />
+        <result property="bo_total_rating" column="BO_TOTAL_RATING" />
+        <result property="bo_review_count" column="BO_REVIEW_COUNT" />
+        <result property="bo_author" column="AU_NAME" />
+    </resultMap>
+    <resultMap id="bookFilteredMap" type="BookVO">
+        <id property="bo_code" column="BO_CODE" />
+        <result property="bo_title" column="BO_TITLE" />
+        <result property="bo_total_rating" column="BO_TOTAL_RATING" />
+        <result property="bo_review_count" column="BO_REVIEW_COUNT" />
+        <result property="bo_author" column="AU_NAME" />
+        <result property="bo_total_episode" column="BO_TOTAL_EPISODE" />
+        <result property="bo_adult" column="BO_ADULT" />
+        <result property="bo_fin" column="BO_FIN" />
+        <result property="bo_publish_date" column="BO_PUBLISH_DATE" />
+    </resultMap>
+    <resultMap id="bookBestMap" type="BookVO">
+        <id property="bo_code" column="BO_CODE" />
+        <result property="bo_title" column="BO_TITLE" />
+        <result property="bo_total_rating" column="BO_TOTAL_RATING" />
+        <result property="bo_review_count" column="BO_REVIEW_COUNT" />
+        <result property="bo_fin" column="BO_FIN" />
+        <result property="bo_adult" column="BO_ADULT" />
+        <result property="bo_publish_date" column="BO_PUBLISH_DATE" />
+        <result property="bo_total_episode" column="BO_TOTAL_EPISODE" />
+        <result property="bo_author" column="AU_NAME" />
+    </resultMap>
+
+
+
+
     <select id="selectBookList" resultType="BookVO">
         select book.* from book
         join recent_view on bo_code = rc_bo_code
         where rc_ur_num = #{ur_num}
     </select>
-    <select id="selectTopBooks" resultType="BookVO">
+    <select id="selectTopBooks" resultMap="bookSimpleMap">
         SELECT 
             BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_PUBLISH_DATE
         FROM 
@@ -32,7 +72,7 @@
             BO_TOTAL_RATING DESC, BO_REVIEW_COUNT DESC
         LIMIT 18;
     </select>
-    <select id="selectWaitFreeBooks" resultType="BookVO">
+    <select id="selectWaitFreeBooks" resultMap="bookSimpleMap">
         SELECT 
             BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_WAIT_FOR_FREE
         FROM 
@@ -42,7 +82,7 @@
         ORDER BY BO_PUBLISH_DATE DESC
         LIMIT 20
     </select>
-    <select id="selectNewBooks" resultType="BookVO">
+    <select id="selectNewBooks" resultMap="bookNewMap">
         SELECT 
             BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, AU_NAME
         FROM 
@@ -54,7 +94,7 @@
         ORDER BY BO_PUBLISH_DATE DESC
     </select>
 
-    <select id="selectFilteredBooks" resultType="BookVO">
+    <select id="selectFilteredBooks" resultMap="bookFilteredMap">
         SELECT 
             BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, AU_NAME AS bo_author,
             BO_TOTAL_EPISODE, BO_ADULT, BO_FIN, BO_PUBLISH_DATE
@@ -93,7 +133,7 @@
             AND BO_ADULT = #{adultYN}
         </if>
     </select>
-    <select id="selectBestBooks" resultType="BookVO">
+    <select id="selectBestBooks" resultMap="bookBestMap">
         SELECT 
             BO_CODE, BO_TITLE, BO_TOTAL_RATING, COUNT(RV_NUM) AS BO_REVIEW_COUNT,
             BO_FIN, BO_ADULT, BO_PUBLISH_DATE,
