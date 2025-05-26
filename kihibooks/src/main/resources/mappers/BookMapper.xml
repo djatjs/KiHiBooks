@@ -286,6 +286,9 @@
         join user on rv_ur_num = ur_num
         where rv_bo_code = #{bo_code}
     </select>
+    <select id="selectSubCategory" resultType="SubCategoryVO">
+        select * from sub_cate where SC_MC_CODE = #{sc_mc_code}
+    </select>
 
     <insert id="insertReview">
         insert into review(rv_ur_num, rv_rating, rv_content, rv_bo_code, rv_num, rv_ori_num)
@@ -299,5 +302,32 @@
             </otherwise>
         </choose>
         from review
+    </insert>
+    <insert id="insertAuthor">
+        insert into author(au_name) values(#{au_name})
+    </insert>
+    <select id="getAuthorNum" resultType="int">
+        select au_num from author where au_name = #{au_name}
+    </select>
+    <select id="getLatestBoCode" resultType="String">
+        select max(bo_code) from book
+    </select>
+    <insert id="insertBook">
+        insert into book(
+            bo_code, bo_title, bo_description,
+            bo_free_episode, bo_serial_schedule,bo_wait_for_free,
+            bo_wff_date, bo_publish_date, bo_adult,
+            bo_sc_code, bo_pi_num, bo_au_num)
+        values(
+            #{bo_code}, #{bo_title}, #{bo_description},
+            #{bo_free_episode}, #{bo_serial_schedule}, #{bo_wait_for_free},
+            #{bo_wff_date}, #{bo_publish_date}, #{bo_adult},
+            #{bo_sc_code}, #{bo_pi_num}, #{bo_au_num})
+    </insert>
+    <select id="getBookCode" resultType="BookVO">
+        select * from book where bo_au_num = #{bo_au_num} and bo_title = #{bo_title} and bo_pi_num = #{bo_pi_num}
+    </select>
+    <insert id="insertBookKeyword">
+        insert into book_keyword(bk_bo_code, bk_kw_code) values(#{bk_bo_code}, #{bk_kw_code})
     </insert>
 </mapper>

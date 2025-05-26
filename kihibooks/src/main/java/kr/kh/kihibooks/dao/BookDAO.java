@@ -8,6 +8,7 @@ import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
+import kr.kh.kihibooks.model.vo.SubCategoryVO;
 
 public interface BookDAO {
 
@@ -56,6 +57,20 @@ public interface BookDAO {
 
 	List<ReviewVO> selectReviewList(String bo_code);
 
+    List<SubCategoryVO> selectSubCategory(int mainCategoryValue);
+	
 	boolean insertReview(ReviewVO review);
+
+	boolean insertAuthor(@Param("au_name")String bo_author);
+
+	Integer getAuthorNum(String bo_author);
+
+	String getLatestBoCode();
+
+	boolean insertBook(BookVO book);
+
+	BookVO getBookCode(int bo_au_num, String bo_title, int bo_pi_num);
+
+	boolean insertBookKeyword(@Param("bk_bo_code")String bo_code, @Param("bk_kw_code")String keywordCode);
     
 }
