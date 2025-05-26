@@ -26,5 +26,6 @@ public class BookVO {
     private String bo_author;
     private String bo_publisher;
     
+    
     private List<KeywordVO> keywordList;
 }
