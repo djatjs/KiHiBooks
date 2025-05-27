@@ -385,7 +385,8 @@
         join publisher_id on bo_pi_num = pi_num
         join publisher on pi_pu_code = pu_code
         where bo_pi_num = #{pi_num}
-
+    </select>
+    
     <select id="selectReply" resultType="ReviewVO">
         select *, user.ur_nickname AS rv_user from review
         join user on rv_ur_num = ur_num
