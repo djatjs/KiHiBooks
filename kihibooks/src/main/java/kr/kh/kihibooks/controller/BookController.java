@@ -179,6 +179,23 @@ public class BookController {
 
         return "book/keyword";
     }
+
+    @GetMapping("/book/keyword/fragment")
+    public String getKeywordSearchFragment(
+            @RequestParam(required = false) List<String> keywordIds,
+            @RequestParam(defaultValue = "recent") String sort,
+            @RequestParam(defaultValue = "1") int page,
+            Model model) {
+
+        PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
+        model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("bookList", pageInfo.getContent());
+        model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
+        model.addAttribute("sort", sort);
+
+        return "book/keyword :: #bookResultContainer";
+    }
+
     
     
 }

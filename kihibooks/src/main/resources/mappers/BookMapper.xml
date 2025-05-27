@@ -135,44 +135,52 @@
     </select>
     <select id="selectBestBooks" resultMap="bookBestMap">
         SELECT 
-            BO_CODE, BO_TITLE, BO_TOTAL_RATING, COUNT(RV_NUM) AS BO_REVIEW_COUNT,
+            BO_CODE, BO_TITLE, BO_TOTAL_RATING, COUNT(DISTINCT RV_NUM) AS BO_REVIEW_COUNT,
             BO_FIN, BO_ADULT, BO_PUBLISH_DATE,
             BO_TOTAL_EPISODE,
-            AU_NAME AS bo_author
+            AU_NAME AS bo_author,
+            IFNULL(r_recent.recent_review_count, 0) AS recent_review_count
         FROM 
             book
         JOIN 
             author ON BO_AU_NUM = AU_NUM
         LEFT JOIN
-            review 
-            ON RV_BO_CODE = BO_CODE
+            review ON RV_BO_CODE = BO_CODE
+        <!-- 최근 리뷰 수만 정렬용으로 별도 서브쿼리에서 가져오기 -->
+        LEFT JOIN(
+            SELECT
+                RV_BO_CODE, COUNT(*) AS recent_review_count
+            FROM
+                review
+            <choose>
+                <when test="range == 'day'">
+                    WHERE DATE(RV_DATE) = CURDATE()
+                </when>
+                <when test="range == 'week'">
+                    WHERE RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+                </when>
+                <when test="range == 'day'">
+                    WHERE RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
+                </when>
+                <otherwise>
+                    WHERE 1=1
+                </otherwise>
+            </choose>
+            GROUP BY RV_BO_CODE
+        )r_recent ON r_recent.RV_BO_CODE = BO_CODE
         <!-- 날짜 필터: 오늘 / 주간 / 월간 -->
-        <choose>
-            <when test="range == 'day'">
-                AND DATE(RV_DATE) = CURDATE()
-            </when>
-            <when test="range == 'week'">
-                AND RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-            </when>
-            <when test="range == 'month'">
-                AND RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
-            </when>
-        </choose>
-
-        WHERE 
-            1=1
-        <!-- 성인 필터 -->
-        <if test="adultYN != null and adultYN != ''">
-            AND BO_ADULT = #{adultYN}
-        </if>
-        <!-- 완결 필터 -->
-        <if test="finished != null and finished != ''">
-            AND BO_FIN = #{finished}
-        </if>
-
-
+        <where>
+            <!-- 성인 필터 -->
+            <if test="adultYN != null and adultYN != ''">
+                AND BO_ADULT = #{adultYN}
+            </if>
+            <!-- 완결 필터 -->
+            <if test="finished != null and finished != ''">
+                AND BO_FIN = #{finished}
+            </if>
+        </where>
         GROUP BY BO_CODE
-        ORDER BY COUNT(RV_NUM) DESC, BO_TOTAL_RATING DESC
+        ORDER BY recent_review_count DESC, BO_TOTAL_RATING DESC
         LIMIT #{size} OFFSET #{offset}
     </select>
     <select id="countBestBooks" resultType="int">
