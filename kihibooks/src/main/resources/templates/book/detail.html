@@ -2491,6 +2491,98 @@
 			border-bottom: 1px solid #ccc;
 			padding: 19px 0 15px 10px;
 		}
+
+		.rv-review {
+			background: rgb(250, 250, 250);
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		.rv-review-li {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			gap: 8px 6px;
+			padding: 16px;
+			border-top: 1px solid rgb(230, 230, 230);
+		}
+
+		.rv-review-content {
+			font-size: 15px;
+			font-weight: 500;
+			line-height: 24px;
+			white-space: pre-line;
+			overflow-wrap: anywhere;
+			margin: 0;
+			padding: 0;
+		}
+
+		.rv-review-bottom {
+			display: flex;
+			align-items: center;
+			grid-column: 2 / 3;
+			color: rgb(165, 165, 165);
+			font-size: 12px;
+			font-weight: 500;
+			line-height: 14px;
+		}
+
+		.rv-review-blank {
+			background: rgb(240, 240, 240);
+			border-radius: 999px;
+			width: 1px;
+			height: 10px;
+			margin: 0px 8px;
+		}
+
+		.rv-review-insert{
+			padding: 16px;
+			border-top: 1px solid rgb(230, 230, 230);
+		}
+
+		.review-insert-form{
+			position: relative;
+			padding: 13px 68px 12px 16px;
+			background: rgb(255, 255, 255);
+			border: 1px solid rgb(230, 230, 230);
+			border-radius: 6px;
+			overflow: hidden;
+		}
+
+		.review-insert-textarea{
+			width: 100%;
+			min-height: 28x;
+			overflow-y: auto;
+			border: none;
+			font-size: 14px;
+			line-height: 22px;
+			resize: vertical;
+			white-space: pre-wrap;
+			vertical-align: middle;
+		}
+
+		.review-insert-textarea::placeholder{
+			color: #a5a5a5;
+		}
+
+		textarea:focus{
+			border: none;
+			outline: none;
+		}
+
+		.review-submit-btn{
+			color: rgb(165, 165, 165);
+			cursor: default;
+			position: absolute;
+			bottom: 0px;
+			right: 0px;
+			padding: 16px 16px 15px;
+			font-size: 14px;
+			font-weight: 600;
+			appearance: none;
+			background: none;
+			border: 0;
+		}
 	</style>
 </head>
 
@@ -3112,8 +3204,8 @@
 													<button type="button" aria-pressed="false">별점 높은순</button>
 													<button type="button" aria-pressed="false">별점 낮은순</button>
 												</div>
-												<ul class="rv-ul" id="rv_ul" th:each="review : ${rvList}">
-													<li class="rv-li">
+												<ul class="rv-ul" id="rv_ul">
+													<li class="rv-li" th:each="review : ${rvList}" th:if="${review.rv_ori_num == 0}">
 														<div class="rv-rate d-flex red" style="font-weight: 700;">
 															<img src="/resources/static/img/star.png" alt="별" class="red"
 																style="height: 13px; margin-top: 1px;">
@@ -3141,8 +3233,6 @@
 														<div class="rv-bottom">
 															<div class="rv-writer-date">
 																<div class="rv-writer">
-																	<img src="/resources/static/img/buyer.png" alt="구매자 배지" style="height: 35px;"
-																		class="dark-gray">
 																	<div class="rv-nick" th:text="${review.rv_user}">
 																	</div>
 																</div>
@@ -3152,22 +3242,42 @@
 																</div>
 															</div>
 															<div class="rv-right-btn">
-																<button aria-pressed="false" type="button" class="rv-comment">
+																<button type="button" class="rv-comment toggle-replies-btn"
+																	th:attr="data-rvnum=${review.rv_num}">
 																	댓글
 																	<span class="ml-1">0</span>
 																</button>
-																<button aria-pressed="false" type="button" class="rv-like">
+																<button type="button" class="rv-like">
 																	<img src="/resources/static/img/thumb_up.png" alt="공감 버튼" style="height: 18px;">
 																	<span class="rv-like-cnt">0</span>
 																</button>
 															</div>
 														</div>
+														<ul class="rv-review" th:id="'replies-' + ${review.rv_num}" style="display: none;">
+															<li class="rv-review-li" th:each="reply : ${rvList}" th:if="${reply.rv_ori_num == review.rv_num}">
+																<img src="/resources/static/img/re_review.png" alt="ㄴ" style="height: 15px;"
+																	class="dark-gray">
+																<p class="rv-review-content" th:text="${reply.rv_content}"></p>
+																<div class="rv-review-bottom">
+																	<div class="rv-review-user" th:text="${reply.rv_user}"></div>
+																	<div class="rv-review-blank"></div>
+																	<div class="rv-reivew-date" th:text="${#strings.substring(reply.rv_date, 0, 19)}">
+																	</div>
+																</div>
+															</li>
+															<li class="rv-review-insert">
+																<form class="review-insert-form">
+																	<textarea placeholder="댓글을 입력해 주세요." class="review-insert-textarea" style="height: 28px !important;"></textarea>
+																	<button type="submit" class="review-submit-btn">등록</button>
+																</form>
+															</li>
+														</ul>
 													</li>
 												</ul>
 												<script th:inline="javascript">
 													// 정렬 버튼 클릭 시 호출되는 함수
 													function loadRvList(sort) {
-														const boCode = [[${book.bo_code}]];
+														const boCode = [[${ book.bo_code }]];
 
 														$.ajax({
 															url: "/review/sort",
@@ -3208,6 +3318,17 @@
 																loadRvList(sortKey);
 															});
 														});
+														const buttons = document.querySelectorAll('.toggle-replies-btn');
+
+														buttons.forEach(btn => {
+															btn.addEventListener('click', function () {
+																const rvNum = btn.getAttribute('data-rvnum');
+																const replies = document.getElementById('replies-' + rvNum);
+																if (replies) {
+																	replies.style.display = replies.style.display === 'none' ? '' : 'none';
+																}
+															})
+														})
 													});
 												</script>
 												<div class="review-more-btn">

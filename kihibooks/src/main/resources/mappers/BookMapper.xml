@@ -254,7 +254,7 @@
         select *, user.ur_nickname AS rv_user from review
         join user on rv_ur_num = ur_num
         where rv_bo_code = #{bo_code}
-        order by rv_date desc
+        order by rv_num desc
     </select>
 
     <insert id="insertReview">
