@@ -173,6 +173,8 @@ public class BookService {
             }
         }
         return true;
+    }
+    
     public List<ReviewVO> getRvList(String sort, String bo_code) {
         return bookDAO.findReviewBySort(sort, bo_code);
     }
