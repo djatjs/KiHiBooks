@@ -82,7 +82,7 @@ public class BookService {
 
     public BookVO getBook(String bo_code) {
         BookVO book = bookDAO.selectBook(bo_code);
-        if(bookDAO.updateRating(bo_code)){
+        if (bookDAO.updateRating(bo_code)) {
             return book;
         }
         return null;
@@ -138,7 +138,7 @@ public class BookService {
     }
 
     public int addAuthor(String bo_author) {
-        if(!bookDAO.insertAuthor(bo_author)){
+        if (!bookDAO.insertAuthor(bo_author)) {
             return 0;
         }
         return bookDAO.getAuthorNum(bo_author);
@@ -179,7 +179,7 @@ public class BookService {
         }
         return true;
     }
-    
+
     public List<ReviewVO> getRvList(String sort, String bo_code) {
         return bookDAO.findReviewBySort(sort, bo_code);
     }
@@ -187,5 +187,21 @@ public class BookService {
     public List<BookVO> getEditorsBookList(int pi_num) {
         return bookDAO.selectEditorsBookList(pi_num);
     }
+
+    public boolean insertReReview(ReviewVO review, CustomUser customUser) {
+        if (review == null || customUser == null || review.getRv_content().isBlank()) {
+            System.out.println("대댓 : "+review);
+            return false;
+        }
+        review.setRv_ur_num(customUser.getUser().getUr_num());
+        System.out.println(review);
+        return bookDAO.insertReReview(review);
+    }
+
+	public ReviewVO selectReply(ReviewVO review) {
+        return bookDAO.selectReply(review);
+	}
+
+
 
 }

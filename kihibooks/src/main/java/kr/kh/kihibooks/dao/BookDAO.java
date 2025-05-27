@@ -81,5 +81,9 @@ public interface BookDAO {
 	boolean updateRating(String bo_code);
 
 	List<ReviewVO> findReviewBySort(String sort, String bo_code);
+
+	boolean insertReReview(ReviewVO review);
+
+	ReviewVO selectReply(ReviewVO review);
  
 }
