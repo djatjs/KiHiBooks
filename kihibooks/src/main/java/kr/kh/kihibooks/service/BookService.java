@@ -144,19 +144,24 @@ public class BookService {
         return bookDAO.getAuthorNum(bo_author);
     }
 
-    public boolean addBook(BookVO book) {
-        // bo_code 생성 ex) B0001, B0002, ...
-        String latestCode = bookDAO.getLatestBoCode();
-        int nextNumber = 1;
+    public boolean addBook(BookVO book, String pu_code) {
+        // bo_code 생성 (출판사 코드 4자리 + 카테고리 2자리 + 도서번호 3자리) EX: P0001310001
+        // 1. 출판사 코드 4자리
+        String puCode = pu_code;
+        System.out.println("출판사 코드 : "+puCode);
 
-        if (latestCode != null && latestCode.startsWith("B")) {
-            try {
-                nextNumber = Integer.parseInt(latestCode.substring(1)) + 1;
-            } catch (NumberFormatException e) {
-                throw new RuntimeException("코드 형식 오류: " + latestCode);
-            }
-        }
-        String bo_code = String.format("B%04d", nextNumber);
+        // 2. 카테고리 2자리 : bo_sc_code
+        String scCode = book.getBo_sc_code();
+        System.out.println("카테고리 : "+scCode);
+
+        // 3. 도서번호 3자리
+        String psCode = puCode+ scCode;
+        System.out.println("psCode : "+psCode);
+        String boNum = bookDAO.getLatestBoNum(psCode);
+        
+        // 4. 생성된 bo_code 반환
+        String bo_code = psCode + boNum +"";
+        System.out.println(bo_code);
         book.setBo_code(bo_code);
         return bookDAO.insertBook(book);
     }
@@ -177,6 +182,10 @@ public class BookService {
     
     public List<ReviewVO> getRvList(String sort, String bo_code) {
         return bookDAO.findReviewBySort(sort, bo_code);
+    }
+
+    public List<BookVO> getEditorsBookList(int pi_num) {
+        return bookDAO.selectEditorsBookList(pi_num);
     }
 
 }

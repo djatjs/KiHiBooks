@@ -150,6 +150,7 @@
             <form action="/editor/registerNew" method="post" class="register-work-form" enctype="multipart/form-data">
                 <!-- 담당 에디터 번호 -->
                 <input type="hidden" name="bo_pi_num" th:value="${user.pi_num}">
+                <input type="hidden" name="pu_code" th:value="${user.pu_code}">
                 <!-- 작품 제목 -->
                 <div class="form-group">
                     <label class="form-label" for="boTitle">작품 제목 <span style="color: red;">*</span></label>

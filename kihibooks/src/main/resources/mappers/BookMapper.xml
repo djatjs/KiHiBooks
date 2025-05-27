@@ -64,28 +64,28 @@
         where rc_ur_num = #{ur_num}
     </select>
     <select id="selectTopBooks" resultMap="bookSimpleMap">
-        SELECT 
+        SELECT
             BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_PUBLISH_DATE
-        FROM 
+        FROM
             book
-        ORDER BY 
+        ORDER BY
             BO_TOTAL_RATING DESC, BO_REVIEW_COUNT DESC
         LIMIT 18;
     </select>
     <select id="selectWaitFreeBooks" resultMap="bookSimpleMap">
-        SELECT 
+        SELECT
             BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_WAIT_FOR_FREE
-        FROM 
+        FROM
             book
-        WHERE 
+        WHERE
             BO_WAIT_FOR_FREE = 'Y'
         ORDER BY BO_PUBLISH_DATE DESC
         LIMIT 20
     </select>
     <select id="selectNewBooks" resultMap="bookNewMap">
-        SELECT 
+        SELECT
             BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, AU_NAME
-        FROM 
+        FROM
             book
         JOIN
             author ON book.BO_AU_NUM = author.AU_NUM
@@ -95,14 +95,14 @@
     </select>
 
     <select id="selectFilteredBooks" resultMap="bookFilteredMap">
-        SELECT 
+        SELECT
             BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, AU_NAME AS bo_author,
             BO_TOTAL_EPISODE, BO_ADULT, BO_FIN, BO_PUBLISH_DATE
-        FROM 
+        FROM
             book
-        JOIN 
+        JOIN
             author ON book.BO_AU_NUM = author.AU_NUM
-        WHERE 
+        WHERE
             BO_PUBLISH_DATE >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
         
         <if test="adultYN != null and adultYN != ''">
@@ -122,11 +122,11 @@
     </select>
 
     <select id="countFilteredBooks" resultType="int">
-        SELECT 
+        SELECT
             COUNT(*)
-        FROM 
+        FROM
             book
-        WHERE 
+        WHERE
             BO_PUBLISH_DATE >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
 
         <if test="adultYN != null and adultYN !=''">
@@ -134,15 +134,15 @@
         </if>
     </select>
     <select id="selectBestBooks" resultMap="bookBestMap">
-        SELECT 
+        SELECT
             BO_CODE, BO_TITLE, BO_TOTAL_RATING, COUNT(DISTINCT RV_NUM) AS BO_REVIEW_COUNT,
             BO_FIN, BO_ADULT, BO_PUBLISH_DATE,
             BO_TOTAL_EPISODE,
             AU_NAME AS bo_author,
             IFNULL(r_recent.recent_review_count, 0) AS recent_review_count
-        FROM 
+        FROM
             book
-        JOIN 
+        JOIN
             author ON BO_AU_NUM = AU_NUM
         LEFT JOIN
             review ON RV_BO_CODE = BO_CODE
@@ -184,9 +184,9 @@
         LIMIT #{size} OFFSET #{offset}
     </select>
     <select id="countBestBooks" resultType="int">
-        SELECT 
+        SELECT
             COUNT(DISTINCT BO_CODE)
-        FROM 
+        FROM
             book
         LEFT JOIN
             review ON RV_BO_CODE = BO_CODE
@@ -202,7 +202,7 @@
             </when>
         </choose>
 
-        WHERE 
+        WHERE
             1=1
         <if test="adultYN != null and adultYN != ''">
             AND BO_ADULT = #{adultYN}
@@ -215,14 +215,14 @@
 
     <!-- 키워드 검색 도서 리스트 -->
     <select id="selectBooksByKeywords" resultMap="bookWithKeywords">
-        SELECT 
+        SELECT
             BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_TOTAL_EPISODE,
             BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_ADULT, BO_FIN, BO_PUBLISH_DATE,
             AU_NAME AS bo_author,
             KW_CODE AS KW_CODE, KW_NAME AS kw_name
-        FROM 
+        FROM
             book
-        JOIN 
+        JOIN
             author ON BO_AU_NUM = AU_NUM
         LEFT JOIN
             book_keyword ON BK_BO_CODE = BO_CODE
@@ -279,12 +279,12 @@
 
     <select id="selectBook" resultType="BookVO">
         select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher, sub_cate.sc_name AS bo_sub_cate, main_cate.mc_name AS bo_main_cate from book
-	    join `author` on bo_au_num = au_num
+        join `author` on bo_au_num = au_num
         join `publisher_id` on bo_pi_num = pi_num
         join `publisher` on pi_pu_code = pu_code
         join `sub_cate` on bo_sc_code = sc_code
         join `main_cate` on sc_mc_code = mc_code
-	    where bo_code = #{bo_code}
+        where bo_code = #{bo_code}
     </select>
     
     <update id="updateRating">
@@ -327,8 +327,10 @@
     <select id="getAuthorNum" resultType="int">
         select au_num from author where au_name = #{au_name}
     </select>
-    <select id="getLatestBoCode" resultType="String">
-        select max(bo_code) from book
+    <select id="getLatestBoNum" resultType="String">
+        SELECT LPAD(COUNT(*)+1,3,0) FROM BOOK
+        JOIN publisher_id ON BO_PI_NUM = PI_NUM
+        WHERE CONCAT(PI_PU_CODE, BO_SC_CODE)=#{psCode}
     </select>
     <insert id="insertBook">
         insert into book(
@@ -350,14 +352,13 @@
     </insert>
 
     <select id="findReviewBySort" resultType="ReviewVO">
-        SELECT r.*, 
-               COALESCE((
-                   SELECT COUNT(*) FROM review_like l 
-                   WHERE l.rl_rv_num = r.rv_num AND l.rl_state = 1
-               ), 0) AS rv_li_count
+        SELECT r.*,
+            COALESCE((
+                SELECT COUNT(*) FROM review_like l
+                WHERE l.rl_rv_num = r.rv_num AND l.rl_state = 1
+            ), 0) AS rv_li_count
         FROM review r
-        WHERE r.rv_bo_code = #{bo_code}
-          AND r.rv_del = 'N'
+        WHERE r.rv_bo_code = #{bo_code} AND r.rv_del = 'N'
 
         <choose>
             <when test="sort == 'like'">
@@ -373,5 +374,12 @@
                 ORDER BY r.rv_date DESC
             </otherwise>
         </choose>
+    </select>
+    <select id="selectEditorsBookList" resultType="BookVO">
+        select book.*, author.au_name as bo_author, publisher.pu_name as bo_publisher from book
+        join author on bo_au_num = au_num
+        join publisher_id on bo_pi_num = pi_num
+        join publisher on pi_pu_code = pu_code
+        where bo_pi_num = #{pi_num}
     </select>
 </mapper>
