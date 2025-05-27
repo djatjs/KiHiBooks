@@ -65,12 +65,16 @@ public interface BookDAO {
 
 	Integer getAuthorNum(String bo_author);
 
-	String getLatestBoCode();
+	String getLatestBoNum(String psCode);
 
 	boolean insertBook(BookVO book);
 
 	BookVO getBookCode(int bo_au_num, String bo_title, int bo_pi_num);
 
 	boolean insertBookKeyword(@Param("bk_bo_code")String bo_code, @Param("bk_kw_code")String keywordCode);
+
+	List<BookVO> selectEditorsBookList(int pi_num);
+
+	
     
 }

@@ -309,8 +309,10 @@
     <select id="getAuthorNum" resultType="int">
         select au_num from author where au_name = #{au_name}
     </select>
-    <select id="getLatestBoCode" resultType="String">
-        select max(bo_code) from book
+    <select id="getLatestBoNum" resultType="String">
+        SELECT LPAD(COUNT(*)+1,3,0) FROM BOOK
+        JOIN publisher_id ON BO_PI_NUM = PI_NUM
+        WHERE CONCAT(PI_PU_CODE, BO_SC_CODE)=#{psCode}
     </select>
     <insert id="insertBook">
         insert into book(
@@ -330,4 +332,11 @@
     <insert id="insertBookKeyword">
         insert into book_keyword(bk_bo_code, bk_kw_code) values(#{bk_bo_code}, #{bk_kw_code})
     </insert>
+    <select id="selectEditorsBookList" resultType="BookVO">
+        select book.*, author.au_name as bo_author, publisher.pu_name as bo_publisher from book
+        join author on bo_au_num = au_num
+        join publisher_id on bo_pi_num = pi_num
+        join publisher on pi_pu_code = pu_code
+        where bo_pi_num = #{pi_num}
+    </select>
 </mapper>
