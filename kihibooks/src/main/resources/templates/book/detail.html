@@ -846,7 +846,7 @@
 			display: block;
 		}
 
-		.free-badge {
+		.badge {
 			float: left;
 			margin-right: 2px;
 			display: block;
@@ -929,6 +929,23 @@
 			border: 1px solid #d9d2d1;
 		}
 
+		.checkout-btn {
+			font-size: 13px;
+			padding: 8px 14px;
+			margin: 7px 0 7px 4px;
+			position: relative;
+			z-index: 5;
+			color: #fff;
+			box-sizing: border-box;
+			border-radius: 4px;
+			font-weight: 700;
+			display: inline-block;
+			text-align: center;
+			cursor: pointer;
+			background: #ff7f50;
+			border: 1px solid #ff6730;
+		}
+
 		.buy-book-btn {
 			font-size: 13px;
 			padding: 8px 14px;
@@ -949,6 +966,11 @@
 		.direct-view-btn:hover {
 			text-decoration: none;
 			color: #918580;
+		}
+
+		.checkout-btn:hover {
+			text-decoration: none;
+			color: #fff;
 		}
 
 		.buy-book-btn:hover {
@@ -1761,41 +1783,6 @@
 			text-align: left;
 		}
 
-		.rv-sort-btn {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			text-align: center;
-			border-top: 2px solid #787878;
-			font-size: 18px;
-			line-height: 22px;
-		}
-
-		.rv-sort-btn button {
-			cursor: pointer;
-			appearance: none;
-			border: none;
-			background: none;
-		}
-
-		.buyer {
-			padding: 19px 0 15px;
-		}
-
-		.rv-sort-btn button[aria-pressed='true'] {
-			border-bottom: 1px solid transparent;
-		}
-
-		.rv-sort-btn button[aria-pressed='false'] {
-			border-bottom: 1px solid #ccc;
-			color: #a5a5a5;
-			background: #f5f5f5;
-		}
-
-		.all {
-			padding: 19px 0 15px;
-			border-left: 1px solid #ccc !important;
-		}
-
 		.rv-arrange-btn {
 			display: flex;
 			padding: 16px 0;
@@ -2011,27 +1998,6 @@
 
 		.buyer-check {
 			display: none;
-		}
-
-		.standard-title {
-			display: flex;
-			align-items: center;
-			width: fit-content;
-			color: #787878;
-			cursor: pointer;
-			font-size: 14px;
-			font-weight: 500;
-			line-height: 18px;
-			user-select: none;
-		}
-
-		.standard-content {
-			padding: 14px 16px;
-			background: #fafafa;
-			border-radius: 6px;
-			font-size: 14px;
-			line-height: 23px;
-			text-align: left;
 		}
 
 		.recommend-wrapper {
@@ -2504,6 +2470,119 @@
 			padding-top: 7px;
 			font-size: 12px;
 		}
+
+		.clock-badge {
+			filter: brightness(0) saturate(100%) invert(38%) sepia(95%) saturate(750%) hue-rotate(-5deg) brightness(115%) contrast(110%);
+			height: 15px;
+		}
+
+		.free-badge {
+			height: 18px;
+		}
+
+		.rv-count {
+			border-top: 2px solid #787878;
+			font-size: 18px;
+			line-height: 22px;
+			font-weight: 700;
+		}
+
+		.all {
+			border-bottom: 1px solid #ccc;
+			padding: 19px 0 15px 10px;
+		}
+
+		.rv-review {
+			background: rgb(250, 250, 250);
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		.rv-review-li {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			gap: 8px 6px;
+			padding: 16px;
+			border-top: 1px solid rgb(230, 230, 230);
+		}
+
+		.rv-review-content {
+			font-size: 15px;
+			font-weight: 500;
+			line-height: 24px;
+			white-space: pre-line;
+			overflow-wrap: anywhere;
+			margin: 0;
+			padding: 0;
+		}
+
+		.rv-review-bottom {
+			display: flex;
+			align-items: center;
+			grid-column: 2 / 3;
+			color: rgb(165, 165, 165);
+			font-size: 12px;
+			font-weight: 500;
+			line-height: 14px;
+		}
+
+		.rv-review-blank {
+			background: rgb(240, 240, 240);
+			border-radius: 999px;
+			width: 1px;
+			height: 10px;
+			margin: 0px 8px;
+		}
+
+		.rv-review-insert{
+			padding: 16px;
+			border-top: 1px solid rgb(230, 230, 230);
+		}
+
+		.review-insert-form{
+			position: relative;
+			padding: 13px 68px 12px 16px;
+			background: rgb(255, 255, 255);
+			border: 1px solid rgb(230, 230, 230);
+			border-radius: 6px;
+			overflow: hidden;
+		}
+
+		.review-insert-textarea{
+			width: 100%;
+			min-height: 28x;
+			overflow-y: auto;
+			border: none;
+			font-size: 14px;
+			line-height: 22px;
+			resize: vertical;
+			white-space: pre-wrap;
+			vertical-align: middle;
+		}
+
+		.review-insert-textarea::placeholder{
+			color: #a5a5a5;
+		}
+
+		textarea:focus{
+			border: none;
+			outline: none;
+		}
+
+		.review-submit-btn{
+			color: rgb(165, 165, 165);
+			cursor: default;
+			position: absolute;
+			bottom: 0px;
+			right: 0px;
+			padding: 16px 16px 15px;
+			font-size: 14px;
+			font-weight: 600;
+			appearance: none;
+			background: none;
+			border: 0;
+		}
 	</style>
 </head>
 
@@ -2529,9 +2608,9 @@
 														<li class="cate-li">
 															<span class="blank"></span>
 															<div class="cate-title">
-																<a th:href="@{/}" class="main-cate-title">판타지 웹소설</a>
+																<a th:href="@{/}" class="main-cate-title" th:text="${book.bo_main_cate}"></a>
 																<img src="/resources/static/img/next.png" alt="next" style="height: 10px;" class="mb-1">
-																<a th:href="@{/}" class="sub-cate-title">현대 판타지</a>
+																<a th:href="@{/}" class="sub-cate-title" th:text="${book.bo_sub_cate}"></a>
 															</div>
 														</li>
 													</ul>
@@ -2563,7 +2642,8 @@
 													<div class="publisher">
 														<a th:href="@{/}" class="publisher-link" th:text="${book.bo_publisher}"></a> 출판
 													</div>
-													<div class="total-episode" th:text="'총 ' + ${epiList.size()} + '화'"></div>
+													<div class="total-episode" th:text="'총 ' + ${epiList.size()} + '화'">
+													</div>
 												</div>
 												<div class="interest-content">
 													<button class="interestBtn"><img src="/resources/static/img/plus.png" alt="plus"
@@ -2585,7 +2665,8 @@
 														<ul class="noti-ul">
 															<li class="noti-li">
 																<div class="noti-contents">
-																	<button type="button" class="noti-title">도서 파일 교체 안내 (2025-04-22)
+																	<button type="button" class="noti-title">도서 파일 교체 안내
+																		(2025-04-22)
 																		<!-- 펼친 경우 fold.png 로 변경 -->
 																		<span class="expandBtn">
 																			<img id="noti_icon" src="/resources/static/img/expand.png" alt="펼치기"
@@ -2596,12 +2677,16 @@
 																		<div class="content-wrapper">
 																			<div class="content-wrap">
 																				<b>이세계 착각 헌터 495화는</b>
-																				2025년 4월 22일 본문 내 문장을 수정한 파일로 교체했습니다.<br>
-																				기존 구매자분들께서는 앱 내의 '내 서재'에 다운로드 받은 도서를 삭제하신 후, '구매목록'에서 재다운로드 하시면 수정된 도서로 이용하실 수
+																				2025년 4월 22일 본문 내 문장을 수정한 파일로
+																				교체했습니다.<br>
+																				기존 구매자분들께서는 앱 내의 '내 서재'에 다운로드 받은 도서를
+																				삭제하신 후, '구매목록'에서 재다운로드 하시면 수정된 도서로 이용하실
+																				수
 																				있습니다.
 																				도서
 																				이용에 참고 부탁드립니다.<br>
-																				※ 단, 재다운로드 시 기존 도서에 남긴 독서노트(형광펜, 메모, 책갈피)는 초기화되거나 위치가 변경됩니다.
+																				※ 단, 재다운로드 시 기존 도서에 남긴 독서노트(형광펜, 메모,
+																				책갈피)는 초기화되거나 위치가 변경됩니다.
 																			</div>
 																		</div>
 																	</button>
@@ -2695,7 +2780,8 @@
 																</button>
 															</li>
 															<li class="btn-item">
-																<button type="button" class="select-buy-btn">선택 소장</button>
+																<button type="button" class="select-buy-btn">선택
+																	소장</button>
 															</li>
 														</ul>
 													</li>
@@ -2715,16 +2801,23 @@
 															<div class="epi-info">
 																<div class="info-title-with-badge">
 																	<!-- 무료 회차가 아닌 경우 무료 배지 미노출 | 키다무 도서 & 무료X 회차인 경우 clock_badge로 노출 -->
-																	<div class="badge-list">
-																		<div class="free-badge">
-																			<img src="/resources/static/img/free.png" alt="무료 배지" style="height: 18px;">
+																	<div th:if="${episode.ep_price == 0}" class="badge-list">
+																		<div class="badge">
+																			<img class="free-badge" src="/resources/static/img/free.png" alt="무료 배지">
+																		</div>
+																	</div>
+																	<div th:if="${episode.ep_price != 0} and ${book.bo_wait_for_free == 'Y'}"
+																		class="badge-list">
+																		<div class="badge">
+																			<img class="clock-badge" src="/resources/static/img/clock_badge.png" alt="키다무 배지">
 																		</div>
 																	</div>
 																	<div class="epi-title" th:text="${episode.ep_title}"></div>
 																</div>
 																<div>
 																	<ul class="info-list-wrapper">
-																		<li class="info-ep-date">2023.05.02</li>
+																		<li class="info-ep-date" th:text="${#strings.substring(episode.ep_date, 0, 10)}">
+																		</li>
 																		<!-- 아마도 전체 페이지 들어가야할듯? ↓ -->
 																		<li class="info-page-cnt">| 약 4.5천 자</li>
 																		<!-- 소장한 경우만 아래 배지 추가 -->
@@ -2737,6 +2830,10 @@
 															<div class="direct-view-wrapper">
 																<!-- 무료/소장 회차 : 보기 | 유료 회차 : 소장 -->
 																<a th:href="@{/}" data-book-id="ep_code" class="direct-view-btn">보기</a>
+															</div>
+															<div class="direct-view-wrapper">
+																<!-- 무료/소장 회차 : 보기 | 유료 회차 : 소장 -->
+																<a th:href="@{/}" data-book-id="ep_code" class="checkout-btn">소장</a>
 															</div>
 														</div>
 													</div>
@@ -2850,7 +2947,8 @@
 																					<div class="book-info">
 																						<div class="bo-title">
 																							<!-- bo-img와 동일한 링크 -->
-																							<a th:href="@{/}" class="b-title">이세계 착각 헌터</a>
+																							<a th:href="@{/}" class="b-title">이세계 착각
+																								헌터</a>
 																						</div>
 																						<div class="book-author">
 																							<span class="bo-author">
@@ -2944,23 +3042,28 @@
 																<div class="rate-bunpo">
 																	<div>5</div>
 																	<div class="bunpo">
-																		<div id="rate5" class="rate-bunpo-percent"></div>
+																		<div id="rate5" class="rate-bunpo-percent">
+																		</div>
 																	</div>
 																	<div>4</div>
 																	<div class="bunpo">
-																		<div id="rate4" class="rate-bunpo-percent"></div>
+																		<div id="rate4" class="rate-bunpo-percent">
+																		</div>
 																	</div>
 																	<div>3</div>
 																	<div class="bunpo">
-																		<div id="rate3" class="rate-bunpo-percent"></div>
+																		<div id="rate3" class="rate-bunpo-percent">
+																		</div>
 																	</div>
 																	<div>2</div>
 																	<div class="bunpo">
-																		<div id="rate2" class="rate-bunpo-percent"></div>
+																		<div id="rate2" class="rate-bunpo-percent">
+																		</div>
 																	</div>
 																	<div>1</div>
 																	<div class="bunpo">
-																		<div id="rate1" class="rate-bunpo-percent"></div>
+																		<div id="rate1" class="rate-bunpo-percent">
+																		</div>
 																	</div>
 																</div>
 																<script>
@@ -3031,7 +3134,8 @@
 																style="width: 20px; margin-left: 3px;" class="check-expand">
 														</label>
 														<div class="note-content none">
-															<strong>건전한 리뷰 정착 및 양질의 리뷰를 위해 아래 해당하는 리뷰는 비공개 조치될 수 있음을 안내드립니다.</strong>
+															<strong>건전한 리뷰 정착 및 양질의 리뷰를 위해 아래 해당하는 리뷰는 비공개 조치될 수 있음을
+																안내드립니다.</strong>
 															<ol style="list-style-type: decimal; list-style-position: outside; margin-left: -25px;">
 																<li>타인에게 불쾌감을 주는 욕설</li>
 																<li>비속어가 타인을 비방하는 내용</li>
@@ -3042,69 +3146,66 @@
 																<li>저작권상 문제의 소지가 있는 내용</li>
 																<li>다른 리뷰에 대한 반박이나 논쟁을 유발하는 내용</li>
 															</ol>
-															<div style="margin-top: -15px;">* 결말을 예상할 수 있는 리뷰는 자제하여 주시기 바랍니다.</div>
-															<strong>이 외에도 건전한 리뷰 문화 형성을 위한 운영 목적과 취지에 맞지 않는 내용은 담당자에 의해 리뷰가 비공개 처리될 수 있습니다.</strong>
+															<div style="margin-top: -15px;">* 결말을 예상할 수 있는 리뷰는 자제하여 주시기
+																바랍니다.</div>
+															<strong>이 외에도 건전한 리뷰 문화 형성을 위한 운영 목적과 취지에 맞지 않는 내용은 담당자에 의해
+																리뷰가 비공개 처리될 수 있습니다.</strong>
 														</div>
 													</div>
 												</div>
 												<script th:inline="javascript">
-													$(".rv-regist-form").submit(function(e){
+													$(".rv-regist-form").submit(function (e) {
 														e.preventDefault();
 
 														const content = $(".rv-textarea").val();
 														const rating = $("input[name='rating']:checked").val();
+														const spoilerCheckbox = document.querySelector('.spoiler-check');
 
-														if(!rating) {
+														if (!rating) {
 															alert("별점을 선택해주세요.");
 															return;
 														}
 
-														if(content.length < 10) {
+														if (content.length < 10) {
 															alert("리뷰는 10자 이상 입력해주세요.");
 															return;
 														}
 
 														const review = {
-																rv_bo_code : '[[${book.bo_code}]]',
-																rv_content : content,
-																rv_rating : rating
+															rv_bo_code: [[${ book.bo_code }]],
+															rv_content: content,
+															rv_rating: rating,
+															rv_spoiler: spoilerCheckbox.checked ? 'Y' : 'N'
 														}
 
 														$.ajax({
-															url : "/review/insert",
-															method : "post",
-															data : JSON.stringify(review),
-															contentType : "application/json",
-															success : function(data){
-																if(data) {
+															url: "/review/insert",
+															method: "post",
+															data: JSON.stringify(review),
+															contentType: "application/json",
+															success: function (data) {
+																if (data) {
+																	console.log(review);
 																	alert("리뷰 등록 완료");
 																	$(".rv-textarea").val('');
-																} else{
+																} else {
 																	alert("리뷰 등록 실패");
 																}
 															}
 														});
 													});
 												</script>
-												<div class="rv-sort-btn">
-													<button type="button" class="buyer" aria-pressed="true">
-														<span style="font-weight: 700;">구매자</span>
-														<span style="font-weight: 600;">5,124</span>
-													</button>
-													<button type="button" class="all" aria-pressed="false">
-														<span style="font-weight: 700;">전체</span>
-														<span style="font-weight: 600;" th:text="${book.bo_review_count}"></span>
-													</button>
+												<div class="rv-count">
+													<div class="all" th:text="'리뷰 수 ' + ${book.bo_review_count}"></div>
 												</div>
 												<div class="rv-arrange-btn">
 													<button type="button" aria-pressed="true">최신순</button>
 													<button type="button" aria-pressed="false">공감순</button>
-													<!-- 전체 버튼 선택한 경우 별점 관련 필터버튼 미노출 -->
 													<button type="button" aria-pressed="false">별점 높은순</button>
 													<button type="button" aria-pressed="false">별점 낮은순</button>
 												</div>
-												<ul class="rv-ul" th:each="review : ${rvList}">
-													<li class="rv-li">
+												<ul class="rv-ul" id="rv_ul">
+													<li class="rv-li" th:each="review : ${rvList}" th:if="${review.rv_ori_num == 0}">
 														<div class="rv-rate d-flex red" style="font-weight: 700;">
 															<img src="/resources/static/img/star.png" alt="별" class="red"
 																style="height: 13px; margin-top: 1px;">
@@ -3115,7 +3216,8 @@
 														</div>
 														<div class="rv-content-spoiler" th:attr="hidden=${review.rv_spoiler != 'Y'}">
 															<div class="rv-content" hidden>
-																<p class="content-text" th:text="${review.rv_content}"></p>
+																<p class="content-text" th:text="${review.rv_content}">
+																</p>
 															</div>
 															<div class="content-spoiler">
 																<img src="/resources/static/img/exclamation.png" alt="i 아이콘" style="height: 23px;"
@@ -3131,9 +3233,8 @@
 														<div class="rv-bottom">
 															<div class="rv-writer-date">
 																<div class="rv-writer">
-																	<img src="/resources/static/img/buyer.png" alt="구매자 배지" style="height: 35px;"
-																		class="dark-gray">
-																	<div class="rv-nick" th:text="${review.rv_user}"></div>
+																	<div class="rv-nick" th:text="${review.rv_user}">
+																	</div>
 																</div>
 																<div class="rv-date">
 																	<div class="rv-date-text" th:text="${#strings.substring(review.rv_date, 0, 10)}">
@@ -3141,18 +3242,95 @@
 																</div>
 															</div>
 															<div class="rv-right-btn">
-																<button aria-pressed="false" type="button" class="rv-comment">
+																<button type="button" class="rv-comment toggle-replies-btn"
+																	th:attr="data-rvnum=${review.rv_num}">
 																	댓글
 																	<span class="ml-1">0</span>
 																</button>
-																<button aria-pressed="false" type="button" class="rv-like">
+																<button type="button" class="rv-like">
 																	<img src="/resources/static/img/thumb_up.png" alt="공감 버튼" style="height: 18px;">
 																	<span class="rv-like-cnt">0</span>
 																</button>
 															</div>
 														</div>
+														<ul class="rv-review" th:id="'replies-' + ${review.rv_num}" style="display: none;">
+															<li class="rv-review-li" th:each="reply : ${rvList}" th:if="${reply.rv_ori_num == review.rv_num}">
+																<img src="/resources/static/img/re_review.png" alt="ㄴ" style="height: 15px;"
+																	class="dark-gray">
+																<p class="rv-review-content" th:text="${reply.rv_content}"></p>
+																<div class="rv-review-bottom">
+																	<div class="rv-review-user" th:text="${reply.rv_user}"></div>
+																	<div class="rv-review-blank"></div>
+																	<div class="rv-reivew-date" th:text="${#strings.substring(reply.rv_date, 0, 19)}">
+																	</div>
+																</div>
+															</li>
+															<li class="rv-review-insert">
+																<form class="review-insert-form">
+																	<textarea placeholder="댓글을 입력해 주세요." class="review-insert-textarea" style="height: 28px !important;"></textarea>
+																	<button type="submit" class="review-submit-btn">등록</button>
+																</form>
+															</li>
+														</ul>
 													</li>
 												</ul>
+												<script th:inline="javascript">
+													// 정렬 버튼 클릭 시 호출되는 함수
+													function loadRvList(sort) {
+														const boCode = [[${ book.bo_code }]];
+
+														$.ajax({
+															url: "/review/sort",
+															method: "GET",
+															data: {
+																sort: sort,
+																bo_code: boCode
+															},
+															contentType: 'text/html; charset=utf-8',
+															success: function (html) {
+																$("#rvListFlag").replaceWith(html);
+															},
+															error: function (xhr, status, error) {
+																console.log('리뷰 불러오기 실패:', error);
+															}
+														});
+													}
+
+													// 정렬 버튼 클릭 이벤트 바인딩
+													document.addEventListener("DOMContentLoaded", function () {
+														const arrangeButtons = document.querySelectorAll('.rv-arrange-btn button');
+
+														arrangeButtons.forEach(button => {
+															button.addEventListener('click', function () {
+																// 모든 버튼 aria-pressed 초기화
+																arrangeButtons.forEach(btn => btn.setAttribute('aria-pressed', 'false'));
+																// 현재 클릭한 버튼 활성화
+																this.setAttribute('aria-pressed', 'true');
+
+																// 텍스트로 정렬 방식 결정
+																const text = this.textContent.trim();
+																let sortKey = "recent";
+																if (text.includes("공감")) sortKey = "likes";
+																else if (text.includes("높은")) sortKey = "high";
+																else if (text.includes("낮은")) sortKey = "low";
+
+																// 정렬된 리뷰 리스트 불러오기
+																loadRvList(sortKey);
+															});
+														});
+														const buttons = document.querySelectorAll('.toggle-replies-btn');
+
+														buttons.forEach(btn => {
+															btn.addEventListener('click', function () {
+																const rvNum = btn.getAttribute('data-rvnum');
+																const replies = document.getElementById('replies-' + rvNum);
+																if (replies) {
+																	replies.style.display = replies.style.display === 'none' ? '' : 'none';
+																}
+															})
+														})
+													});
+												</script>
 												<div class="review-more-btn">
 													<button type="button" class="rv-more-btn">
 														<span class="rmb-text">
@@ -3160,27 +3338,6 @@
 															<img src="/resources/static/img/expand.png" alt="더보기 버튼" style="height: 23px;">
 														</span>
 													</button>
-												</div>
-												<div class="buyer-standard">
-													<input type="checkbox" id="buyer_check" class="buyer-check">
-													<label for="buyer_check" class="standard-title">
-														<span>구매자 표시 기준은 무엇인가요?</span>
-														<img id="standard_icon" src="/resources/static/img/expand.png" alt="확정 아이콘"
-															class="dark-gray" style="height: 20px;">
-													</label>
-													<div class="standard-content none">
-														<strong style="color: #141414;">'구매자' 표시는 유료 작품 결제 후 다운로드 한 경우에만 표시됩니다.</strong>
-														<dl class="standard-dl">
-															<dt>무료 작품 (프로모션 등으로 무료로 전환된 작품 포함)</dt>
-															<dd>'구매자'로 표시되지 않습니다.</dd>
-															<dt>시리즈 내 무료 작품</dt>
-															<dd>'구매자'로 표시되지 않습니다. 하지만 같은 시리즈의 유료 작품을 결제한 뒤 리뷰를 수정하거나 재등록하면 '구매자'로 표시됩니다.</dd>
-															<dt>영구 삭제</dt>
-															<dd>작품을 영구 삭제해도 '구매자' 표시는 남아있습니다.</dd>
-															<dt>결제 취소</dt>
-															<dd>'구매자' 표시가 자동으로 사라집니다.</dd>
-														</dl>
-													</div>
 												</div>
 											</div>
 										</div>
@@ -3241,9 +3398,22 @@
 							<div>
 								<div class="side-banner">
 									<a th:href="@{/}" class="side-banner-wrap">
-										<img src="/resources/static/banners/fantasy.png" alt="배너 이미지" class="banner-img" style="width: 100%;">
+										<img id="category-banner" alt="배너 이미지" class="banner-img" style="width: 100%;">
 									</a>
 								</div>
+								<script th:inline="javascript">
+									const bo_main_cate = [[${ book.bo_main_cate }]];
+									// 카테고리에 따른 이미지 경로 설정
+									const bannerSrcMap = {
+										"로맨스": "/resources/static/banners/romance.png",
+										"로판": "/resources/static/banners/romance_fantasy.png",
+										"판타지": "/resources/static/banners/fantasy.png",
+										"무협": "/resources/static/banners/oriental_fantasy.png"
+									};
+
+									const bannerImg = document.getElementById("category-banner");
+									bannerImg.src = bannerSrcMap[bo_main_cate];
+								</script>
 								<div class="best-list-top10">
 									<a th:href="@{/}" class="best-list-title">
 										현대 판타지 베스트
@@ -3325,7 +3495,8 @@
 							<p class="sub-description">키히포인트를 충전하고 결제없이 편하게 감상하세요.<br>포인트 적립 혜택도 놓치지 마세요!</p>
 						</div>
 						<div class="checkout-btns">
-							<button type="button" class="orange-btn payment-charge-cash-and-payment-book">충전하고 결제</button>
+							<button type="button" class="orange-btn payment-charge-cash-and-payment-book">충전하고
+								결제</button>
 							<button type="button" class="white-btn payment-book">일반 결제</button>
 						</div>
 					</div>
@@ -3358,7 +3529,8 @@
 							</ul>
 						</div>
 						<div class="checkout-btns">
-							<button type="button" class="orange-btn payment-book-point-immediate-view">결제하고 바로보기</button>
+							<button type="button" class="orange-btn payment-book-point-immediate-view">결제하고
+								바로보기</button>
 							<button type="button" class="white-btn payment-book-point">결제하고 다음에 보기</button>
 						</div>
 					</div>
@@ -3516,22 +3688,6 @@
 					}
 				});
 
-				const standardTitle = document.querySelector(".standard-title");
-				const standardContent = document.querySelector(".standard-content");
-				const standardIcon = document.getElementById("standard_icon")
-
-				standardTitle.addEventListener("click", function () {
-					if (standardContent.classList.contains("none")) {
-						standardContent.classList.remove("none");
-						standardIcon.src = "/resources/static/img/fold.png";
-						standardIcon.alt = "접기";
-					} else {
-						standardContent.classList.add("none");
-						standardIcon.src = "/resources/static/img/expand.png";
-						standardIcon.alt = "펼치기";
-					}
-				})
-
 				const notiTitle = document.querySelector(".noti-title");
 				const notiContent = document.querySelector(".noti-content");
 				const notiIcon = document.getElementById("noti_icon")
@@ -3583,28 +3739,6 @@
 				});
 
 			});
-
-			// 최신순/공감순/별점높은순/별점낮은순 클릭 시
-			const arrangeButtons = document.querySelectorAll('.rv-arrange-btn button');
-
-			arrangeButtons.forEach(button => {
-				button.addEventListener('click', function () {
-					arrangeButtons.forEach(btn => btn.setAttribute('aria-pressed', 'false'));
-
-					this.setAttribute('aria-pressed', 'true');
-				});
-			});
-
-			// 구매자/전체 클릭 시
-			const sortBtns = document.querySelectorAll(".rv-sort-btn button");
-
-			sortBtns.forEach(button => {
-				button.addEventListener('click', function () {
-					sortBtns.forEach(btn => btn.setAttribute('aria-pressed', 'false'));
-
-					this.setAttribute('aria-pressed', 'true');
-				})
-			})
 
 			// 스포일러 댓글 -> 리뷰 보기 클릭 시
 			const spoilerButtons = document.querySelectorAll('.spoiler-view-btn');

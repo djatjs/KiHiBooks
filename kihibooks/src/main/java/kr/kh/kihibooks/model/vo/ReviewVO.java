@@ -16,4 +16,5 @@ public class ReviewVO {
 	private String rv_bo_code;
 	private int rv_ur_num;
 	private String rv_user;
+	private int rv_li_count;
 }

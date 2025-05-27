@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.kh.kihibooks.model.vo.BookVO;
+import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
@@ -195,5 +196,13 @@ public class BookController {
     }
     
     
+    @GetMapping("/review/sort")
+    public String getSortedReview(@RequestParam String sort, @RequestParam("bo_code") String bo_code, Model model){
+        List<ReviewVO> rvList = bookService.getRvList(sort, bo_code);
+        System.out.println(rvList);
+        model.addAttribute("rvList", rvList);
+
+        return "book/reviewSort :: rvListFlag";
+    }
     
 }
