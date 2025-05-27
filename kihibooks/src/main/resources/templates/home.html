@@ -698,7 +698,7 @@
 								<a href="${detailUrl}" class="book-title">${book.bo_title}</a>
 								<div class="book-meta">${book.bo_author || '작가 미정'} · ${book.bo_free_info || '무료'}</div>
 								<div class="book-rating">
-									★${(book.bo_total_rating / book.bo_review_count).toFixed(1)} |	리뷰 ${book.bo_review_count}
+									★${((book.bo_total_rating / book.bo_review_count)/2).toFixed(1)} |	리뷰 ${book.bo_review_count}
 								</div>
 							</div>
 						`;
