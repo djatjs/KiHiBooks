@@ -216,7 +216,7 @@
 							<span class="badge complete" th:if="${book.bo_fin == 'Y'}">완결</span>
 						</p>
 						<p class="meta">
-							<span class="highlight-rating" th:text="'★ ' + ${#numbers.formatDecimal(book.bo_total_rating / 1000.0, 1, 1)}">평점</span>
+							<span class="highlight-rating" th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal(book.bo_total_rating / book.bo_review_count, 1, 1)} : '0.0')">평점</span>
 							<span class="separator">|</span>
 							<span th:text="'(' + ${book.bo_review_count} + ')'">(0)</span>
 						</p>
