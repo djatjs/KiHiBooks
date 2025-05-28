@@ -1,6 +1,7 @@
 package kr.kh.kihibooks.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -8,6 +9,7 @@ import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
+import kr.kh.kihibooks.model.vo.ReviewLikeVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
 import kr.kh.kihibooks.model.vo.SubCategoryVO;
 
@@ -85,5 +87,21 @@ public interface BookDAO {
 	boolean insertReReview(ReviewVO review);
 
 	ReviewVO selectReply(ReviewVO review);
+
+	ReviewVO selectReview(ReviewVO review);
+
+	int selectLikeCount(int rv_num);
+
+	ReviewLikeVO getLike(int rv_num, int ur_num);
+
+	void insertLike(int rv_num, int ur_num);
+
+	void updateLikeState(int rv_num, int ur_num, int ur_state);
+
+	Set<Integer> selectLikedReview(int ur_num);
+
+	boolean deleteReview(int rv_num);
+
+	int countReview(String bo_code, int ur_num);
  
 }

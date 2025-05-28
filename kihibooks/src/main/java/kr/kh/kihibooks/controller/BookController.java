@@ -1,11 +1,18 @@
 package kr.kh.kihibooks.controller;
 
+import java.security.Principal;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -86,25 +93,49 @@ public class BookController {
     }
 
     @GetMapping("/books/{bo_code}")
-    public String bookDetail(Model model, @PathVariable String bo_code) {
+    public String bookDetail(Model model, @PathVariable String bo_code,
+            @AuthenticationPrincipal CustomUser customUser) {
         BookVO book = bookService.getBook(bo_code);
         List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
         List<ReviewVO> rvList = bookService.getReviewList(bo_code);
         Map<Integer, Double> rating = bookService.calcRating(rvList);
         Map<Integer, Integer> replyCountMap = new HashMap<>();
-
         for (ReviewVO r : rvList) {
             int oriNum = r.getRv_ori_num();
             if (oriNum != 0) { // 댓글이면
                 replyCountMap.put(oriNum, replyCountMap.getOrDefault(oriNum, 0) + 1);
             }
         }
-        
+        long freeCount = epiList.stream().filter(e -> e.getEp_price() == 0).count();
+        Map<Integer, Integer> likeCountMap = new HashMap<>();
+        for (ReviewVO review : rvList) {
+            int rvNum = review.getRv_num();
+            int likeCount = bookService.getLikeCount(rvNum);
+            likeCountMap.put(rvNum, likeCount);
+        }
+        Set<Integer> likedReviewIds = new HashSet<>();
+        if (customUser != null) {
+            int ur_num = customUser.getUser().getUr_num();
+            likedReviewIds = bookService.getLikedReview(ur_num);
+        }
+        Optional<Timestamp> latestDateOpt = epiList.stream()
+                .map(EpisodeVO::getEp_date)
+                .max(Comparator.naturalOrder());
+
+        String latestDate = latestDateOpt
+                .map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
+                .orElse("날짜 없음");
+
+        model.addAttribute("latestEpDate", latestDate);
+
         model.addAttribute("book", book);
         model.addAttribute("epiList", epiList);
         model.addAttribute("rvList", rvList);
         model.addAttribute("rating", rating);
         model.addAttribute("replyCountMap", replyCountMap);
+        model.addAttribute("freeCount", freeCount);
+        model.addAttribute("likeCountMap", likeCountMap);
+        model.addAttribute("likedReviewIds", likedReviewIds);
 
         return "book/detail";
     }
@@ -112,14 +143,21 @@ public class BookController {
     @PostMapping("/review/insert")
     @ResponseBody
     public boolean insert(@RequestBody ReviewVO review, @AuthenticationPrincipal CustomUser customUser) {
-        System.out.println("컨트롤러" + customUser);
-        return bookService.insertReview(review, customUser);
+
+        int reviewCnt = bookService.countReview(review.getRv_bo_code(), customUser.getUser().getUr_num());
+        System.out.println(reviewCnt);
+        
+        if(reviewCnt == 0) {
+            return bookService.insertReview(review, customUser);
+        }
+        
+        return false;
     }
 
     @PostMapping("/rereview/insert")
     @ResponseBody
     public ReviewVO insertReview(@RequestBody ReviewVO review, @AuthenticationPrincipal CustomUser customUser) {
-        if(!bookService.insertReReview(review, customUser)){
+        if (!bookService.insertReReview(review, customUser)) {
             System.out.println("리뷰 등록 실패");
             return null;
         }
@@ -215,6 +253,7 @@ public class BookController {
         }
         return null;
     }
+
     @GetMapping("/book/keyword/fragment")
     public String getKeywordSearchFragment(
             @RequestParam(required = false) List<String> keywordIds,
@@ -231,9 +270,6 @@ public class BookController {
         return "book/keyword :: #bookResultContainer";
     }
 
-    
-    
-
     @GetMapping("/review/sort")
     public String getSortedReview(@RequestParam String sort, @RequestParam("bo_code") String bo_code, Model model) {
         List<ReviewVO> rvList = bookService.getRvList(sort, bo_code);
@@ -243,4 +279,30 @@ public class BookController {
         return "book/reviewSort :: rvListFlag";
     }
 
+    @PostMapping("/review/like")
+    @ResponseBody
+    public Map<String, Object> toggleReviewLike(@RequestBody Map<String, Integer> payload,
+            @AuthenticationPrincipal CustomUser customUser) {
+        int rvNum = payload.get("rv_num");
+        int urNum = customUser.getUser().getUr_num();
+
+        boolean liked = bookService.toggleLike(rvNum, urNum);
+        Integer likeCount = bookService.getLikeCount(rvNum);
+        System.out.println(likeCount);
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("liked", liked);
+        result.put("likeCount", likeCount);
+
+        return result;
+    }
+
+    @PostMapping("/review/delete")
+    @ResponseBody
+    public boolean deleteReview(int rv_num) {
+        System.out.println(rv_num);
+        boolean res = bookService.deleteReview(rv_num);
+        System.out.println(res);
+        return res;
+    }
 }

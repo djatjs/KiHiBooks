@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,7 @@ import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
+import kr.kh.kihibooks.model.vo.ReviewLikeVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
 import kr.kh.kihibooks.model.vo.SubCategoryVO;
 import kr.kh.kihibooks.pagination.PageInfo;
@@ -96,7 +98,7 @@ public class BookService {
 
     public List<ReviewVO> getReviewList(String bo_code) {
         List<ReviewVO> rvList = bookDAO.selectReviewList(bo_code);
-
+        
         return rvList;
     }
 
@@ -124,7 +126,6 @@ public class BookService {
             return false;
         }
         review.setRv_ur_num(customUser.getUser().getUr_num());
-        System.out.println(review);
         return bookDAO.insertReview(review);
     }
 
@@ -202,6 +203,39 @@ public class BookService {
         return bookDAO.selectReply(review);
 	}
 
+	public int getLikeCount(int rv_num) {
+        int likeCount = bookDAO.selectLikeCount(rv_num);
 
+		
+        return likeCount;
+	}
 
+    public boolean toggleLike(int rv_num, int ur_num) {
+        ReviewLikeVO like = bookDAO.getLike(rv_num, ur_num);
+        if(like == null) {
+            bookDAO.insertLike(rv_num, ur_num);
+
+            return true;
+        } else {
+            if(like.getRl_state() == 1) {
+                bookDAO.updateLikeState(rv_num, ur_num, 0);
+                return false;
+            } else {
+                bookDAO.updateLikeState(rv_num, ur_num, 1);
+                return true;
+            }
+        }
+    }
+
+		public Set<Integer> getLikedReview(int ur_num) {
+			return bookDAO.selectLikedReview(ur_num);
+		}
+
+        public boolean deleteReview(int rv_num) {
+            return bookDAO.deleteReview(rv_num);
+        }
+
+        public int countReview(String bo_code, int ur_num) {
+            return bookDAO.countReview(bo_code, ur_num);
+        }
 }
