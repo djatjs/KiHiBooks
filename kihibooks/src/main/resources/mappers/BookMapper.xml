@@ -191,10 +191,12 @@
             kw_code, kw_name
         FROM 
             book_keyword
-        JOIN 
-            keyword k 
-        ON bk_kw_code = kw_code
-        WHERE bk_bo_code = #{bo_code}
+        LEFT JOIN 
+            keyword 
+        ON 
+            bk_kw_code = kw_code
+        WHERE 
+            bk_bo_code = #{bo_code}
     </select>
     <select id="countBestBooks" resultType="int">
         SELECT
