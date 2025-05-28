@@ -116,4 +116,8 @@ public class PublisherService {
     public int getEditorCount(String puCode) {
         return publisherDAO.selectEditorCount(puCode);
     }
+
+    public List<EditorVO> getEditorList(String pu_code) {
+        return publisherDAO.selectEditors(pu_code);
+    }
 }

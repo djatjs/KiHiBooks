@@ -10,8 +10,10 @@ import java.util.stream.Collectors;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.kh.kihibooks.dao.BookDAO;
+import kr.kh.kihibooks.dao.KeywordDAO;
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
@@ -30,6 +32,9 @@ public class BookService {
 
     @Autowired
     BookDAO bookDAO;
+
+    @Autowired
+    KeywordDAO keywordDao;
 
     @Autowired
     SqlSession sqlSession;
@@ -148,20 +153,16 @@ public class BookService {
         // bo_code 생성 (출판사 코드 4자리 + 카테고리 2자리 + 도서번호 3자리) EX: P0001310001
         // 1. 출판사 코드 4자리
         String puCode = pu_code;
-        System.out.println("출판사 코드 : "+puCode);
 
         // 2. 카테고리 2자리 : bo_sc_code
         String scCode = book.getBo_sc_code();
-        System.out.println("카테고리 : "+scCode);
 
         // 3. 도서번호 3자리
         String psCode = puCode+ scCode;
-        System.out.println("psCode : "+psCode);
         String boNum = bookDAO.getLatestBoNum(psCode);
         
         // 4. 생성된 bo_code 반환
         String bo_code = psCode + boNum +"";
-        System.out.println(bo_code);
         book.setBo_code(bo_code);
         return bookDAO.insertBook(book);
     }
@@ -186,6 +187,28 @@ public class BookService {
 
     public List<BookVO> getEditorsBookList(int pi_num) {
         return bookDAO.selectEditorsBookList(pi_num);
+    }
+    
+    @Transactional
+    public boolean updateBookInfo(BookVO book, List<String> bo_keywords) {
+        if(book == null || book.getBo_code() == null || book.getBo_title().length() == 0 || book.getBo_author().length() == 0 ) {
+            throw new IllegalArgumentException("도서 정보가 잘못됨");
+        }
+        if(bo_keywords == null) {
+            throw new IllegalArgumentException("키워드 목록이 잘못됨");
+        }
+        if(!bookDAO.updateBookInfo(book)) {
+            throw new RuntimeException("도서 정보 수정 실패");
+        }
+        if(!keywordDao.deleteKeywordFromBook(book.getBo_code())) {
+            throw new RuntimeException("키워드 삭제 실패");
+        }
+        for(String keywordCode : bo_keywords){
+            if(!bookDAO.insertBookKeyword(book.getBo_code(), keywordCode)) {
+                throw new RuntimeException("키워드 추가 실패");
+            }
+        }
+        return true;
     }
 
 }

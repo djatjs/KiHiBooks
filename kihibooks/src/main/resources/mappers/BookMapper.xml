@@ -382,4 +382,18 @@
         join publisher on pi_pu_code = pu_code
         where bo_pi_num = #{pi_num}
     </select>
+    <update id="updateBookInfo">
+        update book
+        set
+            bo_pi_num = #{bo_pi_num},
+            bo_description = #{bo_description},
+            bo_sc_code = #{bo_sc_code},
+            bo_serial_schedule = #{bo_serial_schedule},
+            bo_publish_date = #{bo_publish_date},
+            bo_adult = #{bo_adult},
+            bo_wait_for_free = #{bo_wait_for_free},
+            bo_wff_date = #{bo_wff_date},
+            bo_free_episode = #{bo_free_episode}
+        where bo_code = #{bo_code}
+    </update>
 </mapper>

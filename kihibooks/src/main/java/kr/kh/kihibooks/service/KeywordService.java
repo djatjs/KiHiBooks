@@ -17,5 +17,12 @@ public class KeywordService {
 	public List<KeywordCategoryVO> getAllKeywordCategories() {
     return keywordDAO.selectKeywordCategories();
 	}
+    
+    public List<KeywordCategoryVO> getSelectedKeywordList(String bo_code) {
+        if(bo_code == null || bo_code.isEmpty()) {
+            return null;
+        }
+        return keywordDAO.selectBooksKeywordList(bo_code);
+    }
 	
 }

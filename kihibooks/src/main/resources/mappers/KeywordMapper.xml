@@ -21,5 +21,15 @@
 		ORDER BY 
 				kc.KC_CODE, kw.KW_CODE
 	</select>
-
+	<select id="selectBooksKeywordList" resultMap="KeywordCategoryMap">
+		select * from book_keyword
+		JOIN keyword ON bk_kw_code = kw_code
+		JOIN keyword_category ON kw_kc_code = kc_code
+		where bk_bo_code = #{bo_code}
+		order by bk_kw_code
+	</select>
+	<delete id="deleteKeywordFromBook">
+		delete from book_keyword
+		where bk_bo_code = #{bk_bo_code}
+	</delete>
 </mapper>

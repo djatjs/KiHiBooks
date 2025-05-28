@@ -76,10 +76,10 @@ public interface BookDAO {
 
 	List<BookVO> selectEditorsBookList(int pi_num);
 
-	
-    
 	boolean updateRating(String bo_code);
 
 	List<ReviewVO> findReviewBySort(String sort, String bo_code);
- 
+
+    boolean updateBookInfo(BookVO book);
+	
 }

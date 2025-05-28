@@ -8,6 +8,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -147,14 +149,10 @@ public class PublisherContoller {
             }
         }
         book.setBo_au_num(authorNum);
-        //System.out.println("작가번호 : "+authorNum);
         //2. 책
-        //System.out.println(book.getBo_title());
-        //작가 번호 : authorNum
         if(!bookService.addBook(book, pu_code)){
             return "redirect:/editor/registerNew";
         }
-
         // 3. bo_code 다시 받아오기
         String bo_code = bookService.getBookCode(book.getBo_au_num(), book.getBo_title(), book.getBo_pi_num());
         System.out.println(bo_code);
@@ -168,5 +166,34 @@ public class PublisherContoller {
         return "redirect:/editor/myContent";
     }
     
-    
+    @GetMapping("/editor/registerEpisode/{bo_code}")
+    public String registerEpisode(@PathVariable String bo_code) {
+        System.out.println(bo_code);
+        return "redirect:/editor/myContent";
+    }
+
+    @GetMapping("/editor/updateBookInfo/{bo_code}")
+    public String updateBookInfo(@AuthenticationPrincipal CustomUser customUser, @PathVariable String bo_code, Model model) {
+        BookVO book = bookService.getBook(bo_code);
+        List<EditorVO> editors = publisherService.getEditorList(customUser.getPu_code());
+        List <KeywordCategoryVO> keywordList = keywordService.getAllKeywordCategories();
+        List <KeywordCategoryVO> selectedKeywordList = keywordService.getSelectedKeywordList(bo_code);
+        model.addAttribute("user", customUser); //출판사 코드 가져오려고 꼼수 부림
+        model.addAttribute("editors", editors); //담당 에디터 이름 가져오려고 씀
+        model.addAttribute("book", book); //도서 정보
+        model.addAttribute("keywordList", keywordList); //전체 키워드
+        model.addAttribute("selectedKeywordList", selectedKeywordList); //선택된 키워드
+        return "/publisher/editor_updateBook";
+    }
+    @PostMapping("/editor/updateBookInfo/{bo_code}")
+    public String updateBookInfoPost(@AuthenticationPrincipal CustomUser customUser, @PathVariable String bo_code, @RequestParam("bo_keywords") List<String> bo_keywords, BookVO book, String pu_code)  {
+        //받은 값 확인
+        System.out.println("선택한 키워드 : "+bo_keywords);
+        System.out.println("수정된 도서 정보 : "+book);
+        //도서 수정 작업
+        if(!bookService.updateBookInfo(book, bo_keywords)){
+            return "redirect:/editor/updateBookInfo/"+bo_code;
+        }
+        return "redirect:/editor/myContent";
+    }
 }

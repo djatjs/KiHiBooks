@@ -35,4 +35,6 @@ public interface PublisherDAO {
                                 @Param("offset") int offset);
 
     int selectEditorCount(@Param("puCode") String puCode);
+
+    List<EditorVO> selectEditors(String pu_code);
 }

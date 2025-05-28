@@ -3,19 +3,16 @@
     xmlns:th="http://www.thymeleaf.org"
     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
     xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-    layout:decorate="~{layout/layout.html}"> <!-- 레이아웃 파일 경로에 맞게 수정하세요 -->
+    layout:decorate="~{layout/layout.html}">
 <head>
     <meta charset="UTF-8">
     <title>KiHiBooks - 콘텐츠 관리</title>
     <style>
-        /* 기본적인 컨테이너 스타일 (layout.html 또는 공통 CSS에 있을 수 있습니다) */
-        /* .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; font-family: 'Arial', sans-serif; } */
-
         /* 페이지 고유 스타일을 위한 클래스 */
         .content-management-page h2 {
             color: #2c3e50;
             margin-bottom: 20px;
-            border-bottom: 2px solid #ff7f50; /* 강조 색상 예시 */
+            border-bottom: 2px solid #ff7f50;
             padding-bottom: 10px;
             font-weight: bold;
         }
@@ -44,15 +41,14 @@
             display: flex; /* 가로 스크롤 또는 그리드 레이아웃을 위해 flex 사용 예시 */
             overflow-x: auto; /* 내용이 넘칠 경우 가로 스크롤바 표시 */
             padding-bottom: 15px; /* 스크롤바 여백 */
-            gap: 20px; /* 작품 아이템 간 간격 */
-             /* 스크롤바 숨김 (선택 사항) */
-             -ms-overflow-style: none;  /* IE and Edge */
-             scrollbar-width: none;  /* Firefox */
+            gap: 20px;
+            /* 스크롤바 숨김 (선택 사항) */
+            -ms-overflow-style: auto;  /* IE and Edge */
+            scrollbar-width: auto;  /* Firefox */
         }
         .series-body::-webkit-scrollbar { /* Chrome, Safari, Opera */
             display: none;
         }
-
 
         /* 작품 아이템 트랙 (슬라이더 사용 시) */
         .series-slider-wrapper {
@@ -123,8 +119,8 @@
         }
 
         /* 작품 등록 버튼 스타일 */
-        .registration-container button {
-            padding: 10px 20px;
+        .orenge-btn {
+            padding: 6px 20px;
             font-size: 1rem;
             background-color: #ff7f50; /* 강조 색상 예시 */
             color: white;
@@ -133,10 +129,26 @@
             cursor: pointer;
             transition: background-color 0.2s ease-in-out;
         }
-        .registration-container button:hover {
+        .orenge-btn:hover {
             background-color: #ff6347;
+            color: #fff;
         }
-
+        .modal-item {
+            flex: 0 0 180px; /* 아이템 너비 고정 (예시), flex-shrink: 0으로 줄어들지 않게 */
+            width: 500px; /* 아이템 고정 너비 */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #fff;
+            /* text-align: center; */
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .center-img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
     </style>
 </head>
@@ -147,26 +159,20 @@
 
 			<h2 class="mb-3">📖 콘텐츠 관리</h2>
             <p>에디터님이 담당하거나 등록하신 작품(도서 시리즈)을 관리할 수 있습니다.</p>
-            <!-- <div>
-                <th:block th:each="book : ${books}">
-                    <span th:text="${book}"></span>
-                </th:block>
-            </div> -->
             <!-- 1. 담당 작품 리스트 섹션 (연재 중인 작품) -->
             <div class="series-container">
                 <h4>연재 중인 작품</h4>
                 <div class="series-body">
-                    <!--백엔드에서 List<BookVO> 형태의 연재 중인 작품 목록을 모델에 담아 'ongoingWorks'라는 이름으로 전달한다고 가정-->
                     <th:block th:if="${books != null and !books.isEmpty()}">
-                        <div class="series-item" th:each="work : ${books}" th:data-bo-code="${work.bo_code}">
-                            <h5 th:text="${work.bo_title}">작품 제목</h5>
-                            <img class="mt-1" src="/resources/static/img/default_thumb.png" alt="썸네일" style="height: 150px;">
-                            <p class="mt-2" th:text="${work.bo_author}">저자명</p>
-                            <!-- <p>총 <span th:text="${work.bo_episode_count != null ? work.bo_episode_count : '0'}">0</span>화</p> 총 회차 수 필드명 확인 -->
-                            <p><span class="status" th:classappend="${work.bo_fin == 'Y' ? 'finished' : ''}" th:text="${work.bo_fin == 'Y' ? '완결' : '연재 중'}">연재 중</span></p>
-
-                            <!-- 클릭 시 해당 작품의 회차 관리 페이지로 이동 또는 모달/AJAX 로드 -->
-                            <!-- th:onclick="'location.href=\'' + @{/editor/episodes(boCode=${work.bo_code})} + '\''" -->
+                        <div class="series-item" th:each="work : ${books}" th:data-title="${work.bo_title}" th:data-author="${work.bo_author}" th:data-code="${work.bo_code}" th:data-fin="${work.bo_fin}" th:data-description="${work.bo_description}">
+                            <div data-toggle="modal" data-target="#workModal">
+                                <h5 th:text="${work.bo_title}">작품 제목</h5>
+                                <img class="mt-1" src="/resources/static/img/default_thumb.png" alt="썸네일" style="height: 150px;">
+                                <p class="mt-2" th:text="${work.bo_author}">저자명</p>
+                                <!-- <p>총 <span th:text="${work.bo_episode_count != null ? work.bo_episode_count : '0'}">0</span>화</p> 총 회차 수 필드명 확인 -->
+                                <p><span class="status" th:classappend="${work.bo_fin == 'Y' ? 'finished' : ''}" th:text="${work.bo_fin == 'Y' ? '완결' : '연재 중'}">연재 중</span></p>
+                                <!-- 클릭 시 해당 작품의 회차 관리 페이지로 이동 또는 모달/AJAX 로드 -->
+                            </div>
                         </div>
                     </th:block>
                     <!-- 연재 중인 작품이 없을 때 메시지 -->
@@ -175,48 +181,104 @@
                     </th:block>
                 </div>
             </div>
-
-            <!-- 연재 중인 작품 섹션과 유사하게 구성 -->
-            <!-- <div class="series-container"> ... <h4>완결된 작품</h4> ... </div> -->
-
             <hr>
-
             <!-- 2. 작품 등록 섹션 -->
             <div class="registration-container">
                 <h3>새로운 작품 등록</h3>
                 <p>새로운 도서 시리즈를 등록하려면 아래 버튼을 클릭하세요.</p>
-                <!-- 버튼 클릭 시 새 작품 등록 페이지로 이동 -->
-                <button type="button" onclick="location.href='/editor/registerNew'">작품 등록</button> <!-- JavaScript로 페이지 이동 -->
-                <!-- 또는 <a th:href="@{/editor/register-work}"><button type="button">작품 등록</button></a> -->
+                <button class="orenge-btn" type="button" onclick="location.href='/editor/registerNew'">작품 등록</button>
             </div>
-
             <!-- TODO: 회차 목록 및 등록/수정/삭제/미리보기 기능 섹션은 별도의 페이지 (/editor/episodes?boCode=...) 에서 구현하거나,
                         이 페이지 하단에 숨겨진 섹션으로 두고 'series-item' 클릭 시 AJAX로 내용을 로드하여 보여주는 방식으로 구현할 수 있습니다. -->
-
-
+            
+            <!-- 담당 작품 클릭시 모달 -->
+            <div class="modal" id="workModal">
+                <div class="modal-dialog ">
+                    <div class="modal-content modal-item">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title">도서 정보</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <p><strong>작품 제목 : </strong> <span id="modalBoTitle"></span></p>
+                            <img class="mt-1 mb-3 center-img" src="/resources/static/img/default_thumb.png" alt="썸네일" style="height: 150px;">
+                            <p><strong>저자:</strong> <span id="modalBoAuthor"></span></p>
+                            <p><strong>상태:</strong> <span id="modalBoFin"></span></p>
+                            <p>
+                                <strong>내용:</strong>
+                                <span id="modalBoDescription"></span>
+                                <span id="toggleMoreBtn" style="color: #ff7f50; cursor: pointer; display: none;"> 더보기</span>
+                            </p>
+                            <input type="hidden" name="modalBoCode" id="modalBoCode">
+                        </div>
+                        
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <div class="btn orenge-btn" id="registerEpisodeBtn">회차 등록</div>
+                            <div class="btn orenge-btn" id="updateBookInfoBtn">수정</div>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 		</div>
+        <script>
+            $(document).ready(function () {
+                const maxLength = 100; // 최대 표시할 글자 수
+                $('.series-item').on('click', function () {
+                    const boTitle = $(this).data('title');
+                    const boAuthor = $(this).data('author');
+                    const boFin = $(this).data('fin') === 'Y' ? '완결' : '연재 중';
+                    const boDescription = $(this).data('description');
+                    const boCode = $(this).data('code');
+
+                    $('#modalBoTitle').text(boTitle);
+                    $('#modalBoAuthor').text(boAuthor);
+                    $('#modalBoFin').text(boFin);
+                    $('#modalBoCode').val(boCode);
+
+                    // 더보기 기능 적용
+                    if (boDescription.length > maxLength) {
+                        const shortText = boDescription.substring(0, maxLength) + '...';
+                        $('#modalBoDescription').text(shortText).data('full', boDescription).data('short', shortText);
+                        $('#toggleMoreBtn').text(' 더보기').show();
+                    } else {
+                        $('#modalBoDescription').text(boDescription);
+                        $('#toggleMoreBtn').hide();
+                    }
+                    //회차등록 버튼
+                    $("#registerEpisodeBtn").on("click", function(){
+                        window.location.href = "/editor/registerEpisode/" + boCode;
+                    })
+                    //수정 버튼
+                    $("#updateBookInfoBtn").on("click", function(){
+                        window.location.href = "/editor/updateBookInfo/" + boCode;
+                    })
+                });
+
+                $('#toggleMoreBtn').on('click', function () {
+                    const descSpan = $('#modalBoDescription');
+                    const isShort = $(this).text().includes('더보기');
+
+                    if (isShort) {
+                        descSpan.text(descSpan.data('full'));
+                        $(this).text(' 접기');
+                    } else {
+                        descSpan.text(descSpan.data('short'));
+                        $(this).text(' 더보기');
+                    }
+                });
+
+                $('#workModal').on('hidden.bs.modal', function () {
+                    document.activeElement.blur();
+                });
+            });
+        </script>
+
 	</main>
-
-    <!-- 페이지 하단에 필요한 JavaScript 코드 추가 -->
-    <!-- jQuery 라이브러리가 로드된 후에 위치해야 합니다. -->
-    <script th:inline="javascript">
-    /*<![CDATA[*/
-    $(document).ready(function() {
-        // 'series-item' 클릭 시 회차 관리 페이지로 이동하는 JavaScript (AJAX 로드 방식이 아닌 페이지 이동 시)
-        $('.series-item').on('click', function() {
-            const boCode = $(this).data('bo-code'); // data-bo-code 속성 값 가져오기
-            if (boCode) {
-                // TODO: 이동할 회차 관리 페이지 URL 확인
-                location.href = '/editor/episodes?boCode=' + boCode; // 예시 URL, 실제 경로에 맞게 수정
-            }
-        });
-
-        // TODO: 슬라이더 기능 구현 (series-body 또는 series-track에 overflow-x: auto 사용 시 필요 없음)
-        // TODO: AJAX로 회차 목록 로드 시 필요한 JavaScript 로직
-
-    });
-    /*]]>*/
-    </script>
 
 
 </body>

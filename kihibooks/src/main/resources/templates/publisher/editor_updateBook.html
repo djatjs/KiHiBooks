@@ -6,7 +6,7 @@
         layout:decorate="~{layout/layout.html}">
 <head>
     <meta charset="UTF-8">
-    <title>KiHiBooks - 새 작품 등록</title>
+    <title>KiHiBooks - 도서 정보 수정</title>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
     <style>
@@ -143,31 +143,41 @@
 <body>
     <main layout:fragment="content">
         <div class="container register-work-page">
-            <h2>📖 새 작품 등록</h2>
-            <p>새로운 작품(도서 시리즈) 정보를 입력하고 등록하세요.</p>
+            <h2>📖 도서 정보 수정</h2>
+            <p>수정할 작품(도서 시리즈) 정보를 입력하고 등록하세요.</p>
 
-            <!-- 새 작품 등록 폼 -->
-            <form action="/editor/registerNew" method="post" class="register-work-form">
-                <!-- 담당 에디터 번호 -->
-                <input type="hidden" name="bo_pi_num" th:value="${user.pi_num}">
+            <!-- 작품 수정 폼 -->
+            <form th:action="@{/editor/updateBookInfo/{bo_code}(bo_code=${book.bo_code})}" method="post" class="register-work-form">
+                <!-- 담당 출판사 번호 -->
                 <input type="hidden" name="pu_code" th:value="${user.pu_code}">
+                <input type="hidden" name="bo_code" th:value="${book.bo_code}">
+
                 <!-- 작품 제목 -->
                 <div class="form-group">
                     <label class="form-label" for="boTitle">작품 제목 <span style="color: red;">*</span></label>
-                    <input type="text" id="bo_title" name="bo_title" class="form-control" required>
+                    <input type="text" id="bo_title" name="bo_title" class="form-control" th:value="${book.bo_title}" readonly>
                     <label id="bo_title-error" style="color: red; font-size: 12px; display: none;"></label>
                 </div>
 
                 <!-- 저자명 -->
                 <div class="form-group">
                     <label class="form-label" for="boAuthor">저자명 <span style="color: red;">*</span></label>
-                    <input type="text" id="bo_author" name="bo_author" class="form-control" required>
+                    <input type="text" id="bo_author" name="bo_author" class="form-control" th:value="${book.bo_author}" readonly>
                     <label id="bo_author-error" style="color: red; font-size: 12px; display: none;"></label>
+                </div>
+
+                <!-- 담당 에디터 -->
+                <div class="form-group">
+                    <label class="form-label" for="editorSelect">담당 에디터</label>
+                    <select id="editorSelect" name="bo_pi_num" class="form-control">
+                        <option th:each="editor : ${editors}" th:value="${editor.pi_num}" th:text="${editor.ur_nickname}" th:selected="${editor.pi_num == book.bo_pi_num}"></option>
+                    </select>
                 </div>
 
                 <!-- 장르 선택 (대분류 및 소분류) -->
                 <div class="form-group category-row">
                     <div class="category-group">
+                        <input type="hidden" id="initScCode" th:value="${book.bo_sc_code}" />
                         <label class="form-label" for="mainCategory">대분류 <span style="color: red;">*</span></label>
                         <select id="mainCategory" name="mainCategory" class="form-control" required>
                             <option value="0">-- 대분류 선택 --</option>
@@ -189,29 +199,29 @@
                 <!-- 작품 소개 -->
                 <div class="form-group">
                     <label class="form-label" for="bo_description">작품 소개</label>
-                    <textarea id="bo_description" name="bo_description" class="form-control" rows="6"></textarea>
+                    <textarea id="bo_description" name="bo_description" class="form-control" th:text="${book.bo_description}" rows="6"></textarea>
                 </div>
 
                 <!-- 연재 주기 선택 -->
                 <div class="form-group">
                     <label class="form-label" for="bo_serial_schedule">연재 주기</label>
                     <select id="bo_serial_schedule" name="bo_serial_schedule" class="form-control">
-                        <option value="">-- 선택 안함 --</option>
-                        <option value="월요연재">월요연재</option>
-                        <option value="화요연재">화요연재</option>
-                        <option value="수요연재">수요연재</option>
-                        <option value="목요연재">목요연재</option>
-                        <option value="금요연재">금요연재</option>
-                        <option value="토요연재">토요연재</option>
-                        <option value="일요연재">일요연재</option>
-                        <option value="주3회">주 3회</option>
+                        <option value="" th:selected="${book.bo_serial_schedule == ''}">-- 선택 안함 --</option>
+                        <option value="월요연재" th:selected="${book.bo_serial_schedule == '월요연재'}">월요연재</option>
+                        <option value="화요연재" th:selected="${book.bo_serial_schedule == '화요연재'}">화요연재</option>
+                        <option value="수요연재" th:selected="${book.bo_serial_schedule == '수요연재'}">수요연재</option>
+                        <option value="목요연재" th:selected="${book.bo_serial_schedule == '목요연재'}">목요연재</option>
+                        <option value="금요연재" th:selected="${book.bo_serial_schedule == '금요연재'}">금요연재</option>
+                        <option value="토요연재" th:selected="${book.bo_serial_schedule == '토요연재'}">토요연재</option>
+                        <option value="일요연재" th:selected="${book.bo_serial_schedule == '일요연재'}">일요연재</option>
+                        <option value="주3회" th:selected="${book.bo_serial_schedule == '주3회'}">주 3회</option>
                     </select>
                 </div>
 
                 <!-- 연재 시작일 -->
                 <div class="form-group">
                     <label class="form-label" for="boStartDate">연재 시작일</label>
-                    <input type="date" id="bo_publish_date" name="bo_publish_date" class="form-control">
+                    <input type="date" id="bo_publish_date" name="bo_publish_date" class="form-control" th:value="${book.bo_publish_date.substring(0, 10)}" />
                 </div>
 
                 <!-- 성인열람가능 여부 -->
@@ -219,11 +229,11 @@
                     <label class="form-label">성인 전용 여부 <span style="color: red;">*</span></label>
                     <div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bo_adult" id="adultYes" value="Y" required>
+                            <input class="form-check-input" th:checked="${book.bo_adult == 'Y'}" type="radio" name="bo_adult" id="adultYes" value="Y">
                             <label class="form-check-label" for="adultYes">예</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bo_adult" id="adultNo" value="N" required checked>
+                            <input class="form-check-input" th:checked="${book.bo_adult == 'N'}" type="radio" name="bo_adult" id="adultNo" value="N">
                             <label class="form-check-label" for="adultNo">아니오</label>
                         </div>
                     </div>
@@ -234,11 +244,11 @@
                     <label class="form-label">기다무(기다리면 무료) 적용 여부 <span style="color: red;">*</span></label>
                     <div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bo_wait_for_free" id="waitFreeYes" value="Y" required>
+                            <input class="form-check-input" th:checked="${book.bo_wait_for_free == 'Y'}" type="radio" name="bo_wait_for_free" id="waitFreeYes" value="Y" required>
                             <label class="form-check-label" for="waitFreeYes">예</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bo_wait_for_free" id="waitFreeNo" value="N" required checked>
+                            <input class="form-check-input" th:checked="${book.bo_wait_for_free == 'N'}" type="radio" name="bo_wait_for_free" id="waitFreeNo" value="N" required checked>
                             <label class="form-check-label" for="waitFreeNo">아니오</label>
                         </div>
                     </div>
@@ -246,14 +256,14 @@
                 <!-- 기다무 기간 (초기엔 숨김) -->
                 <div class="form-group" id="waitFreeDurationGroup" style="display: none;">
                     <label class="form-label" for="bo_wff_date">기다무 기간<span style="color: red;">*</span></label>
-                    <input type="number" id="bo_wff_date" name="bo_wff_date" class="form-control">
+                    <input type="number" id="bo_wff_date" name="bo_wff_date" th:value="${book.bo_wff_date}" class="form-control">
                     <small class="form-text text-muted">ex) 1 : 1일</small>
                 </div>
 
                 <!-- 무료 회차 수 -->
                 <div class="form-group">
                     <label class="form-label" for="bo_free_episode">무료 회차 수 <span style="color: red;">*</span></label>
-                    <input type="number" id="bo_free_episode" name="bo_free_episode" class="form-control" required min="0" value="0"> <!-- 기본값 0화 -->
+                    <input type="number" id="bo_free_episode" name="bo_free_episode" class="form-control" th:value="${book.bo_free_episode}" required min="0" value="0"> <!-- 기본값 0화 -->
                     <small class="form-text text-muted">처음부터 무료로 제공될 회차 수를 입력하세요.</small>
                 </div>
 
@@ -263,19 +273,38 @@
                     <div class="keyword-list">
                         <h5>선택된 키워드:</h5>
                         <div class="selected-keywords" id="selected-keywords-area">
-                            <small id="no-keywords-message" class="form-text text-muted">선택된 키워드가 없습니다.</small>
+                            <th:block th:if="${selectedKeywordList != null}">
+                                <th:block th:each="category : ${selectedKeywordList}">
+                                    <th:block th:each="keyword : ${category.keywordList}">
+                                        <button type="button" class="btn keyword-button selected-keyword-btn"
+                                                th:data-keyword="${keyword.kw_code}" th:data-name="${keyword.kw_name}"
+                                                th:text="${keyword.kw_name}">
+                                        </button>
+                                        <input type="hidden" name="bo_keywords" th:value="${keyword.kw_code}">
+                                    </th:block>
+                                </th:block>
+                            </th:block>
+                            <small id="no-keywords-message" class="form-text text-muted">
+                                선택된 키워드가 없습니다.
+                            </small>
                         </div>
+
+                        <!-- 전체 키워드 출력 -->
                         <th:block th:each="category : ${keywordList}">
                             <h5 th:text="${category.kc_name}"></h5>
                             <div>
                                 <th:block th:each="keyword : ${category.keywordList}">
-                                    <button type="button" class="btn keyword-button" th:data-keyword="${keyword.kw_code}" th:data-name="${keyword.kw_name}" th:text="${keyword.kw_name}">
+                                    <button type="button" class="btn keyword-button"
+                                            th:data-keyword="${keyword.kw_code}"
+                                            th:data-name="${keyword.kw_name}"
+                                            th:text="${keyword.kw_name}">
                                     </button>
                                 </th:block>
                             </div>
                         </th:block>
                     </div>
                 </div>
+
                 <!-- 버튼 그룹 -->
                 <div class="button-group">
                     <button type="submit" class="btn btn-primary">등록</button>
@@ -298,10 +327,8 @@
                             boWffDate.value = "0"; // 기본값 1일로 설정
                         }
                     }
-
                     // 초기 상태 설정
                     toggleWaitFreeDuration();
-
                     // 이벤트 리스너 등록
                     waitFreeYes.addEventListener("change", toggleWaitFreeDuration);
                     waitFreeNo.addEventListener("change", toggleWaitFreeDuration);
@@ -329,19 +356,46 @@
                     })
                 })
             </script>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const initScCode = $("#initScCode").val(); // 예: "35"
+                    
+                    if (initScCode && initScCode.length > 0) {
+                        const mainCategoryCode = initScCode.charAt(0); // 앞자리: 예 "3"
+                        $("#mainCategory").val(mainCategoryCode).trigger("change"); // 대분류 설정 + change 이벤트 트리거
+
+                        // AJAX 완료 후 소분류도 선택되게 처리
+                        const checkInterval = setInterval(function () {
+                            const $subCategorySelect = $("#bo_sc_code");
+                            if ($subCategorySelect.children("option").length > 1) {
+                                $subCategorySelect.val(initScCode); // 소분류 선택
+                                clearInterval(checkInterval); // 완료되면 인터벌 제거
+                            }
+                        }, 100); // 0.1초 간격으로 체크
+                    }
+                });
+            </script>
             <!-- 키워드 선택 -->
             <script>
+                function toggleNoKeywordsMessage() {
+                    const selectedArea = $("#selected-keywords-area");
+                    const noMessage = $("#no-keywords-message");
+
+                    if (selectedArea.find("button").length === 0) {
+                        noMessage.show();
+                    } else {
+                        noMessage.hide();
+                    }
+                }
+
                 $(document).on("click", ".keyword-button", function () {
                     const keywordCode = $(this).data("keyword");
                     const keywordName = $(this).data("name");
 
                     const selectedArea = $("#selected-keywords-area");
-                    const noMessage = $("#no-keywords-message");
 
-                    // 중복 방지: 이미 선택된 경우
                     const existing = selectedArea.find(`[data-keyword="${keywordCode}"]`);
                     if (existing.length > 0) {
-                        // 이미 선택된 버튼 클릭 시 해당 버튼과 input 태그 모두 제거**
                         existing.next("input[name='bo_keywords']").remove();
                         existing.remove();
                     } else {
@@ -350,25 +404,21 @@
                         selectedArea.append(newBtn);
                     }
 
-                    if (selectedArea.find("button").length > 0) {
-                        noMessage.hide();
-                    } else {
-                        noMessage.show();
-                    }
+                    toggleNoKeywordsMessage();
                 });
 
                 $(document).on("click", ".selected-keyword-btn", function () {
-                    const $this = $(this);
+                    $(this).next("input[name='bo_keywords']").remove();
+                    $(this).remove();
 
-                    $this.next("input[name='bo_keywords']").remove();
-                    $this.remove();
+                    toggleNoKeywordsMessage();
+                });
 
-                    const selectedArea = $("#selected-keywords-area");
-                    if (selectedArea.find("button").length === 0) {
-                        $("#no-keywords-message").show();
-                    }
+                $(document).ready(function () {
+                    toggleNoKeywordsMessage();
                 });
             </script>
+            <!-- 검증 -->
             <script>
                 $(".register-work-form").validate({
                     rules : {

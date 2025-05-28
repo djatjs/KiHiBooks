@@ -54,4 +54,11 @@
         WHERE PI_PU_CODE = #{puCode}
         AND PI_AUTHORITY = 'EDITOR'
     </select>
+    <select id="selectEditors" resultType="EditorVO">
+        select * from publisher
+        join publisher_id on pi_pu_code = pu_code
+        join user on ur_num = pi_ur_num
+        where pu_code = #{pu_code} and pi_authority = 'EDITOR'
+        order by ur_nickname asc
+    </select>
 </mapper>

@@ -403,7 +403,6 @@ layout:decorate="~{layout/layout.html}">
                 $(document).on("click", ".add-editor-button", function() {
                     const userNum = $(this).data("user-id");
                     const puCode = $("#pu_code").val();
-                    console.log(userNum); // 사용자 ID를 확인하는 코드
                     $.ajax({
                         url: "/publisher/addEditor",
                         type: "POST",
@@ -422,7 +421,6 @@ layout:decorate="~{layout/layout.html}">
                             }
                         }
                     })
-
                 });
             </script>
 
@@ -430,7 +428,6 @@ layout:decorate="~{layout/layout.html}">
                 // 에디터 계정 삭제 버튼 클릭시 이벤트 처리
                 $(".delete-btn").on("click",function() {
                     const userNum = $(this).data("user-id");
-                    alert(userNum);
                     if(!confirm("정말 삭제하시겠습니까?")) return;
                     $.ajax({
                         url: "/publisher/deleteEditor",
