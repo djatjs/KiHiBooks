@@ -103,5 +103,9 @@ public interface BookDAO {
 	boolean deleteReview(int rv_num);
 
 	int countReview(String bo_code, int ur_num);
+
+	int getAuthorNumByBocode(String bo_code);
+
+	List<BookVO> getAuthorAnotherBookList(int au_num);
  
 }

@@ -238,4 +238,10 @@ public class BookService {
         public int countReview(String bo_code, int ur_num) {
             return bookDAO.countReview(bo_code, ur_num);
         }
+
+        public List<BookVO> getAuthorAnotherBook(String bo_code) {
+            int au_num = bookDAO.getAuthorNumByBocode(bo_code);
+            
+            return bookDAO.getAuthorAnotherBookList(au_num);
+        }
 }

@@ -2945,7 +2945,7 @@
 															<div class="other-book-list">
 																<div class="book-list">
 																	<div class="books">
-																		<ul class="books-ul">
+																		<ul class="books-ul" th:each="anotherBook : ${abList}">
 																			<li class="book-li">
 																				<div class="book">
 																					<div class="book-img">
@@ -2957,17 +2957,16 @@
 																					<div class="book-info">
 																						<div class="bo-title">
 																							<!-- bo-img와 동일한 링크 -->
-																							<a th:href="@{/}" class="b-title">이세계 착각
-																								헌터</a>
+																							<a th:href="@{/}" class="b-title" th:text="${anotherBook.bo_title}"></a>
 																						</div>
 																						<div class="book-author">
 																							<span class="bo-author">
-																								<a th:href="@{/}" class="b-author">대대원</a>
+																								<a th:href="@{/}" class="b-author" th:text="${anotherBook.bo_author}"></a>
 																							</span>
 																							<span class="bo-rating">
 																								<img class="red mb-1" src="/resources/static/img/star.png" alt="별"
-																									style="height: 12px; margin-right: 2px;">4.9
-																								<span class="b-rating-cnt">(12,996)</span>
+																									style="height: 12px; margin-right: 2px;" th:text="${anotherBook.bo_total_rating / anotherBook.bo_review_count / 2.0}">
+																								<span class="b-rating-cnt" th:text="'(' + ${anotherBook.bo_review_count} + ')'"></span>
 																							</span>
 																						</div>
 																					</div>
@@ -3214,8 +3213,6 @@
 												<div class="rv-arrange-btn">
 													<button type="button" aria-pressed="true">최신순</button>
 													<button type="button" aria-pressed="false">공감순</button>
-													<button type="button" aria-pressed="false">별점 높은순</button>
-													<button type="button" aria-pressed="false">별점 낮은순</button>
 												</div>
 												<ul class="rv-ul" id="rv_ul">
 													<li class="rv-li" th:each="review : ${rvList}" th:if="${review.rv_ori_num == 0 and review.rv_del == 'N'}">

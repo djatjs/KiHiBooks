@@ -430,4 +430,14 @@
         select count(*) from review
         where rv_bo_code = #{bo_code} and rv_ur_num = #{ur_num} and rv_del = "N" and rv_ori_num is null
     </select>
+
+    <select id="getAuthorNumByBocode" resultType="int">
+        select bo_au_num from book
+        where bo_code = #{bo_code}
+    </select>
+
+    <select id="getAuthorAnotherBookList" resultType="BookVO">
+        select * from book
+        where bo_au_num = #{au_num}
+    </select>
 </mapper>

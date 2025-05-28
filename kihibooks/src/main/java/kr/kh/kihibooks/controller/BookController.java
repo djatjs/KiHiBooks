@@ -125,9 +125,8 @@ public class BookController {
         String latestDate = latestDateOpt
                 .map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
                 .orElse("날짜 없음");
-
-        model.addAttribute("latestEpDate", latestDate);
-
+        List<BookVO> abList = bookService.getAuthorAnotherBook(bo_code);
+        
         model.addAttribute("book", book);
         model.addAttribute("epiList", epiList);
         model.addAttribute("rvList", rvList);
@@ -136,6 +135,8 @@ public class BookController {
         model.addAttribute("freeCount", freeCount);
         model.addAttribute("likeCountMap", likeCountMap);
         model.addAttribute("likedReviewIds", likedReviewIds);
+        model.addAttribute("latestEpDate", latestDate);
+        model.addAttribute("abList", abList);
 
         return "book/detail";
     }
@@ -146,7 +147,7 @@ public class BookController {
 
         int reviewCnt = bookService.countReview(review.getRv_bo_code(), customUser.getUser().getUr_num());
         System.out.println(reviewCnt);
-        
+
         if(reviewCnt == 0) {
             return bookService.insertReview(review, customUser);
         }
