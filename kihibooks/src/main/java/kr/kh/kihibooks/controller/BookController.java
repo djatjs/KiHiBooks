@@ -203,7 +203,7 @@ public class BookController {
 
         PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
         model.addAttribute("pageInfo", pageInfo);
-        model.addAttribute("bookList", pageInfo.getContent());
+        model.addAttribute("bookList", pageInfo != null ? pageInfo.getContent() : new ArrayList<>());
         model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
         model.addAttribute("sort", sort);
 

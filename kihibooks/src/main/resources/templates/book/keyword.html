@@ -185,7 +185,7 @@
       </div>
     </div>
 
-    <div id="bookResultContainer">
+    <div id="bookResultContainer" th:fragment="bookResultContainer">
       <div th:if="${selectedKeywordIds == null or #lists.isEmpty(selectedKeywordIds)}" class="no-result-box">
         <img src="/resources/static/img/emptykeyword.png" class="no-result-img">
         <div class="no-result-msg">키워드를 선택해 작품을 검색해보세요</div>
@@ -206,7 +206,7 @@
             <option value="review" th:selected="${sort == 'review'}">리뷰많은 순</option>
           </select>
         </div>
-        <div th:each="book : ${bookList}" style="display: flex; padding: 20px 0; border-bottom: 1px solid #eee; gap: 16px;">
+        <div th:if="${bookList != null}" th:each="book : ${bookList}" style="display: flex; padding: 20px 0; border-bottom: 1px solid #eee; gap: 16px;">
           <div style="width: 100px; height: 140px; flex-shrink: 0; position: relative;">
             <img th:src="@{'/resources/static/img/default_thumb.png'}" alt="썸네일" 
               style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
@@ -275,6 +275,10 @@
           $("#bookResultContainer").html(html);
           history.replaceState(null, "", `/book/keyword?${query.toString()}`);
           renderSelectedKeywords(keywordIds); // 선택된 키워드 UI 업데이트
+        },
+        error: function(xhr){
+          console.error("ajax 오류", xhr.status, xhr.responseText);
+          $("#bookResultContainer").html("<div style='padding:40px; text-align:center;'>데이터를 불러오는 중 오류가 발생했습니다.</div>")
         }
       });
     }
