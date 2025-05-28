@@ -217,7 +217,7 @@
                         
                         <!-- Modal footer -->
                         <div class="modal-footer">
-                            <div class="btn orenge-btn" id="registerEpisodeBtn">회차 등록</div>
+                            <div class="btn orenge-btn" id="manageEpisodeBtn">회차 관리</div>
                             <div class="btn orenge-btn" id="updateBookInfoBtn">수정</div>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
                         </div>
@@ -249,9 +249,9 @@
                         $('#modalBoDescription').text(boDescription);
                         $('#toggleMoreBtn').hide();
                     }
-                    //회차등록 버튼
-                    $("#registerEpisodeBtn").on("click", function(){
-                        window.location.href = "/editor/registerEpisode/" + boCode;
+                    //회차관리 버튼
+                    $("#manageEpisodeBtn").on("click", function(){
+                        window.location.href = "/editor/manageEpisode/" + boCode;
                     })
                     //수정 버튼
                     $("#updateBookInfoBtn").on("click", function(){

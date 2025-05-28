@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.EditorVO;
+import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
 import kr.kh.kihibooks.model.vo.KeywordVO;
 import kr.kh.kihibooks.model.vo.PublisherVO;
@@ -166,10 +167,16 @@ public class PublisherContoller {
         return "redirect:/editor/myContent";
     }
     
-    @GetMapping("/editor/registerEpisode/{bo_code}")
-    public String registerEpisode(@PathVariable String bo_code) {
-        System.out.println(bo_code);
-        return "redirect:/editor/myContent";
+    @GetMapping("/editor/manageEpisode/{bo_code}")
+    public String manageEpisodeEpisode(@PathVariable String bo_code, Model model) {
+        BookVO book = bookService.getBook(bo_code);
+        List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
+        model.addAttribute("bo_code", bo_code);
+        model.addAttribute("book", book);
+        model.addAttribute("epiList", epiList);
+        System.out.println(book);
+        System.out.println(epiList);
+        return "/publisher/editor_manageEpisode";
     }
 
     @GetMapping("/editor/updateBookInfo/{bo_code}")
@@ -196,4 +203,17 @@ public class PublisherContoller {
         }
         return "redirect:/editor/myContent";
     }
+
+    @GetMapping("/editor/registerEpisode/{ep_code}")
+    public String registerEpisode(@PathVariable String ep_code) {
+        System.out.println(ep_code);
+        return "/publisher/editor_registerEpisode";
+    }
+
+    @GetMapping("/editor/updateEpisode/{ep_code}")
+    public String updateEpisode(@PathVariable String ep_code) {
+        System.out.println(ep_code);
+        return "/publisher/editor_updateEpisode";
+    }
+    
 }
