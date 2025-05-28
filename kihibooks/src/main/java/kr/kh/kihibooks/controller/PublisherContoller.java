@@ -109,8 +109,12 @@ public class PublisherContoller {
 
     @GetMapping("/editor/myContent")
     public String myContent(@AuthenticationPrincipal CustomUser customUser, Model model) {
-        // System.out.println(customUser);
+        //등록한 작품 가져오기 (+ 출판사명(publisher), 작가명(author))
+        List<BookVO> books = bookService.getEditorsBookList(customUser.getPi_num());
+        //System.out.println(books);
+        
         model.addAttribute("user", customUser.getUser());
+        model.addAttribute("books", books);
         return "/publisher/editor_myContent";
     }
     
@@ -127,7 +131,7 @@ public class PublisherContoller {
     }
 
     @PostMapping("/editor/registerNew")
-    public String registerNewWorkPost(BookVO book, @RequestParam("bo_keywords") List<String> keywordCodes) {
+    public String registerNewWorkPost(BookVO book, @RequestParam("bo_keywords") List<String> keywordCodes, String pu_code) {
         System.out.println(book);
         
         if(book == null || book.getBo_author() == null || book.getBo_title() == null || book.getBo_sc_code()== null || book.getBo_title().isBlank()){
@@ -143,11 +147,11 @@ public class PublisherContoller {
             }
         }
         book.setBo_au_num(authorNum);
-        System.out.println("작가번호 : "+authorNum);
+        //System.out.println("작가번호 : "+authorNum);
         //2. 책
-        System.out.println(book.getBo_title());
+        //System.out.println(book.getBo_title());
         //작가 번호 : authorNum
-        if(!bookService.addBook(book)){
+        if(!bookService.addBook(book, pu_code)){
             return "redirect:/editor/registerNew";
         }
 
