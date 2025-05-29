@@ -204,16 +204,17 @@ public class PublisherContoller {
         return "redirect:/editor/myContent";
     }
 
-    @GetMapping("/editor/registerEpisode/{ep_code}")
-    public String registerEpisode(@PathVariable String ep_code) {
-        System.out.println(ep_code);
+    @GetMapping("/editor/registerEpisode/{bo_code}")
+    public String registerEpisode(@PathVariable String bo_code, Model model) {
+        model.addAttribute("bo_code", bo_code);
         return "/publisher/editor_registerEpisode";
     }
-
-    @GetMapping("/editor/updateEpisode/{ep_code}")
-    public String updateEpisode(@PathVariable String ep_code) {
-        System.out.println(ep_code);
-        return "/publisher/editor_updateEpisode";
+    @PostMapping("/editor/registerEpisode/{bo_code}")
+    public String registerEpisodePost(@PathVariable String bo_code) {
+        System.out.println(bo_code);
+        return "redirect:/editor/manageEpisode/"+bo_code;
     }
+    
+
     
 }
