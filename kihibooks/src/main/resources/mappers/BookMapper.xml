@@ -289,8 +289,8 @@
     
     <update id="updateRating">
         update book
-        set bo_total_rating = (select sum(rv_rating) from review where rv_bo_code = #{bo_code}),
-            bo_review_count = (select count(*) from review where rv_bo_code = #{bo_code})
+        set bo_total_rating = (select sum(rv_rating) from review where rv_bo_code = #{bo_code} and rv_ori_num is null),
+            bo_review_count = (select count(*) from review where rv_bo_code = #{bo_code} and rv_ori_num is null)
         where bo_code = #{bo_code}
     </update>
 
@@ -320,6 +320,10 @@
             </otherwise>
         </choose>
         from review)
+    </insert>
+    <insert id="insertReReview">
+        insert into review(rv_ur_num, rv_content, rv_bo_code, rv_num, rv_ori_num)
+        select #{rv_ur_num}, #{rv_content}, #{rv_bo_code}, ifnull(max(rv_num),0)+1, #{rv_ori_num} from review
     </insert>
     <insert id="insertAuthor">
         insert into author(au_name) values(#{au_name})
@@ -396,4 +400,12 @@
             bo_free_episode = #{bo_free_episode}
         where bo_code = #{bo_code}
     </update>
+    
+    <select id="selectReply" resultType="ReviewVO">
+        select *, user.ur_nickname AS rv_user from review
+        join user on rv_ur_num = ur_num
+        where rv_ur_num = #{rv_ur_num} and rv_content = #{rv_content}
+        order by rv_date desc
+        limit 1
+    </select>
 </mapper>

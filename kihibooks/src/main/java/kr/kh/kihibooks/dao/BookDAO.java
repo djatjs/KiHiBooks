@@ -82,4 +82,8 @@ public interface BookDAO {
 
     boolean updateBookInfo(BookVO book);
 	
+	boolean insertReReview(ReviewVO review);
+
+	ReviewVO selectReply(ReviewVO review);
+
 }
