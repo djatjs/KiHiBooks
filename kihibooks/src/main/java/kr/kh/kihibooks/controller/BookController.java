@@ -29,10 +29,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import kr.kh.kihibooks.model.vo.BookKeywordVO;
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
+import kr.kh.kihibooks.model.vo.KeywordVO;
+import kr.kh.kihibooks.model.vo.NoticeVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
 import kr.kh.kihibooks.model.vo.SubCategoryVO;
 import kr.kh.kihibooks.pagination.PageInfo;
@@ -126,6 +129,13 @@ public class BookController {
                 .map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
                 .orElse("날짜 없음");
         List<BookVO> abList = bookService.getAuthorAnotherBook(bo_code);
+        List<NoticeVO> notiList = bookService.getNoticeList(bo_code);
+        List<BookVO> bestList10 = bookService.getBestList(bo_code);
+        List<BookVO> bestList5 = bookService.getBestList5(bo_code);
+        List<BuyListVO> buyList = bookService.getBuyList(customUser.getUser().getUr_num(), bo_code);
+        Set<String> buyCodeSet = buyList.stream().map(BuyListVO::getBl_ep_code).collect(Collectors.toSet());
+        List<BookKeywordVO> kwList = bookService.getKeywordList(bo_code);
+        System.out.println(kwList);
         
         model.addAttribute("book", book);
         model.addAttribute("epiList", epiList);
@@ -137,6 +147,12 @@ public class BookController {
         model.addAttribute("likedReviewIds", likedReviewIds);
         model.addAttribute("latestEpDate", latestDate);
         model.addAttribute("abList", abList);
+        model.addAttribute("notiList", notiList);
+        model.addAttribute("bestList10", bestList10);
+        model.addAttribute("bestList5", bestList5);
+        model.addAttribute("buyList", buyList);
+        model.addAttribute("buyCodeSet", buyCodeSet);
+        model.addAttribute("kwList", kwList);
 
         return "book/detail";
     }
@@ -286,7 +302,7 @@ public class BookController {
             @AuthenticationPrincipal CustomUser customUser) {
         int rvNum = payload.get("rv_num");
         int urNum = customUser.getUser().getUr_num();
-
+        System.out.println(rvNum + urNum);
         boolean liked = bookService.toggleLike(rvNum, urNum);
         Integer likeCount = bookService.getLikeCount(rvNum);
         System.out.println(likeCount);
@@ -294,6 +310,7 @@ public class BookController {
 
         result.put("liked", liked);
         result.put("likeCount", likeCount);
+        System.out.println(result);
 
         return result;
     }

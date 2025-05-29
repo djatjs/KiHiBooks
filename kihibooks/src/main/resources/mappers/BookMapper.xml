@@ -440,4 +440,40 @@
         select * from book
         where bo_au_num = #{au_num}
     </select>
+
+    <select id="getNoticeList" resultType="NoticeVO">
+        select * from notice
+        where nt_bo_code = #{bo_code}
+    </select>
+
+    <select id="getScCodeByBoCode" resultType="String">
+        select bo_sc_code from book
+        where bo_code = #{bo_code}
+    </select>
+
+    <select id="getBestList" resultType="BookVO">
+        select * from book
+        where bo_sc_code = #{sc_code}
+        order by (bo_total_rating / bo_review_count / 2.0) desc
+        limit 10
+    </select>
+
+    <select id="getBuyList" resultType="BuyListVO">
+        select * from buy_list
+        join episode on bl_ep_code = ep_code
+        where bl_ur_num = #{ur_num} and ep_bo_code = #{bo_code}
+    </select>
+
+    <select id="getBestList5" resultType="BookVO">
+        select * from book
+        where bo_sc_code = #{sc_code}
+        order by (bo_total_rating / bo_review_count / 2.0) desc
+        limit 5
+    </select>
+
+    <select id="getKeywordList" resultType="BookKeywordVO">
+        select *, kw_name AS bk_name from book_keyword
+        join keyword on bk_kw_code = kw_code
+        where bk_bo_code = #{bo_code}
+    </select>
 </mapper>

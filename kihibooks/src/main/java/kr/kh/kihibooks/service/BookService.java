@@ -13,10 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.kh.kihibooks.dao.BookDAO;
+import kr.kh.kihibooks.model.vo.BookKeywordVO;
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
+import kr.kh.kihibooks.model.vo.KeywordVO;
+import kr.kh.kihibooks.model.vo.NoticeVO;
 import kr.kh.kihibooks.model.vo.ReviewLikeVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
 import kr.kh.kihibooks.model.vo.SubCategoryVO;
@@ -98,7 +101,7 @@ public class BookService {
 
     public List<ReviewVO> getReviewList(String bo_code) {
         List<ReviewVO> rvList = bookDAO.selectReviewList(bo_code);
-        
+
         return rvList;
     }
 
@@ -149,19 +152,19 @@ public class BookService {
         // bo_code 생성 (출판사 코드 4자리 + 카테고리 2자리 + 도서번호 3자리) EX: P0001310001
         // 1. 출판사 코드 4자리
         String puCode = pu_code;
-        System.out.println("출판사 코드 : "+puCode);
+        System.out.println("출판사 코드 : " + puCode);
 
         // 2. 카테고리 2자리 : bo_sc_code
         String scCode = book.getBo_sc_code();
-        System.out.println("카테고리 : "+scCode);
+        System.out.println("카테고리 : " + scCode);
 
         // 3. 도서번호 3자리
-        String psCode = puCode+ scCode;
-        System.out.println("psCode : "+psCode);
+        String psCode = puCode + scCode;
+        System.out.println("psCode : " + psCode);
         String boNum = bookDAO.getLatestBoNum(psCode);
-        
+
         // 4. 생성된 bo_code 반환
-        String bo_code = psCode + boNum +"";
+        String bo_code = psCode + boNum + "";
         System.out.println(bo_code);
         book.setBo_code(bo_code);
         return bookDAO.insertBook(book);
@@ -191,7 +194,7 @@ public class BookService {
 
     public boolean insertReReview(ReviewVO review, CustomUser customUser) {
         if (review == null || customUser == null || review.getRv_content().isBlank()) {
-            System.out.println("대댓 : "+review);
+            System.out.println("대댓 : " + review);
             return false;
         }
         review.setRv_ur_num(customUser.getUser().getUr_num());
@@ -199,25 +202,24 @@ public class BookService {
         return bookDAO.insertReReview(review);
     }
 
-	public ReviewVO selectReply(ReviewVO review) {
+    public ReviewVO selectReply(ReviewVO review) {
         return bookDAO.selectReply(review);
-	}
+    }
 
-	public int getLikeCount(int rv_num) {
+    public int getLikeCount(int rv_num) {
         int likeCount = bookDAO.selectLikeCount(rv_num);
 
-		
         return likeCount;
-	}
+    }
 
     public boolean toggleLike(int rv_num, int ur_num) {
         ReviewLikeVO like = bookDAO.getLike(rv_num, ur_num);
-        if(like == null) {
+        if (like == null) {
             bookDAO.insertLike(rv_num, ur_num);
 
             return true;
         } else {
-            if(like.getRl_state() == 1) {
+            if (like.getRl_state() == 1) {
                 bookDAO.updateLikeState(rv_num, ur_num, 0);
                 return false;
             } else {
@@ -227,21 +229,45 @@ public class BookService {
         }
     }
 
-		public Set<Integer> getLikedReview(int ur_num) {
-			return bookDAO.selectLikedReview(ur_num);
-		}
+    public Set<Integer> getLikedReview(int ur_num) {
+        return bookDAO.selectLikedReview(ur_num);
+    }
 
-        public boolean deleteReview(int rv_num) {
-            return bookDAO.deleteReview(rv_num);
-        }
+    public boolean deleteReview(int rv_num) {
+        return bookDAO.deleteReview(rv_num);
+    }
 
-        public int countReview(String bo_code, int ur_num) {
-            return bookDAO.countReview(bo_code, ur_num);
-        }
+    public int countReview(String bo_code, int ur_num) {
+        return bookDAO.countReview(bo_code, ur_num);
+    }
 
-        public List<BookVO> getAuthorAnotherBook(String bo_code) {
-            int au_num = bookDAO.getAuthorNumByBocode(bo_code);
-            
-            return bookDAO.getAuthorAnotherBookList(au_num);
-        }
+    public List<BookVO> getAuthorAnotherBook(String bo_code) {
+        int au_num = bookDAO.getAuthorNumByBocode(bo_code);
+
+        return bookDAO.getAuthorAnotherBookList(au_num);
+    }
+
+    public List<NoticeVO> getNoticeList(String bo_code) {
+        return bookDAO.getNoticeList(bo_code);
+    }
+
+    public List<BookVO> getBestList(String bo_code) {
+        String sc_code = bookDAO.getScCodeByBoCode(bo_code);
+
+        return bookDAO.getBestList(sc_code);
+    }
+
+    public List<BuyListVO> getBuyList(int ur_num, String bo_code) {
+        return bookDAO.getBuyList(ur_num, bo_code);
+    }
+
+    public List<BookVO> getBestList5(String bo_code) {
+        String sc_code = bookDAO.getScCodeByBoCode(bo_code);
+
+        return bookDAO.getBestList5(sc_code);
+    }
+
+    public List<BookKeywordVO> getKeywordList(String bo_code) {
+        return bookDAO.getKeywordList(bo_code);
+    }
 }
