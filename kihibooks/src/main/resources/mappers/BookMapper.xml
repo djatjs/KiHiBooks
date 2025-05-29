@@ -52,7 +52,10 @@
         <result property="bo_adult" column="BO_ADULT" />
         <result property="bo_publish_date" column="BO_PUBLISH_DATE" />
         <result property="bo_total_episode" column="BO_TOTAL_EPISODE" />
-        <result property="bo_author" column="AU_NAME" />
+        <result property="au_name" column="AU_NAME"/>
+        <collection property="keywordList" ofType="KeywordVO"
+                column="BO_CODE"
+                select="selectKeywordListByBookCode" />
     </resultMap>
 
 
@@ -182,6 +185,18 @@
         GROUP BY BO_CODE
         ORDER BY recent_review_count DESC, BO_TOTAL_RATING DESC
         LIMIT #{size} OFFSET #{offset}
+    </select>
+    <select id="selectKeywordListByBookCode" resultType="KeywordVO">
+        SELECT 
+            kw_code, kw_name
+        FROM 
+            book_keyword
+        LEFT JOIN 
+            keyword 
+        ON 
+            bk_kw_code = kw_code
+        WHERE 
+            bk_bo_code = #{bo_code}
     </select>
     <select id="countBestBooks" resultType="int">
         SELECT

@@ -27,6 +27,5 @@ public class BookVO {
     private String bo_publisher;
     private String bo_main_cate;
     private String bo_sub_cate;
-    
     private List<KeywordVO> keywordList;
 }
