@@ -1,0 +1,14 @@
+<div>
+    <h2>출석 달력</h2>
+    <div th:each="day : ${calendarDays}">
+        <span th:text="${day}">날짜</span>
+    </div>
+</div>
+
+<p>출석일수: <span th:text="${attendanceCount}">0</span>일</p>
+<p>포인트: <span th:text="${totalPoint}">0</span>P</p>
+
+<div>
+    <button th:if="${!todayChecked}">출석하기</button>
+    <span th:if="${todayChecked}">오늘 출석 완료 ✅</span>
+</div>
