@@ -1,125 +1,136 @@
-    <!DOCTYPE html>
-    <html
-        xmlns:th="http://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        layout:decorate="~{layout/layout.html}">
+<!DOCTYPE html>
+<html
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/layout.html}">
 
-    <head>
-        <meta charset="UTF-8">
-        <title>KiHiBooks - 에피소드 등록</title>
-        <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-        <style>
-            .container {
-                max-width: 1200px;
-                margin: 20px auto;
-                padding: 0 20px;
-                font-family: 'Arial', sans-serif;
-            }
-            .register-work-page h2 {
-                color: #2c3e50;
-                margin-bottom: 20px;
-                border-bottom: 2px solid #ff7f50;
-                padding-bottom: 10px;
-                font-weight: bold;
-            }
-            .register-work-form {
-                background-color: #f8f9fa;
-                padding: 30px;
-                border-radius: 8px;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-            }
-            .form-group {
-                margin-bottom: 20px;
-            }
-            .form-label {
-                display: block;
-                margin-bottom: 8px;
-                font-weight: bold;
-                color: #34495e;
-            }
-            .form-group input[type="text"],
-            .form-group input[type="file"],
-            .form-group input[type="number"],
-            .form-group select {
-                width: 100%;
-                padding: 10px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                font-size: 14px;
-            }
-            .button-group {
-                margin-top: 30px;
-                text-align: center;
-            }
-            .button-group button {
-                padding: 10px 20px;
-                font-size: 1rem;
-                border: none;
-                border-radius: .25rem;
-                cursor: pointer;
-                margin: 0 5px;
-            }
-            .btn-primary {
-                background-color: #ff7f50;
-                color: white;
-            }
-            .btn-primary:hover {
-                background-color: #ff6347;
-            }
-            .btn-secondary {
-                background-color: #6c757d;
-                color: white;
-            }
-            .btn-secondary:hover {
-                background-color: #5a6268;
-            }
-            .upload-wrapper {
-                display: flex;
-                gap: 20px;
-                flex-wrap: wrap;
-            }
-            .upload-box {
-                flex: 1;
-                border: 2px dashed #b5b5d6;
-                border-radius: 12px;
-                padding: 30px;
-                text-align: center;
-                cursor: pointer;
-                transition: background-color 0.3s;
-                position: relative;
-            }
-            .upload-box:hover {
-                background-color: #f0f0fa;
-            }
-            .upload-box input[type="file"] {
-                display: none;
-            }
-            .upload-icon {
-                font-size: 40px;
-                color: #777;
-            }
-            .upload-text {
-                margin-top: 10px;
-                font-size: 15px;
-                color: #666;
-            }
-            .file-name {
-                margin-top: 5px;
-                font-weight: bold;
-                font-size: 14px;
-            }
-        </style>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <title>KiHiBooks - 에피소드 등록</title>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            font-family: 'Arial', sans-serif;
+        }
+        .register-work-page h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ff7f50;
+            padding-bottom: 10px;
+            font-weight: bold;
+        }
+        .register-work-form {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="file"],
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .button-group {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .button-group button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: .25rem;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        .btn-primary {
+            background-color: #ff7f50;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #ff6347;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        .upload-wrapper {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .upload-box {
+            flex: 1;
+            border: 2px dashed #ffbba1;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .upload-box:hover {
+            background-color: #ffebe3;
+        }
+        .upload-box input[type="file"] {
+            display: none;
+        }
+        .upload-icon {
+            font-size: 40px;
+            color: #777;
+        }
+        .upload-text {
+            margin-top: 10px;
+            font-size: 15px;
+            color: #666;
+        }
+        .file-name {
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        #epubFileName {
+            min-height: 20px; /* 최소 높이 설정 */
+            margin-top: 5px; /* 위에 간격 추가 */
+            /* 기타 스타일 (border, background 등) */
+        }
 
-    <body>
+    </style>
+</head>
+
+<body>
     <main layout:fragment="content">
         <div class="container register-work-page">
             <h2>📖 회차 등록</h2>
             <p>기존 작품에 회차를 등록하세요.</p>
 
-            <form action="/editor/registerEpisode/{bo_code}(bo_code=${bo_code})" method="post" enctype="multipart/form-data" class="register-work-form">
+            <form th:action="@{/editor/registerEpisode/{bo_code}(bo_code=${bo_code})}" method="post" enctype="multipart/form-data" class="register-work-form">
                 <input type="hidden" name="bo_code" th:value="${bo_code}">
 
                 <!-- 회차 제목 -->
@@ -138,13 +149,23 @@
                         <input type="file" name="epubFile" id="epubInput" accept=".epub" required>
                         <div class="file-name" id="epubFileName"></div>
                     </label>
-
                     <!-- 커버 이미지 -->
                     <label class="upload-box" id="coverBox">
                         <div class="upload-icon"><i class="fas fa-image"></i></div>
                         <div class="upload-text">커버 이미지 업로드</div>
                         <input type="file" name="coverImage" id="coverInput" accept="image/*" required>
                         <div class="file-name" id="coverFileName"></div>
+                    </label>
+                    <!-- 이미지 미리보기 커버 이미지 업로드시 나타나도록 설정 -->
+                    <label class="upload-box" id="coverPreviewBox">
+                        <div class="preview-box">
+                            <div class="before-upload">
+                                <div class="upload-icon"><i class="fas fa-image"></i></div>
+                                <div class="upload-text">커버 이미지 미리보기</div>
+                            </div>
+                            <div class="file-name" id="coverPreview"></div>
+                            <img id="coverPreviewImg" src="" alt="커버 이미지 미리보기" style="display: none; max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px;">
+                        </div>
                     </label>
                 </div>
 
@@ -161,72 +182,95 @@
                     <button type="button" class="btn btn-secondary" onclick="history.back()">취소</button>
                 </div>
             </form>
+            <script>
+                $("#epubInput").on("change", function(){
+                    const file = this.files[0];
+                    if (file) {
+                        $("#epubFileName").html(file.name);
+                    }
+                    else{
+                        $("#epubFileName").html("");
+                    }
+                })
+                $("#coverInput").on("change", function () {
+                    const file = this.files[0];
+                    if (file) {
+                        // 파일 이름 표시
+                        $("#coverFileName").html(file.name);
+
+                        // 이미지 미리보기 처리
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            $("#coverPreviewImg")
+                                .attr("src", e.target.result)
+                                .css("display", "block");
+                            $(".before-upload").attr("style", "display: none");
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        $("#coverFileName").html("");
+                        $("#coverPreviewImg").attr("src", "").css("display", "none");
+                    }
+                });
+            </script>
+            <!-- validate -->
+            <script>
+                $(".register-work-form").validate({
+                    rules: {
+                        ep_title: {
+                            required: true,
+                            maxlength: 100
+                        },
+                        epubFile: {
+                            required: true,
+                            extension: "epub"
+                        },
+                        coverImage: {
+                            required: true,
+                            extension: "jpg|jpeg|png|gif|bmp"
+                        },
+                        ep_price: {
+                            required: true,
+                            min: 0
+                        }
+                    },
+                    messages: {
+                        ep_title: {
+                            required: "회차 제목을 입력하세요.",
+                            maxlength: "100자 이내로 입력해주세요."
+                        },
+                        epubFile: {
+                            required: "EPUB 파일을 업로드하세요.",
+                            extension: "EPUB 파일만 업로드할 수 있습니다."
+                        },
+                        coverImage: {
+                            required: "커버 이미지를 업로드하세요.",
+                            extension: "이미지 파일만 업로드할 수 있습니다."
+                        },
+                        ep_price: {
+                            required: "가격을 입력하세요.",
+                            min: "0 이상의 값을 입력하세요."
+                        }
+                    },
+                    errorPlacement: function(error, element) {
+                        const target = $(`#${element.attr("id")}-error`);
+                        if (target.length) {
+                            target.html(error.text()).show();
+                        } else {
+                            error.insertAfter(element);
+                        }
+                    },
+                    success: function(label, element) {
+                        const target = $(`#${element.id}-error`);
+                        target.text("").hide();
+                    }
+                });
+            </script>
         </div>
     </main>
+    
 
-    <script>
-        document.getElementById("epubInput").addEventListener("change", function () {
-            const fileName = this.files.length > 0 ? this.files[0].name : "";
-            document.getElementById("epubFileName").textContent = fileName;
-            document.getElementById("epubUploadText").textContent = fileName ? "File Selected:" : "No Files Selected";
-        });
-
-        document.getElementById("coverInput").addEventListener("change", function () {
-            const fileName = this.files.length > 0 ? this.files[0].name : "";
-            document.getElementById("coverFileName").textContent = fileName;
-            document.getElementById("coverUploadText").textContent = fileName ? "File Selected:" : "No Files Selected";
-        });
-
-        $(".register-work-form").validate({
-            rules: {
-                ep_title: {
-                    required: true,
-                    maxlength: 100
-                },
-                epubFile: {
-                    required: true,
-                    extension: "epub"
-                },
-                coverImage: {
-                    required: true,
-                    extension: "jpg|jpeg|png|gif|bmp"
-                },
-                ep_price: {
-                    required: true,
-                    min: 0
-                }
-            },
-            messages: {
-                ep_title: {
-                    required: "회차 제목을 입력하세요.",
-                    maxlength: "100자 이내로 입력해주세요."
-                },
-                epubFile: {
-                    required: "EPUB 파일을 업로드하세요.",
-                    extension: "EPUB 파일만 업로드할 수 있습니다."
-                },
-                coverImage: {
-                    required: "커버 이미지를 업로드하세요.",
-                    extension: "이미지 파일만 업로드할 수 있습니다."
-                },
-                ep_price: {
-                    required: "가격을 입력하세요.",
-                    min: "0 이상의 값을 입력하세요."
-                }
-            },
-            errorPlacement: function(error, element) {
-                const target = $(`#${element.attr("id")}-error`);
-                if (target.length) {
-                    target.html(error.text()).show();
-                } else {
-                    error.insertAfter(element);
-                }
-            },
-            success: function(label, element) {
-                const target = $(`#${element.id}-error`);
-                target.text("").hide();
-            }
-        });
-    </script>
-    </body>
-    </html>
+    
+    
+</body>
+</html>

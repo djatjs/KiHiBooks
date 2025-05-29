@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.EditorVO;
@@ -174,8 +175,6 @@ public class PublisherContoller {
         model.addAttribute("bo_code", bo_code);
         model.addAttribute("book", book);
         model.addAttribute("epiList", epiList);
-        System.out.println(book);
-        System.out.println(epiList);
         return "/publisher/editor_manageEpisode";
     }
 
@@ -210,9 +209,12 @@ public class PublisherContoller {
         return "/publisher/editor_registerEpisode";
     }
     @PostMapping("/editor/registerEpisode/{bo_code}")
-    public String registerEpisodePost(@PathVariable String bo_code) {
-        System.out.println(bo_code);
-        return "redirect:/editor/manageEpisode/"+bo_code;
+    public String registerEpisodePost(@PathVariable String bo_code, EpisodeVO ep, MultipartFile epubFile, MultipartFile coverImage) {
+        System.out.println(ep);
+        if(bookService.insertEpisode(ep, bo_code, epubFile, coverImage)){
+            return "redirect:/editor/manageEpisode/"+bo_code;
+        }
+        return "redirect:/editor/registerEpisode/"+bo_code;
     }
     
 

@@ -9,8 +9,10 @@ import java.util.stream.Collectors;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.kh.kihibooks.dao.BookDAO;
 import kr.kh.kihibooks.dao.KeywordDAO;
@@ -24,6 +26,7 @@ import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.utils.CustomUser;
 import kr.kh.kihibooks.utils.PageConstants;
 import kr.kh.kihibooks.utils.PaginationUtils;
+import kr.kh.kihibooks.utils.UploadFileUtils;
 
 import static kr.kh.kihibooks.utils.PageConstants.*;
 
@@ -38,6 +41,9 @@ public class BookService {
 
     @Autowired
     SqlSession sqlSession;
+
+    @Value("${spring.path.upload}")
+    String uploadPath;
 
     private final String NAMESPACE = "kr.kh.kihibooks.dao.BookDAO.";
 
@@ -225,6 +231,48 @@ public class BookService {
         return bookDAO.selectReply(review);
 	}
 
+    public boolean insertEpisode(EpisodeVO ep, String bo_code, MultipartFile epubFile, MultipartFile coverImage) {
+        if(ep == null || epubFile == null || epubFile.getOriginalFilename().isEmpty() || coverImage == null || coverImage.getOriginalFilename().isEmpty()){
+            return false;
+        }
+        // 에피소드 코드 생성
+        String ep_code = bo_code+bookDAO.getLatestEpNum(bo_code);
+        // 썸네일 작업
+        String coverName = coverImage.getOriginalFilename();
+        String coverSuffix = getSuffix(coverName);
+        String newCoverName = ep_code + coverSuffix;
+        System.out.println(newCoverName);
+        // epub 파일 작업
+        String epubName = epubFile.getOriginalFilename();
+        String epubSuffix = getSuffix(epubName);
+        String newFilerName = ep_code + epubSuffix;
+        System.out.println(epubSuffix);
+        //설정한 값들 ep에 저장후 DB에 저장
+        ep.setEp_file_name(newFilerName);
+        ep.setEp_cover_img(newCoverName);
+        ep.setEp_bo_code(bo_code);
+        ep.setEp_code(ep_code);
+        
+        boolean res = bookDAO.insertEpisode(ep);
+        if(!res) {
+            return false;
+        }
+        String ep_cover_img;
+        String ep_file_name;
+        try{
+            ep_cover_img = UploadFileUtils.uploadFile(uploadPath, newCoverName, coverImage.getBytes(), bo_code+"/covers");
+            ep.setEp_cover_img(ep_cover_img);
+            ep_file_name = UploadFileUtils.uploadFile(uploadPath, newFilerName, epubFile.getBytes(), bo_code+"/epubs");
+            ep.setEp_file_name(ep_file_name);
+            bookDAO.updateEpisode(ep);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return true;
+    }
 
-
+    private String getSuffix(String fileName) {
+        int index = fileName.lastIndexOf(".");
+        return index < 0 ? null : fileName.substring(index);
+    }
 }

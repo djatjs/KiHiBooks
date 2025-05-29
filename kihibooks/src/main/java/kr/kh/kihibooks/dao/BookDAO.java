@@ -86,4 +86,10 @@ public interface BookDAO {
 
 	ReviewVO selectReply(ReviewVO review);
 
+    String getLatestEpNum(String bo_code);
+
+	boolean insertEpisode(EpisodeVO ep);
+	
+	void updateEpisode(EpisodeVO ep);
+
 }

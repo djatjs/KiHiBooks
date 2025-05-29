@@ -408,4 +408,36 @@
         order by rv_date desc
         limit 1
     </select>
+
+    <select id="getLatestEpNum" resultType="String">
+        SELECT LPAD(COUNT(*)+1,3,0) FROM episode
+        WHERE EP_BO_CODE=#{bo_code}
+    </select>
+    <insert id="insertEpisode">
+        insert into episode (ep_code, ep_title, ep_price, ep_bo_code, ep_file_name, ep_cover_img, ep_total_page)
+        values (#{ep_code}, #{ep_title}, #{ep_price}, #{ep_bo_code}, #{ep_file_name}, #{ep_cover_img}, 0)
+    </insert>
+    <update id="updateEpisode">
+        update episode
+        set
+            ep_title = #{ep_title},
+            <choose>
+                <when test="ep_file_name == null">
+                    ep_file_name = ep_file_name,
+                </when>
+                <otherwise>
+                    ep_file_name = #{ep_file_name},
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="ep_cover_img == null">
+                    ep_cover_img = ep_cover_img,
+                </when>
+                <otherwise>
+                    ep_cover_img = #{ep_cover_img},
+                </otherwise>
+            </choose>
+            ep_price = #{ep_price}
+        where ep_code = #{ep_code}
+    </update>
 </mapper>

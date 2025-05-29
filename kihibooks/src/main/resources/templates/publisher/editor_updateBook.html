@@ -31,7 +31,7 @@
             background-color: #f8f9fa;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
         /* 폼 그룹 스타일 */
         .form-group {
@@ -137,6 +137,9 @@
             background-color: #ff7f50;
             color: white;
         }
+        .form-group input:read-only{
+            background-color: #ffffff;
+        }
         
     </style>
 </head>
@@ -154,14 +157,14 @@
 
                 <!-- 작품 제목 -->
                 <div class="form-group">
-                    <label class="form-label" for="boTitle">작품 제목 <span style="color: red;">*</span></label>
+                    <label class="form-label" for="boTitle">작품 제목</label>
                     <input type="text" id="bo_title" name="bo_title" class="form-control" th:value="${book.bo_title}" readonly>
                     <label id="bo_title-error" style="color: red; font-size: 12px; display: none;"></label>
                 </div>
 
                 <!-- 저자명 -->
                 <div class="form-group">
-                    <label class="form-label" for="boAuthor">저자명 <span style="color: red;">*</span></label>
+                    <label class="form-label" for="boAuthor">저자명</label>
                     <input type="text" id="bo_author" name="bo_author" class="form-control" th:value="${book.bo_author}" readonly>
                     <label id="bo_author-error" style="color: red; font-size: 12px; display: none;"></label>
                 </div>
@@ -198,13 +201,13 @@
                 
                 <!-- 작품 소개 -->
                 <div class="form-group">
-                    <label class="form-label" for="bo_description">작품 소개</label>
+                    <label class="form-label" for="bo_description">작품 소개 <span style="color: red;">*</span></label>
                     <textarea id="bo_description" name="bo_description" class="form-control" th:text="${book.bo_description}" rows="6"></textarea>
                 </div>
 
                 <!-- 연재 주기 선택 -->
                 <div class="form-group">
-                    <label class="form-label" for="bo_serial_schedule">연재 주기</label>
+                    <label class="form-label" for="bo_serial_schedule">연재 주기 <span style="color: red;">*</span> </label>
                     <select id="bo_serial_schedule" name="bo_serial_schedule" class="form-control">
                         <option value="" th:selected="${book.bo_serial_schedule == ''}">-- 선택 안함 --</option>
                         <option value="월요연재" th:selected="${book.bo_serial_schedule == '월요연재'}">월요연재</option>
@@ -220,7 +223,7 @@
 
                 <!-- 연재 시작일 -->
                 <div class="form-group">
-                    <label class="form-label" for="boStartDate">연재 시작일</label>
+                    <label class="form-label" for="boStartDate">연재 시작일 <span style="color: red;">*</span> </label>
                     <input type="date" id="bo_publish_date" name="bo_publish_date" class="form-control" th:value="${book.bo_publish_date.substring(0, 10)}" />
                 </div>
 
@@ -255,7 +258,7 @@
                 </div>
                 <!-- 기다무 기간 (초기엔 숨김) -->
                 <div class="form-group" id="waitFreeDurationGroup" style="display: none;">
-                    <label class="form-label" for="bo_wff_date">기다무 기간<span style="color: red;">*</span></label>
+                    <label class="form-label" for="bo_wff_date">기다무 기간 <span style="color: red;">*</span></label>
                     <input type="number" id="bo_wff_date" name="bo_wff_date" th:value="${book.bo_wff_date}" class="form-control">
                     <small class="form-text text-muted">ex) 1 : 1일</small>
                 </div>
@@ -269,7 +272,7 @@
 
                 <!-- 키워드 -->
                 <div class="form-group">
-                    <label class="form-label" for="bo_keywords">키워드</label>
+                    <label class="form-label" for="bo_keywords">키워드 <span style="color: red;">*</span></label>
                     <div class="keyword-list">
                         <h5>선택된 키워드:</h5>
                         <div class="selected-keywords" id="selected-keywords-area">
