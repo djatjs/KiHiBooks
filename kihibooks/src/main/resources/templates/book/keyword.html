@@ -6,6 +6,7 @@
   <meta charset="UTF-8">
   <title>키워드 검색</title>
   <style>
+
     .keyword-table {
       width: 100%;
       border-top: 1px solid #ccc;
@@ -132,43 +133,44 @@
       font-size: 20px;
       color: #999;
     }
+    .page-btn {
+      padding: 6px 12px;
+      margin: 0 4px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      cursor: pointer;
+    }
+    .page-btn.active {
+      background-color: #ff7f50;
+      color: #fff;
+      font-weight: bold;
+    }
+
+
   </style>
 </head>
-
 <body>
-  <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{layout/layout.html}">
+  <div class="container" layout:fragment="content">
 
-<head>
-  <meta charset="UTF-8">
-  <title>키워드 검색</title>
-  <!-- 기존 style 생략 -->
-</head>
-
-<body>
-  <section class="container" layout:fragment="content">
     <h3>웹소설 키워드 검색</h3>
 
+    <!-- 키워드 테이블 영역 -->
     <table class="keyword-table">
       <tbody>
         <tr th:each="category, stat : ${keywordCategories}">
           <th th:text="${category.kc_name}">카테고리</th>
           <td>
             <div class="keyword-scroll-wrapper">
-              <button class="arrow-btn left" th:attr="data-target='kw-scroll-' + ${stat.index}"
-                onclick="scrollKeywordRow(this, -1)">
+              <button class="arrow-btn left" th:attr="data-target='kw-scroll-' + ${stat.index}" onclick="scrollKeywordRow(this, -1)">
                 <img src="/resources/static/img/back.png" alt="이전">
               </button>
               <div class="keyword-scroll" th:attr="id='kw-scroll-' + ${stat.index}">
                 <span th:each="keyword : ${category.keywordList}" th:text="${keyword.kw_name}"
                   th:data-id="${keyword.kw_code}" th:data-name="${keyword.kw_name}" class="keyword-tag"
-                  th:classappend="${selectedKeywordIds != null and selectedKeywordIds.contains(keyword.kw_code)} ? 'selected' : ''"
-                  onclick="toggleKeyword(this)">
+                  th:classappend="${selectedKeywordIds != null and selectedKeywordIds.contains(keyword.kw_code)} ? 'selected' : ''">
                 </span>
               </div>
-              <button class="arrow-btn right" th:attr="data-target='kw-scroll-' + ${stat.index}"
-                onclick="scrollKeywordRow(this, 1)">
+              <button class="arrow-btn right" th:attr="data-target='kw-scroll-' + ${stat.index}" onclick="scrollKeywordRow(this, 1)">
                 <img src="/resources/static/img/next.png" alt="다음">
               </button>
             </div>
@@ -177,26 +179,32 @@
       </tbody>
     </table>
 
-    <div id="selectedKeywordsContainer" style="margin-top: 30px; display: none;">
-      <h4>선택된 키워드</h4>
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div id="selectedKeywords" class="selected-keyword-list"></div>
-        <button id="resetBtn" class="reset-btn" onclick="resetKeywords()">전체해제</button>
+    <!-- Ajax 갱신 대상: 이 영역만 fragment로 교체됨 -->
+    <div id="bookResultContainer" th:fragment="bookResultFragment">
+      <div id="selectedKeywordsContainer" style="margin-top: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div id="selectedKeywords" class="selected-keyword-list">
+            <span th:each="kw:${selectedKeywords}" th:text="${kw.kw_name}" th:attr="data-id=${kw.kw_code}" class="selected-keyword">
+            </span>
+          </div>
+          <button id="resetBtn" class="reset-btn" onclick="resetKeywords()">전체해제</button>
+        </div>
       </div>
-    </div>
 
-    <div id="bookResultContainer" th:fragment="bookResultContainer">
+      <!-- 케이스 1: 아무 키워드도 선택 안 함 -->
       <div th:if="${selectedKeywordIds == null or #lists.isEmpty(selectedKeywordIds)}" class="no-result-box">
         <img src="/resources/static/img/emptykeyword.png" class="no-result-img">
         <div class="no-result-msg">키워드를 선택해 작품을 검색해보세요</div>
       </div>
 
-      <div th:if="${selectedKeywordIds != null and not #lists.isEmpty(selectedKeywordIds)} and ${bookList == null or #lists.isEmpty(bookList)}" class="no-result-box">
-        <div class="no-result-msg">선택한 키워드에 해당하는 작품이 없습니다. </div>
-        <div class="no-result-msg">원하는 키워드를 다시 검색해보세요.  </div>
+      <!-- 케이스 2: 키워드는 있으나 도서 없음 -->
+      <div th:if="${selectedKeywordIds != null and not #lists.isEmpty(selectedKeywordIds) and #lists.isEmpty(bookList)}" class="no-result-box">
+        <div class="no-result-msg">선택한 키워드에 해당하는 작품이 없습니다.</div>
+        <div class="no-result-msg">원하는 키워드를 다시 검색해보세요.</div>
       </div>
 
-      <div th:if="${selectedKeywordIds != null and not #lists.isEmpty(selectedKeywordIds)} and ${bookList != null and not #lists.isEmpty(bookList)}">
+      <!-- 케이스 3: 도서 결과 있음 -->
+      <div th:if="${selectedKeywordIds != null and not #lists.isEmpty(selectedKeywordIds) and not #lists.isEmpty(bookList)}">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px;">
           <div th:text="${pageInfo.totalCount} + '개의 작품'"></div>
           <select onchange="changeSort(this.value)">
@@ -206,18 +214,18 @@
             <option value="review" th:selected="${sort == 'review'}">리뷰많은 순</option>
           </select>
         </div>
-        <div th:if="${bookList != null}" th:each="book : ${bookList}" style="display: flex; padding: 20px 0; border-bottom: 1px solid #eee; gap: 16px;">
+
+        <!-- 도서 리스트 -->
+        <div th:each="book : ${bookList}" style="display: flex; padding: 20px 0; border-bottom: 1px solid #eee; gap: 16px;">
           <div style="width: 100px; height: 140px; flex-shrink: 0; position: relative;">
-            <img th:src="@{'/resources/static/img/default_thumb.png'}" alt="썸네일" 
-              style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
-            <div th:if="${book.bo_adult == 1}"
-              style="position: absolute; top: 4px; right: 4px; background: red; color: white; font-size: 11px; padding: 2px 6px; border-radius: 10px;">19</div>
+            <img th:src="@{'/resources/static/img/default_thumb.png'}" alt="썸네일" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
+            <div th:if="${book.bo_adult == 1}" style="position: absolute; top: 4px; right: 4px; background: red; color: white; font-size: 11px; padding: 2px 6px; border-radius: 10px;">19</div>
           </div>
           <div style="flex: 1;">
             <div style="font-size: 16px; font-weight: bold;" th:text="${book.bo_title}">제목</div>
             <div style="font-size: 13px; color: #666;" th:text="${book.bo_author} + ' · 총 ' + ${book.bo_total_episode} + '화'">작가정보</div>
             <div style="font-size: 13px; color: #d00; margin: 4px 0;">
-              ★<span th:text="${book.bo_total_rating != null ? #numbers.formatDecimal((book.bo_total_rating / book.bo_review_count) / 2.0, 1, 1) : '0.0'}">0.0</span>
+              ★<span th:text="${book.bo_total_rating != null and book.bo_review_count > 0 ? #numbers.formatDecimal((book.bo_total_rating / book.bo_review_count) / 2.0, 1, 1) : '0.0'}">0.0</span>
               <span style="color: #999;">(<span th:text="${book.bo_review_count}">리뷰 수</span>)</span>
             </div>
             <div style="font-size: 13px; color: #333; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" th:text="${book.bo_description}">
@@ -230,136 +238,213 @@
             </div>
           </div>
         </div>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination" th:if="${pageInfo.totalPages > 1}" id="paginationContainer">
+          <a th:if="${pageInfo.currentPage > 1}"
+             th:href="@{/book/keyword(sort=${sort}, page=${pageInfo.currentPage - 1}, keywordIds=${selectedKeywordIds})}"
+             class="page-btn">&laquo;</a>
+          <span th:each="i : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}">
+            <a th:href="@{/book/keyword(sort=${sort}, page=${i}, keywordIds=${selectedKeywordIds})}"
+               th:class="${pageInfo.currentPage == i} ? 'page-btn active' : 'page-btn'"
+               th:text="${i}">1</a>
+          </span>
+          <a th:if="${pageInfo.currentPage < pageInfo.totalPages}"
+             th:href="@{/book/keyword(sort=${sort}, page=${pageInfo.currentPage + 1}, keywordIds=${selectedKeywordIds})}"
+             class="page-btn">&raquo;</a>
+        </div>
       </div>
     </div>
-  </section>
-
+  </div>
   <div layout:fragment="script">
     <script>
-    function toggleKeyword(el) {
-      el.classList.toggle('selected');
+      // 공통 초기화 함수
+      function initKeywordPage() {
+        document.querySelectorAll(".keyword-scroll").forEach(div => {
+          updateArrows(div, div.id);
+        });
 
-      const id = el.dataset.id;
-      const url = new URL(window.location.href);
-      const params = new URLSearchParams(url.search);
-      let keywordIds = params.getAll("keywordIds");
-
-      if (el.classList.contains("selected")) {
-        if (!keywordIds.includes(id)) keywordIds.push(id);
-      } else {
-        keywordIds = keywordIds.filter(kw => kw !== id);
+        const urlParams = new URLSearchParams(window.location.search);
+        const keywordIds = urlParams.getAll("keywordIds");
+        renderSelectedKeywords(keywordIds);
       }
 
-      updateKeywordResult(keywordIds, params.get("sort") || "recent", 1);
-    }
+      // DOMContentLoaded 시점에도 초기화
+      window.addEventListener("DOMContentLoaded", initKeywordPage);
 
-    function resetKeywords() {
-      const url = new URL(window.location.href);
-      const params = new URLSearchParams(url.search);
-      const sort = params.get("sort") || "recent";
-      document.querySelectorAll(".keyword-tag.selected").forEach(span => span.classList.remove("selected"))
-      updateKeywordResult([], sort, 1);
-    }
+      // 키워드 클릭 토글
+      function toggleKeyword(el) {
+        const id = el.dataset.id;
+        const sort = new URLSearchParams(window.location.search).get("sort") || "recent";
 
-    function updateKeywordResult(keywordIds, sort, page) {
-      const query = new URLSearchParams();
-      keywordIds.forEach(id => query.append("keywordIds", id));
-      query.set("sort", sort);
-      query.set("page", page);
+        const urlParams = new URLSearchParams(window.location.search);
+        let keywordIds = urlParams.getAll("keywordIds");
 
-      $.ajax({
-        url: "/book/keyword/fragment",
-        method: "GET",
-        data: query.toString(),
-        success: function (html) {
-          $("#bookResultContainer").html(html);
-          history.replaceState(null, "", `/book/keyword?${query.toString()}`);
-          renderSelectedKeywords(keywordIds); // 선택된 키워드 UI 업데이트
-        },
-        error: function(xhr){
-          console.error("ajax 오류", xhr.status, xhr.responseText);
-          $("#bookResultContainer").html("<div style='padding:40px; text-align:center;'>데이터를 불러오는 중 오류가 발생했습니다.</div>")
-        }
-      });
-    }
-
-    function renderSelectedKeywords(keywordIds) {
-      const container = document.getElementById("selectedKeywordsContainer");
-      const list = document.getElementById("selectedKeywords");
-      if (!container || !list) return;
-
-      list.innerHTML = "";
-
-      if (keywordIds.length === 0) {
-        container.style.display = "none";
-        document.getElementById('resetBtn').classList.remove('visible');
-        return;
-      }
-
-      container.style.display = "block";
-
-      document.querySelectorAll(".keyword-tag").forEach(span => {
-        const id = span.dataset.id;
-        span.classList.remove("selected");
+        // 중복 제거 및 토글 로직
         if (keywordIds.includes(id)) {
-          span.classList.add("selected");
-          const name = span.textContent.trim();
-          const div = document.createElement("div");
-          div.className = "selected-keyword";
-          div.innerHTML = `${name} <button class="remove-btn" data-id="${id}">&times;</button>`;
-          list.appendChild(div);
+          keywordIds = keywordIds.filter(kw => kw !== id);
+        } else {
+          keywordIds.push(id);
         }
-      });
+        updateKeywordResult(keywordIds, sort, 1);
+      }
 
-      document.getElementById('resetBtn').classList.add('visible');
-    }
+      // 전체 해제
+      function resetKeywords() {
+        const sort = new URLSearchParams(window.location.search).get("sort") || "recent";
+        updateKeywordResult([], sort, 1);
+        renderSelectedKeywords([]); // 키워드 초기화
+      }
 
-    function scrollKeywordRow(btn, direction) {
-      const targetId = btn.dataset.target;
-      const scrollDiv = document.getElementById(targetId);
-      if (!scrollDiv) return;
-      const amount = 180 * direction;
-      scrollDiv.scrollBy({ left: amount, behavior: 'smooth' });
-      setTimeout(() => updateArrows(scrollDiv, targetId), 300);
-    }
+      // Ajax 로딩 후 HTML 갱신
+      function updateKeywordResult(keywordIds, sort, page) {
+        const query = new URLSearchParams();
+        keywordIds.forEach(id => query.append("keywordIds", id));
+        query.set("sort", sort);
+        query.set("page", page);
 
-    function updateArrows(container, id) {
-      const leftBtn = document.querySelector(`.arrow-btn.left[data-target="${id}"]`);
-      const rightBtn = document.querySelector(`.arrow-btn.right[data-target="${id}"]`);
-      if (leftBtn) leftBtn.style.display = container.scrollLeft <= 10 ? 'none' : 'flex';
-      if (rightBtn) rightBtn.style.display = (container.scrollLeft + container.offsetWidth >= container.scrollWidth - 10) ? 'none' : 'flex';
-    }
+        $.ajax({
+          url: "/book/keyword/updated", // ← 프래그먼트 리턴용 GET 매핑
+          method: "GET",
+          data: query.toString(),
+          success: function (html) {
+            console.log("✅ Ajax 성공", keywordIds);
 
-    window.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.keyword-scroll').forEach(div => {
-        updateArrows(div, div.id);
-      });
+            // 1. 응답 전체 HTML에서 #bookResultContainer DOM 자체를 추출해서 통째로 교체
+            const newContainer = $("<div>").html(html).find("#bookResultContainer");
+            $("#bookResultContainer").replaceWith(newContainer);
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const keywordIds = urlParams.getAll("keywordIds");
+            console.log("✅ bookResultContainer 갱신 완료");
 
-      renderSelectedKeywords(keywordIds); // 초기 렌더링
+            renderSelectedKeywords(keywordIds);
 
-      const selectedList = document.getElementById("selectedKeywords");
-      selectedList.addEventListener("click", (e) => {
-        if (e.target.classList.contains("remove-btn")) {
+            document.querySelectorAll(".keyword-tag").forEach(tag => {
+              const id = tag.dataset.id;
+              if (keywordIds.includes(id)) {
+                tag.classList.add("selected");
+              } else {
+                tag.classList.remove("selected");
+              }
+            });
+
+            // 3. 주소창 갱신
+            history.replaceState(null, "", `/book/keyword?${query.toString()}`);
+          },
+          error: function (xhr) {
+            console.error("❌ Ajax 오류", xhr.status, xhr.responseText);
+          }
+        });
+      }
+
+
+
+      // 선택 키워드 하단 렌더링
+      function renderSelectedKeywords(keywordIds) {
+        console.log("🔥 renderSelectedKeywords 실행됨", keywordIds);
+
+        const container = document.getElementById("selectedKeywords");
+        const resetBtn = document.getElementById("resetBtn");
+        if (!container) {
+          console.warn("🚨 selectedKeywords 컨테이너 없음");
+          return;
+        }
+
+        container.innerHTML = "";
+        keywordIds.forEach(id => {
+          const keywordName = getKeywordNameById(id); // 미리 맵핑된 이름 가져오는 함수
+          const span = document.createElement("span");
+          span.className = "selected-keyword";
+          span.dataset.id = id;
+          span.textContent = keywordName;
+
+          const removeBtn = document.createElement("button");
+          removeBtn.className = "remove-btn";
+          removeBtn.dataset.id = id;
+          removeBtn.innerHTML = "&times;";
+          span.appendChild(removeBtn);
+          
+          container.appendChild(span);
+        });
+
+        document.getElementById("resetBtn").classList.toggle("visible", keywordIds.length > 0);
+      }
+
+
+      // 이벤트 위임: 키워드 클릭, 제거, 전체해제
+      document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("keyword-tag")) {
+          toggleKeyword(e.target);
+        } else if (e.target.classList.contains("remove-btn")) {
           const idToRemove = e.target.dataset.id;
-          const remainIds = keywordIds.filter(id => id !== idToRemove);
-          const sort = urlParams.get("sort") || "recent";
-          updateKeywordResult(remainIds, sort, 1);
+          const selectedKeywordSpans = document.querySelectorAll(".selected-keyword");
+          let keywordIds = Array.from(selectedKeywordSpans)
+          .map(span => span.dataset.id)
+          .filter(id => id !== idToRemove);
+
+          const sort = new URLSearchParams(window.location.search).get("sort") || "recent";
+          updateKeywordResult(keywordIds, sort, 1);
+        } else if (e.target.id === "resetBtn") {
+          resetKeywords();
         }
       });
-    });
 
-    function changeSort(value) {
-      const url = new URL(window.location.href);
-      const params = url.searchParams;
-      const keywordIds = params.getAll("keywordIds");
-      updateKeywordResult(keywordIds, value, 1);
+      // 정렬 변경
+      function changeSort(value) {
+        const selectedTags = document.querySelectorAll(".keyword-tag.selected");
+        const keywordIds = Array.from(selectedTags).map(tag => tag.dataset.id);
+        updateKeywordResult(keywordIds, value, 1);
+      }
+
+      // 좌우 스크롤
+      function scrollKeywordRow(btn, direction) {
+        const targetId = btn.dataset.target;
+        const scrollDiv = document.getElementById(targetId);
+        if (!scrollDiv) return;
+
+        const amount = 180 * direction;
+        scrollDiv.scrollBy({ left: amount, behavior: 'smooth' });
+
+        setTimeout(() => updateArrows(scrollDiv, targetId), 300);
+      }
+
+      function updateArrows(container, id) {
+        const leftBtn = document.querySelector(`.arrow-btn.left[data-target="${id}"]`);
+        const rightBtn = document.querySelector(`.arrow-btn.right[data-target="${id}"]`);
+        if (leftBtn) leftBtn.style.display = container.scrollLeft <= 10 ? 'none' : 'flex';
+        if (rightBtn) rightBtn.style.display = (container.scrollLeft + container.offsetWidth >= container.scrollWidth - 10) ? 'none' : 'flex';
+      }
+      function updatePagination(pageInfo) {
+        const paginationContainer = document.getElementById("paginationContainer");
+        if (!paginationContainer) return;
+        
+        let paginationHtml = '';
+        
+        // 이전 페이지
+        if (pageInfo.currentPage > 1) {
+            paginationHtml += `<a href="?page=${pageInfo.currentPage - 1}" class="page-btn">&laquo;</a>`;
+        }
+        
+        // 페이지 번호
+        for (let i = pageInfo.startPage; i <= pageInfo.endPage; i++) {
+            paginationHtml += `<a href="?page=${i}" class="page-btn ${i === pageInfo.currentPage ? 'active' : ''}">${i}</a>`;
+        }
+        
+        // 다음 페이지
+        if (pageInfo.currentPage < pageInfo.totalPages) {
+            paginationHtml += `<a href="?page=${pageInfo.currentPage + 1}" class="page-btn">&raquo;</a>`;
+        }
+
+        paginationContainer.innerHTML = paginationHtml;
     }
-  </script>
+    function getKeywordNameById(id) {
+      const allTags = document.querySelectorAll(".keyword-tag");
+      for (const tag of allTags) {
+        if (tag.dataset.id === id) return tag.dataset.name;
+      }
+      return id;
+    }
 
-
+    </script>
   </div>
 </body>
 </html>

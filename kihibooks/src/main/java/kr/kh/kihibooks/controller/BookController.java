@@ -22,10 +22,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
+import kr.kh.kihibooks.model.vo.KeywordVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
 import kr.kh.kihibooks.model.vo.SubCategoryVO;
 import kr.kh.kihibooks.pagination.PageInfo;
@@ -177,32 +179,74 @@ public class BookController {
     }
 
     @GetMapping("/book/keyword")
-    public String searchBooksByKeywords(
-            @RequestParam(required = false) List<String> keywordIds,
-            @RequestParam(defaultValue = "recent") String sort,
-            @RequestParam(defaultValue = "1") int page,
-            Model model) {
-
-        // 키워드 카테고리 + 키워드 리스트 조회
+    public String keywordSearchPage(
+        @RequestParam(value = "keywordIds", required = false) List<String> keywordIds,
+        @RequestParam(defaultValue = "recent") String sort,
+        @RequestParam(defaultValue = "1") int page,
+        Model model,
+        HttpServletRequest request
+    ) {
+        // 1. 키워드 카테고리 + 키워드 리스트
         List<KeywordCategoryVO> keywordCategories = keywordService.getAllKeywordCategories();
         model.addAttribute("keywordCategories", keywordCategories);
+        model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
 
-        // 키워드로 필터링된 도서 리스트 + 페이지네이션 처리
+        // 2. 검색 결과 도서 리스트
         PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
-        model.addAttribute("pageInfo", pageInfo);
         model.addAttribute("bookList", pageInfo.getContent());
-        System.out.println(pageInfo.getContent().size());
-        for (BookVO b : pageInfo.getContent()) {
-            System.out.println(b.getBo_title());
+        model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("selectedKeywordIds", keywordIds);
+
+        System.out.println("bookList size: " + pageInfo.getContent().size());  // 책 리스트 사이즈 확인
+        System.out.println("bookList: " + pageInfo.getContent()); 
+
+        List<KeywordVO> selectedKeywords = keywordService.getSelectedKeywordsPreserveOrder(keywordIds);
+        model.addAttribute("selectedKeywords", selectedKeywords);
+
+        // 3. Ajax 요청 여부 판별 (헤더로 구분)
+        String requestedWith = request.getHeader("X-Requested-With");
+        if ("XMLHttpRequest".equals(requestedWith)) {
+            // Ajax 요청에 대해서만 갱신된 HTML 반환
+            return "book/keyword :: bookResultFragment";
         }
 
-        // 현재 선택 상태 전달
-        model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
-        model.addAttribute("sort", sort);
-
+        // 최초 접속 or 전체 페이지 렌더링
         return "book/keyword";
     }
 
+    @GetMapping("/book/keyword/updated")
+    public String updatedKeywordSearchPage(
+        @RequestParam(value = "keywordIds", required = false) List<String> keywordIds,
+        @RequestParam(defaultValue = "recent") String sort,
+        @RequestParam(defaultValue = "1") int page,
+        Model model,
+        HttpServletRequest request
+    ) {
+        // 1. 키워드 카테고리 + 키워드 리스트
+        List<KeywordCategoryVO> keywordCategories = keywordService.getAllKeywordCategories();
+        model.addAttribute("keywordCategories", keywordCategories);
+        model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
+
+        // 2. 검색 결과 도서 리스트
+        PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
+        model.addAttribute("bookList", pageInfo.getContent());
+        model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("selectedKeywordIds", keywordIds);
+
+        System.out.println("bookList size: " + pageInfo.getContent().size());  // 책 리스트 사이즈 확인
+        System.out.println("bookList: " + pageInfo.getContent()); 
+
+        List<KeywordVO> selectedKeywords = keywordService.getSelectedKeywordsPreserveOrder(keywordIds);
+        model.addAttribute("selectedKeywords", selectedKeywords);
+
+        // Ajax 요청에 대해 fragment만 리턴
+        return "book/keyword :: bookResultFragment";
+    }
+
+
+
+
+    
     @ResponseBody
     @GetMapping("/book/getSubCategory")
     public List<SubCategoryVO> getSubCategory(@RequestParam int mainCategoryValue) {
@@ -215,24 +259,6 @@ public class BookController {
         }
         return null;
     }
-    @GetMapping("/book/keyword/fragment")
-    public String getKeywordSearchFragment(
-            @RequestParam(required = false) List<String> keywordIds,
-            @RequestParam(defaultValue = "recent") String sort,
-            @RequestParam(defaultValue = "1") int page,
-            Model model) {
-
-        PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
-        model.addAttribute("pageInfo", pageInfo);
-        model.addAttribute("bookList", pageInfo != null ? pageInfo.getContent() : new ArrayList<>());
-        model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
-        model.addAttribute("sort", sort);
-
-        return "book/keyword :: #bookResultContainer";
-    }
-
-    
-    
 
     @GetMapping("/review/sort")
     public String getSortedReview(@RequestParam String sort, @RequestParam("bo_code") String bo_code, Model model) {
