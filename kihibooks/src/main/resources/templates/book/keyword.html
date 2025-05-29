@@ -308,16 +308,10 @@
           method: "GET",
           data: query.toString(),
           success: function (html) {
-            console.log("✅ Ajax 성공", keywordIds);
-
-            // 1. 응답 전체 HTML에서 #bookResultContainer DOM 자체를 추출해서 통째로 교체
+            // 응답 전체 HTML에서 #bookResultContainer DOM 자체를 추출해서 통째로 교체
             const newContainer = $("<div>").html(html).find("#bookResultContainer");
             $("#bookResultContainer").replaceWith(newContainer);
-
-            console.log("✅ bookResultContainer 갱신 완료");
-
             renderSelectedKeywords(keywordIds);
-
             document.querySelectorAll(".keyword-tag").forEach(tag => {
               const id = tag.dataset.id;
               if (keywordIds.includes(id)) {
@@ -326,29 +320,22 @@
                 tag.classList.remove("selected");
               }
             });
-
-            // 3. 주소창 갱신
+            // 주소창 갱신
             history.replaceState(null, "", `/book/keyword?${query.toString()}`);
           },
           error: function (xhr) {
-            console.error("❌ Ajax 오류", xhr.status, xhr.responseText);
+            console.error("Ajax 오류", xhr.status, xhr.responseText);
           }
         });
       }
-
-
-
       // 선택 키워드 하단 렌더링
       function renderSelectedKeywords(keywordIds) {
-        console.log("🔥 renderSelectedKeywords 실행됨", keywordIds);
-
         const container = document.getElementById("selectedKeywords");
         const resetBtn = document.getElementById("resetBtn");
         if (!container) {
-          console.warn("🚨 selectedKeywords 컨테이너 없음");
+          console.warn("selectedKeywords 컨테이너 없음");
           return;
         }
-
         container.innerHTML = "";
         keywordIds.forEach(id => {
           const keywordName = getKeywordNameById(id); // 미리 맵핑된 이름 가져오는 함수
@@ -368,8 +355,6 @@
 
         document.getElementById("resetBtn").classList.toggle("visible", keywordIds.length > 0);
       }
-
-
       // 이벤트 위임: 키워드 클릭, 제거, 전체해제
       document.addEventListener("click", function (e) {
         if (e.target.classList.contains("keyword-tag")) {
@@ -387,14 +372,12 @@
           resetKeywords();
         }
       });
-
       // 정렬 변경
       function changeSort(value) {
         const selectedTags = document.querySelectorAll(".keyword-tag.selected");
         const keywordIds = Array.from(selectedTags).map(tag => tag.dataset.id);
         updateKeywordResult(keywordIds, value, 1);
       }
-
       // 좌우 스크롤
       function scrollKeywordRow(btn, direction) {
         const targetId = btn.dataset.target;
@@ -406,7 +389,6 @@
 
         setTimeout(() => updateArrows(scrollDiv, targetId), 300);
       }
-
       function updateArrows(container, id) {
         const leftBtn = document.querySelector(`.arrow-btn.left[data-target="${id}"]`);
         const rightBtn = document.querySelector(`.arrow-btn.right[data-target="${id}"]`);
@@ -443,7 +425,6 @@
       }
       return id;
     }
-
     </script>
   </div>
 </body>
