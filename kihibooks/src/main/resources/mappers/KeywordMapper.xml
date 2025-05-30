@@ -32,4 +32,15 @@
 		delete from book_keyword
 		where bk_bo_code = #{bk_bo_code}
 	</delete>
+	<select id="selectKeywordsByIds" resultType="KeywordVO">
+		SELECT
+			kw_code, kw_name
+		FROM 
+			keyword
+		WHERE 
+			kw_code IN
+		<foreach collection="keywordIds" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
 </mapper>

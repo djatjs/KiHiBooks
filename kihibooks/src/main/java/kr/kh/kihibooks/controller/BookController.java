@@ -1,11 +1,18 @@
 package kr.kh.kihibooks.controller;
 
+import java.security.Principal;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -22,10 +29,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import kr.kh.kihibooks.model.vo.BookKeywordVO;
+import jakarta.servlet.http.HttpServletRequest;
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
+import kr.kh.kihibooks.model.vo.KeywordVO;
+import kr.kh.kihibooks.model.vo.NoticeVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
 import kr.kh.kihibooks.model.vo.SubCategoryVO;
 import kr.kh.kihibooks.pagination.PageInfo;
@@ -86,25 +97,63 @@ public class BookController {
     }
 
     @GetMapping("/books/{bo_code}")
-    public String bookDetail(Model model, @PathVariable String bo_code) {
+    public String bookDetail(Model model, @PathVariable String bo_code,
+            @AuthenticationPrincipal CustomUser customUser) {
         BookVO book = bookService.getBook(bo_code);
         List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
         List<ReviewVO> rvList = bookService.getReviewList(bo_code);
         Map<Integer, Double> rating = bookService.calcRating(rvList);
         Map<Integer, Integer> replyCountMap = new HashMap<>();
-
         for (ReviewVO r : rvList) {
             int oriNum = r.getRv_ori_num();
             if (oriNum != 0) { // 댓글이면
                 replyCountMap.put(oriNum, replyCountMap.getOrDefault(oriNum, 0) + 1);
             }
         }
+        long freeCount = epiList.stream().filter(e -> e.getEp_price() == 0).count();
+        Map<Integer, Integer> likeCountMap = new HashMap<>();
+        for (ReviewVO review : rvList) {
+            int rvNum = review.getRv_num();
+            int likeCount = bookService.getLikeCount(rvNum);
+            likeCountMap.put(rvNum, likeCount);
+        }
+        Set<Integer> likedReviewIds = new HashSet<>();
+        if (customUser != null) {
+            int ur_num = customUser.getUser().getUr_num();
+            likedReviewIds = bookService.getLikedReview(ur_num);
+        }
+        Optional<Timestamp> latestDateOpt = epiList.stream()
+                .map(EpisodeVO::getEp_date)
+                .max(Comparator.naturalOrder());
+
+        String latestDate = latestDateOpt
+                .map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
+                .orElse("날짜 없음");
+        List<BookVO> abList = bookService.getAuthorAnotherBook(bo_code);
+        List<NoticeVO> notiList = bookService.getNoticeList(bo_code);
+        List<BookVO> bestList10 = bookService.getBestList(bo_code);
+        List<BookVO> bestList5 = bookService.getBestList5(bo_code);
+        List<BuyListVO> buyList = bookService.getBuyList(customUser.getUser().getUr_num(), bo_code);
+        Set<String> buyCodeSet = buyList.stream().map(BuyListVO::getBl_ep_code).collect(Collectors.toSet());
+        List<BookKeywordVO> kwList = bookService.getKeywordList(bo_code);
+        System.out.println(kwList);
         
         model.addAttribute("book", book);
         model.addAttribute("epiList", epiList);
         model.addAttribute("rvList", rvList);
         model.addAttribute("rating", rating);
         model.addAttribute("replyCountMap", replyCountMap);
+        model.addAttribute("freeCount", freeCount);
+        model.addAttribute("likeCountMap", likeCountMap);
+        model.addAttribute("likedReviewIds", likedReviewIds);
+        model.addAttribute("latestEpDate", latestDate);
+        model.addAttribute("abList", abList);
+        model.addAttribute("notiList", notiList);
+        model.addAttribute("bestList10", bestList10);
+        model.addAttribute("bestList5", bestList5);
+        model.addAttribute("buyList", buyList);
+        model.addAttribute("buyCodeSet", buyCodeSet);
+        model.addAttribute("kwList", kwList);
 
         return "book/detail";
     }
@@ -112,14 +161,21 @@ public class BookController {
     @PostMapping("/review/insert")
     @ResponseBody
     public boolean insert(@RequestBody ReviewVO review, @AuthenticationPrincipal CustomUser customUser) {
-        System.out.println("컨트롤러" + customUser);
-        return bookService.insertReview(review, customUser);
+
+        int reviewCnt = bookService.countReview(review.getRv_bo_code(), customUser.getUser().getUr_num());
+        System.out.println(reviewCnt);
+
+        if(reviewCnt == 0) {
+            return bookService.insertReview(review, customUser);
+        }
+        
+        return false;
     }
 
     @PostMapping("/rereview/insert")
     @ResponseBody
     public ReviewVO insertReview(@RequestBody ReviewVO review, @AuthenticationPrincipal CustomUser customUser) {
-        if(!bookService.insertReReview(review, customUser)){
+        if (!bookService.insertReReview(review, customUser)) {
             System.out.println("리뷰 등록 실패");
             return null;
         }
@@ -177,32 +233,74 @@ public class BookController {
     }
 
     @GetMapping("/book/keyword")
-    public String searchBooksByKeywords(
-            @RequestParam(required = false) List<String> keywordIds,
-            @RequestParam(defaultValue = "recent") String sort,
-            @RequestParam(defaultValue = "1") int page,
-            Model model) {
-
-        // 키워드 카테고리 + 키워드 리스트 조회
+    public String keywordSearchPage(
+        @RequestParam(value = "keywordIds", required = false) List<String> keywordIds,
+        @RequestParam(defaultValue = "recent") String sort,
+        @RequestParam(defaultValue = "1") int page,
+        Model model,
+        HttpServletRequest request
+    ) {
+        // 1. 키워드 카테고리 + 키워드 리스트
         List<KeywordCategoryVO> keywordCategories = keywordService.getAllKeywordCategories();
         model.addAttribute("keywordCategories", keywordCategories);
+        model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
 
-        // 키워드로 필터링된 도서 리스트 + 페이지네이션 처리
+        // 2. 검색 결과 도서 리스트
         PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
-        model.addAttribute("pageInfo", pageInfo);
         model.addAttribute("bookList", pageInfo.getContent());
-        System.out.println(pageInfo.getContent().size());
-        for (BookVO b : pageInfo.getContent()) {
-            System.out.println(b.getBo_title());
+        model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("selectedKeywordIds", keywordIds);
+
+        System.out.println("bookList size: " + pageInfo.getContent().size());  // 책 리스트 사이즈 확인
+        System.out.println("bookList: " + pageInfo.getContent()); 
+
+        List<KeywordVO> selectedKeywords = keywordService.getSelectedKeywordsPreserveOrder(keywordIds);
+        model.addAttribute("selectedKeywords", selectedKeywords);
+
+        // 3. Ajax 요청 여부 판별 (헤더로 구분)
+        String requestedWith = request.getHeader("X-Requested-With");
+        if ("XMLHttpRequest".equals(requestedWith)) {
+            // Ajax 요청에 대해서만 갱신된 HTML 반환
+            return "book/keyword :: bookResultFragment";
         }
 
-        // 현재 선택 상태 전달
-        model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
-        model.addAttribute("sort", sort);
-
+        // 최초 접속 or 전체 페이지 렌더링
         return "book/keyword";
     }
 
+    @GetMapping("/book/keyword/updated")
+    public String updatedKeywordSearchPage(
+        @RequestParam(value = "keywordIds", required = false) List<String> keywordIds,
+        @RequestParam(defaultValue = "recent") String sort,
+        @RequestParam(defaultValue = "1") int page,
+        Model model,
+        HttpServletRequest request
+    ) {
+        // 1. 키워드 카테고리 + 키워드 리스트
+        List<KeywordCategoryVO> keywordCategories = keywordService.getAllKeywordCategories();
+        model.addAttribute("keywordCategories", keywordCategories);
+        model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
+
+        // 2. 검색 결과 도서 리스트
+        PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
+        model.addAttribute("bookList", pageInfo.getContent());
+        model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("selectedKeywordIds", keywordIds);
+
+        System.out.println("bookList size: " + pageInfo.getContent().size());  // 책 리스트 사이즈 확인
+        System.out.println("bookList: " + pageInfo.getContent()); 
+
+        List<KeywordVO> selectedKeywords = keywordService.getSelectedKeywordsPreserveOrder(keywordIds);
+        model.addAttribute("selectedKeywords", selectedKeywords);
+
+        // Ajax 요청에 대해 fragment만 리턴
+        return "book/keyword :: bookResultFragment";
+    }
+
+
+
+
+    
     @ResponseBody
     @GetMapping("/book/getSubCategory")
     public List<SubCategoryVO> getSubCategory(@RequestParam int mainCategoryValue) {
@@ -215,24 +313,6 @@ public class BookController {
         }
         return null;
     }
-    @GetMapping("/book/keyword/fragment")
-    public String getKeywordSearchFragment(
-            @RequestParam(required = false) List<String> keywordIds,
-            @RequestParam(defaultValue = "recent") String sort,
-            @RequestParam(defaultValue = "1") int page,
-            Model model) {
-
-        PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
-        model.addAttribute("pageInfo", pageInfo);
-        model.addAttribute("bookList", pageInfo.getContent());
-        model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
-        model.addAttribute("sort", sort);
-
-        return "book/keyword :: #bookResultContainer";
-    }
-
-    
-    
 
     @GetMapping("/review/sort")
     public String getSortedReview(@RequestParam String sort, @RequestParam("bo_code") String bo_code, Model model) {
@@ -243,4 +323,31 @@ public class BookController {
         return "book/reviewSort :: rvListFlag";
     }
 
+    @PostMapping("/review/like")
+    @ResponseBody
+    public Map<String, Object> toggleReviewLike(@RequestBody Map<String, Integer> payload,
+            @AuthenticationPrincipal CustomUser customUser) {
+        int rvNum = payload.get("rv_num");
+        int urNum = customUser.getUser().getUr_num();
+        System.out.println(rvNum + urNum);
+        boolean liked = bookService.toggleLike(rvNum, urNum);
+        Integer likeCount = bookService.getLikeCount(rvNum);
+        System.out.println(likeCount);
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("liked", liked);
+        result.put("likeCount", likeCount);
+        System.out.println(result);
+
+        return result;
+    }
+
+    @PostMapping("/review/delete")
+    @ResponseBody
+    public boolean deleteReview(int rv_num) {
+        System.out.println(rv_num);
+        boolean res = bookService.deleteReview(rv_num);
+        System.out.println(res);
+        return res;
+    }
 }

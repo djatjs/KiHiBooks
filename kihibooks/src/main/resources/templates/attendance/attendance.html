@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>출석체크</title>
+    <style>
+        .attendance-container {
+            padding: 20px;
+        }
+
+        .attendance-container h2 {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .attendance-container button.btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #ff7f50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .attendance-container #attendanceResult {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" layout:fragment="content">
+        <h2>출석 체크</h2>
+        <button id="checkAttendanceBtn" class="btn">출석하기</button>
+        <div id="attendanceResult"></div>
+
+    </div>
+    <div layout:fragment="script">
+        <script th:inline="javascript">
+        const checkUrl = /*[[@{/attendance/check}]]*/ '';
+        $("#checkAttendanceBtn").click(function () {
+            $.ajax({
+                url: checkUrl,
+                type: "POST",
+                success: function (response) {
+                    if (response.status === "success") {
+                        $("#attendanceResult").html(
+                            `🎉 출석 완료! ${response.point}포인트 지급<br>${response.message}`
+                        );
+                    } else if (response.status === "already") {
+                        $("#attendanceResult").html("⚠ 오늘은 이미 출석하셨습니다.");
+                    } else if (response.status === "fail") {
+                        $("#attendanceResult").html("❌ 로그인 후 이용 가능합니다.");
+                    } else {
+                        $("#attendanceResult").html("❗알 수 없는 오류");
+                    }
+                },
+                error: function () {
+                    $("#attendanceResult").html("🚨 서버 오류가 발생했습니다.");
+                }
+            });
+        });
+        </script>
+    </div>
+</body>
+</html>

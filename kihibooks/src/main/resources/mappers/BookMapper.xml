@@ -52,7 +52,10 @@
         <result property="bo_adult" column="BO_ADULT" />
         <result property="bo_publish_date" column="BO_PUBLISH_DATE" />
         <result property="bo_total_episode" column="BO_TOTAL_EPISODE" />
-        <result property="bo_author" column="AU_NAME" />
+        <result property="au_name" column="AU_NAME"/>
+        <collection property="keywordList" ofType="KeywordVO"
+                column="BO_CODE"
+                select="selectKeywordListByBookCode" />
     </resultMap>
 
 
@@ -183,6 +186,18 @@
         ORDER BY recent_review_count DESC, BO_TOTAL_RATING DESC
         LIMIT #{size} OFFSET #{offset}
     </select>
+    <select id="selectKeywordListByBookCode" resultType="KeywordVO">
+        SELECT 
+            kw_code, kw_name
+        FROM 
+            book_keyword
+        LEFT JOIN 
+            keyword 
+        ON 
+            bk_kw_code = kw_code
+        WHERE 
+            bk_bo_code = #{bo_code}
+    </select>
     <select id="countBestBooks" resultType="int">
         SELECT
             COUNT(DISTINCT BO_CODE)
@@ -289,8 +304,8 @@
     
     <update id="updateRating">
         update book
-        set bo_total_rating = (select sum(rv_rating) from review where rv_bo_code = #{bo_code} and rv_ori_num is null),
-            bo_review_count = (select count(*) from review where rv_bo_code = #{bo_code} and rv_ori_num is null)
+        set bo_total_rating = (select sum(rv_rating) from review where rv_bo_code = #{bo_code} and rv_ori_num is null and rv_del = "N"),
+            bo_review_count = (select count(*) from review where rv_bo_code = #{bo_code} and rv_ori_num is null and rv_del = "N")
         where bo_code = #{bo_code}
     </update>
 
@@ -309,17 +324,8 @@
     </select>
 
     <insert id="insertReview">
-        insert into review(rv_ur_num, rv_rating, rv_content, rv_spoiler, rv_bo_code, rv_num, rv_ori_num)
-        (select #{rv_ur_num}, #{rv_rating}, #{rv_content}, #{rv_spoiler}, #{rv_bo_code}, ifnull(max(rv_num),0)+1,
-        <choose>
-            <when test="rv_ori_num == 0">
-                ifnull(max(rv_num),0) +1
-            </when>
-            <otherwise>
-                #{rv_ori_num}
-            </otherwise>
-        </choose>
-        from review)
+        insert into review(rv_ur_num, rv_rating, rv_content, rv_spoiler, rv_bo_code, rv_num)
+        value(#{rv_ur_num}, #{rv_rating}, #{rv_content}, #{rv_spoiler}, #{rv_bo_code}, #{rv_num})
     </insert>
     <insert id="insertReReview">
         insert into review(rv_ur_num, rv_content, rv_bo_code, rv_num, rv_ori_num)
@@ -402,11 +408,19 @@
         where bo_code = #{bo_code}
     </update>
     
+    <select id="selectReview" resultType="ReviewVO">
+        select *, user.ur_nickname AS rv_user from review
+        join user on rv_ur_num = ur_num
+        where rv_ur_num = #{rv_ur_num} and rv_content = #{rv_content}
+        order by rv_num desc
+        limit 1
+    </select>
+
     <select id="selectReply" resultType="ReviewVO">
         select *, user.ur_nickname AS rv_user from review
         join user on rv_ur_num = ur_num
         where rv_ur_num = #{rv_ur_num} and rv_content = #{rv_content}
-        order by rv_date desc
+        order by rv_num desc
         limit 1
     </select>
 
@@ -438,4 +452,86 @@
     <update id="deleteEpisode">
         update episode set ep_del = "Y" where ep_code = #{ep_code}
     </update>
+    <select id="selectLikeCount" resultType="int">
+        select count(*) from review_like
+        where rl_rv_num = #{rv_num} and rl_state = 1
+    </select>
+
+    <select id="getLike" resultType="ReviewLikeVO">
+        select * from review_like
+        where rl_rv_num = #{rv_num} and rl_ur_num = #{ur_num}
+    </select>
+
+    <insert id="insertLike">
+        insert into review_like(rl_rv_num, rl_ur_num, rl_state)
+        value(#{rv_num}, #{ur_num}, 1)
+    </insert>
+
+    <update id="updateLikeState">
+        update review_like
+        set rl_state = #{ur_state}
+        where rl_rv_num = #{rv_num} and rl_ur_num = #{ur_num}
+    </update>
+
+    <select id="selectLikedReview" resultType="int">
+        select rl_rv_num from review_like
+        where rl_ur_num = #{ur_num} and rl_state = 1
+    </select>
+
+    <update id="deleteReview">
+        update review
+        set rv_rating = null, rv_content = "삭제된 댓글입니다.", rv_del = "Y"
+        where rv_num = #{rv_num}
+    </update>
+
+    <select id="countReview" resultType="int">
+        select count(*) from review
+        where rv_bo_code = #{bo_code} and rv_ur_num = #{ur_num} and rv_del = "N" and rv_ori_num is null
+    </select>
+
+    <select id="getAuthorNumByBocode" resultType="int">
+        select bo_au_num from book
+        where bo_code = #{bo_code}
+    </select>
+
+    <select id="getAuthorAnotherBookList" resultType="BookVO">
+        select * from book
+        where bo_au_num = #{au_num}
+    </select>
+
+    <select id="getNoticeList" resultType="NoticeVO">
+        select * from notice
+        where nt_bo_code = #{bo_code}
+    </select>
+
+    <select id="getScCodeByBoCode" resultType="String">
+        select bo_sc_code from book
+        where bo_code = #{bo_code}
+    </select>
+
+    <select id="getBestList" resultType="BookVO">
+        select * from book
+        where bo_sc_code = #{sc_code}
+        order by (bo_total_rating / bo_review_count / 2.0) desc
+        limit 10
+    </select>
+
+    <select id="getBuyList" resultType="BuyListVO">
+        select * from buy_list
+        join episode on bl_ep_code = ep_code
+        where bl_ur_num = #{ur_num} and ep_bo_code = #{bo_code}
+    </select>
+
+    <select id="getBestList5" resultType="BookVO">
+        select * from book
+        where bo_sc_code = #{sc_code}
+        order by (bo_total_rating / bo_review_count / 2.0) desc
+        limit 5
+    </select>
+
+    <select id="getKeywordList" resultType="BookKeywordVO">
+        select *, kw_name AS bk_name from book_keyword
+        join keyword on bk_kw_code = kw_code
+        where bk_bo_code = #{bo_code}
+    </select>
 </mapper>

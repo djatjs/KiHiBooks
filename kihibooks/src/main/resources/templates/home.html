@@ -604,7 +604,7 @@
 				</div>
 				<div class="button-text">키다무</div>
 			</a>
-			<a th:href="@{/}" class="button-wrapper">
+			<a th:href="@{/attendance}" class="button-wrapper">
 				<div class="round-button">
 					<img src="/resources/static/img/calendar.png" alt="출석체크" class="button-icon">
 				</div>
@@ -614,7 +614,7 @@
 		<!-- 실시간 랭킹 -->
 		<div class="ranking-container">
 			<div class="ranking-header">
-				<h2 class="ranking-title">실시간 랭킹</h2>
+				<h2 class="ranking-title">로맨스 웹소설 실시간 랭킹</h2>
 				<div id="lastUpdatedText" class="last-updated">최근 갱신: -</div>
 			</div>	
 			<div class="ranking-body">
@@ -688,6 +688,9 @@
 						const imageUrl = `/resources/static/covers/cover${imageNum}.png`;
 						const detailUrl = `/books/${book.bo_code}`; //book/detail?code=${book.bo_code}
 						const authorUrl = `/`; //book/detail?code=${book.bo_author} 작가 매칭 되면 사용하면 됨
+						const totalRating = Number(book.bo_total_rating) || 0;
+						const reviewCount = Number(book.bo_review_count) || 0;
+						const avgRating = (reviewCount > 0) ? ((totalRating / reviewCount)/2).toFixed(1) : "0.0";
 
 						bookDiv.innerHTML = `
 							<a href="${detailUrl}" class="ranking-thumb">
@@ -698,7 +701,7 @@
 								<a href="${detailUrl}" class="book-title">${book.bo_title}</a>
 								<div class="book-meta">${book.bo_author || '작가 미정'} · ${book.bo_free_info || '무료'}</div>
 								<div class="book-rating">
-									★${((book.bo_total_rating / book.bo_review_count)/2).toFixed(1)} |	리뷰 ${book.bo_review_count}
+									★${avgRating} |	리뷰 ${reviewCount}
 								</div>
 							</div>
 						`;
@@ -797,10 +800,10 @@
 			});
 		</script>
 		
-		<!-- 웹소설 베스트 -->
+		<!-- 로맨스 웹소설 베스트 -->
 			<div class="best-container">
 				<div class="best-header">
-					<h3>웹 소설 베스트</h3>
+					<h3>로맨스 웹소설 베스트</h3>
 					<div class="best-see-more">더 보기</div>
 				</div>	
 				<div class="best-body">
@@ -859,6 +862,9 @@
 							const imageUrl = `/resources/static/covers/cover${imageNum}.png`;
 							const detailUrl = `/`; //book/detail?code=${book.bo_code}
 							const authorUrl = `/`; //book/detail?code=${book.bo_author} 작가 매칭 되면 사용하면 됨
+							const totalRating = Number(book.bo_total_rating) || 0;
+							const reviewCount = Number(book.bo_review_count) || 0;
+							const avgRating = (reviewCount > 0) ? ((totalRating / reviewCount)/2).toFixed(1) : "0.0";
 	
 							bookDiv.innerHTML = `
 								<a href="${detailUrl}" class="ranking-thumb">
@@ -869,7 +875,7 @@
 									<a href="${detailUrl}" class="book-title">${book.bo_title}</a>
 									<div class="book-meta">${book.bo_author || '작가 미정'} · ${book.bo_free_info || '무료'}</div>
 									<div class="book-rating">
-										★${((book.bo_total_rating / book.bo_review_count)/2).toFixed(1)} |	리뷰 ${book.bo_review_count}
+										★${avgRating} |	리뷰 ${reviewCount}
 									</div>
 								</div>
 							`;
@@ -993,6 +999,9 @@
 								const imageNum = index + 1;
 								const detailUrl = `/`; //book/detail?code=${book.bo_code}
 								const authorUrl = `/`; //book/detail?code=${book.bo_author} 작가 매칭 되면 사용하면 됨
+								const totalRating = Number(book.bo_total_rating) || 0;
+								const reviewCount = Number(book.bo_review_count) || 0;
+								const avgRating = (reviewCount > 0) ? ((totalRating / reviewCount)/2).toFixed(1) : "0.0";
 								const html = `
 									<div class="new-publish-item">
 										<a href="${detailUrl}" class="new-publish-thumb">
@@ -1000,7 +1009,7 @@
 										</a>
 										<a href="${detailUrl}" class="new-publish-title-text">${book.bo_title}</a>
 										<div class="new-publish-author">${book.bo_author || '작가 미정'}</div>
-										<div class="book-rating">★${((book.bo_total_rating / book.bo_review_count) / 2).toFixed(1)} | 리뷰 ${book.bo_review_count}</div>
+										<div class="book-rating">★${avgRating} | 리뷰 ${reviewCount}</div>
 									</div>
 								`;
 								$grid.append(html);

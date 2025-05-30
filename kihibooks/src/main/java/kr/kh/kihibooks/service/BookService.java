@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -16,10 +17,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import kr.kh.kihibooks.dao.BookDAO;
 import kr.kh.kihibooks.dao.KeywordDAO;
+import kr.kh.kihibooks.model.vo.BookKeywordVO;
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
+import kr.kh.kihibooks.model.vo.KeywordVO;
+import kr.kh.kihibooks.model.vo.NoticeVO;
+import kr.kh.kihibooks.model.vo.ReviewLikeVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
 import kr.kh.kihibooks.model.vo.SubCategoryVO;
 import kr.kh.kihibooks.pagination.PageInfo;
@@ -135,7 +140,6 @@ public class BookService {
             return false;
         }
         review.setRv_ur_num(customUser.getUser().getUr_num());
-        System.out.println(review);
         return bookDAO.insertReview(review);
     }
 
@@ -166,7 +170,7 @@ public class BookService {
         // 3. 도서번호 3자리
         String psCode = puCode+ scCode;
         String boNum = bookDAO.getLatestBoNum(psCode);
-        
+
         // 4. 생성된 bo_code 반환
         String bo_code = psCode + boNum +"";
         book.setBo_code(bo_code);
@@ -219,7 +223,7 @@ public class BookService {
 
     public boolean insertReReview(ReviewVO review, CustomUser customUser) {
         if (review == null || customUser == null || review.getRv_content().isBlank()) {
-            System.out.println("대댓 : "+review);
+            System.out.println("대댓 : " + review);
             return false;
         }
         review.setRv_ur_num(customUser.getUser().getUr_num());
@@ -227,9 +231,9 @@ public class BookService {
         return bookDAO.insertReReview(review);
     }
 
-	public ReviewVO selectReply(ReviewVO review) {
+    public ReviewVO selectReply(ReviewVO review) {
         return bookDAO.selectReply(review);
-	}
+    }
 
     public boolean insertEpisode(EpisodeVO ep, String bo_code, MultipartFile epubFile, MultipartFile coverImage) {
         if(ep == null || epubFile == null || epubFile.getOriginalFilename().isEmpty() || coverImage == null || coverImage.getOriginalFilename().isEmpty()){
@@ -343,5 +347,68 @@ public class BookService {
             return false;
         }
     }
+    public int getLikeCount(int rv_num) {
+        int likeCount = bookDAO.selectLikeCount(rv_num);
 
+        return likeCount;
+    }
+
+    public boolean toggleLike(int rv_num, int ur_num) {
+        ReviewLikeVO like = bookDAO.getLike(rv_num, ur_num);
+        if (like == null) {
+            bookDAO.insertLike(rv_num, ur_num);
+
+            return true;
+        } else {
+            if (like.getRl_state() == 1) {
+                bookDAO.updateLikeState(rv_num, ur_num, 0);
+                return false;
+            } else {
+                bookDAO.updateLikeState(rv_num, ur_num, 1);
+                return true;
+            }
+        }
+    }
+
+    public Set<Integer> getLikedReview(int ur_num) {
+        return bookDAO.selectLikedReview(ur_num);
+    }
+
+    public boolean deleteReview(int rv_num) {
+        return bookDAO.deleteReview(rv_num);
+    }
+
+    public int countReview(String bo_code, int ur_num) {
+        return bookDAO.countReview(bo_code, ur_num);
+    }
+
+    public List<BookVO> getAuthorAnotherBook(String bo_code) {
+        int au_num = bookDAO.getAuthorNumByBocode(bo_code);
+
+        return bookDAO.getAuthorAnotherBookList(au_num);
+    }
+
+    public List<NoticeVO> getNoticeList(String bo_code) {
+        return bookDAO.getNoticeList(bo_code);
+    }
+
+    public List<BookVO> getBestList(String bo_code) {
+        String sc_code = bookDAO.getScCodeByBoCode(bo_code);
+
+        return bookDAO.getBestList(sc_code);
+    }
+
+    public List<BuyListVO> getBuyList(int ur_num, String bo_code) {
+        return bookDAO.getBuyList(ur_num, bo_code);
+    }
+
+    public List<BookVO> getBestList5(String bo_code) {
+        String sc_code = bookDAO.getScCodeByBoCode(bo_code);
+
+        return bookDAO.getBestList5(sc_code);
+    }
+
+    public List<BookKeywordVO> getKeywordList(String bo_code) {
+        return bookDAO.getKeywordList(bo_code);
+    }
 }

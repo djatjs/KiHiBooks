@@ -622,3 +622,9 @@ WHERE BO_CODE IN (
   'B0001', 'B0003', 'B0005', 'B0007', 'B0009',
   'B0011', 'B0013', 'B0015', 'B0017'
 );
+
+INSERT INTO ATTENDANCE_REWARD (AR_TYPE, AR_POINT, AR_PROBABILITY, AR_MESSAGE) VALUES
+('COMMON', 100, 60, '기본 출석 보상입니다.'),
+('BONUS', 300, 25, '보너스 포인트 당첨!'),
+('RARE', 500, 10, '레어 보상! 대박!'),
+('JACKPOT', 1000, 5, '잭팟! 오늘 당신은 행운의 주인공!');

@@ -1920,6 +1920,24 @@
 			display: flex;
 		}
 
+		.rv-delete {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 8px 7px;
+			border-radius: 4px;
+			border: 1px solid #e6e6e6;
+			background: #fff;
+			color: #787878;
+			font-size: 13px;
+			font-variant-numeric: tabular-nums;
+			font-weight: 500;
+			line-height: 16px;
+			min-width: 65px;
+			user-select: none;
+			margin-right: 6px;
+		}
+
 		.rv-comment {
 			display: flex;
 			justify-content: center;
@@ -2171,33 +2189,44 @@
 		.best-list-ol {
 			display: grid;
 			gap: 8px;
-			list-style-type: none;
+			list-style: none;
 			counter-reset: ranking;
+			padding: 0;
+			margin: 0;
+		}
+
+		.best-list-ol li {
+			counter-increment: ranking;
+			position: relative;
+			padding-left: 20px;
+			/* 공간 확보 */
+			line-height: initial;
+		}
+
+		.best-list-ol li::before {
+			content: counter(ranking);
+			position: absolute;
+			left: 0;
+			top: 0;
+			color: #dc3232;
+			font-weight: 700;
 		}
 
 		.b-list {
-			display: grid;
-			grid-template-columns: 17px 1fr;
-			gap: 12px;
+			display: block;
 			font-size: 14px;
 			font-weight: 500;
 			line-height: 17px;
-			margin-left: -38px;
+			color: inherit;
+			text-decoration: none;
+		}
+
+		.b-list:hover>.b-list-title {
+			color: #aaa;
 		}
 
 		.b-list:hover {
 			text-decoration: none;
-		}
-
-		.b-list:hover>span {
-			color: #aaa;
-		}
-
-		.b-list::before {
-			counter-increment: ranking;
-			content: counter(ranking);
-			color: #dc3232;
-			font-weight: 700;
 		}
 
 		.b-list-title {
@@ -2403,7 +2432,6 @@
 			border-radius: 4px;
 			font-weight: 700;
 			text-align: center;
-			vertical-align: baseline;
 			cursor: pointer;
 			transition: background .2s, color .2s;
 			color: #a59b98;
@@ -2570,6 +2598,11 @@
 			background: none;
 			border: 0;
 		}
+
+		.liked {
+			color: #ff7f50;
+
+		}
 	</style>
 </head>
 
@@ -2639,21 +2672,20 @@
 											</div>
 											<div class="info-bottom-grid">
 												<div class="bottom-content">
-													<div class="content-area">
+													<div class="content-area" th:if="${book.bo_serial_schedule != null}">
 														<div class="header-text" style="color: #748198; background-color: #e3edf7;">연재</div>
 														<ul class="serial-ul">
 															<li class="serial-li">
-																<div class="serial-daytitme">매주 (월, 수, 금) 18시</div>
+																<div class="serial-daytitme" th:text="'매주 ' + ${book.bo_serial_schedule}"></div>
 															</li>
 														</ul>
 													</div>
-													<div class="content-area">
+													<div class="content-area" th:if="${notiList.size() != 0}">
 														<div class="header-text" style="color: #ed6d5e; background: #fce8e6;">공지</div>
-														<ul class="noti-ul">
+														<ul class="noti-ul" th:each="notice : ${notiList}">
 															<li class="noti-li">
 																<div class="noti-contents">
-																	<button type="button" class="noti-title">도서 파일 교체 안내
-																		(2025-04-22)
+																	<button type="button" class="noti-title" th:text="${notice.nt_title}">
 																		<!-- 펼친 경우 fold.png 로 변경 -->
 																		<span class="expandBtn">
 																			<img id="noti_icon" src="/resources/static/img/expand.png" alt="펼치기"
@@ -2662,29 +2694,17 @@
 																	</button>
 																	<button type="button" class="noti-content none">
 																		<div class="content-wrapper">
-																			<div class="content-wrap">
-																				<b>이세계 착각 헌터 495화는</b>
-																				2025년 4월 22일 본문 내 문장을 수정한 파일로
-																				교체했습니다.<br>
-																				기존 구매자분들께서는 앱 내의 '내 서재'에 다운로드 받은 도서를
-																				삭제하신 후, '구매목록'에서 재다운로드 하시면 수정된 도서로 이용하실
-																				수
-																				있습니다.
-																				도서
-																				이용에 참고 부탁드립니다.<br>
-																				※ 단, 재다운로드 시 기존 도서에 남긴 독서노트(형광펜, 메모,
-																				책갈피)는 초기화되거나 위치가 변경됩니다.
-																			</div>
+																			<div class="content-wrap" th:text="${notice.nt_content}"></div>
 																		</div>
 																	</button>
 																</div>
 															</li>
 														</ul>
 													</div>
-													<div class="content-area">
+													<div class="content-area" th:if="${book.bo_wait_for_free == 'Y'}">
 														<div class="header-text" style="color: #ffa550; background: #fff3e4;">키다무</div>
 														<div class="wait-for-free">
-															<span class="wff-text">1일 마다 1편 기다리면 무료</span>
+															<span class="wff-text" th:text="${book.bo_wff_date} + '일 마다 1편 기다리면 무료'"></span>
 															<button class="infoBtn">
 																<img src="/resources/static/img/info.png" alt="i아이콘" style="height: 18px;">
 															</button>
@@ -2708,7 +2728,7 @@
 										<div class="meta">
 											<div class="m-wrap">
 												<div class="wrap-title">업데이트</div>
-												<span class="wrap-date"></span>
+												<span class="wrap-date" th:text="${latestEpDate} + ' 업데이트'"></span>
 											</div>
 											<div class="m-wrap">
 												<div class="wrap-title">출간 정보</div>
@@ -2808,17 +2828,17 @@
 																		<!-- 아마도 전체 페이지 들어가야할듯? ↓ -->
 																		<li class="info-page-cnt">| 약 4.5천 자</li>
 																		<!-- 소장한 경우만 아래 배지 추가 -->
-																		<li class="info-status">|
+																		<li class="info-status" th:if="${buyCodeSet.contains(episode.ep_code)}">|
 																			<span style="color: #ff7f50;">소장</span>
 																		</li>
 																	</ul>
 																</div>
 															</div>
-															<div class="direct-view-wrapper">
+															<div class="direct-view-wrapper" th:if="${episode.ep_price == 0 or buyCodeSet.contains(episode.ep_code)}">
 																<!-- 무료/소장 회차 : 보기 | 유료 회차 : 소장 -->
 																<a th:href="@{/}" data-book-id="ep_code" class="direct-view-btn">보기</a>
 															</div>
-															<div class="direct-view-wrapper">
+															<div class="direct-view-wrapper" th:unless="${episode.ep_price == 0 or buyCodeSet.contains(episode.ep_code)}">
 																<!-- 무료/소장 회차 : 보기 | 유료 회차 : 소장 -->
 																<a th:href="@{/}" data-book-id="ep_code" class="checkout-btn">소장</a>
 															</div>
@@ -2845,7 +2865,8 @@
 													<div class="upper-text">
 														본 도서는 출판사의 요청으로 무료 회차를 부분별로 서비스하고 있습니다.
 														<br>
-														기본 무료 회차는 총 27화(1~25화, 246화, 388화) 입니다. 도서 이용에 참고 부탁드립니다.
+														기본 무료 회차는 총 <span th:text="${freeCount} + '화(1~' + ${freeCount} + '화)'"></span>입니다.
+														도서 이용에 참고 부탁드립니다.
 													</div>
 												</div>
 											</div>
@@ -2858,13 +2879,15 @@
 											<div style="margin-bottom: 80px;">
 												<h2 class="keyword-title">이 작품의 키워드</h2>
 												<div class="keyword-list">
-													<div class="keyword">
+													<ul class="keyword" th:each="keyword : ${kwList}">
+														<li>
 														<button class="keyword-btn">
 															<span class="keyword-name">
-																<span>#현대판타지</span>
+																<span th:text="'#'+${keyword.bk_name}"></span>
 															</span>
 														</button>
-													</div>
+														</li>
+													</ul>
 												</div>
 												<a class="other-keyword" th:href="@{/}">
 													<span class="other-kw">다른 키워드로 검색</span>
@@ -2878,7 +2901,7 @@
 									<div class="description-wrapper">
 										<div class="description-wrap">
 											<div style="margin-bottom: 80px;">
-												<div class="d-book-title">이세계 착각 헌터</div>
+												<div class="d-book-title" th:text="${book.bo_title}"></div>
 												<h2 class="wrapper-title">작품 소개</h2>
 												<div class="descript-wrapper">
 													<div class="descript-wrap">
@@ -2922,7 +2945,7 @@
 															<div class="other-book-list">
 																<div class="book-list">
 																	<div class="books">
-																		<ul class="books-ul">
+																		<ul class="books-ul" th:each="anotherBook : ${abList}">
 																			<li class="book-li">
 																				<div class="book">
 																					<div class="book-img">
@@ -2934,17 +2957,19 @@
 																					<div class="book-info">
 																						<div class="bo-title">
 																							<!-- bo-img와 동일한 링크 -->
-																							<a th:href="@{/}" class="b-title">이세계 착각
-																								헌터</a>
+																							<a th:href="@{/}" class="b-title" th:text="${anotherBook.bo_title}"></a>
 																						</div>
 																						<div class="book-author">
 																							<span class="bo-author">
-																								<a th:href="@{/}" class="b-author">대대원</a>
+																								<a th:href="@{/}" class="b-author"
+																									th:text="${anotherBook.bo_author}"></a>
 																							</span>
 																							<span class="bo-rating">
 																								<img class="red mb-1" src="/resources/static/img/star.png" alt="별"
-																									style="height: 12px; margin-right: 2px;">4.9
-																								<span class="b-rating-cnt">(12,996)</span>
+																									style="height: 12px; margin-right: 2px;"
+																									th:text="${anotherBook.bo_total_rating / anotherBook.bo_review_count / 2.0}">
+																								<span class="b-rating-cnt"
+																									th:text="'(' + ${anotherBook.bo_review_count} + ')'"></span>
 																							</span>
 																						</div>
 																					</div>
@@ -3146,24 +3171,24 @@
 
 														const content = $(".rv-textarea").val();
 														const rating = $("input[name='rating']:checked").val();
-														const spoilerCheckbox = document.querySelector('.spoiler-check');
+														const spoiler = $(".spoiler-check").is(":checked") ? 'Y' : 'N';
+														const bookCode = [[${ book.bo_code }]];
 
 														if (!rating) {
 															alert("별점을 선택해주세요.");
 															return;
 														}
-
 														if (content.length < 10) {
 															alert("리뷰는 10자 이상 입력해주세요.");
 															return;
 														}
 
 														const review = {
-															rv_bo_code: [[${ book.bo_code }]],
+															rv_bo_code: bookCode,
 															rv_content: content,
 															rv_rating: rating,
-															rv_spoiler: spoilerCheckbox.checked ? 'Y' : 'N'
-														}
+															rv_spoiler: spoiler
+														};
 
 														$.ajax({
 															url: "/review/insert",
@@ -3172,11 +3197,14 @@
 															contentType: "application/json",
 															success: function (data) {
 																if (data) {
-																	console.log(review);
 																	alert("리뷰 등록 완료");
 																	$(".rv-textarea").val('');
+																	$("input[name='rating']").prop("checked", false);
+																	$(".spoiler-check").prop("checked", false);
+
+																	location.reload();
 																} else {
-																	alert("리뷰 등록 실패");
+																	alert("이미 등록한 리뷰가 있습니다.\n기존 리뷰 삭제 후 이용해주세요.");
 																}
 															}
 														});
@@ -3188,11 +3216,10 @@
 												<div class="rv-arrange-btn">
 													<button type="button" aria-pressed="true">최신순</button>
 													<button type="button" aria-pressed="false">공감순</button>
-													<button type="button" aria-pressed="false">별점 높은순</button>
-													<button type="button" aria-pressed="false">별점 낮은순</button>
 												</div>
 												<ul class="rv-ul" id="rv_ul">
-													<li class="rv-li" th:each="review : ${rvList}" th:if="${review.rv_ori_num == 0}">
+													<li class="rv-li" th:each="review : ${rvList}"
+														th:if="${review.rv_ori_num == 0 and review.rv_del == 'N'}">
 														<div class="rv-rate d-flex red" style="font-weight: 700;">
 															<img src="/resources/static/img/star.png" alt="별" class="red"
 																style="height: 13px; margin-top: 1px;">
@@ -3227,15 +3254,22 @@
 																</div>
 															</div>
 															<div class="rv-right-btn">
+																<button type="button" class="rv-delete"
+																	th:if="${#authentication.principal.user.ur_num == review.rv_ur_num}"
+																	th:attr="data-rvNum=${review.rv_num}">
+																	삭제
+																</button>
 																<button type="button" class="rv-comment toggle-replies-btn"
 																	th:attr="data-rvnum=${review.rv_num}">
 																	댓글
 																	<span class="ml-1"
 																		th:text="${replyCountMap[review.rv_num] != null ? replyCountMap[review.rv_num] : 0}"></span>
 																</button>
-																<button type="button" class="rv-like">
-																	<img src="/resources/static/img/thumb_up.png" alt="공감 버튼" style="height: 18px;">
-																	<span class="rv-like-cnt">0</span>
+																<button type="button" class="rv-like" th:attr="data-rv-num=${review.rv_num}"
+																	th:classappend="${likedReviewIds.contains(review.rv_num)}? 'liked' : ''">
+																	<img src="/resources/static/img/thumb_up.png" alt="공감 버튼" style="height: 18px;"
+																		th:classappend="${likedReviewIds.contains(review.rv_num)}? 'orange' : ''">
+																	<span class="rv-like-cnt" th:text="${likeCountMap[review.rv_num]}"></span>
 																</button>
 															</div>
 														</div>
@@ -3327,7 +3361,7 @@
 														const content = form.find(".review-insert-textarea").val();
 
 														const review = {
-															rv_bo_code: [[${book.bo_code}]], // 상단 <script>에서 선언되어 있어야 함
+															rv_bo_code: [[${ book.bo_code }]], // 상단 <script>에서 선언되어 있어야 함
 															rv_content: content,
 															rv_ori_num: rvOriNum
 														};
@@ -3365,6 +3399,63 @@
 														});
 													});
 												</script>
+												<script th:inline="javascript">
+													$(document).on("click", ".rv-like", function () {
+														if ([[${ #authentication.principal }]] == "anonymousUser") {
+															alert("로그인 후 이용해주세요.");
+															return;
+														}
+
+														const $btn = $(this);
+														const $img = $(this).find("img");
+														const rvNum = $btn.data("rvNum");
+
+														$.ajax({
+															url: "/review/like",
+															method: "post",
+															contentType: "application/json",
+															data: JSON.stringify({ rv_num: rvNum }),
+															success: function (data) {
+																const $countSpan = $btn.find(".rv-like-cnt");
+																$countSpan.text(data.likeCount);
+
+																if (data.liked) {
+																	$btn.addClass("liked");
+																	$img.addClass("orange");
+																} else {
+																	$btn.removeClass("liked");
+																	$img.removeClass("orange");
+																}
+															},
+															error: function () {
+																alert("오류 발생");
+															}
+														});
+													});
+
+													$(document).on("click", ".rv-delete", function () {
+														if (!confirm("삭제하시겠습니까?")) {
+															return;
+														}
+
+														const $btn = $(this);
+														const rvNum = $btn.data("rvnum");
+														console.log(rvNum);
+
+														$.ajax({
+															url: "/review/delete",
+															method: "post",
+															data: { rv_num: rvNum },
+															success: function (data) {
+																alert(data ? "댓글 삭제 완료" : "댓글 삭제 실패");
+																location.reload();
+															},
+															error: function () {
+																alert("오류");
+															}
+														})
+													})
+												</script>
 												<div class="review-more-btn">
 													<button type="button" class="rv-more-btn">
 														<span class="rmb-text">
@@ -3382,14 +3473,14 @@
 										<div class="recommend-wrap">
 											<div style="margin-bottom: 80px;">
 												<h2 class="best-wrap-title">
-													<span>현대 판타지 베스트</span>
+													<span th:text="${book.bo_sub_cate} + ' 베스트'"></span>
 													<a th:href="@{/}" class="best-more-btn">더보기</a>
 												</h2>
 												<div class="best-list-wrapper">
 													<div class="best-list-wrap">
 														<div class="best-list">
 															<div class="bst-list">
-																<ul class="bst-ul">
+																<ul class="bst-ul" th:each="best5 : ${bestList5}">
 																	<li class="bst-li">
 																		<div class="bst-book">
 																			<div class="b-book-img-wrap">
@@ -3399,17 +3490,17 @@
 																			</div>
 																			<div class="b-book-info-wrap">
 																				<div class="b-book-title">
-																					<a th:href="@{/}" class="bb-title">이세계 착각 헌터</a>
+																					<a th:href="@{/}" class="bb-title" th:text="${best5.bo_title}"></a>
 																				</div>
 																				<div class="b-book-info">
 																					<span class="b-book-author">
-																						<a th:href="@{/}" class="b-book-author-name">대대원</a>
+																						<a th:href="@{/}" class="b-book-author-name" th:text="${best5.bo_author}"></a>
 																					</span>
 																					<span class="b-book-rating">
 																						<img class="b-rating-img red" src="/resources/static/img/star.png" alt="별점"
-																							style="height: 13px; margin-right: 2px; margin-bottom: 2px;">4.9
+																							style="height: 13px; margin-right: 2px; margin-bottom: 2px;" th:text="${best5.bo_total_rating / best5.bo_review_count / 2.0}">
 																						<span class="b-rating-cnt"
-																							style="margin-left: 1px; color: #787878;">(12,996)</span>
+																							style="margin-left: 1px; color: #787878;" th:text="'('+${best5.bo_review_count}+')'"></span>
 																					</span>
 																				</div>
 																			</div>
@@ -3450,13 +3541,13 @@
 								</script>
 								<div class="best-list-top10">
 									<a th:href="@{/}" class="best-list-title">
-										현대 판타지 베스트
+										<span th:text="${book.bo_sub_cate} + ' 베스트'"></span>
 										<img style="height: 9px; margin-left: 2px;" src="/resources/static/img/next.png" alt=">">
 									</a>
 									<ol class="best-list-ol">
-										<li style="line-height: initial;">
+										<li style="line-height: initial;" th:each="best : ${bestList10}">
 											<a th:href="@{/}" class="b-list">
-												<span class="b-list-title">이세계 착각 헌터</span>
+												<span class="b-list-title" th:text="${best.bo_title}"></span>
 											</a>
 										</li>
 									</ol>
@@ -3808,6 +3899,22 @@
 					submitBtn.disabled = true;
 				}
 			});
+
+			$(document).on('input', '.review-insert-textarea', function () {
+				const $textarea = $(this);
+				const $btn = $textarea.closest('form').find('.review-submit-btn');
+
+				if ($textarea.val().trim().length > 0) {
+					$btn.css({
+						'color': '#ff7f50'
+					})
+				} else {
+					$btn.css({
+						'color': 'rgb(165, 165, 165)'
+					})
+				}
+			})
+
 
 			const dimmed = document.getElementById('full_page_spinner');
 			const freePopup = document.getElementById('serial_free_rent_coupon_popup');
