@@ -12,8 +12,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ComponentScan(basePackages = "kr.kh.kihibooks")
 public class WebMvcConfig implements WebMvcConfigurer{
 
-
+    @Value("${spring.path.upload}")
+    String uploadPath;
+    
     public void addResourceHandlers(ResourceHandlerRegistry registry){
+        registry.addResourceHandler("/file/**").addResourceLocations("file:///"+uploadPath);
         registry.addResourceHandler("/resources/**").addResourceLocations("classpath:/");
     }
 }

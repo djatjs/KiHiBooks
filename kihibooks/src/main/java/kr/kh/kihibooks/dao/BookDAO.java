@@ -90,6 +90,10 @@ public interface BookDAO {
 
 	boolean insertEpisode(EpisodeVO ep);
 	
-	void updateEpisode(EpisodeVO ep);
+	boolean updateEpisode(EpisodeVO ep);
+
+	EpisodeVO getEpisodeByCode(String ep_code);
+
+	boolean deleteEpisode(String ep_code);
 
 }

@@ -46,15 +46,6 @@ layout:decorate="~{layout/layout.html}">
     /* .publisher-management .publisher-type-container { ... } - Bootstrap 클래스로 충분 */
 
 
-    /* 드롭다운(select) 스타일 */
-    .publisher-management #publisherTypeSelect {
-        border-color: #ced4da; /* 경계선 색상 */
-        border-radius: 5px; /* 모서리 둥글게 */
-        padding: .375rem .75rem; /* 내부 여백 */
-        height: calc(1.5em + .75rem + 2px); /* 높이 조정 (Bootstrap input-group에 맞춤) */
-        box-shadow: inset 0 1px 2px rgba(0,0,0,.075); /* 은은한 내부 그림자 */
-    }
-
     /* 테이블 스타일 */
     .publisher-management .table {
         border-collapse: collapse; /* 셀 경계선 병합 */
@@ -155,24 +146,10 @@ layout:decorate="~{layout/layout.html}">
 </style>
 </head>
 <body>
-	<!-- main 태그의 layout:fragment="content"는 유지 -->
 	<main layout:fragment="content">
-        <!-- container 클래스에 publisher-management 고유 클래스 추가 -->
 		<div class="container publisher-management">
 			<h2 class="mb-3" style="font-weight: bold;">📊 출판사 계정 관리</h2>
-			<!-- 출판사 종류 선택 옵션
-			<div class="publisher-type-container mb-4">
-				<div class="input-group">
-					<select class="form-control" id="publisherTypeSelect">
-						<option value="">전체 출판사</option>
-						<option value="domestic">키키북스</option>
-						<option value="foreign">히히북스</option>
-						<option value="independent">키키와 히히</option>
-						<option value="academic">히히와 키키</option>
-					</select>
-				</div>
-			</div> -->
-			<!-- 출판사 계정 리스트(삭제 버튼 포함) -->
+
 			<div class="publisher-list mb-4">
 				<table class="table table-striped table-hover">
 					<thead>
@@ -183,26 +160,22 @@ layout:decorate="~{layout/layout.html}">
 							<th>관리</th>
 						</tr>
 					</thead>
-					<!-- publishers 리스트가 비어있지 않을 때 -->
 					<tbody th:if="${publishers != null and !publishers.isEmpty()}">
 						<tr th:each="publisher: ${publishers}">
 							<td th:text="${publisher.pu_code}"></td>
 							<td th:text="${publisher.pu_name}"></td>
 							<td th:text="${publisher.ur_email}"></td>
 							<td>
-								<!-- 삭제 버튼에 데이터 속성 추가하여 ID 전달 -->
 								<button class="btn btn-danger btn-sm delete-btn" th:data-id="${publisher.pu_code}">삭제</button>
 							</td>
 						</tr>
 					</tbody>
-					<!-- publishers 리스트가 null이거나 비어있을 때 메시지 -->
 					<tbody th:unless="${publishers != null and !publishers.isEmpty()}">
 						<tr>
 							<td colspan="4" class="text-center">등록된 출판사가 없습니다.</td>
 						</tr>
 					</tbody>
 				</table>
-				<!-- '출판사 추가하기' 버튼 -->
 				<div class="text-right">
 					<a th:href="@{/admin/addPublisher}" class="btn addPublisherBtn">출판사 추가하기</a>
 				</div>
@@ -210,8 +183,6 @@ layout:decorate="~{layout/layout.html}">
 		</div>
 	</main>
 
-	<!-- 삭제 버튼 클릭 이벤트를 위한 간단한 스크립트 예시 -->
-	<!-- 실제 구현 시에는 AJAX 등으로 서버에 삭제 요청을 보내도록 해야 합니다. -->
 	<script layout:fragment="script">
         document.addEventListener('DOMContentLoaded', function() {
             const deleteButtons = document.querySelectorAll('.publisher-management .delete-btn'); // 특정 클래스 하위 버튼 선택
@@ -227,17 +198,6 @@ layout:decorate="~{layout/layout.html}">
                     }
                 });
             });
-
-            // 출판사 종류 선택 변경 이벤트 (필요에 따라 구현)
-            const publisherTypeSelect = document.getElementById('publisherTypeSelect');
-            if (publisherTypeSelect) { // 요소가 있는지 확인
-                publisherTypeSelect.addEventListener('change', function() {
-                    const selectedType = this.value;
-                    // TODO: 선택된 종류에 따라 목록을 필터링하는 로직을 추가합니다.
-                    console.log('선택된 출판사 종류:', selectedType);
-                    // 예: AJAX를 사용하여 필터링된 목록을 다시 로드
-                });
-            }
         });
     </script>
 

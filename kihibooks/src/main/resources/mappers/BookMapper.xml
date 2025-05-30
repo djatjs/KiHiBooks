@@ -295,7 +295,7 @@
     </update>
 
     <select id="selectEpisodeList" resultType="EpisodeVO">
-        select * from episode where ep_bo_code = #{bo_code}
+        select * from episode where ep_bo_code = #{bo_code} and ep_del = "N"
     </select>
 
     <select id="selectReviewList" resultType="ReviewVO">
@@ -385,6 +385,7 @@
         join publisher_id on bo_pi_num = pi_num
         join publisher on pi_pu_code = pu_code
         where bo_pi_num = #{pi_num}
+        order by bo_title asc
     </select>
     <update id="updateBookInfo">
         update book
@@ -415,29 +416,26 @@
     </select>
     <insert id="insertEpisode">
         insert into episode (ep_code, ep_title, ep_price, ep_bo_code, ep_file_name, ep_cover_img, ep_total_page)
-        values (#{ep_code}, #{ep_title}, #{ep_price}, #{ep_bo_code}, #{ep_file_name}, #{ep_cover_img}, 0)
+        values (#{ep_code}, #{ep_title}, #{ep_price}, #{ep_bo_code}, #{ep_file_name}, #{ep_cover_img}, #{ep_total_page})
     </insert>
     <update id="updateEpisode">
         update episode
         set
             ep_title = #{ep_title},
-            <choose>
-                <when test="ep_file_name == null">
-                    ep_file_name = ep_file_name,
-                </when>
-                <otherwise>
-                    ep_file_name = #{ep_file_name},
-                </otherwise>
-            </choose>
-            <choose>
-                <when test="ep_cover_img == null">
-                    ep_cover_img = ep_cover_img,
-                </when>
-                <otherwise>
-                    ep_cover_img = #{ep_cover_img},
-                </otherwise>
-            </choose>
-            ep_price = #{ep_price}
+            <if test="ep_file_name != null">
+                ep_file_name = #{ep_file_name},
+            </if>
+            <if test="ep_cover_img != null">
+                ep_cover_img = #{ep_cover_img},
+            </if>
+            ep_price = #{ep_price},
+            ep_total_page = #{ep_total_page}
         where ep_code = #{ep_code}
+    </update>
+    <select id="getEpisodeByCode" resultType="EpisodeVO">
+        select * from episode where ep_code = #{ep_code}
+    </select>
+    <update id="deleteEpisode">
+        update episode set ep_del = "Y" where ep_code = #{ep_code}
     </update>
 </mapper>

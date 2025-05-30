@@ -276,7 +276,7 @@
 			display: table-cell;
 		}
         
-        .direct-view-btn {
+        .update-btn {
 			font-size: 13px;
 			padding: 8px 14px;
 			margin: 7px 0 7px 4px;
@@ -292,7 +292,7 @@
 			background: #fff;
 			border: 1px solid #d9d2d1;
 		}
-        .direct-view-btn:hover {
+        .update-btn:hover {
 			text-decoration: none;
 			color: #918580;
 		}
@@ -382,7 +382,13 @@
                         <div class="grid-left-top1">
                             <div class="grid-left-top2">
                                 <div class="thumb-grid">
-                                    <img class="thumb-img" src="/resources/static/covers/cover1.png">
+									<th:block th:if="${#lists.isEmpty(epiList)}">
+										<img src="/resources/static/img/default_thumb.png" alt="next" style="width: 204px; height: 300px;">
+									</th:block>
+									<th:block th:if="${!#lists.isEmpty(epiList)}">
+										<img class="thumb-img" th:src="@{/file/{path}(path=${epiList[epiList.size() - 1].ep_cover_img})}">
+									</th:block>
+
                                 </div>
                                 <div class="info-grid">
                                     <div class="category">
@@ -427,8 +433,13 @@
                                         <div class="content-area mb-2 mt-2">
                                             <div class="header-text mb-2" style="width: 50px; text-align: center; color: #ffa550; background: #fff3e4;">키다무</div>
                                             <div class="d-flex justify-content-between">
-                                                <span class="wff-text" th:text="${book.bo_wff_date}+'일 마다 1편 기다리면 무료'"></span>
-                                                <div class="state-text">무료 이용 가능</div>
+                                                <th:block th:if="${book.bo_wait_for_free == 'Y'}">
+													<span class="wff-text" th:text="${book.bo_wff_date}+'일 마다 1편 기다리면 무료'"></span>
+													<div class="state-text">무료 이용 가능</div>
+												</th:block>
+												<th:block th:if="${book.bo_wait_for_free == 'N'}">
+													<span class="wff-text">키다무 전용 컨텐츠가 아닙니다.</span>
+												</th:block>
                                             </div>
                                         </div>
                                     </div>
@@ -438,57 +449,84 @@
                                 <div class="epi-line"></div>
                                 <div class="list-module">
                                     <div class="list-wrapper">
-                                        <!-- 데이터 뿌려주기 시작 -->
-                                        <ul class="list-ul" th:each="episode : ${epiList}">
-                                            <!-- data-id : ep_code | data-price : ep_price | data-volume : ep_code에서 도서코드 제거 -->
-                                            <li class="epi-list" data-id="${episode.ep_code}">
-                                                <div class="epi-list-wrapper">
-                                                    <div class="table-wrap">
-                                                        <div class="epi-info">
-                                                            <div class="info-title-with-badge">
-                                                                <!-- 무료 회차가 아닌 경우 무료 배지 미노출 | 키다무 도서 & 무료X 회차인 경우 clock_badge로 노출 -->
-                                                                <div th:if="${episode.ep_price == 0}" class="badge-list">
-                                                                    <div class="badge">
-                                                                        <img class="free-badge" src="/resources/static/img/free.png" alt="무료 배지">
-                                                                    </div>
-                                                                </div>
-                                                                <div th:if="${episode.ep_price != 0} and ${book.bo_wait_for_free == 'Y'}"
-                                                                    class="badge-list">
-                                                                    <div class="badge">
-                                                                        <img class="clock-badge" src="/resources/static/img/clock_badge.png" alt="키다무 배지">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="epi-title" th:text="${episode.ep_title}"></div>
-                                                            </div>
-                                                            <div>
-                                                                <ul class="info-list-wrapper">
-                                                                    <li class="info-ep-date" th:text="${#strings.substring(episode.ep_date, 0, 10)}">
-                                                                    </li>
-                                                                    <!-- 아마도 전체 페이지 들어가야할듯? ↓ -->
-                                                                    <li class="info-page-cnt">| 약 4.5천 자</li>
-                                                                    <!-- 소장한 경우만 아래 배지 추가 -->
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                        <div class="direct-view-wrapper">
-                                                            <!-- 무료/소장 회차 : 보기 | 유료 회차 : 소장 -->
-                                                            <a th:href="@{/editor/updateEpisode/{ep_code}(ep_code=${episode.ep_code})}" class="direct-view-btn">수정</a>
-                                                        </div>
-                                                        <div class="direct-view-wrapper">
-                                                            <!-- 무료/소장 회차 : 보기 | 유료 회차 : 소장 -->
-                                                            <a th:href="@{/}" data-book-id="ep_code" class="checkout-btn">삭제</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </ul>
+										<th:block th:if="${!#lists.isEmpty(epiList)}">
+											<!-- 데이터 뿌려주기 시작 -->
+											<ul class="list-ul" th:each="episode : ${epiList}">
+												<li class="epi-list" data-id="${episode.ep_code}">
+													<div class="epi-list-wrapper">
+														<div class="table-wrap">
+															<div class="epi-info">
+																<div class="info-title-with-badge">
+																	<!-- 무료 회차가 아닌 경우 무료 배지 미노출 | 키다무 도서 & 무료X 회차인 경우 clock_badge로 노출 -->
+																	<div th:if="${episode.ep_price == 0}" class="badge-list">
+																		<div class="badge">
+																			<img class="free-badge" src="/resources/static/img/free.png" alt="무료 배지">
+																		</div>
+																	</div>
+																	<div th:if="${episode.ep_price != 0} and ${book.bo_wait_for_free == 'Y'}"
+																		class="badge-list">
+																		<div class="badge">
+																			<img class="clock-badge" src="/resources/static/img/clock_badge.png" alt="키다무 배지">
+																		</div>
+																	</div>
+																	<div class="epi-title" th:text="${episode.ep_title}"></div>
+																</div>
+																<div>
+																	<ul class="info-list-wrapper">
+																		<li class="info-ep-date" th:text="${#strings.substring(episode.ep_date, 0, 10)}"></li>
+																		<li class="info-page-cnt" th:text="'| 약 ' + ${episode.ep_total_page} +'자'">| 약 4.5천 자</li>
+																	</ul>
+																</div>
+															</div>
+															<div class="direct-view-wrapper">
+																<a th:href="@{/editor/updateEpisode/{ep_code}(ep_code=${episode.ep_code})}" class="update-btn">수정</a>
+															</div>
+															<div class="direct-view-wrapper">
+																<button  class="checkout-btn del-btn" th:data-ep-code="${episode.ep_code}">삭제</button>
+															</div>
+														</div>
+													</div>
+												</li>
+											</ul>
+										</th:block>
+										<th:block th:if="${#lists.isEmpty(epiList)}">
+											<div>회차 정보가 없습니다. 등록해주세요.</div>
+										</th:block>
                                     </div>
                                 </div>
 							</div>
                         </div>
+						<div class="direct-view-wrapper">
+							<a th:href="@{/editor/myContent}"  class="checkout-btn">목록으로</a>
+						</div>
                     </div>
                 </div>
             </div>
         </div>
+		<script>
+			$(".del-btn").on("click", function (){
+				if (!confirm("삭제하시겠습니까?")){
+					console.log("삭제안한대요.")
+					return
+				}
+				console.log("삭제한대요.")
+				const ep_code = $(this).data("ep-code");
+				console.log(ep_code);
+				$.ajax({
+					url : "/editor/deleteEpisode",
+					type : "post",
+					data : {ep_code : ep_code},
+					success : function (res){
+						if(res){
+							alert(ep_code+"삭제처리 완료");
+							location.reload();
+						} else {
+							console.log(ep_code+"삭제처리 실패");
+						}
+					}
+				})
+			})
+			
+		</script>
     </main>
 </body>

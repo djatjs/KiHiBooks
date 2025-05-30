@@ -241,12 +241,10 @@ public class BookService {
         String coverName = coverImage.getOriginalFilename();
         String coverSuffix = getSuffix(coverName);
         String newCoverName = ep_code + coverSuffix;
-        System.out.println(newCoverName);
         // epub 파일 작업
         String epubName = epubFile.getOriginalFilename();
         String epubSuffix = getSuffix(epubName);
         String newFilerName = ep_code + epubSuffix;
-        System.out.println(epubSuffix);
         //설정한 값들 ep에 저장후 DB에 저장
         ep.setEp_file_name(newFilerName);
         ep.setEp_cover_img(newCoverName);
@@ -264,15 +262,86 @@ public class BookService {
             ep.setEp_cover_img(ep_cover_img);
             ep_file_name = UploadFileUtils.uploadFile(uploadPath, newFilerName, epubFile.getBytes(), bo_code+"/epubs");
             ep.setEp_file_name(ep_file_name);
-            bookDAO.updateEpisode(ep);
+            return bookDAO.updateEpisode(ep);
         }catch(Exception e){
             e.printStackTrace();
+            return false;
         }
-        return true;
     }
 
     private String getSuffix(String fileName) {
         int index = fileName.lastIndexOf(".");
         return index < 0 ? null : fileName.substring(index);
     }
+
+    public boolean updateEpisode(EpisodeVO ep, String ep_code, String bo_code, MultipartFile epubFile, MultipartFile coverImage) {
+        if(ep == null || ep.getEp_code() == null){
+            return false;
+        }
+        // 기존 정보 가져오기
+        EpisodeVO existing = bookDAO.getEpisodeByCode(ep.getEp_code());
+        if (existing == null) {
+            System.out.println("없는데요");
+            return false;
+        }
+        String ep_cover_img;
+        String ep_file_name;
+        try {
+            // 썸네일 변경 처리
+            if(coverImage != null && !coverImage.isEmpty()){
+                //이미지 삭제
+                UploadFileUtils.deleteFile(uploadPath, existing.getEp_cover_img());
+                String coverName = coverImage.getOriginalFilename();
+                String coverSuffix = getSuffix(coverName);
+                String newCoverName = ep.getEp_code() + coverSuffix;
+                System.out.println(newCoverName);
+                ep_cover_img = UploadFileUtils.uploadFile(uploadPath, newCoverName, coverImage.getBytes(), bo_code+"/covers");
+                ep.setEp_cover_img(ep_cover_img);
+                System.out.println("이미지 삭제 및 재업로드 완료");
+            }
+            // epub 변경 처리
+            if(epubFile != null && !epubFile.isEmpty()){
+                //EPUB 파일 삭제
+                UploadFileUtils.deleteFile(uploadPath, existing.getEp_file_name());
+                String epubName = epubFile.getOriginalFilename();
+                String epubSuffix = getSuffix(epubName);
+                String newFilerName = ep.getEp_code() + epubSuffix;
+                System.out.println(newFilerName);
+                ep_file_name = UploadFileUtils.uploadFile(uploadPath, newFilerName, epubFile.getBytes(), bo_code+"/epubs");
+                System.out.println("EPUB 파일 삭제 및 재업로드 완료");
+                ep.setEp_file_name(ep_file_name);
+            }
+            ep.setEp_bo_code(bo_code);
+            return bookDAO.updateEpisode(ep);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public EpisodeVO getEpisodeByCode(String ep_code) {
+        return bookDAO.getEpisodeByCode(ep_code);
+    }
+
+    public boolean deleteEpisode(String ep_code) {
+        EpisodeVO episode = bookDAO.getEpisodeByCode(ep_code);
+        if(episode == null || ! ep_code.equals(episode.getEp_code())) {
+            return false;
+        }
+        try {
+            // 파일들 삭제
+            if(episode.getEp_file_name() != null) {
+                UploadFileUtils.deleteFile(uploadPath, episode.getEp_file_name());
+            }
+            if(episode.getEp_cover_img() != null) {
+                UploadFileUtils.deleteFile(uploadPath, episode.getEp_cover_img());
+            }
+            // DB에서도 삭제
+            return bookDAO.deleteEpisode(ep_code);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

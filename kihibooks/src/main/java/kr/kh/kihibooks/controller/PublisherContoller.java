@@ -217,6 +217,27 @@ public class PublisherContoller {
         return "redirect:/editor/registerEpisode/"+bo_code;
     }
     
+    @GetMapping("/editor/updateEpisode/{ep_code}")
+    public String updateEpisode(@PathVariable String ep_code, Model model) {
+        EpisodeVO episode = bookService.getEpisodeByCode(ep_code);
+        System.out.println(episode);
+        model.addAttribute("episode", episode);
 
+        return "/publisher/editor_updateEpisode";
+    }
+    @PostMapping("/editor/updateEpisode/{ep_code}")
+    public String updateEpisodePost(@PathVariable String ep_code, EpisodeVO ep, MultipartFile epubFile, MultipartFile coverImage) {
+        System.out.println(ep);
+        String bo_code = ep.getEp_bo_code();
+        if(bookService.updateEpisode(ep, ep_code, bo_code, epubFile, coverImage)){
+            return "redirect:/editor/manageEpisode/"+bo_code;
+        }
+        return "redirect:/editor/updateEpisode/"+ep_code;
+    }
+    @ResponseBody
+    @PostMapping("/editor/deleteEpisode")
+    public boolean deleteEpisode(@RequestParam String ep_code) {
+        return bookService.deleteEpisode(ep_code);
+    }
     
 }

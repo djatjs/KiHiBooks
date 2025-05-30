@@ -1,416 +1,279 @@
 <!DOCTYPE html>
 <html
-        xmlns:th="http://www.thymeleaf.org"
-        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-        xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-        layout:decorate="~{layout/layout.html}">
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/layout.html}">
+
 <head>
     <meta charset="UTF-8">
-    <title>KiHiBooks - 에피소드 수정</title>
+    <title>KiHiBooks - 에피소드 등록</title>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        /* 기본적인 컨테이너 스타일 */
         .container {
             max-width: 1200px;
             margin: 20px auto;
             padding: 0 20px;
             font-family: 'Arial', sans-serif;
         }
-
-        /* 페이지 제목 스타일 */
-        .register-work-page h2 {
+        .update-work-page h2 {
             color: #2c3e50;
             margin-bottom: 20px;
             border-bottom: 2px solid #ff7f50;
             padding-bottom: 10px;
             font-weight: bold;
         }
-        /* 등록 폼 스타일 */
-        .register-work-form {
+        .update-work-form {
             background-color: #f8f9fa;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
-        /* 폼 그룹 스타일 */
         .form-group {
             margin-bottom: 20px;
         }
-        /* 라벨 스타일 */
         .form-label {
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
             color: #34495e;
         }
-        /* 대분류와 소분류를 가로 정렬 */
-        .category-row {
-            display: flex;
-            gap: 20px; /* 요소 사이 여백 */
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-        /* 각 셀렉트 그룹 스타일 */
-        .category-group {
-            flex: 1;
-            min-width: 200px;
-        }
-        /* 입력 필드 스타일 */
         .form-group input[type="text"],
         .form-group input[type="file"],
-        .form-group input[type="date"],
-        .form-group textarea,
+        .form-group input[type="number"],
         .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 1rem;
+            font-size: 14px;
         }
-        /* 버튼 그룹 스타일 */
         .button-group {
             margin-top: 30px;
             text-align: center;
         }
-        /* 버튼 스타일 */
         .button-group button {
             padding: 10px 20px;
             font-size: 1rem;
             border: none;
             border-radius: .25rem;
             cursor: pointer;
-            transition: background-color 0.2s ease-in-out;
             margin: 0 5px;
         }
-        .button-group .btn-primary {
+        .btn-primary {
             background-color: #ff7f50;
             color: white;
         }
-        .button-group .btn-primary:hover {
+        .btn-primary:hover {
             background-color: #ff6347;
         }
-        .button-group .btn-secondary {
+        .btn-secondary {
             background-color: #6c757d;
             color: white;
         }
-        .button-group .btn-secondary:hover {
+        .btn-secondary:hover {
             background-color: #5a6268;
         }
-        /* 키워드 섹션 스타일 */
-        .keyword-list {
-            margin-top: 12px;
-            border: 1px solid #e0e0e0;
-            padding: 15px;
-            border-radius: 4px;
-            background-color: #ffffff;
+        .upload-wrapper {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
         }
-
-        .keyword-list h5 {
-            color: #34495e;
-            margin-top: 0;
-            margin-bottom: 10px;
-            padding-bottom: 5px;
-            border-bottom: 1px dashed #cccccc; /* 카테고리 제목 아래 점선 */
-            font-size: 1.1rem;
-        }
-
-        .keyword-list div {
-            margin-bottom: 15px;
-        }
-
-        /* 키워드 버튼 스타일 */
-        .keyword-button {
-            width: 75px;
-            margin: 3px;
-            padding: 5px 10px;
-            font-size: 0.6rem;
-            border-radius: 15px;
-            border: 1px solid #ff7f50 !important;
-            color: #ff7f50;
-            background-color: #ffffff;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .keyword-button:hover {
-            background-color: #ff7f50;
-            color: white;
+        .upload-box {
+            flex: 1;
+            border: 2px dashed #ffbba1;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         
+        .upload-box:hover {
+            background-color: #ffebe3;
+        }
+        .upload-box input[type="file"] {
+            display: none;
+        }
+        .upload-icon {
+            font-size: 40px;
+            color: #777;
+        }
+        .upload-text {
+            margin-top: 10px;
+            font-size: 15px;
+            color: #666;
+        }
+        .file-name {
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        #epubFileName {
+            min-height: 20px; /* 최소 높이 설정 */
+            margin-top: 5px; /* 위에 간격 추가 */
+            /* 기타 스타일 (border, background 등) */
+        }
+
     </style>
 </head>
+
 <body>
     <main layout:fragment="content">
-        <div class="container register-work-page">
-            <h2>📖 에피소드 수정</h2>
-            <p>에피소드를 수정해보세요.</p>
+        <div class="container update-work-page">
+            <h2>📖 회차 정보 수정</h2>
+            <p>회차 정보를 수정해주세요.</p>
 
-            <!-- 새 작품 등록 폼 -->
-            <form action="/editor/registerNew" method="post" class="register-work-form">
-                <!-- 담당 에디터 번호 -->
-                <input type="hidden" name="bo_pi_num" th:value="${user.pi_num}">
-                <input type="hidden" name="pu_code" th:value="${user.pu_code}">
-                <!-- 작품 제목 -->
-                <div class="form-group">
-                    <label class="form-label" for="boTitle">작품 제목 <span style="color: red;">*</span></label>
-                    <input type="text" id="bo_title" name="bo_title" class="form-control" required>
-                    <label id="bo_title-error" style="color: red; font-size: 12px; display: none;"></label>
-                </div>
+            <form th:action="@{/editor/updateEpisode/{ep_code}(ep_code=${ep_code})}" method="post" enctype="multipart/form-data" class="update-work-form">
+                <input type="hidden" name="ep_bo_code" th:value="${episode.ep_bo_code}">
+                <input type="hidden" name="ep_code" th:value="${episode.ep_code}">
 
-                <!-- 저자명 -->
+                <!-- 회차 제목 -->
                 <div class="form-group">
-                    <label class="form-label" for="boAuthor">저자명 <span style="color: red;">*</span></label>
-                    <input type="text" id="bo_author" name="bo_author" class="form-control" required>
-                    <label id="bo_author-error" style="color: red; font-size: 12px; display: none;"></label>
+                    <label class="form-label" for="ep_title">회차 제목 <span style="color: red;">*</span></label>
+                    <input type="text" id="ep_title" name="ep_title" th:value="${episode.ep_title}" required>
+                    <label id="ep_title-error" class="error" style="color: red; font-size: 12px; display: none;"></label>
                 </div>
 
-                <!-- 장르 선택 (대분류 및 소분류) -->
-                <div class="form-group category-row">
-                    <div class="category-group">
-                        <label class="form-label" for="mainCategory">대분류 <span style="color: red;">*</span></label>
-                        <select id="mainCategory" name="mainCategory" class="form-control" required>
-                            <option value="0">-- 대분류 선택 --</option>
-                            <option value="1">로맨스</option>
-                            <option value="2">로판</option>
-                            <option value="3">판타지</option>
-                            <option value="4">무협</option>
-                        </select>
-                    </div>
-                    <div class="category-group">
-                        <label class="form-label" for="subCategory">소분류 <span style="color: red;">*</span></label>
-                        <select id="bo_sc_code" name="bo_sc_code" class="form-control" required>
-                            <option value="">-- 소분류 선택 --</option>
-                        </select>
-                        <label id="bo_sc_code-error" style="color: red; font-size: 12px; display: none;"></label>
-                    </div>
-                </div>
-                
-                <!-- 작품 소개 -->
-                <div class="form-group">
-                    <label class="form-label" for="bo_description">작품 소개</label>
-                    <textarea id="bo_description" name="bo_description" class="form-control" rows="6"></textarea>
-                </div>
-
-                <!-- 연재 주기 선택 -->
-                <div class="form-group">
-                    <label class="form-label" for="bo_serial_schedule">연재 주기</label>
-                    <select id="bo_serial_schedule" name="bo_serial_schedule" class="form-control">
-                        <option value="">-- 선택 안함 --</option>
-                        <option value="월요연재">월요연재</option>
-                        <option value="화요연재">화요연재</option>
-                        <option value="수요연재">수요연재</option>
-                        <option value="목요연재">목요연재</option>
-                        <option value="금요연재">금요연재</option>
-                        <option value="토요연재">토요연재</option>
-                        <option value="일요연재">일요연재</option>
-                        <option value="주3회">주 3회</option>
-                    </select>
-                </div>
-
-                <!-- 연재 시작일 -->
-                <div class="form-group">
-                    <label class="form-label" for="boStartDate">연재 시작일</label>
-                    <input type="date" id="bo_publish_date" name="bo_publish_date" class="form-control">
-                </div>
-
-                <!-- 성인열람가능 여부 -->
-                <div class="form-group">
-                    <label class="form-label">성인 전용 여부 <span style="color: red;">*</span></label>
-                    <div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bo_adult" id="adultYes" value="Y" required>
-                            <label class="form-check-label" for="adultYes">예</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bo_adult" id="adultNo" value="N" required checked>
-                            <label class="form-check-label" for="adultNo">아니오</label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 기다무(기다리면 무료) 여부 -->
-                <div class="form-group">
-                    <label class="form-label">기다무(기다리면 무료) 적용 여부 <span style="color: red;">*</span></label>
-                    <div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bo_wait_for_free" id="waitFreeYes" value="Y" required>
-                            <label class="form-check-label" for="waitFreeYes">예</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="bo_wait_for_free" id="waitFreeNo" value="N" required checked>
-                            <label class="form-check-label" for="waitFreeNo">아니오</label>
-                        </div>
-                    </div>
-                </div>
-                <!-- 기다무 기간 (초기엔 숨김) -->
-                <div class="form-group" id="waitFreeDurationGroup" style="display: none;">
-                    <label class="form-label" for="bo_wff_date">기다무 기간<span style="color: red;">*</span></label>
-                    <input type="number" id="bo_wff_date" name="bo_wff_date" class="form-control">
-                    <small class="form-text text-muted">ex) 1 : 1일</small>
-                </div>
-
-                <!-- 무료 회차 수 -->
-                <div class="form-group">
-                    <label class="form-label" for="bo_free_episode">무료 회차 수 <span style="color: red;">*</span></label>
-                    <input type="number" id="bo_free_episode" name="bo_free_episode" class="form-control" required min="0" value="0"> <!-- 기본값 0화 -->
-                    <small class="form-text text-muted">처음부터 무료로 제공될 회차 수를 입력하세요.</small>
-                </div>
-
-                <!-- 키워드 -->
-                <div class="form-group">
-                    <label class="form-label" for="bo_keywords">키워드</label>
-                    <div class="keyword-list">
-                        <h5>선택된 키워드:</h5>
-                        <div class="selected-keywords" id="selected-keywords-area">
-                            <small id="no-keywords-message" class="form-text text-muted">선택된 키워드가 없습니다.</small>
-                        </div>
-                        <th:block th:each="category : ${keywordList}">
-                            <h5 th:text="${category.kc_name}"></h5>
-                            <div>
-                                <th:block th:each="keyword : ${category.keywordList}">
-                                    <button type="button" class="btn keyword-button" th:data-keyword="${keyword.kw_code}" th:data-name="${keyword.kw_name}" th:text="${keyword.kw_name}">
-                                    </button>
-                                </th:block>
+                <!-- 파일 업로드 -->
+                <div class="form-group upload-wrapper">
+                    <!-- EPUB 파일 -->
+                    <label class="upload-box" id="epubBox">
+                        <div class="upload-icon"><i class="fas fa-file-upload"></i></div>
+                        <div class="upload-text">EPUB 파일 업로드</div>
+                        <input type="file" name="epubFile" id="epubInput" accept=".epub">
+                        <div class="file-name" id="epubFileName"></div>
+                    </label>
+                    <!-- 커버 이미지 -->
+                    <label class="upload-box" id="coverBox">
+                        <div class="upload-icon"><i class="fas fa-image"></i></div>
+                        <div class="upload-text">커버 이미지 업로드</div>
+                        <input type="file" name="coverImage" id="coverInput" accept="image/*">
+                        <div class="file-name" id="coverFileName"></div>
+                    </label>
+                    <!-- 이미지 미리보기 커버 이미지 업로드시 나타나도록 설정 -->
+                    <label class="upload-box" id="coverPreviewBox">
+                        <div class="preview-box">
+                            <div class="before-upload">
+                                <div class="upload-icon"><i class="fas fa-image"></i></div>
+                                <div class="upload-text">커버 이미지 미리보기</div>
                             </div>
-                        </th:block>
-                    </div>
+                            <div class="file-name" id="coverPreview"></div>
+                            <img id="coverPreviewImg" src="" alt="커버 이미지 미리보기" style="display: none; max-width: 100%; height: auto; border-radius: 8px; margin-top: 10px;">
+                        </div>
+                    </label>
                 </div>
-                <!-- 버튼 그룹 -->
+
+                <!-- 글자 수 -->
+                <div class="form-group">
+                    <label class="form-label" for="ep_total_page">글자 수 <span style="color: red;">*</span></label>
+                    <input type="number" id="ep_total_page" name="ep_total_page" required min="0" th:value="${episode.ep_total_page}">
+                </div>
+
+                <!-- 가격 -->
+                <div class="form-group">
+                    <label class="form-label" for="ep_price">가격 <span style="color: red;">*</span></label>
+                    <input type="number" id="ep_price" name="ep_price" required min="0" th:value="${episode.ep_price}">
+                    <small class="form-text text-muted">0원으로 입력 시 무료회차로 처리됩니다.</small>
+                </div>
+
+                <!-- 버튼 -->
                 <div class="button-group">
                     <button type="submit" class="btn btn-primary">등록</button>
                     <button type="button" class="btn btn-secondary" onclick="history.back()">취소</button>
                 </div>
             </form>
-            <!-- 기다무 라디오 버튼 -->
             <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    const waitFreeYes = document.getElementById("waitFreeYes");
-                    const waitFreeNo = document.getElementById("waitFreeNo");
-                    const waitFreeDurationGroup = document.getElementById("waitFreeDurationGroup");
-                    const boWffDate = document.getElementById("bo_wff_date");
-
-                    function toggleWaitFreeDuration() {
-                        if (waitFreeYes.checked) {
-                            waitFreeDurationGroup.style.display = "block";
-                        } else {
-                            waitFreeDurationGroup.style.display = "none";
-                            boWffDate.value = "0"; // 기본값 1일로 설정
-                        }
+                $("#epubInput").on("change", function(){
+                    const file = this.files[0];
+                    if (file) {
+                        $("#epubFileName").html(file.name);
                     }
-
-                    // 초기 상태 설정
-                    toggleWaitFreeDuration();
-
-                    // 이벤트 리스너 등록
-                    waitFreeYes.addEventListener("change", toggleWaitFreeDuration);
-                    waitFreeNo.addEventListener("change", toggleWaitFreeDuration);
-                });
-            </script>
-            <!-- 장르 선택 -->
-            <script>
-                $("#mainCategory").on("change", function(){
-                    const mainCategoryValue = $(this).val();
-                    $.ajax({
-                        url: "/book/getSubCategory",
-                        type: 'GET',
-                        data: {mainCategoryValue},
-                        success: function(response){
-                            const $subCategorySelect = $('#bo_sc_code');
-                            $subCategorySelect.empty();
-                            $subCategorySelect.append('<option value="">-- 소분류 선택 --</option>');
-
-                            response.forEach(function(subCategory) {
-                                $subCategorySelect.append(`
-                                    <option value="${subCategory.sc_code}">${subCategory.sc_name}</option>
-                                `);
-                            });
-                        }
-                    })
+                    else{
+                        $("#epubFileName").html("");
+                    }
                 })
-            </script>
-            <!-- 키워드 선택 -->
-            <script>
-                $(document).on("click", ".keyword-button", function () {
-                    const keywordCode = $(this).data("keyword");
-                    const keywordName = $(this).data("name");
+                $("#coverInput").on("change", function () {
+                    const file = this.files[0];
+                    if (file) {
+                        // 파일 이름 표시
+                        $("#coverFileName").html(file.name);
 
-                    const selectedArea = $("#selected-keywords-area");
-                    const noMessage = $("#no-keywords-message");
-
-                    // 중복 방지: 이미 선택된 경우
-                    const existing = selectedArea.find(`[data-keyword="${keywordCode}"]`);
-                    if (existing.length > 0) {
-                        // 이미 선택된 버튼 클릭 시 해당 버튼과 input 태그 모두 제거**
-                        existing.next("input[name='bo_keywords']").remove();
-                        existing.remove();
+                        // 이미지 미리보기 처리
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            $("#coverPreviewImg")
+                                .attr("src", e.target.result)
+                                .css("display", "block");
+                            $(".before-upload").attr("style", "display: none");
+                        };
+                        reader.readAsDataURL(file);
                     } else {
-                        const newBtn = `<button type="button" class="btn keyword-button selected-keyword-btn" data-keyword="${keywordCode}" data-name="${keywordName}">${keywordName}</button>
-                                        <input type="hidden" name="bo_keywords" value="${keywordCode}">`;
-                        selectedArea.append(newBtn);
-                    }
-
-                    if (selectedArea.find("button").length > 0) {
-                        noMessage.hide();
-                    } else {
-                        noMessage.show();
-                    }
-                });
-
-                $(document).on("click", ".selected-keyword-btn", function () {
-                    const $this = $(this);
-
-                    $this.next("input[name='bo_keywords']").remove();
-                    $this.remove();
-
-                    const selectedArea = $("#selected-keywords-area");
-                    if (selectedArea.find("button").length === 0) {
-                        $("#no-keywords-message").show();
+                        $("#coverFileName").html("");
+                        $("#coverPreviewImg").attr("src", "").css("display", "none");
                     }
                 });
             </script>
+            <!-- validate -->
             <script>
-                $(".register-work-form").validate({
-                    rules : {
-                        bo_title : {
-                            required : true,
-                            maxlength : 50,
+                $(".update-work-form").validate({
+                    rules: {
+                        ep_title: {
+                            required: true,
+                            maxlength: 100
                         },
-                        bo_author : {
-                            required : true,
-                            maxlength : 20,
+                        epubFile: {
+                            required: true,
+                            extension: "epub"
                         },
-                        bo_sc_code : {
-                            required : true,
+                        coverImage: {
+                            required: true,
+                            extension: "jpg|jpeg|png|gif|bmp"
+                        },
+                        ep_price: {
+                            required: true,
+                            min: 0
                         }
                     },
-                    messages : {
-                        bo_title : {
-                            required : "제목을 입력해주세요.",
-                            maxlength : "50자 이내로 입력해주세요."
+                    messages: {
+                        ep_title: {
+                            required: "회차 제목을 입력하세요.",
+                            maxlength: "100자 이내로 입력해주세요."
                         },
-                        bo_author: {
-                            required: "작가명을 입력해주세요.",
-                            maxlength: "20자 이내로 입력해주세요."
+                        epubFile: {
+                            required: "EPUB 파일을 업로드하세요.",
+                            extension: "EPUB 파일만 업로드할 수 있습니다."
                         },
-                        bo_sc_code : {
-                            required : "장르를 선택해주세요."
+                        coverImage: {
+                            required: "커버 이미지를 업로드하세요.",
+                            extension: "이미지 파일만 업로드할 수 있습니다."
+                        },
+                        ep_price: {
+                            required: "가격을 입력하세요.",
+                            min: "0 이상의 값을 입력하세요."
                         }
                     },
                     errorPlacement: function(error, element) {
-                        const name = element.attr("name");
-                        const target = $(`#${name}-error`);
-                        target.html(error.text()).css("display", "block");
+                        const target = $(`#${element.attr("id")}-error`);
+                        if (target.length) {
+                            target.html(error.text()).show();
+                        } else {
+                            error.insertAfter(element);
+                        }
                     },
                     success: function(label, element) {
-                        const name = $(element).attr("name");
-                        const target = $(`#${name}-error`);
-                        target.text("").hide(); // 에러 메시지 지우고 숨김
+                        const target = $(`#${element.id}-error`);
+                        target.text("").hide();
                     }
-                })
+                });
             </script>
         </div>
     </main>
-
-    </body>
+</body>
 </html>
