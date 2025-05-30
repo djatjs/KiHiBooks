@@ -30,7 +30,7 @@ public class AttendanceController {
 	@Autowired
 	private AttendanceService attendanceService;
 
-	@GetMapping("/attendance")
+	@GetMapping("")
 	public String attendancePage(Model model, Principal principal) {
 			String userId = (principal != null) ?  principal.getName() : "guest";
 

@@ -6,7 +6,7 @@ import kr.kh.kihibooks.model.vo.AttendanceRewardVO;
 
 public interface AttendanceDAO {
 
-	boolean isCheckedToday(String userId);
+	boolean hasCheckedToday(String userId);
 
 	List<AttendanceRewardVO> selectRewardList();
 
