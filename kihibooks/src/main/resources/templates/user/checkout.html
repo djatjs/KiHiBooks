@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout.html}">
+
+<head>
+	<meta charset="UTF-8">
+	<title>결제 완료 - 키히</title>
+	<style>
+		.orange {
+      filter: brightness(0) saturate(100%) invert(38%) sepia(95%) saturate(750%) hue-rotate(-5deg) brightness(115%) contrast(110%);
+    }
+
+		.container{
+			max-width: 1170px;
+			margin: 30px auto 0;
+			padding: 0px 30px;
+			justify-content: center;
+		}
+
+		.checkout-container{
+			width: 100%;
+			max-width: 580px;
+			margin-bottom: 100px;
+		}
+
+		.check-icon{
+			display: block;
+			margin: 80px auto 18px;
+		}
+
+		.checkout-text{
+			color: #141414;
+			text-align: center;
+			font-size: 22px;
+			font-weight: 700;
+			line-height: 26px;
+			margin-bottom: 10px;
+		}
+
+		.btn-wrapper{
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+			flex-direction: column;
+			margin: 40px 0;
+		}
+
+		.direct-view-btn{
+			display: flex;
+			height: 40px;
+			justify-content: center;
+			align-items: center;
+			width: 160px;
+			font-size: 14px;
+			font-weight: 600;
+			line-height: 17px;
+			border-radius: 4px;
+			padding: 9px 0 8px;
+			color: #fff;
+			background: #ff7f50;
+			border: 0;
+		}
+
+		.direct-view-btn:hover {
+			background: #ff5e23;
+		}
+
+		.download-in-viewer{
+			margin-top: 10px;
+			display: flex;
+			height: 40px;
+			justify-content: center;
+			align-items: center;
+			width: 160px;
+			font-size: 14px;
+			font-weight: 600;
+			line-height: 17px;
+			border-radius: 4px;
+			padding: 9px 0 8px;
+			color: #787878;
+			background-color: #fff;
+			border: 1px solid #ccc;
+		}
+
+		.download-in-viewer:hover{
+			border: 1px solid #787878;
+		}
+
+		.download-viewer{
+			text-decoration: none;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin-top: 40px;
+			color: #a5a5a5;
+			font-size: 15px;
+			font-weight: 500;
+			line-height: normal;
+		}
+
+		.download-icon{
+			height: 16px;
+			margin-right: 2px;
+			margin-top: 3px;
+		}
+
+		.download-icon{
+			filter: brightness(0) saturate(100%) invert(68%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+		}
+
+		.download-viewer:hover img, .download-text:hover {
+      filter: brightness(0) saturate(100%) invert(88%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+			color: #b9b9b9;
+    }
+
+		.download-text{
+			text-decoration: underline;
+			color: #a5a5a5;
+			font-size: 15px;
+			font-weight: 500;
+			line-height: normal;
+		}
+
+		.checkout-info-table{
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			width: 100%;
+			border-collapse: collapse;
+			border-top: 1px solid #e6e6e6;
+			padding-bottom: 12px;
+		}
+
+		.checkout-info-table>tbody>tr{
+			display: flex;
+			min-height: 42px;
+			border-bottom: 1px solid #e6e6e6;
+			margin: 0;
+			padding: 0;
+		}
+
+		.checkout-info-table>tbody>tr>th{
+			width: 100px;
+			display: flex;
+			align-items: center;
+			padding: 12.5px 10px;
+			border-right: 1px solid #e6e6e6;
+			background: #fafafa;
+			color: #787878;
+			font-size: 15px;
+			font-weight: 500;
+		}
+
+		.checkout-info-table>tbody>tr>td{
+			display: flex;
+			align-items: center;
+			flex: 1;
+			justify-content: space-between;
+			padding: 12.5px 10px;
+			color: #141414;
+			font-size: 15px;
+			font-weight: 600;
+		}
+
+		.checkout-episode-text{
+			display: flex;
+			text-decoration: none;
+			flex: 1;
+			align-items: center;
+			justify-content: flex-start;
+			color: inherit;
+		}
+
+		.checkout-episode-text:hover{
+			text-decoration: none;
+			color: inherit;
+		}
+
+		.history-btn{
+			display: flex;
+			justify-content: flex-start;
+			flex-direction: row;
+			margin: 0;
+			padding: 0;
+		}
+
+		.history-text{
+			text-decoration: none;
+			display: flex;
+			height: 33px;
+			justify-content: center;
+			align-items: center;
+			color: #787878;
+			text-align: center;
+			font-size: 14px;
+			font-weight: 600;
+			border-radius: 4px;
+			border: 1px solid #e6e6e6;
+			padding: 10px 8px;
+		}
+
+		.history-text:hover{
+			color: #787878;
+			text-decoration: none;
+		}
+
+		.history-btn:hover a{
+			border: 1px solid #b6b6b6;
+		}
+	</style>
+</head>
+
+<body>
+	<main layout:fragment="content" class="container d-flex" style="min-height: 650px;">
+		<div class="checkout-container">
+			<img src="/resources/static/img/check_icon.png" alt="체크 아이콘" style="height: 64px;" class="check-icon orange">
+			<h2 class="checkout-text">결제가 완료되었습니다.</h2>
+			<div class="btn-wrapper">
+				<button type="button" class="direct-view-btn">바로 보기</button>
+				<button type="button" class="download-in-viewer">PC 뷰어에서 다운로드</button>
+				<a th:href="@{/}" class="download-viewer">
+					<img src="/resources/static/img/download.png" alt="다운로드 아이콘" class="download-icon">
+					<span class="download-text">PC 뷰어 설치</span>
+				</a>
+			</div>
+			<table class="checkout-info-table">
+				<tbody>
+					<tr>
+						<th>결제 내역</th>
+						<td>
+						<a th:href="@{/}" class="checkout-episode-text">이세계 착각 헌터 4화</a>
+					</td>
+					</tr>
+					<tr>
+						<th>결제 금액</th>
+						<td>0원</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="history-btn">
+				<a th:href="@{/}" class="history-text">결제 내역</a>
+			</div>
+		</div>
+	</main>
+</body>
+
+</html>

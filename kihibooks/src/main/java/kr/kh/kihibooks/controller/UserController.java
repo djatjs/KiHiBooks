@@ -254,4 +254,9 @@ public class UserController {
 
         return userService.deleteSelected(urNum, epCodes);
     }
+
+    @GetMapping("/order/checkout")
+    public String checkout(Model model){
+        return "/user/checkout";
+    }
 }
