@@ -1,8 +1,11 @@
 package kr.kh.kihibooks.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 import kr.kh.kihibooks.model.vo.EmailVO;
+import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 
 public interface UserDAO {
@@ -29,5 +32,9 @@ public interface UserDAO {
     boolean updateAthourityToPublisher(@Param("userNum")int userNum);
 
     boolean updateAuthorityToUser(@Param("userNum")int userNum);
+
+    List<EpisodeVO> getCartEpList(int ur_num);
+
+    int deleteCart(int ur_num, String ep_code);
 	
 }

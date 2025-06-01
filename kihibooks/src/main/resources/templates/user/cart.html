@@ -1,576 +1,605 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layout/layout.html}">
+  layout:decorate="~{layout/layout.html}">
 
 <head>
-	<meta charset="UTF-8">
-	<title>회원정보 변경</title>
-	<style>
-		.gray {
-			filter: brightness(0) saturate(100%) invert(90%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
-		}
+  <meta charset="UTF-8">
+  <title>내 카트 - 키히</title>
+  <style>
+    .gray {
+      filter: brightness(0) saturate(100%) invert(90%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+    }
 
-		.orange {
-			filter: brightness(0) saturate(130%) invert(38%) sepia(95%) saturate(750%) hue-rotate(-5deg) brightness(115%) contrast(110%);
-		}
+    .orange {
+      filter: brightness(0) saturate(130%) invert(38%) sepia(95%) saturate(750%) hue-rotate(-5deg) brightness(115%) contrast(110%);
+    }
 
-		.dark-gray {
-			filter: brightness(0) saturate(100%) invert(56%) sepia(6%) saturate(275%) hue-rotate(6deg) brightness(95%) contrast(84%);
-		}
+    .dark-gray {
+      filter: brightness(0) saturate(100%) invert(56%) sepia(6%) saturate(275%) hue-rotate(6deg) brightness(95%) contrast(84%);
+    }
 
-		#books_contents {
-			overflow: initial;
-			margin: 0 auto 100px auto;
-			color: #666;
-			font-size: 12px;
-		}
+    #books_contents {
+      overflow: initial;
+      margin: 0 auto 100px auto;
+      color: #666;
+      font-size: 12px;
+    }
 
-		.page-cart {
-			position: relative;
-			width: 952px;
-		}
+    .page-cart {
+      position: relative;
+      width: 952px;
+    }
 
-		.title-container {
-			display: flex;
-			align-items: center;
-			margin: 16px 0 0;
-			padding: 14px 0;
-		}
+    .title-container {
+      display: flex;
+      align-items: center;
+      margin: 16px 0 0;
+      padding: 14px 0;
+    }
 
-		.title-container a {
-			text-decoration: none;
-		}
+    .title-container a {
+      text-decoration: none;
+    }
 
-		.article-title-selected {
-			font-size: 26px;
-			font-weight: 700;
-			color: #000;
-			line-height: 54px;
-			display: inline-block;
-		}
+    .article-title-selected {
+      font-size: 26px;
+      font-weight: 700;
+      color: #000;
+      line-height: 54px;
+      display: inline-block;
+    }
 
-		.cart-wrapper {
-			position: relative;
-		}
+    .cart-wrapper {
+      position: relative;
+    }
 
-		.checkout-form {
-			width: 620px;
-		}
+    .checkout-form {
+      width: 620px;
+    }
 
-		.cart-summary-wrapper {
-			width: 290px;
-			cursor: default;
-			position: absolute;
-			top: 0;
-			right: 0;
-		}
+    .cart-summary-wrapper {
+      width: 290px;
+      cursor: default;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
 
-		.summary-box {
-			border: 1px solid #e6e6e6;
-		}
+    .summary-box {
+      border: 1px solid #e6e6e6;
+    }
 
-		.count-wrapper {
-			padding: 20px;
-			color: #ff7f50;
-			font-size: 12px;
-			font-weight: 700;
-		}
+    .count-wrapper {
+      padding: 20px;
+      color: #ff7f50;
+      font-size: 12px;
+      font-weight: 700;
+    }
 
-		.total-price-wrapper {
-			padding: 12px 20px;
-			background: #fff5f1;
-			margin: 0;
-		}
+    .total-price-wrapper {
+      padding: 12px 20px;
+      background: #fff5f1;
+      margin: 0;
+    }
 
-		.table-wrapper {
-			display: table;
-			width: 100%;
-		}
+    .table-wrapper {
+      display: table;
+      width: 100%;
+    }
 
-		.total-text {
-			display: table-cell;
-			vertical-align: middle;
-			text-align: left;
-			font-weight: 700;
-			font-size: 13px;
-			color: #967e73;
-		}
+    .total-text {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: left;
+      font-weight: 700;
+      font-size: 13px;
+      color: #967e73;
+    }
 
-		.total-price {
-			display: table-cell;
-			vertical-align: middle;
-			text-align: right;
-			font-size: 20px;
-			font-weight: 700;
-			color: #ff7f50;
-		}
+    .total-price {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: right;
+      font-size: 20px;
+      font-weight: 700;
+      color: #ff7f50;
+    }
 
-		.orange-btn {
-			display: inline-block;
-			text-align: center;
-			padding: 1em;
-			font-weight: 700;
-			box-sizing: border-box;
-			border-radius: 4px;
-			transition: background .3s;
-			color: #fff;
-			background: #ff7f50;
-			border: 1px solid #ff7f50;
-		}
+    .orange-btn {
+      display: inline-block;
+      text-align: center;
+      padding: 1em;
+      font-weight: 700;
+      box-sizing: border-box;
+      border-radius: 4px;
+      transition: background .3s;
+      color: #fff;
+      background: #ff7f50;
+      border: 1px solid #ff7f50;
+    }
 
-		.buy-btn {
-			width: 100%;
-			margin-top: 10px;
-			font-size: 16px;
-			box-shadow: none;
-		}
+    .buy-btn {
+      width: 100%;
+      margin-top: 10px;
+      font-size: 16px;
+      box-shadow: none;
+    }
 
-		.cart-list-wrapper {
-			display: block;
-			margin: 0;
-			padding: 0;
-		}
+    .cart-list-wrapper {
+      display: block;
+      margin: 0;
+      padding: 0;
+    }
 
-		.cart-list-box {
-			position: relative;
-			border: 1px solid #d9d3d1;
-		}
+    .cart-list-box {
+      position: relative;
+      border: 1px solid #d9d3d1;
+    }
 
-		.module-list-handler {
-			padding: 15px 20px;
-			background: #fff;
-			clear: both;
-			display: table;
-			width: 100%;
-			box-sizing: border-box;
-		}
+    .module-list-handler {
+      padding: 15px 20px;
+      background: #fff;
+      clear: both;
+      display: table;
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-		.total-checkbox {
-			display: table-cell;
-			vertical-align: middle;
-			font-size: 13px;
-			font-weight: 700;
-			color: #736663;
-		}
+    .total-checkbox {
+      display: table-cell;
+      vertical-align: middle;
+      font-size: 13px;
+      font-weight: 700;
+      color: #736663;
+    }
 
-		.checkbox-input {
-			margin-right: 7px;
-			width: 18px;
-			height: 18px;
-			border: 1px solid #c2bbb9;
-			background-color: transparent;
-			cursor: pointer;
-			border-radius: 4px;
-			vertical-align: middle;
-		}
+    .checkbox-input {
+      margin-right: 7px;
+      width: 18px;
+      height: 18px;
+      border: 1px solid #c2bbb9;
+      background-color: transparent;
+      cursor: pointer;
+      border-radius: 4px;
+      vertical-align: middle;
+    }
 
-		.checkbox-label {
-			color: #383230;
-		}
+    .checkbox-label {
+      color: #383230;
+    }
 
-		.btn-wrapper {
-			display: table-cell;
-			vertical-align: middle;
-			text-align: right;
-		}
+    .btn-wrapper {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: right;
+    }
 
-		.white-btn {
-			margin: 0;
-			padding: 0;
-			appearance: none;
-			border: 0;
-			outline: 0;
-			text-decoration: none;
-			box-sizing: border-box;
-			border-radius: 4px;
-			font-weight: 700;
-			display: inline-block;
-			text-align: center;
-			cursor: pointer;
-			line-height: 1em;
-			vertical-align: baseline;
-			transition: background .2s, color .2s;
-			color: #918480;
-			background: #fff;
-			border: 1px solid #d9d3d1;
-			font-size: 12px;
-			padding: 7px;
-		}
+    .white-btn {
+      margin: 0;
+      padding: 0;
+      appearance: none;
+      border: 0;
+      outline: 0;
+      text-decoration: none;
+      box-sizing: border-box;
+      border-radius: 4px;
+      font-weight: 700;
+      display: inline-block;
+      text-align: center;
+      cursor: pointer;
+      line-height: 1em;
+      vertical-align: baseline;
+      transition: background .2s, color .2s;
+      color: #918480;
+      background: #fff;
+      border: 1px solid #d9d3d1;
+      font-size: 12px;
+      padding: 7px;
+    }
 
-		.cart-wrap {
-			color: #666;
-			font-size: 12px;
-			line-height: 1em;
-		}
+    .cart-wrap {
+      color: #666;
+      font-size: 12px;
+      line-height: 1em;
+    }
 
-		.bookmacro-wrapper {
-			padding: 0 20px;
-		}
+    .bookmacro-wrapper {
+      padding: 0 20px;
+    }
 
-		.book-macro {
-			border-top: 1px solid #ebe7e6;
-			display: table;
-			width: 100%;
-		}
+    .book-macro {
+      border-top: 1px solid #ebe7e6;
+      display: table;
+      width: 100%;
+    }
 
-		.book-thumbnail-wrapper {
-			padding: 20px 0 20px 28px;
-			width: 28px;
-		}
+    .book-thumbnail-wrapper {
+      padding: 20px 0 20px 28px;
+      width: 28px;
+    }
 
-		.book-thumbnail {
-			display: inline-block;
-			position: relative;
-			height: auto;
-		}
+    .book-thumbnail {
+      display: inline-block;
+      position: relative;
+      height: auto;
+    }
 
-		.thumbnail-checkbox {
-			left: -28px;
-			top: 50%;
-			margin-top: -9px;
-			display: block;
-			position: absolute;
-		}
+    .thumbnail-checkbox {
+      left: -28px;
+      top: 50%;
+      margin-top: -9px;
+      display: block;
+      position: absolute;
+    }
 
-		.thumbnail-img {
-			display: block;
-			width: 60px;
-			max-height: 87px;
-			position: relative;
-			background: #d9d9d9;
-		}
+    .thumbnail-img {
+      display: block;
+      width: 60px;
+      max-height: 87px;
+      position: relative;
+      background: #d9d9d9;
+    }
 
-		.thumbnail {
-			width: 60px;
-			max-height: 87px;
-		}
+    .thumbnail {
+      width: 60px;
+      max-height: 87px;
+    }
 
-		.thumbnail-btn {
-			display: block;
-			position: absolute;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			z-index: 9;
-			cursor: pointer;
-		}
+    .thumbnail-btn {
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9;
+      cursor: pointer;
+    }
 
-		.indent-hidden {
-			position: absolute;
-			display: inline-block;
-			height: 0;
-			width: 0;
-			text-indent: -9999px;
-			overflow: hidden;
-		}
+    .indent-hidden {
+      position: absolute;
+      display: inline-block;
+      height: 0;
+      width: 0;
+      text-indent: -9999px;
+      overflow: hidden;
+    }
 
-		.table-cell-wrapper {
-			display: table-cell;
-			vertical-align: middle;
-			padding: 10px 0 15px 0;
-		}
+    .table-cell-wrapper {
+      display: table-cell;
+      vertical-align: middle;
+      padding: 10px 0 15px 0;
+    }
 
-		.table-wrapper {
-			display: table;
-			width: 100%;
-		}
+    .table-wrapper {
+      display: table;
+      width: 100%;
+    }
 
-		.book-metadata-wrapper {
-			padding: 0 8px 0 15px;
-			position: relative;
-			display: table-cell;
-			vertical-align: top;
-			cursor: default;
-		}
+    .book-metadata-wrapper {
+      padding: 0 8px 0 15px;
+      position: relative;
+      display: table-cell;
+      vertical-align: top;
+      cursor: default;
+    }
 
-		.book-metadata {
-			display: block;
-			margin-top: 3px;
-		}
+    .book-metadata {
+      display: block;
+      margin-top: 3px;
+    }
 
-		.book-metadata.meta-title {
-			margin-bottom: 7px;
-		}
+    .book-metadata.meta-title {
+      margin-bottom: 7px;
+    }
 
-		.title-link {
-			text-decoration: none;
-		}
+    .title-link {
+      text-decoration: none;
+    }
 
-		.title-text {
-			font-size: 16px;
-			color: #000;
-			font-weight: 700;
-		}
+    .title-text {
+      font-size: 16px;
+      color: #000;
+      font-weight: 700;
+    }
 
-		.book-metadata.author {
-			height: auto;
-			padding: 0;
-			margin-left: 0;
-		}
+    .book-metadata.author {
+      height: auto;
+      padding: 0;
+      margin-left: 0;
+    }
 
-		.author-detail-link {
-			display: inline;
-			margin-top: 0;
-			font-size: 12px;
-			color: #666;
-		}
+    .author-detail-link {
+      display: inline;
+      margin-top: 0;
+      font-size: 12px;
+      color: #666;
+    }
 
-		a:hover {
-			text-decoration: none;
-			color: inherit;
-		}
+    a:hover {
+      text-decoration: none;
+      color: inherit;
+    }
 
-		.book-price-wrapper {
-			display: table-cell;
-			vertical-align: middle;
-			cursor: default;
-			text-align: right;
-		}
+    .book-price-wrapper {
+      display: table-cell;
+      vertical-align: middle;
+      cursor: default;
+      text-align: right;
+    }
 
-		ul {
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-		}
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
 
-		.coupon-price {
-			display: block;
-			font-size: 14px;
-			white-space: nowrap;
-			margin-top: 4px;
-		}
+    .coupon-price {
+      display: block;
+      font-size: 14px;
+      white-space: nowrap;
+      margin-top: 4px;
+    }
 
-		.coupon-price strong {
-			color: #ff7f50;
-		}
+    .coupon-price strong {
+      color: #ff7f50;
+    }
 
-		.del-btn-wrapper {
-			padding: 0 0 0 15px;
-		}
+    .del-btn-wrapper {
+      padding: 0 0 0 15px;
+    }
 
-		.btn-del {
-			padding: 8px 18px;
-		}
+    .btn-del {
+      padding: 8px 18px;
+    }
 
-		.empty-desktop{
-			width: 620px;
-			cursor: default;
-			position: static;
-		}
+    .empty-desktop {
+      width: 620px;
+      cursor: default;
+      position: static;
+    }
 
-		.empty{
-			padding: 160px 0;
-		}
+    .empty {
+      padding: 160px 0;
+    }
 
-		.empty-cart-icon{
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			margin-bottom: 20px;
-			margin-left: -2px;
-		}
+    .empty-cart-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      margin-left: -2px;
+    }
 
-		.empty-description{
-			margin: 0;
-			padding: 0;
-			margin-left: 1px;
-			font-size: 13px;
-			color: #736663;
-			cursor: default;
-			display: flex;
-			justify-content: center;
-		}
-	</style>
+    .empty-description {
+      margin: 0;
+      padding: 0;
+      margin-left: 1px;
+      font-size: 13px;
+      color: #736663;
+      cursor: default;
+      display: flex;
+      justify-content: center;
+    }
+  </style>
 </head>
 
 <body>
-	<main layout:fragment="content" class="container d-flex" style="min-height: 650px;">
-		<div id="books_contents">
-			<div>
-				<section id="page_cart" class="page-cart" data-count="1">
-					<div class="title-container">
-						<a th:href="@{/cart}">
-							<h2 class="article-title-selected">카트</h2>
-						</a>
-					</div>
-					<div class="cart-wrapper">
-						<form action="/order/checkout" method="post" id="form" class="checkout-form">
-							<!-- <article class="cart-summary-wrapper">
-								<div class="summary-box-wrapper">
-									<div class="summary-box">
-										<p class="count-wrapper">
-											<span class="icon-check">
-												<img src="/resources/static/img/check.png" alt="체크" class="orange" style="height: 15px;">
-											</span>
-											<span class="checked-book-cnt">1</span>개를 선택하셨습니다.
-										</p>
-										<p class="total-price-wrapper">
-											<span class="table-wrapper">
-												<span class="total-text">합계</span>
-												<span class="total-price">
-													<span class="price-wrapper">
-														<span class="price-num">100</span>원
-													</span>
-												</span>
-											</span>
-										</p>
-									</div>
-									<div class="buy-btn-wrapper">
-										<button type="submit" class="orange-btn buy-btn">소장으로 구매하기</button>
-									</div>
-								</div>
-							</article>
-							<article class="cart-list-wrapper">
-								<div class="cart-list-box">
-									<div class="module-list-handler">
-										<div class="total-checkbox">
-											<input type="checkbox" id="checkbox_all_top" class="checkbox-input" title="카트에 있는 작품 전체 선택"
-												checked>
-											<label for="checkbox_all_top" class="checkbox-label">
-												전체 선택
-											</label>
-										</div>
-										<div class="btn-wrapper">
-											<button type="button" class="white-btn btn-selected-del-cart">선택 삭제</button>
-										</div>
-									</div>
-									<div id="cart_wrap">
-										<div class="bookmacro-wrapper">
-											<div id="book_BO_CODE" data-need-adult-verify="0" class="book-macro" data-series-id="EP_CODE">
-												<div class="book-thumbnail-wrapper">
-													<div class="book-thumbnail">
-														<div class="thumbnail-checkbox">
-															<input type="checkbox" id="bookEP_CODE" class="checkbox-input epi-checkbox" title="도서 제목"
-																value="BO_CODE" checked>
-														</div>
-														<div class="thumbnail-img">
-															<img class="thumbnail" src="/resources/static/covers/cover1.png" alt="표지 이미지">
-															<span class="border"></span>
-														</div>
-														<a th:href="@{/}" class="thumbnail-btn">
-															<span class="indent-hidden">상세페이지 바로가기</span>
-														</a>
-													</div>
-												</div>
-												<div class="table-cell-wrapper">
-													<div class="table-wrapper">
-														<div class="book-metadata-wrapper" data-book-id="BO_CODE">
-															<div class="book-metadata metadata-title">
-																<a th:href="@{/}" class="title-link">
-																	<span class="title-text">도서 제목 1화</span>
-																</a>
-															</div>
-															<p class="book-metadata author">
-																<a th:href="@{/}" class="author-detail-link">작가명</a>
-															</p>
-														</div>
-														<div class="book-price-wrapper">
-															<ul class="show-coupon-price">
-																<li class="coupon-price">
-																	<strong>
-																		<span>100</span>원
-																	</strong>
-																</li>
-															</ul>
-														</div>
-													</div>
-													<ul class="del-btn-wrapper">
-														<li class="btn-item">
-															<button type="button" class="white-btn btn-del">삭제</button>
-														</li>
-													</ul>
-												</div>
-											</div>
-											<div id="book_BO_CODE" data-need-adult-verify="0" class="book-macro" data-series-id="EP_CODE">
-												<div class="book-thumbnail-wrapper">
-													<div class="book-thumbnail">
-														<div class="thumbnail-checkbox">
-															<input type="checkbox" id="bookEP_CODE" class="checkbox-input epi-checkbox" title="도서 제목"
-																value="BO_CODE" checked>
-														</div>
-														<div class="thumbnail-img">
-															<img class="thumbnail" src="/resources/static/covers/cover1.png" alt="표지 이미지">
-															<span class="border"></span>
-														</div>
-														<a th:href="@{/}" class="thumbnail-btn">
-															<span class="indent-hidden">상세페이지 바로가기</span>
-														</a>
-													</div>
-												</div>
-												<div class="table-cell-wrapper">
-													<div class="table-wrapper">
-														<div class="book-metadata-wrapper" data-book-id="BO_CODE">
-															<div class="book-metadata metadata-title">
-																<a th:href="@{/}" class="title-link">
-																	<span class="title-text">도서 제목 1화</span>
-																</a>
-															</div>
-															<p class="book-metadata author">
-																<a th:href="@{/}" class="author-detail-link">작가명</a>
-															</p>
-														</div>
-														<div class="book-price-wrapper">
-															<ul class="show-coupon-price">
-																<li class="coupon-price">
-																	<strong>
-																		<span>100</span>원
-																	</strong>
-																</li>
-															</ul>
-														</div>
-													</div>
-													<ul class="del-btn-wrapper">
-														<li class="btn-item">
-															<button type="button" class="white-btn btn-del">삭제</button>
-														</li>
-													</ul>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</article> -->
-							<article class="empty-desktop">
-								<article class="cart-list-wrapper">
-									<div class="cart-list-box">
-										<div class="empty">
-											<div class="empty-cart-icon-wrapper">
-												<span class="empty-cart-icon">
-													<img class="gray" src="/resources/static/img/cart.png" alt="카트 이미지" style="height: 80px;">
-												</span>
-												<p class="empty-description">카트에 담긴 작품이 없습니다.</p>
-											</div>
-										</div>
-									</div>
-								</article>
-							</article>
-						</form>
-					</div>
-				</section>
-			</div>
-		</div>
-		<script>
-			document.addEventListener("DOMContentLoaded", function () {
-				const allCheck = document.getElementById("checkbox_all_top");
-				const epiChecks = document.querySelectorAll(".epi-checkbox");
+  <main layout:fragment="content" class="container d-flex" style="min-height: 650px;">
+    <div id="books_contents">
+      <div>
+        <section id="page_cart" class="page-cart" data-count="1">
+          <div class="title-container">
+            <a th:href="@{/cart}">
+              <h2 class="article-title-selected">카트</h2>
+            </a>
+          </div>
+          <div class="cart-wrapper">
+            <form action="/order/checkout" method="post" id="form" class="checkout-form">
+              <div th:if="${!epList.isEmpty()}">
+                <article class="cart-summary-wrapper">
+                  <div class="summary-box-wrapper">
+                    <div class="summary-box">
+                      <p class="count-wrapper">
+                        <span class="icon-check">
+                          <img src="/resources/static/img/check.png" alt="체크" class="orange" style="height: 15px;">
+                        </span>
+                        <span class="checked-book-cnt">1</span>개를 선택하셨습니다.
+                      </p>
+                      <p class="total-price-wrapper">
+                        <span class="table-wrapper">
+                          <span class="total-text">합계</span>
+                          <span class="total-price">
+                            <span class="price-wrapper">
+                              <span class="price-num">100</span>원
+                            </span>
+                          </span>
+                        </span>
+                      </p>
+                    </div>
+                    <div class="buy-btn-wrapper">
+                      <button type="submit" class="orange-btn buy-btn">소장으로 구매하기</button>
+                    </div>
+                  </div>
+                </article>
+                <article class="cart-list-wrapper">
+                  <div class="cart-list-box">
+                    <div class="module-list-handler">
+                      <div class="total-checkbox">
+                        <input type="checkbox" id="checkbox_all_top" class="checkbox-input" title="카트에 있는 작품 전체 선택"
+                          checked>
+                        <label for="checkbox_all_top" class="checkbox-label">
+                          전체 선택
+                        </label>
+                      </div>
+                      <div class="btn-wrapper">
+                        <button type="button" class="white-btn btn-selected-del-cart" onclick="deleteSelectedEpisodes()">선택 삭제</button>
+                      </div>
+                    </div>
+                    <div id="cart_wrap">
+                      <div class="bookmacro-wrapper">
+                        <div class="book-macro" data-series-id="EP_CODE" th:each="episode : ${epList}"
+                          th:id="'B_' + ${episode.ep_code}" th:attr="data-series-id=${episode.ep_code}">
+                          <div class="book-thumbnail-wrapper">
+                            <div class="book-thumbnail">
+                              <div class="thumbnail-checkbox">
+                                <input type="checkbox" th:id="${episode.ep_code}" class="checkbox-input epi-checkbox"
+                                  title="도서 제목" th:value="${episode.ep_bo_code}"
+                                  th:attr="data-price=${episode.ep_price}" checked>
+                              </div>
+                              <div class="thumbnail-img">
+                                <img class="thumbnail" src="/resources/static/covers/cover1.png" alt="표지 이미지">
+                                <span class="border"></span>
+                              </div>
+                              <a th:href="@{'/books/' + ${episode.ep_bo_code}}" class="thumbnail-btn">
+                                <span class="indent-hidden">상세페이지 바로가기</span>
+                              </a>
+                            </div>
+                          </div>
+                          <div class="table-cell-wrapper">
+                            <div class="table-wrapper">
+                              <div class="book-metadata-wrapper" th:attr="data-book-id=${episode.ep_bo_code}">
+                                <div class="book-metadata metadata-title">
+                                  <a th:href="@{'/books/' + ${episode.ep_bo_code}}" class="title-link">
+                                    <span class="title-text" th:text="${episode.ep_title}"></span>
+                                  </a>
+                                </div>
+                                <p class="book-metadata author">
+                                  <a th:href="@{/}" class="author-detail-link" th:text="${episode.ep_author}"></a>
+                                </p>
+                              </div>
+                              <div class="book-price-wrapper">
+                                <ul class="show-coupon-price">
+                                  <li class="coupon-price">
+                                    <strong>
+                                      <span
+                                        th:text="${episode.ep_price == 0} ? '무료' : ${episode.ep_price + '원'}"></span>
+                                    </strong>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                            <ul class="del-btn-wrapper">
+                              <li class="btn-item">
+                                <button type="button" class="white-btn btn-del" th:attr="data-ep-code=${episode.ep_code}" onclick="delteEpisode(this)">삭제</button>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+              <div th:if="${epList.isEmpty()}">
+                <article class="empty-desktop">
+                  <article class="cart-list-wrapper">
+                    <div class="cart-list-box">
+                      <div class="empty">
+                        <div class="empty-cart-icon-wrapper">
+                          <span class="empty-cart-icon">
+                            <img class="gray" src="/resources/static/img/cart.png" alt="카트 이미지" style="height: 80px;">
+                          </span>
+                          <p class="empty-description">카트에 담긴 작품이 없습니다.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                </article>
+              </div>
+            </form>
+          </div>
+        </section>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const allCheck = document.getElementById("checkbox_all_top");
+        const epiChecks = document.querySelectorAll(".epi-checkbox");
+        const countEl = document.querySelector(".checked-book-cnt");
+        const priceEl = document.querySelector(".price-num");
 
-				allCheck.addEventListener("change", function () {
-					const isChecked = allCheck.checked;
-					epiChecks.forEach(checkbox => {
-						checkbox.checked = isChecked;
-					});
-				});
+        function updateSummary() {
+          let count = 0;
+          let totalPrice = 0;
 
-				epiChecks.forEach(checkbox => {
-					checkbox.addEventListener("change", function () {
-						const allChecked = Array.from(epiChecks).every(cb => cb.checked);
-						allCheck.checked = allChecked;
-					});
-				});
-			});
-		</script>
-	</main>
+          epiChecks.forEach(cb => {
+            if (cb.checked) {
+              count++;
+              const price = parseInt(cb.dataset.price, 10);
+              totalPrice += isNaN(price) ? 0 : price;
+            }
+          });
+
+          countEl.textContent = count;
+          priceEl.textContent = totalPrice.toLocaleString();
+        }
+
+        allCheck.addEventListener("change", function () {
+          const isChecked = allCheck.checked;
+          epiChecks.forEach(checkbox => {
+            checkbox.checked = isChecked;
+          });
+          updateSummary();
+        });
+
+        epiChecks.forEach(checkbox => {
+          checkbox.addEventListener("change", function () {
+            allCheck.checked = Array.from(epiChecks).every(cb => cb.checked);
+            updateSummary();
+          });
+        });
+
+        updateSummary();
+      });
+
+      function delteEpisode(button) {
+        const epCode = button.getAttribute('data-ep-code');
+        if(!epCode) return;
+
+        if(confirm("작품을 삭제하시겠습니까?")) {
+          $.ajax({
+            url : "/cart/delete",
+            method : "post",
+            contentType : "application/json",
+            data : JSON.stringify({epCode : epCode}),
+            success : function() {
+              location.reload();
+            },
+            error : function() {
+              alert("카트 삭제 실패");
+            }
+          })
+        }
+      }
+
+      function deleteSelectedEpisodes() {
+        const checkedCheckboxes = document.querySelectorAll('.epi-checkbox:checked');
+
+        if(checkedCheckboxes.length === 0) {
+          alert("삭제할 작품을 선택해주세요.");
+          return;
+        }
+
+        const epCodes = Array.from(checkedCheckboxes).map(cb=> cb.id);
+
+        if(confirm("작품을 삭제하시겠습니까?")) {
+          $.ajax({
+            url : "/cart/deleteSelected",
+            method : "post",
+            contentType : "application/json",
+            data : JSON.stringify({epCodes : epCodes}),
+            success : function() {
+              location.reload();
+            },
+            error : function() {
+              alert("카트 삭제 실패");
+            }
+          })
+        }
+      }
+    </script>
+  </main>
 </body>
 
 </html>

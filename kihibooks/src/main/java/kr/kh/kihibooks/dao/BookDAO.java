@@ -131,5 +131,9 @@ public interface BookDAO {
 
 	List<BookKeywordVO> getKeywordList(String bo_code);
 
+    int addCart(int ur_num, String ep_code);
+
+	List<String> getCartEpCodesByUser(int ur_num);
+
 
 }

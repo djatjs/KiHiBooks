@@ -40,4 +40,17 @@
     <update id="updateAuthorityToUser">
         update user set ur_authority = 'USER' WHERE (ur_num = #{userNum});
     </update>
+    <select id="getCartEpList">
+        select *, author.au_name AS ep_author from episode
+        join cart on ep_code = ca_ep_code
+        join book on bo_code = ep_bo_code
+        join author on au_num = bo_au_num
+        where ca_ur_num = #{ur_num}
+        order by ca_ep_code
+    </select>
+
+    <delete id="deleteCart">
+        delete from cart
+        where ca_ur_num = #{ur_num} and ca_ep_code = #{ep_code}
+    </delete>
 </mapper>
