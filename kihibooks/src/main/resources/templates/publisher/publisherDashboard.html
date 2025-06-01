@@ -80,7 +80,7 @@ layout:decorate="~{layout/layout.html}">
 
 	.publisher-dashboard .link-button {
 		display: inline-block;
-		background-color: #3498db; /* 버튼 배경색 */
+		background-color: #ff7f50;
 		color: white;
 		padding: 10px 20px;
 		border-radius: 5px;
@@ -90,7 +90,7 @@ layout:decorate="~{layout/layout.html}">
 	}
 
 	.publisher-dashboard .link-button:hover {
-		background-color: #2980b9; /* 호버 시 배경색 변경 */
+		background-color: #ff6347;
 	}
 
 	/* 최근 활동/목록 섹션 */
@@ -125,6 +125,7 @@ layout:decorate="~{layout/layout.html}">
 		margin: 0 auto; /* 가운데 정렬 */
 		padding: 0 20px;
 	}
+	
 	@media (max-width: 800px) {
 		.container {
 			padding: 0; /* 작은 화면에서 패딩 제거 */
@@ -148,53 +149,35 @@ layout:decorate="~{layout/layout.html}">
 				<p th:text="${#authentication.principal?.authority}"></p>
 			</div>
 
-			<!-- 요약 정보 섹션 -->
 			<div class="dashboard-summary">
-
-				<!-- 에디터 수 요약 카드 -->
 				<!-- SUPER 권한에게만 총 에디터 수를 보여주는 카드 -->
 				<div class="summary-card" th:if="${#authentication.principal?.authority == 'SUPER'}">
 					<div class="card-title">총 에디터 수</div>
-					<!-- 서버에서 가져온 에디터 수 표시 -->
-					<!-- <div class="card-value" th:text="${editorCount != null ? editorCount : '로딩 중...'}">0</div> -->
-					<div class="card-value">0</div>
+					<div class="card-value" th:text="${editorCount}"></div>
 				</div>
 
 				<!-- 등록 도서 수 요약 카드 추가 -->
 				<div class="summary-card">
 					<div class="card-title">총 등록 도서 수</div>
 					<!-- 서버에서 가져온 도서 수 표시 -->
-					<!-- <div class="card-value" th:text="${bookCount != null ? bookCount : '로딩 중...'}">0</div> -->
-					<div class="card-value">0</div>
+					<div class="card-value" th:text="${totalBookCount}"></div>
 					<!-- 예시: 15 -->
 				</div>
 				<!-- EDITOR 권한에게만 본인 관련 정보나 통계를 보여주는 카드 (예시) -->
 				<th:block th:if="${#authentication.principal?.authority == 'EDITOR'}">
 					<div class="summary-card">
 						<div class="card-title">내가 등록한 도서</div>
-						<!-- <div class="card-value" th:text="${myBookCount}"></div> -->
-						<div class="card-value">0</div>
+						<div class="card-value" th:text="${editorsBookCount}"></div>
 					</div>
 				</th:block>
 				<div class="summary-card">
 					<div class="card-title">연재 중 도서</div>
-					<!-- <div class="card-value" th:text="${ongoingBookCount != null ? ongoingBookCount : '로딩 중...'}">0</div> -->
-					<div class="card-value">0</div>
+					<div class="card-value" th:text="${totalBookCount}">0</div>
 				</div>
 				<div class="summary-card">
 					<div class="card-title">완결 도서</div>
-					<!-- <div class="card-value" th:text="${completedBookCount != null ? completedBookCount : '로딩 중...'}">0</div> -->
-					<div class="card-value">0</div>
+					<div class="card-value" th:text="${totalCompletedCount}">0</div>
 				</div>
-				<!-- <div class="summary-card">
-					<div class="card-title">총 무료 회차</div>
-					<div class="card-value">0</div>
-				</div>
-				<div class="summary-card">
-					<div class="card-title">총 유료 회차</div>
-					<div class="card-value">0</div>
-				</div> -->
-				
 			</div>
 
 			<!-- 주요 기능 바로가기 섹션 -->
@@ -205,17 +188,15 @@ layout:decorate="~{layout/layout.html}">
 					<th:block th:if="${#authentication.principal?.authority == 'SUPER'}">
 						<a th:href="@{/publisher/editors}" class="link-button">에디터 관리</a>
 					</th:block>
+					<!-- 도서 담당 에디터를 설정하는 페이지로 이동하는 버튼 -->
+					<th:block th:if="${#authentication.principal?.authority == 'SUPER'}">
+						<a th:href="@{/publisher/manageEditorsBook}" class="link-button">도서 담당 에디터 설정</a>
+					</th:block>
 					<!-- 신규 도서 등록 페이지로 이동하는 버튼 -->
 					<th:block th:if="${#authentication.principal?.authority == 'EDITOR'}">
 						<a th:href="@{/editor/myContent}" class="link-button">내 콘텐츠 관리</a>
 					</th:block>
 					<a th:href="@{/account/modify}" class="link-button">계정 설정</a>
-					<!-- 도서 목록 및 회차 등록/수정 페이지로 이동하는 버튼 -->
-					<!-- <a th:href="@{/publisher/books}" class="link-button">도서 전체 관리</a> -->
-					<!-- 필요하다면 다른 바로가기 버튼 추가 -->
-					<!--
-					<a th:href="@{/publisher/sales}" class="link-button">판매 현황</a>
-					-->
 				</div>
 			</div>
 

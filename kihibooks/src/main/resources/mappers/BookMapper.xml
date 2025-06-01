@@ -534,4 +534,22 @@
         join keyword on bk_kw_code = kw_code
         where bk_bo_code = #{bo_code}
     </select>
+    <select id="getBookCount" resultType="Integer">
+        select count(*) from book
+        join publisher_id on bo_pi_num = pi_num
+        join publisher on pi_pu_code = pu_code
+        where pu_code = #{pu_code}
+    </select>
+    <select id="getBookCount_BoFinIsN" resultType="Integer">
+        select count(*) from book
+        join publisher_id on bo_pi_num = pi_num
+        join publisher on pi_pu_code = pu_code
+        where pu_code = #{pu_code} and bo_fin = 'N'
+    </select>
+    <select id="getBookCount_BoFinIsY" resultType="Integer">
+        select count(*) from book
+        join publisher_id on bo_pi_num = pi_num
+        join publisher on pi_pu_code = pu_code
+        where pu_code = #{pu_code} and bo_fin = 'Y'
+    </select>
 </mapper>

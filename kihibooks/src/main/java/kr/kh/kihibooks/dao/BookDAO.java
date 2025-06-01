@@ -131,5 +131,11 @@ public interface BookDAO {
 
 	List<BookKeywordVO> getKeywordList(String bo_code);
 
+    Integer getBookCount(String pu_code);
+
+	Integer getBookCount_BoFinIsN(String pu_code);
+
+	Integer getBookCount_BoFinIsY(String pu_code);
+
 
 }

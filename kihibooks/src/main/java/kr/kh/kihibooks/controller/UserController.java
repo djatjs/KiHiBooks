@@ -68,7 +68,8 @@ public class UserController {
 	}
 
     @GetMapping("/user/editForm")
-	public String editForm() {
+	public String editForm(Model model, @AuthenticationPrincipal CustomUser customUser) {
+        model.addAttribute("user", customUser.getUser());
 		return "user/editForm";
 	}
 

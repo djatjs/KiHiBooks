@@ -52,7 +52,23 @@ public class PublisherContoller {
     }
 
     @GetMapping("/publisher/dashboard")
-    public String publisherDashboard() {
+    public String publisherDashboard(@AuthenticationPrincipal CustomUser customUser, Model model) {
+        //총 등록 도서 수, 연재 중 도서 수, 완결 도서 수
+        int totalBookCount = bookService.getBookCount(customUser.getPu_code());
+        int totalPublishingCount = bookService.getPublishedCount(customUser.getPu_code());
+        int totalCompletedCount = bookService.getCompletedCount(customUser.getPu_code());
+        model.addAttribute("totalBookCount", totalBookCount);
+        model.addAttribute("totalPublishingCount", totalPublishingCount);
+        model.addAttribute("totalCompletedCount", totalCompletedCount);
+
+        if(customUser.getAuthority().equals("SUPER")){
+            int editorCount = publisherService.getEditorList(customUser.getPu_code()).size();
+            model.addAttribute("editorCount", editorCount);
+        }
+        if(customUser.getAuthority().equals("EDITOR")){
+            int editorsBookCount = bookService.getEditorsBookList(customUser.getPi_num()).size();
+            model.addAttribute("editorsBookCount", editorsBookCount);
+        }
         return "/publisher/publisherDashboard";
     }
 

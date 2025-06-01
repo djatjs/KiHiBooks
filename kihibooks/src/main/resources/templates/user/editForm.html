@@ -158,8 +158,8 @@
 						<tr class="ur_email bt">
 							<th>이메일</th>
 							<td>
-								<span>이메일</span>
-								<a th:href="@{/deleteId}" class="deleteBtn" style="float: right;">회원 탈퇴</a>
+								<span th:text="${user.ur_email}">이메일</span>
+								<button type="button" class="deleteBtn" id="del-btn" style="float: right;">회원 탈퇴</button>
 							</td>
 						</tr>
 						<tr class="ur_nickname bt">
@@ -191,7 +191,7 @@
 									<input type="password" id="new_pw" name="pw" title="변경할 비밀번호 입력" placeholder="새 비밀번호">
 								</div>
 								<div class="pw_row">
-									<input type="password" id="current_pw" name="pw" title="변경할 비밀번호 한 번 더 입력" placeholder="새 비밀번호 확인">
+									<input type="password" id="check_new_pw" name="pw" title="변경할 비밀번호 한 번 더 입력" placeholder="새 비밀번호 확인">
 								</div>
 								<div class="change_pw_guide">
 									<p class="guide_title">비밀번호 변경 시 유의사항</p>
@@ -207,6 +207,26 @@
 						</tr>
 					</tbody>
 				</table>
+				<script>
+					$("#del-btn").on("click", function(){
+						if(!confirm("정말 탈퇴하시겠습니까?")){
+							console.log("탈퇴 취소");
+						}
+						console.log("탈퇴");
+
+					});
+					// $(".changeNickBtn").on("click", function(){
+					// 	var nickname = $("#input_nick").val();
+					// 	var checkNick = $(".checkNick");
+					// 	var guide = $(".guide_wrapper");
+					// 	var guideTitle = $(".guide_title");
+					// 	var guideGuide = $(".guide");
+					// 	var nick = $(".ur_nickname");
+					// 	var nickGuide = $(".nick_guide");
+					// 	var nickGuideTitle = $(".nick_guide_title");
+					// 	var nickGuideGuide = $(".nick_guide_guide");
+					// })
+				</script>
 			</div>
 		</div>
 

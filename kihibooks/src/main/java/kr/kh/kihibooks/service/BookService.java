@@ -411,4 +411,37 @@ public class BookService {
     public List<BookKeywordVO> getKeywordList(String bo_code) {
         return bookDAO.getKeywordList(bo_code);
     }
+
+    public int getBookCount(String pu_code) {
+        if(pu_code == null || pu_code.equals("")){
+            return 0;
+        }
+        Integer count = bookDAO.getBookCount(pu_code);
+        if(count == null){
+            return 0;
+        }
+        return count;
+    }
+
+    public int getPublishedCount(String pu_code) {
+        if(pu_code == null || pu_code.equals("")){
+            return 0;
+        }
+        Integer count = bookDAO.getBookCount_BoFinIsN(pu_code);
+        if(count == null){
+            return 0;
+        }
+        return count;
+    }
+
+    public int getCompletedCount(String pu_code) {
+        if(pu_code == null || pu_code.equals("")){
+            return 0;
+        }
+        Integer count = bookDAO.getBookCount_BoFinIsY(pu_code);
+        if(count == null){
+            return 0;
+        }
+        return count;
+    }
 }
