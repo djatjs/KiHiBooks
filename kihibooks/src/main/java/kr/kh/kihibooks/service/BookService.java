@@ -470,11 +470,26 @@ public class BookService {
 
         for (String ep_code : newEpCodes) {
             int result = bookDAO.addCart(ur_num, ep_code);
-            if(result > 0) {
+            if (result > 0) {
                 add = true;
             }
         }
 
         return add;
+    }
+
+    public List<BuyListVO> getBList(int ur_num, String bo_code) {
+        return bookDAO.getBList(ur_num, bo_code);
+    }
+
+    public List<EpisodeVO> getEpisodeByCodes(List<String> epCodes) {
+        List<EpisodeVO> epList = new ArrayList<>();
+        for (String ep_code : epCodes) {
+            EpisodeVO epi = bookDAO.getEpisodeByCode(ep_code);
+
+            epList.add(epi);
+        }
+
+        return epList;
     }
 }

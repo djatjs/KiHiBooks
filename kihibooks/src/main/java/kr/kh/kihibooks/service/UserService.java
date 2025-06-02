@@ -1,6 +1,11 @@
 package kr.kh.kihibooks.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,9 +19,11 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.mail.internet.MimeMessage;
 import kr.kh.kihibooks.dao.UserDAO;
+import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EmailVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.UserVO;
+import kr.kh.kihibooks.model.vo.WaitForFreeVO;
 import kr.kh.kihibooks.utils.CustomUser;
 
 @Service
@@ -186,15 +193,15 @@ public class UserService {
 		return userDAO.selectUserByNickName(searchInput);
 	}
 
-    public List<EpisodeVO> getCartEpList(int ur_num) {
-        return userDAO.getCartEpList(ur_num);
-    }
+	public List<EpisodeVO> getCartEpList(int ur_num) {
+		return userDAO.getCartEpList(ur_num);
+	}
 
 	public boolean deleteCart(int ur_num, String ep_code) {
 		boolean res = false;
 		int del = userDAO.deleteCart(ur_num, ep_code);
 
-		if(del > 0) {
+		if (del > 0) {
 			res = true;
 		}
 
@@ -204,11 +211,55 @@ public class UserService {
 	public boolean deleteSelected(int urNum, List<String> epCodes) {
 		int deleteCnt = 0;
 
-		for(String epCode : epCodes) {
+		for (String epCode : epCodes) {
 			deleteCnt += userDAO.deleteCart(urNum, epCode);
 		}
-		
+
 		return deleteCnt == epCodes.size();
+	}
+
+	public WaitForFreeVO getWff(int ur_num, String bo_code) {
+		return userDAO.getWff(ur_num, bo_code);
+	}
+
+	public int getBlNum(List<String> epCodes, int ur_num) {
+		List<String> existEpCodes = userDAO.getBlEpCodesByUser(ur_num);
+
+		List<String> newEpCodes = epCodes.stream().filter(epCode -> !existEpCodes.contains(epCode))
+				.collect(Collectors.toList());
+
+		boolean add = false;
+
+		for (String ep_code : newEpCodes) {
+			BuyListVO buyList = new BuyListVO();
+			buyList.setBl_ep_code(ep_code);
+			buyList.setBl_ur_num(ur_num);
+
+			int res = userDAO.insertBuyList(buyList);
+
+			if (res > 0) {
+				add = true;
+			}
+		}
+
+		int blNum = 0;
+
+		if (add) {
+			blNum = userDAO.selectLastBlNum(ur_num);
+		}
+
+		return blNum;
+	}
+
+	public List<EpisodeVO> getEpisodeByCodes(List<String> epCodes) {
+		List<EpisodeVO> epList = new ArrayList<>();
+		for (String ep_code : epCodes) {
+			EpisodeVO epi = userDAO.getEpisodeByCode(ep_code);
+
+			epList.add(epi);
+		}
+
+		return epList;
 	}
 
 }

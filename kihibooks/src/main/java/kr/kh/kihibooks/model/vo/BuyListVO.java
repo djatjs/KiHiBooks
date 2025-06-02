@@ -11,4 +11,6 @@ public class BuyListVO {
 	private Timestamp bl_end_date;
 	private String bl_ep_code;
 	private int bl_ur_num;
+	private String ep_is_free;
+	private String bo_wff;
 }

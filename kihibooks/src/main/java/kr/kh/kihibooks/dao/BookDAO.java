@@ -84,16 +84,16 @@ public interface BookDAO {
 
 	List<ReviewVO> findReviewBySort(String sort, String bo_code);
 
-    boolean updateBookInfo(BookVO book);
-	
+	boolean updateBookInfo(BookVO book);
+
 	boolean insertReReview(ReviewVO review);
 
 	ReviewVO selectReply(ReviewVO review);
 
-    String getLatestEpNum(String bo_code);
+	String getLatestEpNum(String bo_code);
 
 	boolean insertEpisode(EpisodeVO ep);
-	
+
 	boolean updateEpisode(EpisodeVO ep);
 
 	EpisodeVO getEpisodeByCode(String ep_code);
@@ -130,13 +130,13 @@ public interface BookDAO {
 
 	List<BookKeywordVO> getKeywordList(String bo_code);
 
-    Integer getBookCount(String pu_code);
-
-    int addCart(int ur_num, String ep_code);
+	int addCart(int ur_num, String ep_code);
 
 	List<String> getCartEpCodesByUser(int ur_num);
 
 	Integer getBookCount_BoFinIsN(String pu_code);
+
+	List<BuyListVO> getBList(int ur_num, String bo_code);
 
 	Integer getBookCount_BoFinIsY(String pu_code);
 
@@ -150,5 +150,6 @@ public interface BookDAO {
 
 	Integer getNoticeCount(String bo_code);
 
-	List<NoticeVO> selectNoticeList(@Param("bo_code")String bo_code, @Param("limit")int pageSize, @Param("offset")int offset);
+	List<NoticeVO> selectNoticeList(@Param("bo_code") String bo_code, @Param("limit") int pageSize,
+			@Param("offset") int offset);
 }

@@ -53,4 +53,35 @@
         delete from cart
         where ca_ur_num = #{ur_num} and ca_ep_code = #{ep_code}
     </delete>
+
+    <select id="getWff" resultType="WaitForFreeVO">
+        select * from wait_for_free
+        where wf_bo_code = #{bo_code} and wf_ur_num = #{ur_num}
+        order by wf_num desc
+        limit 1
+    </select>
+    
+    <insert id="insertBuyList">
+        insert into `buy_list`(bl_ep_code, bl_ur_num)
+        values(#{bl_ep_code}, #{bl_ur_num})
+    </insert>
+
+    <select id="selectLastBlNum" resultType="int">
+        select bl_num from buy_list
+        where bl_ur_num = #{ur_num}
+        order by bl_num desc
+        limit 1
+    </select>
+
+    <select id="getBlEpCodesByUser" resultType="String">
+        select bl_ep_code from buy_list
+        where bl_ur_num = #{ur_num} and bl_end_date is not null and bl_end_date &lt;= now()
+    </select>
+
+    <select id="getEpisodeByCode" resultType="EpisodeVO">
+        select *, author.au_name AS ep_author from episode
+        join book on ep_bo_code = bo_code
+        join author on bo_au_num = au_num
+        where ep_code = #{ep_code}
+    </select>
 </mapper>
