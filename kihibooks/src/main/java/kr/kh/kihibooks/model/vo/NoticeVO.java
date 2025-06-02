@@ -9,4 +9,6 @@ public class NoticeVO {
 	private String nt_content;
 	private int nt_pi_num;
 	private String nt_bo_code;
+	private String ur_nickname;
+	private String nt_date;
 }

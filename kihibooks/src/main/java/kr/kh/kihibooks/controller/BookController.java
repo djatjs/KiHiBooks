@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import javax.swing.text.StyledEditorKit.BoldAction;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -118,10 +119,7 @@ public class BookController {
             likeCountMap.put(rvNum, likeCount);
         }
         Set<Integer> likedReviewIds = new HashSet<>();
-        if (customUser != null) {
-            int ur_num = customUser.getUser().getUr_num();
-            likedReviewIds = bookService.getLikedReview(ur_num);
-        }
+        
         Optional<Timestamp> latestDateOpt = epiList.stream()
                 .map(EpisodeVO::getEp_date)
                 .max(Comparator.naturalOrder());
@@ -133,10 +131,17 @@ public class BookController {
         List<NoticeVO> notiList = bookService.getNoticeList(bo_code);
         List<BookVO> bestList10 = bookService.getBestList(bo_code);
         List<BookVO> bestList5 = bookService.getBestList5(bo_code);
-        List<BuyListVO> buyList = bookService.getBuyList(customUser.getUser().getUr_num(), bo_code);
-        Set<String> buyCodeSet = buyList.stream().map(BuyListVO::getBl_ep_code).collect(Collectors.toSet());
+        List<BuyListVO> buyList = new ArrayList<>();
+        Set<String> buyCodeSet = new HashSet<>();
         List<BookKeywordVO> kwList = bookService.getKeywordList(bo_code);
-        System.out.println(kwList);
+        
+        if (customUser != null) {
+            int ur_num = customUser.getUser().getUr_num();
+            likedReviewIds = bookService.getLikedReview(ur_num);
+            buyList = bookService.getBuyList(ur_num, bo_code);
+            buyCodeSet = buyList.stream().map(BuyListVO::getBl_ep_code).collect(Collectors.toSet());
+
+        }
         
         model.addAttribute("book", book);
         model.addAttribute("epiList", epiList);
@@ -349,5 +354,18 @@ public class BookController {
         boolean res = bookService.deleteReview(rv_num);
         System.out.println(res);
         return res;
+    }
+
+    @PostMapping("/cart/add")
+    @ResponseBody
+    public boolean addCart(@RequestBody Map<String, List<String>> payload, @AuthenticationPrincipal CustomUser customUser) {
+        List<String> epCodes = payload.get("epCodes");
+        int urNum = customUser.getUser().getUr_num();
+
+        if(epCodes == null || epCodes.isEmpty()) {
+            return false;
+        }
+
+        return bookService.addCart(urNum, epCodes);
     }
 }

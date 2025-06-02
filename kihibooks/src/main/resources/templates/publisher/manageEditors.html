@@ -22,7 +22,7 @@ layout:decorate="~{layout/layout.html}">
         padding: 20px;
         background-color: #ffffff;
         border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         margin-top: 30px;
         margin-bottom: 30px;
     }
@@ -195,7 +195,7 @@ layout:decorate="~{layout/layout.html}">
         padding: .5rem .75rem;
         margin-left: -1px;
         line-height: 1.25;
-        color: #007bff;
+        color: #ff7f50;
         background-color: #fff;
         border: 1px solid #dee2e6;
         text-decoration: none;
@@ -214,7 +214,7 @@ layout:decorate="~{layout/layout.html}">
     }
 
     .pagination a:hover {
-        color: #0056b3;
+        color: #ff7f50;
         background-color: #e9ecef;
         border-color: #dee2e6;
     }
@@ -234,6 +234,20 @@ layout:decorate="~{layout/layout.html}">
     .pagination > a:last-child {
         margin-left: 5px;
     }
+    .orenge-btn {
+		padding: 6px 20px;
+		font-size: 1rem;
+		background-color: #ff7f50; /* 강조 색상 예시 */
+		color: white;
+		border: none;
+		border-radius: .25rem;
+		cursor: pointer;
+		transition: background-color 0.2s ease-in-out;
+	}
+	.orenge-btn:hover {
+		background-color: #ff6347;
+		color: #fff;
+	}
 
 
     @media (max-width: 800px) {
@@ -326,6 +340,7 @@ layout:decorate="~{layout/layout.html}">
                 <!-- 검색 결과를 여기에 동적으로 표시합니다. -->
                 <p id="search-initial-message">검색어를 입력하고 '사용자 검색' 버튼을 눌러주세요.</p>
             </div>
+            <button type="button" class="btn btn-secondary mt-3" onclick="history.back()">뒤로가기</button>
             <script>
                 //유저 검색 버튼 클릭 시
                 $("#search-user-button").on('click', function(){
@@ -403,7 +418,6 @@ layout:decorate="~{layout/layout.html}">
                 $(document).on("click", ".add-editor-button", function() {
                     const userNum = $(this).data("user-id");
                     const puCode = $("#pu_code").val();
-                    console.log(userNum); // 사용자 ID를 확인하는 코드
                     $.ajax({
                         url: "/publisher/addEditor",
                         type: "POST",
@@ -422,7 +436,6 @@ layout:decorate="~{layout/layout.html}">
                             }
                         }
                     })
-
                 });
             </script>
 
@@ -430,7 +443,6 @@ layout:decorate="~{layout/layout.html}">
                 // 에디터 계정 삭제 버튼 클릭시 이벤트 처리
                 $(".delete-btn").on("click",function() {
                     const userNum = $(this).data("user-id");
-                    alert(userNum);
                     if(!confirm("정말 삭제하시겠습니까?")) return;
                     $.ajax({
                         url: "/publisher/deleteEditor",

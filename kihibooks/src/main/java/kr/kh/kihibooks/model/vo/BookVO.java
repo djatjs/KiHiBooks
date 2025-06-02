@@ -1,6 +1,5 @@
 package kr.kh.kihibooks.model.vo;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import lombok.Data;
@@ -27,5 +26,6 @@ public class BookVO {
     private String bo_publisher;
     private String bo_main_cate;
     private String bo_sub_cate;
+    private int bo_like_count;
     private List<KeywordVO> keywordList;
 }

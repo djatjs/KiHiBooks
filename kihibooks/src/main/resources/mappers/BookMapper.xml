@@ -293,7 +293,7 @@
     </select>
 
     <select id="selectBook" resultType="BookVO">
-        select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher, sub_cate.sc_name AS bo_sub_cate, main_cate.mc_name AS bo_main_cate from book
+        select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher, sub_cate.sc_name AS bo_sub_cate, main_cate.mc_name AS bo_main_cate, (select count(*) from `interest` where it_bo_code = #{bo_code}) AS bo_like_count from book
         join `author` on bo_au_num = au_num
         join `publisher_id` on bo_pi_num = pi_num
         join `publisher` on pi_pu_code = pu_code
@@ -391,7 +391,22 @@
         join publisher_id on bo_pi_num = pi_num
         join publisher on pi_pu_code = pu_code
         where bo_pi_num = #{pi_num}
+        order by bo_title asc
     </select>
+    <update id="updateBookInfo">
+        update book
+        set
+            bo_pi_num = #{bo_pi_num},
+            bo_description = #{bo_description},
+            bo_sc_code = #{bo_sc_code},
+            bo_serial_schedule = #{bo_serial_schedule},
+            bo_publish_date = #{bo_publish_date},
+            bo_adult = #{bo_adult},
+            bo_wait_for_free = #{bo_wait_for_free},
+            bo_wff_date = #{bo_wff_date},
+            bo_free_episode = #{bo_free_episode}
+        where bo_code = #{bo_code}
+    </update>
     
     <select id="selectReview" resultType="ReviewVO">
         select *, user.ur_nickname AS rv_user from review
@@ -409,6 +424,34 @@
         limit 1
     </select>
 
+    <select id="getLatestEpNum" resultType="String">
+        SELECT LPAD(COUNT(*)+1,3,0) FROM episode
+        WHERE EP_BO_CODE=#{bo_code}
+    </select>
+    <insert id="insertEpisode">
+        insert into episode (ep_code, ep_title, ep_price, ep_bo_code, ep_file_name, ep_cover_img, ep_total_page)
+        values (#{ep_code}, #{ep_title}, #{ep_price}, #{ep_bo_code}, #{ep_file_name}, #{ep_cover_img}, #{ep_total_page})
+    </insert>
+    <update id="updateEpisode">
+        update episode
+        set
+            ep_title = #{ep_title},
+            <if test="ep_file_name != null">
+                ep_file_name = #{ep_file_name},
+            </if>
+            <if test="ep_cover_img != null">
+                ep_cover_img = #{ep_cover_img},
+            </if>
+            ep_price = #{ep_price},
+            ep_total_page = #{ep_total_page}
+        where ep_code = #{ep_code}
+    </update>
+    <select id="getEpisodeByCode" resultType="EpisodeVO">
+        select * from episode where ep_code = #{ep_code}
+    </select>
+    <!-- <update id="deleteEpisode">
+        update episode set ep_del = "Y" where ep_code = #{ep_code}
+    </update> -->
     <select id="selectLikeCount" resultType="int">
         select count(*) from review_like
         where rl_rv_num = #{rv_num} and rl_state = 1
@@ -491,4 +534,56 @@
         join keyword on bk_kw_code = kw_code
         where bk_bo_code = #{bo_code}
     </select>
+    <select id="getBookCount" resultType="Integer">
+        select count(*) from book
+        join publisher_id on bo_pi_num = pi_num
+        join publisher on pi_pu_code = pu_code
+        where pu_code = #{pu_code}
+    </select>
+    <select id="getBookCount_BoFinIsN" resultType="Integer">
+        select count(*) from book
+        join publisher_id on bo_pi_num = pi_num
+        join publisher on pi_pu_code = pu_code
+        where pu_code = #{pu_code} and bo_fin = 'N'
+    </select>
+    <select id="getBookCount_BoFinIsY" resultType="Integer">
+        select count(*) from book
+        join publisher_id on bo_pi_num = pi_num
+        join publisher on pi_pu_code = pu_code
+        where pu_code = #{pu_code} and bo_fin = 'Y'
+    </select>
+
+    <update id="bookFinToY">
+        update book set bo_fin = 'Y' where bo_code = #{bo_code}
+    </update>
+    <update id="bookFinToN">
+        update book set bo_fin = 'N' where bo_code = #{bo_code}
+    </update>
+
+    <insert id="insertNotice">
+        insert into notice(nt_title, nt_content, nt_pi_num, nt_bo_code)
+        values(#{nt_title},#{nt_content},#{nt_pi_num},#{nt_bo_code})
+    </insert>
+    <select id="getNoticeCount" resultType="Integer">
+        select count(*) from notice
+        where nt_bo_code = #{bo_code}
+    </select>
+    <select id="selectNoticeList" resultType="NoticeVO">
+        select * from notice
+        join publisher_id on nt_pi_num = pi_num
+        join user on pi_ur_num = ur_num
+        WHERE nt_bo_code = #{bo_code}
+        order by nt_date desc
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="getCartEpCodesByUser" resultType="String">
+        select ca_ep_code from cart
+        where ca_ur_num = #{ur_num}
+    </select>
+
+    <insert id="addCart">
+        insert into `cart`(ca_ep_code, ca_ur_num)
+        value(#{ep_code}, #{ur_num})
+    </insert>
 </mapper>

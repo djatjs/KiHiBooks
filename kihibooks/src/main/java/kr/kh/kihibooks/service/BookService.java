@@ -10,9 +10,13 @@ import java.util.stream.Collectors;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.kh.kihibooks.dao.BookDAO;
+import kr.kh.kihibooks.dao.KeywordDAO;
 import kr.kh.kihibooks.model.vo.BookKeywordVO;
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
@@ -27,6 +31,7 @@ import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.utils.CustomUser;
 import kr.kh.kihibooks.utils.PageConstants;
 import kr.kh.kihibooks.utils.PaginationUtils;
+import kr.kh.kihibooks.utils.UploadFileUtils;
 
 import static kr.kh.kihibooks.utils.PageConstants.*;
 
@@ -37,7 +42,13 @@ public class BookService {
     BookDAO bookDAO;
 
     @Autowired
+    KeywordDAO keywordDao;
+
+    @Autowired
     SqlSession sqlSession;
+
+    @Value("${spring.path.upload}")
+    String uploadPath;
 
     private final String NAMESPACE = "kr.kh.kihibooks.dao.BookDAO.";
 
@@ -152,20 +163,16 @@ public class BookService {
         // bo_code 생성 (출판사 코드 4자리 + 카테고리 2자리 + 도서번호 3자리) EX: P0001310001
         // 1. 출판사 코드 4자리
         String puCode = pu_code;
-        System.out.println("출판사 코드 : " + puCode);
 
         // 2. 카테고리 2자리 : bo_sc_code
         String scCode = book.getBo_sc_code();
-        System.out.println("카테고리 : " + scCode);
 
         // 3. 도서번호 3자리
         String psCode = puCode + scCode;
-        System.out.println("psCode : " + psCode);
         String boNum = bookDAO.getLatestBoNum(psCode);
 
         // 4. 생성된 bo_code 반환
         String bo_code = psCode + boNum + "";
-        System.out.println(bo_code);
         book.setBo_code(bo_code);
         return bookDAO.insertBook(book);
     }
@@ -192,6 +199,29 @@ public class BookService {
         return bookDAO.selectEditorsBookList(pi_num);
     }
 
+    @Transactional
+    public boolean updateBookInfo(BookVO book, List<String> bo_keywords) {
+        if (book == null || book.getBo_code() == null || book.getBo_title().length() == 0
+                || book.getBo_author().length() == 0) {
+            throw new IllegalArgumentException("도서 정보가 잘못됨");
+        }
+        if (bo_keywords == null) {
+            throw new IllegalArgumentException("키워드 목록이 잘못됨");
+        }
+        if (!bookDAO.updateBookInfo(book)) {
+            throw new RuntimeException("도서 정보 수정 실패");
+        }
+        if (!keywordDao.deleteKeywordFromBook(book.getBo_code())) {
+            throw new RuntimeException("키워드 삭제 실패");
+        }
+        for (String keywordCode : bo_keywords) {
+            if (!bookDAO.insertBookKeyword(book.getBo_code(), keywordCode)) {
+                throw new RuntimeException("키워드 추가 실패");
+            }
+        }
+        return true;
+    }
+
     public boolean insertReReview(ReviewVO review, CustomUser customUser) {
         if (review == null || customUser == null || review.getRv_content().isBlank()) {
             System.out.println("대댓 : " + review);
@@ -204,6 +234,104 @@ public class BookService {
 
     public ReviewVO selectReply(ReviewVO review) {
         return bookDAO.selectReply(review);
+    }
+
+    public boolean insertEpisode(EpisodeVO ep, String bo_code, MultipartFile epubFile, MultipartFile coverImage) {
+        if (ep == null || epubFile == null || epubFile.getOriginalFilename().isEmpty() || coverImage == null
+                || coverImage.getOriginalFilename().isEmpty()) {
+            return false;
+        }
+        // 에피소드 코드 생성
+        String ep_code = bo_code + bookDAO.getLatestEpNum(bo_code);
+        // 썸네일 작업
+        String coverName = coverImage.getOriginalFilename();
+        String coverSuffix = getSuffix(coverName);
+        String newCoverName = ep_code + coverSuffix;
+        // epub 파일 작업
+        String epubName = epubFile.getOriginalFilename();
+        String epubSuffix = getSuffix(epubName);
+        String newFilerName = ep_code + epubSuffix;
+        // 설정한 값들 ep에 저장후 DB에 저장
+        ep.setEp_file_name(newFilerName);
+        ep.setEp_cover_img(newCoverName);
+        ep.setEp_bo_code(bo_code);
+        ep.setEp_code(ep_code);
+
+        boolean res = bookDAO.insertEpisode(ep);
+        if (!res) {
+            return false;
+        }
+        String ep_cover_img;
+        String ep_file_name;
+        try {
+            ep_cover_img = UploadFileUtils.uploadFile(uploadPath, newCoverName, coverImage.getBytes(),
+                    bo_code + "/covers");
+            ep.setEp_cover_img(ep_cover_img);
+            ep_file_name = UploadFileUtils.uploadFile(uploadPath, newFilerName, epubFile.getBytes(),
+                    bo_code + "/epubs");
+            ep.setEp_file_name(ep_file_name);
+            return bookDAO.updateEpisode(ep);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private String getSuffix(String fileName) {
+        int index = fileName.lastIndexOf(".");
+        return index < 0 ? null : fileName.substring(index);
+    }
+
+    public boolean updateEpisode(EpisodeVO ep, String ep_code, String bo_code, MultipartFile epubFile,
+            MultipartFile coverImage) {
+        if (ep == null || ep.getEp_code() == null) {
+            return false;
+        }
+        // 기존 정보 가져오기
+        EpisodeVO existing = bookDAO.getEpisodeByCode(ep.getEp_code());
+        if (existing == null) {
+            System.out.println("없는데요");
+            return false;
+        }
+        String ep_cover_img;
+        String ep_file_name;
+        try {
+            // 썸네일 변경 처리
+            if (coverImage != null && !coverImage.isEmpty()) {
+                // 이미지 삭제
+                UploadFileUtils.deleteFile(uploadPath, existing.getEp_cover_img());
+                String coverName = coverImage.getOriginalFilename();
+                String coverSuffix = getSuffix(coverName);
+                String newCoverName = ep.getEp_code() + coverSuffix;
+                System.out.println(newCoverName);
+                ep_cover_img = UploadFileUtils.uploadFile(uploadPath, newCoverName, coverImage.getBytes(),
+                        bo_code + "/covers");
+                ep.setEp_cover_img(ep_cover_img);
+                System.out.println("이미지 삭제 및 재업로드 완료");
+            }
+            // epub 변경 처리
+            if (epubFile != null && !epubFile.isEmpty()) {
+                // EPUB 파일 삭제
+                UploadFileUtils.deleteFile(uploadPath, existing.getEp_file_name());
+                String epubName = epubFile.getOriginalFilename();
+                String epubSuffix = getSuffix(epubName);
+                String newFilerName = ep.getEp_code() + epubSuffix;
+                System.out.println(newFilerName);
+                ep_file_name = UploadFileUtils.uploadFile(uploadPath, newFilerName, epubFile.getBytes(),
+                        bo_code + "/epubs");
+                System.out.println("EPUB 파일 삭제 및 재업로드 완료");
+                ep.setEp_file_name(ep_file_name);
+            }
+            ep.setEp_bo_code(bo_code);
+            return bookDAO.updateEpisode(ep);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public EpisodeVO getEpisodeByCode(String ep_code) {
+        return bookDAO.getEpisodeByCode(ep_code);
     }
 
     public int getLikeCount(int rv_num) {
@@ -269,5 +397,84 @@ public class BookService {
 
     public List<BookKeywordVO> getKeywordList(String bo_code) {
         return bookDAO.getKeywordList(bo_code);
+    }
+
+    public int getBookCount(String pu_code) {
+        if(pu_code == null || pu_code.equals("")){
+            return 0;
+        }
+        Integer count = bookDAO.getBookCount(pu_code);
+        if(count == null){
+            return 0;
+        }
+        return count;
+    }
+
+    public int getPublishedCount(String pu_code) {
+        if(pu_code == null || pu_code.equals("")){
+            return 0;
+        }
+        Integer count = bookDAO.getBookCount_BoFinIsN(pu_code);
+        if(count == null){
+            return 0;
+        }
+        return count;
+    }
+
+    public int getCompletedCount(String pu_code) {
+        if(pu_code == null || pu_code.equals("")){
+            return 0;
+        }
+        Integer count = bookDAO.getBookCount_BoFinIsY(pu_code);
+        if(count == null){
+            return 0;
+        }
+        return count;
+    }
+
+    public boolean bookFinToY(String bo_code) {
+        return bookDAO.bookFinToY(bo_code);
+    }
+
+    public boolean bookFinToN(String bo_code) {
+        return bookDAO.bookFinToN(bo_code);
+    }
+
+    // public List<NoticeVO> getNoticeListForPublisher(String bo_code) {
+    //     return bookDAO.getNoticeListForPublisher(bo_code);
+    // }
+
+    public boolean insertNotice(NoticeVO nt) {
+        return bookDAO.insertNotice(nt);
+    }
+
+    public int getNoticeCount(String bo_code) {
+        Integer count = bookDAO.getNoticeCount(bo_code);
+        if(count == null){
+            return 0;
+        }
+        return count;
+    }
+
+    public List<NoticeVO> getNoticeListForPage(String bo_code, int pageSize, int offset) {
+        return bookDAO.selectNoticeList(bo_code, pageSize, offset);
+    }
+    
+    public boolean addCart(int ur_num, List<String> epCodes) {
+        List<String> existingEpCodes = bookDAO.getCartEpCodesByUser(ur_num);
+
+        List<String> newEpCodes = epCodes.stream()
+                .filter(epCode -> !existingEpCodes.contains(epCode))
+                .collect(Collectors.toList());
+        boolean add = false;
+
+        for (String ep_code : newEpCodes) {
+            int result = bookDAO.addCart(ur_num, ep_code);
+            if(result > 0) {
+                add = true;
+            }
+        }
+
+        return add;
     }
 }

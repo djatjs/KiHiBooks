@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+        layout:decorate="~{layout/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>KiHiBooks - 도서 회차 관리</title>
+    <style>
+        .page-detail {
+			padding: 0;
+			box-sizing: border-box;
+			margin: 0 auto;
+			border-top: none;
+		}
+        .titleH2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ff7f50;
+            padding-bottom: 10px;
+            font-weight: bold;
+        }
+		.detail-wrap {
+			display: flex;
+			width: 100%;
+		}
+		.detail-content {
+			width: 100%;
+            min-width: 800px;
+			background: #fff;
+			display: table-cell;
+			vertical-align: top;
+			min-width: 0;
+		}
+		.detail {
+			padding-bottom: 20px;
+			font-size: 16px;
+			overflow-wrap: break-word;
+			word-break: break-word;
+			line-height: normal;
+			color: black;
+			font-weight: 400;
+		}
+		.grid-left-top1 {
+			color: #666;
+			font-size: 12px;
+			line-height: 1em;
+			margin: 0;
+			padding: 0;
+			cursor: default;
+			font-weight: 400;
+
+            margin-top: 10px; /* 섹션 간 상단 여백 */
+            padding: 20px;
+            background-color: #f8f9fa; /* 섹션 배경색 */
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+		}
+        .grid-left-top2 {
+			font-size: 14px;
+			overflow-wrap: break-word;
+			word-break: break-word;
+			line-height: normal;
+			margin: 0;
+			padding: 0;
+			color: black;
+			
+			padding: 0 30px;
+			box-sizing: border-box;
+			margin: 0;
+			
+			display: grid;
+			grid-template: 'left right' auto
+				'left bottom' auto/fit-content(30%) 1fr;
+			column-gap: 30px;
+			padding-top: 30px;
+		}
+        .thumb-grid {
+			min-width: 0;
+			grid-area: left;
+			box-sizing: border-box;
+		}
+		.thumb-img {
+			position: relative;
+			width: 204px;
+			max-width: 100%;
+			border-radius: 4px;
+			padding: 0;
+			border: 1px solid;
+			height: auto;
+		}
+		.info-grid {
+			min-width: 0;
+			grid-area: right;
+			box-sizing: border-box;
+		}
+        .cate-title span {
+			color: #555;
+			font-size: 14px;
+			font-weight: 600;
+		}
+		.cate-title span:hover {
+			text-decoration: none;
+			/* color: #8a8a8a; */
+		}
+        .category{
+            margin-left: 22px;
+        }
+        .book-title {
+			color: #141414;
+			font-size: 32px;
+			font-weight: 700;
+			line-height: 38px;
+			margin: 12px 0;
+			margin-left: 20px;
+		}
+        .info-content {
+            overflow: hidden;
+			font-size: 15px;
+			font-weight: 400;
+			line-height: 18px;
+			color: #555;
+			margin: 0;
+            margin-left: 22px;
+			padding: 0;
+		}
+		.author-name {
+			font-weight: 600;
+			transition: opacity 0.4s ease;
+			color: #555;
+		}
+		.author-name:hover {
+			text-decoration: none;
+			/* color: #8a8a8a; */
+		}
+		.publisher-link {
+			font-weight: 600;
+			color: #555;
+		}
+		.publisher-link:hover {
+			text-decoration: none;
+			/* color: #8a8a8a; */
+		}
+        .bottom-content {
+            margin-left: 22px;
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			min-width: 0;
+			border-top: 1px solid #e6e6e6;
+		}
+        .bottom-content>div:not(:first-of-type) {
+			padding-top: 8px;
+			padding-bottom: 8px;
+			border-top: 1px solid #e6e6e6;
+		}
+		.bottom-content>div:last-of-type {
+			border-bottom: 1px solid #e6e6e6;
+		}
+        .episode-area {
+			display: block;
+			margin: 0;
+			padding: 0;
+			padding-bottom: 15px;
+			color: #666;
+			font-size: 12px;
+			line-height: 1em;
+		}
+		.form-episode-list {
+			margin: 0;
+			padding: 0;
+		}
+		.epi-line {
+			border-top: 2px solid #666;
+            margin: 15px 30px 15px 30px;
+			text-indent: -20000px;
+			line-height: 1em;
+		}
+		.list-module {
+			padding-bottom: 0;
+			padding: 0 30px 15px 30px;
+		}
+        .list-wrapper {
+			position: relative;
+			margin: 0;
+			padding: 0;
+		}
+		.list-ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+		.epi-list {
+			padding: 0 10px;
+			border-bottom: 1px solid #f5f3f2;
+		}
+		.epi-list-wrapper {
+			overflow: visible;
+			position: relative;
+			display: flex;
+			justify-content: space-between;
+		}
+		.table-wrap {
+			border-bottom: none;
+			display: table;
+			width: 100%;
+		}
+		.epi-info {
+			margin: 0;
+			position: relative;
+			vertical-align: middle;
+			padding: 8px 26px 8px 0;
+			display: table-cell;
+		}
+		.info-title-with-badge {
+			margin: 0;
+			padding: 0;
+			margin-right: 5px;
+			color: #000;
+			font-size: 13px;
+			line-height: 16px;
+			font-weight: 700;
+		}
+		.badge-list {
+			margin-right: 1px;
+			float: left;
+			display: block;
+		}
+		.badge {
+			float: left;
+			margin-right: 2px;
+			display: block;
+		}
+		.epi-title {
+			color: #000;
+			font-size: 13px;
+			line-height: 16px;
+			font-weight: 700;
+			margin-bottom: 8px;
+		}
+		.info-list-wrapper {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			display: flex;
+		}
+		.info-epi-date {
+			padding-right: 3px;
+			position: relative;
+			margin-top: 4px;
+		}
+		.info-page-cnt {
+			padding: 0 3px;
+			position: relative;
+		}
+		.info-price {
+			color: #ff7f50;
+			font-weight: 700;
+			font-size: 13px;
+			margin: 0;
+			margin-top: 6px;
+		}
+        .clock-badge {
+			filter: brightness(0) saturate(100%) invert(38%) sepia(95%) saturate(750%) hue-rotate(-5deg) brightness(115%) contrast(110%);
+			height: 15px;
+		}
+        .free-badge {
+			height: 18px;
+		}
+        .direct-view-wrapper {
+			vertical-align: middle;
+			padding: 7px 10px;
+			text-align: right;
+			white-space: nowrap;
+			display: table-cell;
+		}
+        
+        .update-btn {
+			font-size: 13px;
+			padding: 8px 14px;
+			margin: 7px 0 7px 4px;
+			position: relative;
+			z-index: 5;
+			color: #918580;
+			box-sizing: border-box;
+			border-radius: 4px;
+			font-weight: 700;
+			display: inline-block;
+			text-align: center;
+			cursor: pointer;
+			background: #fff;
+			border: 1px solid #d9d2d1;
+		}
+        .update-btn:hover {
+			text-decoration: none;
+			color: #918580;
+		}
+        .checkout-btn {
+			font-size: 13px;
+			padding: 8px 14px;
+			margin: 7px 0 7px 4px;
+			position: relative;
+			z-index: 5;
+			color: #fff;
+			box-sizing: border-box;
+			border-radius: 4px;
+			font-weight: 700;
+			display: inline-block;
+			text-align: center;
+			cursor: pointer;
+			background: #ff7f50;
+			border: 1px solid #ff6730;
+		}
+        .checkout-btn:hover{
+            background-color: #ff6347;
+            text-decoration: none;
+			color: #fff;
+        }
+        .register-btn{
+            background-color: #ff7f50; color: white;
+			border: #fff;
+            font-weight: bold;
+            padding: 8px 14px; border-radius: 6px;
+            display: inline-block;
+            text-align: center;
+        }
+        .register-btn:hover{
+            background-color: #ff6347;
+            text-decoration: none;
+            color: #fff;
+        }
+        @media (max-width: 768px) {
+            .grid-left-top2 {
+                grid-template: none;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px;
+            }
+            .thumb-grid {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+            .thumb-img {
+                width: 60%;
+                max-width: 240px;
+                height: auto;
+            }
+            .info-grid {
+                width: 100%;
+                text-align: center;
+            }
+            .category,
+            .info-content,
+            .bottom-content {
+                margin-left: 0;
+            }
+            .info-bottom-grid {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .bottom-content {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main layout:fragment="content" class="container">
+        <h2 class="titleH2">📖 도서 회차 관리</h2>
+        <div id="page_detail" class="page-detail">
+            <div class="detail-wrap">
+                <div class="detail-content">
+                    <div class="detail">
+                        <div class="grid-left-top1">
+                            <div class="grid-left-top2">
+                                <div class="thumb-grid">
+									<th:block th:if="${#lists.isEmpty(epiList)}">
+										<img src="/resources/static/img/default_thumb.png" alt="next" style="width: 204px; height: 300px;">
+									</th:block>
+									<th:block th:if="${!#lists.isEmpty(epiList)}">
+										<img class="thumb-img" th:src="@{/file/{path}(path=${epiList[epiList.size() - 1].ep_cover_img})}">
+									</th:block>
+
+                                </div>
+                                <div class="info-grid">
+                                    <div class="category">
+                                        <span class="blank"></span>
+                                        <div class="cate-title">
+                                            <span  class="main-cate-title" th:text="${book.bo_main_cate}"></span>
+                                            <img src="/resources/static/img/next.png" alt="next" style="height: 10px;" class="mb-1">
+                                            <span th:href="@{/}" class="sub-cate-title" th:text="${book.bo_sub_cate}"></span>
+                                        </div>
+                                    </div>
+                                    <h3 class="book-title" th:text="${book.bo_title}"></h3>
+                                    <div class="info-content">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="infomation">
+                                                <div class="author">
+                                                    <span class="author-name" th:text="${book.bo_author}"></span>
+                                                    <span class="ml-1"> 저</span>
+                                                </div>
+                                                <div class="publisher mt-1">
+                                                    <span class="publisher-link" th:text="${book.bo_publisher}"></span> 출판
+                                                </div>
+                                                <div class="total-episode mt-1 mb-3" th:text="'총 ' + ${epiList.size()} + '화'"></div>
+                                            </div>
+                                            <div class="btnArea">
+                                                <div style="margin-top: 40px;">
+                                                    <a th:href="@{/editor/registerEpisode/{bo_code}(bo_code=${book.bo_code})}" class="register-btn">회차 등록</a>
+													<th:block th:if="${book.bo_fin == 'N'}">
+														<button class="register-btn" id="book_finToY-btn" th:data-bocode="${book.bo_code}">완결 처리</button>
+													</th:block>
+													<th:block th:if="${book.bo_fin == 'Y'}">
+														<button class="register-btn" id="book_finToN-btn" th:data-bocode="${book.bo_code}">연재로 전환</button>
+													</th:block>
+													<a th:href="@{/editor/manageNotice/{boCode}(boCode=${book.bo_code})}" class="register-btn">공지 사항 관리</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="info-bottom-grid">
+                                    <div class="bottom-content mb-2 mt-2">
+                                        <div class="content-area ">
+                                            <div class="header-text mb-2 mt-2" style="width: 50px; text-align: center; color: #748198; background-color: #e3edf7;">연재</div>
+                                            <div class="d-flex justify-content-between">
+                                                <div class="serial-daytitme" th:text="${book.bo_serial_schedule}"></div>
+                                                <div th:text="${book.bo_fin == 'Y' ? '완결' : '연재중'}">연재중</div>
+                                            </div>
+                                        </div>
+                                        <div class="content-area mb-2 mt-2">
+                                            <div class="header-text mb-2" style="width: 50px; text-align: center; color: #ffa550; background: #fff3e4;">키다무</div>
+                                            <div class="d-flex justify-content-between">
+                                                <th:block th:if="${book.bo_wait_for_free == 'Y'}">
+													<span class="wff-text" th:text="${book.bo_wff_date}+'일 마다 1편 기다리면 무료'"></span>
+													<div class="state-text">무료 이용 가능</div>
+												</th:block>
+												<th:block th:if="${book.bo_wait_for_free == 'N'}">
+													<span class="wff-text">키다무 전용 컨텐츠가 아닙니다.</span>
+												</th:block>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="episode-area">
+                                <div class="epi-line"></div>
+                                <div class="list-module">
+                                    <div class="list-wrapper">
+										<th:block th:if="${!#lists.isEmpty(epiList)}">
+											<!-- 데이터 뿌려주기 시작 -->
+											<ul class="list-ul" th:each="episode : ${epiList}">
+												<li class="epi-list" data-id="${episode.ep_code}">
+													<div class="epi-list-wrapper">
+														<div class="table-wrap">
+															<div class="epi-info">
+																<div class="info-title-with-badge">
+																	<div th:if="${episode.ep_price == 0}" class="badge-list">
+																		<div class="badge">
+																			<img class="free-badge" src="/resources/static/img/free.png" alt="무료 배지">
+																		</div>
+																	</div>
+																	<div th:if="${episode.ep_price != 0} and ${book.bo_wait_for_free == 'Y'}"
+																		class="badge-list">
+																		<div class="badge">
+																			<img class="clock-badge" src="/resources/static/img/clock_badge.png" alt="키다무 배지">
+																		</div>
+																	</div>
+																	<div class="epi-title" th:text="${episode.ep_title}"></div>
+																</div>
+																<div>
+																	<ul class="info-list-wrapper">
+																		<li class="info-ep-date" th:text="${#strings.substring(episode.ep_date, 0, 10)}"></li>
+																		<li class="info-page-cnt" th:text="'| 약 ' + ${episode.ep_total_page} +'자'"></li>
+																	</ul>
+																</div>
+															</div>
+															<div class="direct-view-wrapper">
+																<a th:href="@{/editor/updateEpisode/{ep_code}(ep_code=${episode.ep_code})}" class="update-btn">수정</a>
+															</div>
+														</div>
+													</div>
+												</li>
+											</ul>
+										</th:block>
+										<th:block th:if="${#lists.isEmpty(epiList)}">
+											<div>회차 정보가 없습니다. 등록해주세요.</div>
+										</th:block>
+                                    </div>
+                                </div>
+							</div>
+                        </div>
+						<div class="direct-view-wrapper">
+							<a th:href="@{/editor/myContent}" class="checkout-btn">목록으로</a>
+						</div>
+						
+                    </div>
+                </div>
+            </div>
+        </div>
+		<script>
+			$("#book_finToY-btn").on("click", function(){
+				const bo_code = $(this).data("bocode");
+				if(confirm("완결 상태로 전환하시겠습니까?")){
+					$.ajax({
+						type: "POST",
+						url: "/editor/bookFinToY",
+						data: {bo_code: bo_code},
+						success: function (data) {
+							alert("완결 상태로 전환되었습니다.");
+							window.location.href = "/editor/myContent";
+						},
+						error: function (data) {
+							alert("완결 상태로 전환에 실패하였습니다.");
+						}
+					});
+				}
+			});
+			$("#book_finToN-btn").on("click", function(){
+				const bo_code = $(this).data("bocode");
+				if(confirm("연재 상태로 전환하시겠습니까?")){
+					$.ajax({
+						type: "POST",
+						url: "/editor/bookFinToN",
+						data: {bo_code: bo_code},
+						success: function (data) {
+							alert("연재 상태로 전환되었습니다.");
+							window.location.href = "/editor/myContent";
+						},
+						error: function (data) {
+							alert("연재 상태로 전환에 실패하였습니다.");
+						}
+					});
+				}
+			});
+		</script>
+		<script>
+			// $("#book_notice-btn").on("click", )
+		</script>
+    </main>
+</body>
