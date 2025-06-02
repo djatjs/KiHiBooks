@@ -18,8 +18,8 @@
 
     <!-- 3. 출석 데이터 삽입 -->
     <insert id="insertAttendance">
-        INSERT INTO attendance (at_ur_num, at_point)
-        VALUES (#{userNum}, #{point})
+        INSERT INTO attendance (at_ur_num, at_point, at_date)
+        VALUES (#{userNum}, #{point}, NOW())
     </insert>
 
     <!-- 4. 유저 포인트 증가 -->
