@@ -327,26 +327,6 @@ public class BookService {
         return bookDAO.getEpisodeByCode(ep_code);
     }
 
-    public boolean deleteEpisode(String ep_code) {
-        EpisodeVO episode = bookDAO.getEpisodeByCode(ep_code);
-        if(episode == null || ! ep_code.equals(episode.getEp_code())) {
-            return false;
-        }
-        try {
-            // 파일들 삭제
-            if(episode.getEp_file_name() != null) {
-                UploadFileUtils.deleteFile(uploadPath, episode.getEp_file_name());
-            }
-            if(episode.getEp_cover_img() != null) {
-                UploadFileUtils.deleteFile(uploadPath, episode.getEp_cover_img());
-            }
-            // DB에서도 삭제
-            return bookDAO.deleteEpisode(ep_code);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
     public int getLikeCount(int rv_num) {
         int likeCount = bookDAO.selectLikeCount(rv_num);
 
@@ -443,5 +423,13 @@ public class BookService {
             return 0;
         }
         return count;
+    }
+
+    public boolean bookFinToY(String bo_code) {
+        return bookDAO.bookFinToY(bo_code);
+    }
+
+    public boolean bookFinToN(String bo_code) {
+        return bookDAO.bookFinToN(bo_code);
     }
 }

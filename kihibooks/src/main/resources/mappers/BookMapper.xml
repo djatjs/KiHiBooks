@@ -310,7 +310,7 @@
     </update>
 
     <select id="selectEpisodeList" resultType="EpisodeVO">
-        select * from episode where ep_bo_code = #{bo_code} and ep_del = "N"
+        select * from episode where ep_bo_code = #{bo_code}
     </select>
 
     <select id="selectReviewList" resultType="ReviewVO">
@@ -449,9 +449,9 @@
     <select id="getEpisodeByCode" resultType="EpisodeVO">
         select * from episode where ep_code = #{ep_code}
     </select>
-    <update id="deleteEpisode">
+    <!-- <update id="deleteEpisode">
         update episode set ep_del = "Y" where ep_code = #{ep_code}
-    </update>
+    </update> -->
     <select id="selectLikeCount" resultType="int">
         select count(*) from review_like
         where rl_rv_num = #{rv_num} and rl_state = 1
@@ -552,4 +552,11 @@
         join publisher on pi_pu_code = pu_code
         where pu_code = #{pu_code} and bo_fin = 'Y'
     </select>
+
+    <update id="bookFinToY">
+        update book set bo_fin = 'Y' where bo_code = #{bo_code}
+    </update>
+    <update id="bookFinToN">
+        update book set bo_fin = 'N' where bo_code = #{bo_code}
+    </update>
 </mapper>

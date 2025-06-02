@@ -319,6 +319,7 @@
         }
         .register-btn{
             background-color: #ff7f50; color: white;
+			border: #fff;
             font-weight: bold;
             padding: 8px 14px; border-radius: 6px;
             display: inline-block;
@@ -415,10 +416,16 @@
                                             <div class="btnArea">
                                                 <div style="margin-top: 40px;">
                                                     <a th:href="@{/editor/registerEpisode/{bo_code}(bo_code=${book.bo_code})}" class="register-btn">회차 등록</a>
+													<th:block th:if="${book.bo_fin == 'N'}">
+														<button class="register-btn" id="book_finToY-btn" th:data-bocode="${book.bo_code}">완결 처리</button>
+													</th:block>
+													<th:block th:if="${book.bo_fin == 'Y'}">
+														<button class="register-btn" id="book_finToN-btn" th:data-bocode="${book.bo_code}">연재로 전환</button>
+													</th:block>
+													
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                                 <div class="info-bottom-grid">
@@ -474,15 +481,12 @@
 																<div>
 																	<ul class="info-list-wrapper">
 																		<li class="info-ep-date" th:text="${#strings.substring(episode.ep_date, 0, 10)}"></li>
-																		<li class="info-page-cnt" th:text="'| 약 ' + ${episode.ep_total_page} +'자'">| 약 4.5천 자</li>
+																		<li class="info-page-cnt" th:text="'| 약 ' + ${episode.ep_total_page} +'자'"></li>
 																	</ul>
 																</div>
 															</div>
 															<div class="direct-view-wrapper">
 																<a th:href="@{/editor/updateEpisode/{ep_code}(ep_code=${episode.ep_code})}" class="update-btn">수정</a>
-															</div>
-															<div class="direct-view-wrapper">
-																<button  class="checkout-btn del-btn" th:data-ep-code="${episode.ep_code}">삭제</button>
 															</div>
 														</div>
 													</div>
@@ -497,36 +501,47 @@
 							</div>
                         </div>
 						<div class="direct-view-wrapper">
-							<a th:href="@{/editor/myContent}"  class="checkout-btn">목록으로</a>
+							<a th:href="@{/editor/myContent}" class="checkout-btn">목록으로</a>
 						</div>
                     </div>
                 </div>
             </div>
         </div>
 		<script>
-			$(".del-btn").on("click", function (){
-				if (!confirm("삭제하시겠습니까?")){
-					console.log("삭제안한대요.")
-					return
-				}
-				console.log("삭제한대요.")
-				const ep_code = $(this).data("ep-code");
-				console.log(ep_code);
-				$.ajax({
-					url : "/editor/deleteEpisode",
-					type : "post",
-					data : {ep_code : ep_code},
-					success : function (res){
-						if(res){
-							alert(ep_code+"삭제처리 완료");
-							location.reload();
-						} else {
-							console.log(ep_code+"삭제처리 실패");
+			$("#book_finToY-btn").on("click", function(){
+				const bo_code = $(this).data("bocode");
+				if(confirm("완결 상태로 전환하시겠습니까?")){
+					$.ajax({
+						type: "POST",
+						url: "/editor/bookFinToY",
+						data: {bo_code: bo_code},
+						success: function (data) {
+							alert("완결 상태로 전환되었습니다.");
+							window.location.href = "/editor/myContent";
+						},
+						error: function (data) {
+							alert("완결 상태로 전환에 실패하였습니다.");
 						}
-					}
-				})
-			})
-			
+					});
+				}
+			});
+			$("#book_finToN-btn").on("click", function(){
+				const bo_code = $(this).data("bocode");
+				if(confirm("연재 상태로 전환하시겠습니까?")){
+					$.ajax({
+						type: "POST",
+						url: "/editor/bookFinToN",
+						data: {bo_code: bo_code},
+						success: function (data) {
+							alert("연재 상태로 전환되었습니다.");
+							window.location.href = "/editor/myContent";
+						},
+						error: function (data) {
+							alert("연재 상태로 전환에 실패하였습니다.");
+						}
+					});
+				}
+			});
 		</script>
     </main>
 </body>

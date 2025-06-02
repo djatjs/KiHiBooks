@@ -93,10 +93,6 @@ public class PublisherService {
         return true;
     }
 
-    // public List<EditorVO> getEditorList(String puCode) {
-    //     return publisherDAO.selectEditorList(puCode);
-    // }
-
     @Transactional
     public boolean deleteEditor(int userNum) {
         // 1. 출판사 ID 테이블에서 해당 유저 삭제
@@ -120,4 +116,5 @@ public class PublisherService {
     public List<EditorVO> getEditorList(String pu_code) {
         return publisherDAO.selectEditors(pu_code);
     }
+    
 }

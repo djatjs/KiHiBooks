@@ -250,10 +250,17 @@ public class PublisherContoller {
         }
         return "redirect:/editor/updateEpisode/"+ep_code;
     }
+
     @ResponseBody
-    @PostMapping("/editor/deleteEpisode")
-    public boolean deleteEpisode(@RequestParam String ep_code) {
-        return bookService.deleteEpisode(ep_code);
+    @PostMapping("/editor/bookFinToY")
+    public boolean bookFinToY(@RequestParam String bo_code) {
+        if(bo_code == null || bo_code.isEmpty()){return false;}
+        return bookService.bookFinToY(bo_code);
     }
-    
+    @ResponseBody
+    @PostMapping("/editor/bookFinToN")
+    public boolean bookFinToN(@RequestParam String bo_code) {
+        if(bo_code == null || bo_code.isEmpty()){return false;}
+        return bookService.bookFinToN(bo_code);
+    }
 }

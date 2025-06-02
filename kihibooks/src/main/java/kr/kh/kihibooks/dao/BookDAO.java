@@ -98,7 +98,6 @@ public interface BookDAO {
 
 	EpisodeVO getEpisodeByCode(String ep_code);
 
-	boolean deleteEpisode(String ep_code);
 	ReviewVO selectReview(ReviewVO review);
 
 	int selectLikeCount(int rv_num);
@@ -137,5 +136,7 @@ public interface BookDAO {
 
 	Integer getBookCount_BoFinIsY(String pu_code);
 
+	boolean bookFinToY(String bo_code);
 
+	boolean bookFinToN(String bo_code);
 }
