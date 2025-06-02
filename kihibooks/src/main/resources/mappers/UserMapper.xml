@@ -79,7 +79,9 @@
     </select>
 
     <select id="getEpisodeByCode" resultType="EpisodeVO">
-        select * from episode
+        select *, author.au_name AS ep_author from episode
+        join book on ep_bo_code = bo_code
+        join author on bo_au_num = au_num
         where ep_code = #{ep_code}
     </select>
 </mapper>

@@ -300,8 +300,15 @@ public class UserController {
     @GetMapping("/order/checkout")
     public String checkout(Model model, HttpSession session) {
         List<EpisodeVO> epList = (List<EpisodeVO>) session.getAttribute("checkoutEpList");
+        int total = 0;
+        if(epList != null) {
+            for(EpisodeVO episode : epList) {
+                total += episode.getEp_price();
+            }
+        }
 
         model.addAttribute("epList", epList);
+        model.addAttribute("total", total);
 
         return "user/checkout";
     }

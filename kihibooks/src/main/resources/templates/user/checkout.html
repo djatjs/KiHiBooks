@@ -57,12 +57,6 @@
 			color: #928681;
 		}
 
-		.book-order-list-wrapper{
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-		}
-
 		.book-order-list{
 			line-height: initial;
 		}
@@ -193,6 +187,166 @@
 			word-break: break-all;
 			line-height: 1.5em;
 		}
+
+		.author-detail-link{
+			display: inline;
+			margin-top: 0;
+			font-size: 12px;
+			color: #666;
+			font-weight: 400;
+			line-height: 1.2em;
+			word-break: break-all;
+		}
+
+		.book-price-wrapper{
+			display: table-cell;
+			vertical-align: middle;
+			cursor: default;
+			text-align: right;
+		}
+
+		ul{
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		.ebook-price{
+			font-size: 14px;
+			white-space: nowrap;
+		}
+
+		.ebook-price strong{
+			color: #ff7f50;
+			font-weight: bolder;
+		}
+
+		.order-receipt-wrapper{
+			width: 346px;
+			display: table-cell;
+			vertical-align: top;
+			padding-left: 50px;
+		}
+
+		.order-info-article{
+			display: block;
+			margin: 0;
+			padding: 0;
+		}
+
+		.order-info-article-title {
+			color: #141414;
+			padding-bottom: 15px;
+			font-size: 18px;
+			font-weight: 700;
+		}
+
+		.order-info-wrapper{
+			border: 1px solid #ccc;
+		}
+
+		.info-list{
+			border-top: none;
+			min-height: 44px;
+			position: relative;
+		}
+
+		.section-title{
+			position: absolute;
+			left: 14px;
+			top: 15px;
+		}
+
+		.title{
+			font-size: 14px;
+			font-weight: 700;
+			color: #141414;
+		}
+
+		.total-order-price-wrapper{
+			text-align: right;
+			padding: 12px 15px;
+		}
+
+		.total-regular-price{
+			font-size: 13px;
+			font-weight: 700;
+			line-height: normal;
+			color: #141414;
+		}
+
+		.point-wrapper{
+			border: 1px solid #e6e6e6;
+		}
+
+		.what-is-kihi-point{
+			display: block;
+			position: absolute;
+			right: -22px;
+			top: -3px;
+			width: 17px;
+			height: 20px;
+			box-sizing: border-box;
+			border: 1px solid #d6d1ce;
+			border-radius: 3px;
+			background: #fff;
+			text-align: center;
+			line-height: 18px;
+			font-size: 12px;
+			font-weight: 700;
+			color: #928581;
+		}
+
+		.asset-wrapper{
+			text-align: right;
+			padding: 10px 14px 13px 14px;
+		}
+
+		.asset-input-wrapper{
+			display: inline-block;
+		}
+
+		.asset-input-out-liner{
+			display: flex;
+			width: 143px;
+			height: 34px;
+			box-sizing: border-box;
+			border-radius: 3px;
+			border: 1px solid #d6cfce;
+			justify-content: end;
+			padding-left: 18px;
+			align-items: center;
+		}
+
+		.asset-input{
+			vertical-align: inherit;
+			text-align: right;
+			width: 100px;
+			flex: 1;
+			border: 0;
+			background: 0 0;
+			box-shadow: none;
+			font-size: 15px;
+			font-weight: 700;
+			color: #000;
+			height: 32px;
+			line-height: 32px;
+		}
+
+		.currency{
+			display: inline-block;
+			padding-right: 10px;
+			font-size: 15px;
+			font-weight: 700;
+			color: #000;
+			height: 32px;
+			line-height: 32px;
+		}
+		
+		.asset-input-out-liner input:focus{
+			border: none;
+			outline: none;
+		}
 	</style>
 </head>
 
@@ -229,7 +383,18 @@
 															<span class="title-text" th:text="${episode.ep_title}"></span>
 														</a>
 													</div>
-													<p class="meta-author"></p>
+													<p class="meta-author">
+														<a th:href="@{/}" class="author-detail-link" th:text="${episode.ep_author}"></a>
+													</p>
+												</div>
+												<div class="book-price-wrapper">
+													<ul class="book-price">
+														<li class="ebook-price">
+															<strong>
+																<span th:text="${episode.ep_price} + '원'"></span>
+															</strong>
+														</li>
+													</ul>
 												</div>
 											</div>
 										</div>
@@ -237,6 +402,45 @@
 								</li>
 							</ul>
 						</article>
+					</div>
+					<div class="order-receipt-wrapper">
+						<form id="order_form" action="" method="post">
+							<article class="order-info-article">
+								<div class="order-info-article-inner-wrapper">
+									<h3 class="order-info-article-title">포인트</h3>
+									<div class="order-info-wrapper">
+										<ul>
+											<li class="info-list">
+												<div class="section-title">
+													<h4 class="title">총 주문 금액</h4>
+												</div>
+												<div class="total-order-price-wrapper">
+													<p class="total-regular-price">
+														<span th:text="${total} + '원'"></span>
+													</p>
+												</div>
+											</li>
+											<li class="info-list point-wrapper">
+												<div class="section-title">
+													<h4 class="title" >키히포인트</h4>
+													<a href="/" class="what-is-kihi-point">?</a>
+												</div>
+												<div class="asset-wrapper">
+													<div class="asset-input-wrapper">
+														<div class="asset-input-out-liner">
+															<label for="use_point" class="indent-hidden">사용할 키히포인트</label>
+															<input type="text" class="asset-input" id="use_point" name="use_point" title="사용할 키히포인트 금액 입력">
+															<span class="currency">원</span>
+														</div>
+													</div>
+													<div class=""></div>
+												</div>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</article>
+						</form>
 					</div>
 				</section>
 			</div>
