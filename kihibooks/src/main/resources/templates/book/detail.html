@@ -2836,12 +2836,14 @@
 																</div>
 																<div>
 																	<ul class="info-list-wrapper">
-																		<li class="info-ep-date" style="display: inline-block;" th:text="${#strings.substring(episode.ep_date, 0, 10)}">
+																		<li class="info-ep-date" style="display: inline-block;"
+																			th:text="${#strings.substring(episode.ep_date, 0, 10)}">
 																		</li>
 																		<!-- 아마도 전체 페이지 들어가야할듯? ↓ -->
 																		<li class="info-page-cnt">| 약 4.5천 자</li>
 																		<!-- 소장한 경우만 아래 배지 추가 -->
-																		<li class="info-status" style="display: inline-block;" th:if="${buyCodeSet.contains(episode.ep_code)}">
+																		<li class="info-status" style="display: inline-block;"
+																			th:if="${buyCodeSet.contains(episode.ep_code)}">
 																			|
 																			<span style="color: #ff7f50;">소장</span>
 																		</li>
@@ -3898,6 +3900,7 @@
 			});
 
 			document.addEventListener("DOMContentLoaded", function () {
+
 				const ratingLabel = document.querySelector(".rating-bunpo");
 				const bunpoTable = document.querySelector(".bunpo-table");
 				const bunpoIcon = document.getElementById("bunpo_table_icon");
@@ -3950,24 +3953,26 @@
 					}
 				})
 
-				// 회차 목록 체크 박스 선택 관련
-				const selectAllCheckbox = document.getElementById("select_all");
-				const episodeCheckboxes = document.querySelectorAll(".episode-check");
 
-				selectAllCheckbox.addEventListener("change", function () {
-					const isChecked = selectAllCheckbox.checked;
-					episodeCheckboxes.forEach(checkbox => {
-						checkbox.checked = isChecked;
-					});
-				});
 
+			});
+
+			// 회차 목록 체크 박스 선택 관련
+			const selectAllCheckbox = document.getElementById("select_all");
+			const episodeCheckboxes = document.querySelectorAll(".episode-check");
+
+			selectAllCheckbox.addEventListener("change", function () {
+				const isChecked = selectAllCheckbox.checked;
 				episodeCheckboxes.forEach(checkbox => {
-					checkbox.addEventListener("change", function () {
-						const allChecked = Array.from(episodeCheckboxes).every(cb => cb.checked);
-						selectAllCheckbox.checked = allChecked;
-					});
+					checkbox.checked = isChecked;
 				});
+			});
 
+			episodeCheckboxes.forEach(checkbox => {
+				checkbox.addEventListener("change", function () {
+					const allChecked = Array.from(episodeCheckboxes).every(cb => cb.checked);
+					selectAllCheckbox.checked = allChecked;
+				});
 			});
 
 			// 스포일러 댓글 -> 리뷰 보기 클릭 시
@@ -4082,7 +4087,7 @@
 						console.log(isFree);
 
 						buyList.push(epCode);
-						
+
 						if (!isFree) {
 							hasPaidEpisode = true;
 						}
@@ -4109,12 +4114,12 @@
 						});
 					} else {
 						$.ajax({
-							url : "/order/checkout",
-							type : "post",
-							data : {
-								epCodes : buyList
+							url: "/order/checkout",
+							type: "post",
+							data: {
+								epCodes: buyList
 							},
-							success : function() {
+							success: function () {
 								location.href = "/order/checkout";
 							}
 						});

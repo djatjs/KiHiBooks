@@ -4,15 +4,21 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>결제 완료 - 키히</title>
+	<title>주문/결제 - 키히</title>
 	<style>
-		.books-content{
+		ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		.books-content {
 			width: 100%;
 			position: relative;
 			min-height: 500px;
 		}
 
-		.indent-hidden{
+		.indent-hidden {
 			position: absolute;
 			display: inline-block;
 			height: 0;
@@ -21,7 +27,7 @@
 			overflow: hidden;
 		}
 
-		.page-checkout{
+		.page-checkout {
 			cursor: default;
 			display: table;
 			table-layout: fixed;
@@ -29,7 +35,7 @@
 			margin: 48px auto 100px;
 		}
 
-		.order-list-wrapper{
+		.order-list-wrapper {
 			display: table-cell;
 			width: 564px;
 			vertical-align: top;
@@ -38,13 +44,13 @@
 			line-height: 1em;
 		}
 
-		.order-list{
+		.order-list {
 			display: block;
 			margin: 0;
 			padding: 0;
 		}
 
-		.order-list-title{
+		.order-list-title {
 			padding-bottom: 14px;
 			border-bottom: 1px solid #ebe7e5;
 			font-size: 18px;
@@ -52,35 +58,35 @@
 			color: #000;
 		}
 
-		.list-count{
+		.list-count {
 			font-size: 16px;
 			color: #928681;
 		}
 
-		.book-order-list{
+		.book-order-list {
 			line-height: initial;
 		}
 
-		.book-macro{
+		.book-macro {
 			display: table;
 			width: 100%;
 			border-bottom: 1px solid #dfdfdf;
 		}
 
-		.book-thumbnail-wrapper{
+		.book-thumbnail-wrapper {
 			padding: 15px 0 15px 8px;
 			display: table-cell;
 			vertical-align: top;
 			width: 60px;
 		}
 
-		.book-thumbnail{
+		.book-thumbnail {
 			display: inline-block;
 			position: relative;
 			height: auto;
 		}
 
-		.thumbnail-img{
+		.thumbnail-img {
 			display: block;
 			width: 100%;
 			height: 100%;
@@ -88,7 +94,7 @@
 			background: #d9d9d9;
 		}
 
-		.thumbnail-img::before{
+		.thumbnail-img::before {
 			content: "";
 			box-sizing: border-box;
 			display: block;
@@ -97,15 +103,16 @@
 			position: absolute;
 			left: 0;
 			top: 0;
-			background: linear-gradient(to right, rgba(0, 0, 0, .2) 0, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0) 95%, rgba(0, 0, 0, .2) 100%);;
+			background: linear-gradient(to right, rgba(0, 0, 0, .2) 0, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0) 95%, rgba(0, 0, 0, .2) 100%);
+			;
 		}
 
-		.thumbnail{
+		.thumbnail {
 			width: 60px;
 			max-height: 87px;
 		}
 
-		.border{
+		.border {
 			box-sizing: border-box;
 			opacity: .1;
 			display: block;
@@ -118,7 +125,7 @@
 			border: 1px solid #000;
 		}
 
-		.thumbnail-btn{
+		.thumbnail-btn {
 			display: block;
 			position: absolute;
 			left: 0;
@@ -130,18 +137,18 @@
 			box-sizing: border-box;
 		}
 
-		.table-cell-wrapper{
+		.table-cell-wrapper {
 			display: table-cell;
 			vertical-align: middle;
 			padding: 10px 0 15px 0;
 		}
 
-		.table-wrapper{
+		.table-wrapper {
 			display: table;
 			width: 100%;
 		}
 
-		.book-metadata-wrapper{
+		.book-metadata-wrapper {
 			padding: 0 8px 15px 15px;
 			position: relative;
 			display: table-cell;
@@ -149,19 +156,19 @@
 			cursor: default;
 		}
 
-		.meta-title{
+		.meta-title {
 			display: block;
 			margin-top: 3px;
 			margin-bottom: 7px;
 			font-size: 13px;
 		}
 
-		.title-link{
+		.title-link {
 			text-decoration: none;
 			color: #666;
 		}
 
-		.title-text{
+		.title-text {
 			font-size: 13px;
 			color: #000;
 			font-weight: 700;
@@ -174,7 +181,7 @@
 			overflow: hidden;
 		}
 
-		.meta-author{
+		.meta-author {
 			height: auto;
 			padding: 0;
 			margin-left: 0;
@@ -188,7 +195,7 @@
 			line-height: 1.5em;
 		}
 
-		.author-detail-link{
+		.author-detail-link {
 			display: inline;
 			margin-top: 0;
 			font-size: 12px;
@@ -198,37 +205,31 @@
 			word-break: break-all;
 		}
 
-		.book-price-wrapper{
+		.book-price-wrapper {
 			display: table-cell;
 			vertical-align: middle;
 			cursor: default;
 			text-align: right;
 		}
 
-		ul{
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-		}
-
-		.ebook-price{
+		.ebook-price {
 			font-size: 14px;
 			white-space: nowrap;
 		}
 
-		.ebook-price strong{
+		.ebook-price strong {
 			color: #ff7f50;
 			font-weight: bolder;
 		}
 
-		.order-receipt-wrapper{
+		.order-receipt-wrapper {
 			width: 346px;
 			display: table-cell;
 			vertical-align: top;
 			padding-left: 50px;
 		}
 
-		.order-info-article{
+		.order-info-article {
 			display: block;
 			margin: 0;
 			padding: 0;
@@ -241,45 +242,46 @@
 			font-weight: 700;
 		}
 
-		.order-info-wrapper{
+		.order-info-wrapper {
 			border: 1px solid #ccc;
 		}
 
-		.info-list{
+		.info-list {
 			border-top: none;
 			min-height: 44px;
 			position: relative;
 		}
 
-		.section-title{
+		.section-title {
 			position: absolute;
 			left: 14px;
 			top: 15px;
 		}
 
-		.title{
+		.title {
 			font-size: 14px;
 			font-weight: 700;
 			color: #141414;
 		}
 
-		.total-order-price-wrapper{
+		.total-order-price-wrapper {
 			text-align: right;
 			padding: 12px 15px;
 		}
 
-		.total-regular-price{
+		.total-regular-price {
 			font-size: 13px;
 			font-weight: 700;
 			line-height: normal;
 			color: #141414;
 		}
 
-		.point-wrapper{
+		.point-wrapper {
 			border: 1px solid #e6e6e6;
+			border-bottom: none;
 		}
 
-		.what-is-kihi-point{
+		.what-is-kihi-point {
 			display: block;
 			position: absolute;
 			right: -22px;
@@ -297,16 +299,16 @@
 			color: #928581;
 		}
 
-		.asset-wrapper{
+		.asset-wrapper {
 			text-align: right;
 			padding: 10px 14px 13px 14px;
 		}
 
-		.asset-input-wrapper{
+		.asset-input-wrapper {
 			display: inline-block;
 		}
 
-		.asset-input-out-liner{
+		.asset-input-out-liner {
 			display: flex;
 			width: 143px;
 			height: 34px;
@@ -318,7 +320,7 @@
 			align-items: center;
 		}
 
-		.asset-input{
+		.asset-input {
 			vertical-align: inherit;
 			text-align: right;
 			width: 100px;
@@ -333,7 +335,7 @@
 			line-height: 32px;
 		}
 
-		.currency{
+		.currency {
 			display: inline-block;
 			padding-right: 10px;
 			font-size: 15px;
@@ -342,11 +344,78 @@
 			height: 32px;
 			line-height: 32px;
 		}
-		
-		.asset-input-out-liner input:focus{
+
+		.asset-input-out-liner input:focus {
 			border: none;
 			outline: none;
 		}
+
+		.asset-description-wrapper {
+			display: flex;
+			align-items: baseline;
+			justify-content: flex-end;
+			margin-top: 6px;
+		}
+
+		.asset-description {
+			display: inline-block;
+			margin-right: 4px;
+			font-size: 13px;
+			line-height: 1.4em;
+			color: #787878 !important;
+		}
+
+		.asset-use-all-btn {
+			border-color: #ccc;
+			color: #787878;
+			box-shadow: none;
+			width: 75px;
+			height: 30px;
+			font-size: 12px;
+			padding: 0;
+			margin: 0;
+			appearance: none;
+			outline: 0;
+			text-decoration: none;
+			box-sizing: border-box;
+			border-radius: 4px;
+			font-weight: 700;
+			display: inline-block;
+			text-align: center;
+			cursor: pointer;
+			line-height: 1em;
+			vertical-align: baseline;
+			transition: background .2s, color .2s;
+			border: 1px solid #d9d4d1;
+			background: #fff;
+		}
+
+		.current-price-wrapper {
+			background: rgba(255, 241, 235, 0.5);
+			margin: 0;
+			padding: 0;
+			padding: 22px 0 20px 0;
+			text-align: center;
+		}
+
+		.current-price{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: #141414 !important;
+			font-size: 14px;
+		}
+
+		.total-payment-price-text{
+			margin-right: 5px;
+		}
+
+		.price-num, .won-text{
+			font-size: 20px;
+			color: #ff7f50 !important;
+		}
+
+		
 	</style>
 </head>
 
@@ -367,10 +436,11 @@
 										<div class="book-thumbnail-wrapper" th:attr="data-bo-code=${episode.ep_bo_code}">
 											<div class="book-thumbnail">
 												<div class="thumbnail-img">
-													<img class="thumbnail" src="/resources/static/covers/cover1.png" alt="썸네일 이미지" th:attr="data-src=${episode.ep_cover_img}">
+													<img class="thumbnail" src="/resources/static/covers/cover1.png" alt="썸네일 이미지"
+														th:attr="data-src=${episode.ep_cover_img}">
 													<span class="border"></span>
 												</div>
-												<a class="thumbnail-btn" th:href="@{'/books/' + ${episode.ep_bo_code}}" >
+												<a class="thumbnail-btn" th:href="@{'/books/' + ${episode.ep_bo_code}}">
 													<span class="indent-hidden">상세페이지 바로가기</span>
 												</a>
 											</div>
@@ -422,19 +492,36 @@
 											</li>
 											<li class="info-list point-wrapper">
 												<div class="section-title">
-													<h4 class="title" >키히포인트</h4>
+													<h4 class="title">키히포인트</h4>
 													<a href="/" class="what-is-kihi-point">?</a>
 												</div>
 												<div class="asset-wrapper">
 													<div class="asset-input-wrapper">
 														<div class="asset-input-out-liner">
 															<label for="use_point" class="indent-hidden">사용할 키히포인트</label>
-															<input type="text" class="asset-input" id="use_point" name="use_point" title="사용할 키히포인트 금액 입력">
+															<input type="text" class="asset-input" id="use_point" name="use_point"
+																title="사용할 키히포인트 금액 입력">
 															<span class="currency">원</span>
 														</div>
 													</div>
-													<div class=""></div>
+													<div class="asset-description-wrapper">
+														<p class="asset-description">내 키히포인트 :
+															<strong>
+																<span th:attr="data-amount=${point}" th:text="${formattedPoint} + '원'"></span>
+															</strong>
+														</p>
+														<button type="button" class="asset-use-all-btn">전액 사용</button>
+													</div>
 												</div>
+											</li>
+											<li>
+												<p class="current-price-wrapper">
+													<strong class="current-price">
+														<span class="total-payment-price-text">부족한 금액</span>
+														<span class="price-num">0</span>
+														<span class="won-text">원</span>
+													</strong>
+												</p>
 											</li>
 										</ul>
 									</div>
