@@ -522,6 +522,12 @@
         where bl_ur_num = #{ur_num} and ep_bo_code = #{bo_code}
     </select>
 
+    <select id="getBList" resultType="BuyListVO">
+        select * from buy_list
+        join episode on bl_ep_code = ep_code
+        where bl_ur_num = #{ur_num} and ep_bo_code = #{bo_code} and (bl_end_date is null or (bl_end_date is not null and bl_end_date <![CDATA[ > ]]> now()))
+    </select>
+
     <select id="getBestList5" resultType="BookVO">
         select * from book
         where bo_sc_code = #{sc_code}

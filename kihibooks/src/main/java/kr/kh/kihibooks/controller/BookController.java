@@ -40,9 +40,12 @@ import kr.kh.kihibooks.model.vo.KeywordVO;
 import kr.kh.kihibooks.model.vo.NoticeVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
 import kr.kh.kihibooks.model.vo.SubCategoryVO;
+import kr.kh.kihibooks.model.vo.UserVO;
+import kr.kh.kihibooks.model.vo.WaitForFreeVO;
 import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.service.BookService;
 import kr.kh.kihibooks.service.KeywordService;
+import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.utils.CustomUser;
 import kr.kh.kihibooks.utils.PageConstants;
 
@@ -51,6 +54,8 @@ public class BookController {
 
     @Autowired
     private BookService bookService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private KeywordService keywordService;
@@ -134,13 +139,16 @@ public class BookController {
         List<BuyListVO> buyList = new ArrayList<>();
         Set<String> buyCodeSet = new HashSet<>();
         List<BookKeywordVO> kwList = bookService.getKeywordList(bo_code);
+        WaitForFreeVO wff = new WaitForFreeVO();
+        UserVO user = new UserVO();
         
         if (customUser != null) {
             int ur_num = customUser.getUser().getUr_num();
             likedReviewIds = bookService.getLikedReview(ur_num);
             buyList = bookService.getBuyList(ur_num, bo_code);
             buyCodeSet = buyList.stream().map(BuyListVO::getBl_ep_code).collect(Collectors.toSet());
-
+            wff = userService.getWff(ur_num, bo_code);
+            user = customUser.getUser();
         }
         
         model.addAttribute("book", book);
@@ -159,6 +167,8 @@ public class BookController {
         model.addAttribute("buyList", buyList);
         model.addAttribute("buyCodeSet", buyCodeSet);
         model.addAttribute("kwList", kwList);
+        model.addAttribute("wff", wff);
+        model.addAttribute("user", user);
 
         return "book/detail";
     }

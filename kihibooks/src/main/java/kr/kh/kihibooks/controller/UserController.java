@@ -1,6 +1,8 @@
 package kr.kh.kihibooks.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import kr.kh.kihibooks.service.ApiService;
+import kr.kh.kihibooks.service.BookService;
 import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.utils.CustomUser;
 import kr.kh.kihibooks.model.vo.EmailVO;
@@ -36,6 +39,9 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
+
+    @Autowired
+    BookService bookService;
 
     @Autowired
     ApiService apiService;
@@ -255,8 +261,48 @@ public class UserController {
         return userService.deleteSelected(urNum, epCodes);
     }
 
+    @GetMapping("/order/checkout/finished")
+    public String checkoutFin(@RequestParam("contents_id") String contentsId, Model model){
+        model.addAttribute("contentsId", contentsId);
+        return "/user/checkoutFin";
+    }
+
+    @PostMapping("/get/blNum")
+    @ResponseBody
+    public Map<String, Object> getBlNum(@RequestParam List<String> epCodes, @AuthenticationPrincipal CustomUser customUser) {
+
+        int urNum = customUser.getUser().getUr_num();
+        int blNum = userService.getBlNum(epCodes, urNum);
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("bl_num", blNum);
+
+        return res;
+    }
+
+    @PostMapping("/order/checkout")
+    @ResponseBody
+    public boolean checkout(@RequestParam List<String> epCodes, @AuthenticationPrincipal CustomUser customUser, HttpSession session) {
+        if(epCodes == null) {
+            return false;
+        }
+
+        List<EpisodeVO> epList = userService.getEpisodeByCodes(epCodes);
+        if(epList == null) {
+            return false;
+        }
+
+        session.setAttribute("checkoutEpList", epList);
+
+        return true;
+    }
+
     @GetMapping("/order/checkout")
-    public String checkout(Model model){
-        return "/user/checkout";
+    public String checkout(Model model, HttpSession session) {
+        List<EpisodeVO> epList = (List<EpisodeVO>) session.getAttribute("checkoutEpList");
+
+        model.addAttribute("epList", epList);
+
+        return "user/checkout";
     }
 }

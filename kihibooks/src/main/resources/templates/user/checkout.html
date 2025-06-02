@@ -6,239 +6,239 @@
 	<meta charset="UTF-8">
 	<title>결제 완료 - 키히</title>
 	<style>
-		.orange {
-      filter: brightness(0) saturate(100%) invert(38%) sepia(95%) saturate(750%) hue-rotate(-5deg) brightness(115%) contrast(110%);
-    }
-
-		.container{
-			max-width: 1170px;
-			margin: 30px auto 0;
-			padding: 0px 30px;
-			justify-content: center;
-		}
-
-		.checkout-container{
+		.books-content{
 			width: 100%;
-			max-width: 580px;
-			margin-bottom: 100px;
+			position: relative;
+			min-height: 500px;
 		}
 
-		.check-icon{
+		.indent-hidden{
+			position: absolute;
+			display: inline-block;
+			height: 0;
+			width: 0;
+			text-indent: -9999px;
+			overflow: hidden;
+		}
+
+		.page-checkout{
+			cursor: default;
+			display: table;
+			table-layout: fixed;
+			width: 952px;
+			margin: 48px auto 100px;
+		}
+
+		.order-list-wrapper{
+			display: table-cell;
+			width: 564px;
+			vertical-align: top;
+			color: #666;
+			font-size: 12px;
+			line-height: 1em;
+		}
+
+		.order-list{
 			display: block;
-			margin: 80px auto 18px;
+			margin: 0;
+			padding: 0;
 		}
 
-		.checkout-text{
-			color: #141414;
-			text-align: center;
-			font-size: 22px;
+		.order-list-title{
+			padding-bottom: 14px;
+			border-bottom: 1px solid #ebe7e5;
+			font-size: 18px;
 			font-weight: 700;
-			line-height: 26px;
-			margin-bottom: 10px;
+			color: #000;
 		}
 
-		.btn-wrapper{
-			display: flex;
-			align-items: center;
-			justify-content: flex-start;
-			flex-direction: column;
-			margin: 40px 0;
+		.list-count{
+			font-size: 16px;
+			color: #928681;
 		}
 
-		.direct-view-btn{
-			display: flex;
-			height: 40px;
-			justify-content: center;
-			align-items: center;
-			width: 160px;
-			font-size: 14px;
-			font-weight: 600;
-			line-height: 17px;
-			border-radius: 4px;
-			padding: 9px 0 8px;
-			color: #fff;
-			background: #ff7f50;
-			border: 0;
+		.book-order-list-wrapper{
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
 		}
 
-		.direct-view-btn:hover {
-			background: #ff5e23;
+		.book-order-list{
+			line-height: initial;
 		}
 
-		.download-in-viewer{
-			margin-top: 10px;
-			display: flex;
-			height: 40px;
-			justify-content: center;
-			align-items: center;
-			width: 160px;
-			font-size: 14px;
-			font-weight: 600;
-			line-height: 17px;
-			border-radius: 4px;
-			padding: 9px 0 8px;
-			color: #787878;
-			background-color: #fff;
-			border: 1px solid #ccc;
-		}
-
-		.download-in-viewer:hover{
-			border: 1px solid #787878;
-		}
-
-		.download-viewer{
-			text-decoration: none;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			margin-top: 40px;
-			color: #a5a5a5;
-			font-size: 15px;
-			font-weight: 500;
-			line-height: normal;
-		}
-
-		.download-icon{
-			height: 16px;
-			margin-right: 2px;
-			margin-top: 3px;
-		}
-
-		.download-icon{
-			filter: brightness(0) saturate(100%) invert(68%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
-		}
-
-		.download-viewer:hover img, .download-text:hover {
-      filter: brightness(0) saturate(100%) invert(88%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
-			color: #b9b9b9;
-    }
-
-		.download-text{
-			text-decoration: underline;
-			color: #a5a5a5;
-			font-size: 15px;
-			font-weight: 500;
-			line-height: normal;
-		}
-
-		.checkout-info-table{
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
+		.book-macro{
+			display: table;
 			width: 100%;
-			border-collapse: collapse;
-			border-top: 1px solid #e6e6e6;
-			padding-bottom: 12px;
+			border-bottom: 1px solid #dfdfdf;
 		}
 
-		.checkout-info-table>tbody>tr{
-			display: flex;
-			min-height: 42px;
-			border-bottom: 1px solid #e6e6e6;
-			margin: 0;
+		.book-thumbnail-wrapper{
+			padding: 15px 0 15px 8px;
+			display: table-cell;
+			vertical-align: top;
+			width: 60px;
+		}
+
+		.book-thumbnail{
+			display: inline-block;
+			position: relative;
+			height: auto;
+		}
+
+		.thumbnail-img{
+			display: block;
+			width: 100%;
+			height: 100%;
+			position: relative;
+			background: #d9d9d9;
+		}
+
+		.thumbnail-img::before{
+			content: "";
+			box-sizing: border-box;
+			display: block;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			left: 0;
+			top: 0;
+			background: linear-gradient(to right, rgba(0, 0, 0, .2) 0, rgba(0, 0, 0, 0) 5%, rgba(0, 0, 0, 0) 95%, rgba(0, 0, 0, .2) 100%);;
+		}
+
+		.thumbnail{
+			width: 60px;
+			max-height: 87px;
+		}
+
+		.border{
+			box-sizing: border-box;
+			opacity: .1;
+			display: block;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			left: 0;
+			top: 0;
+			z-index: 3;
+			border: 1px solid #000;
+		}
+
+		.thumbnail-btn{
+			display: block;
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 9;
+			cursor: pointer;
+			box-sizing: border-box;
+		}
+
+		.table-cell-wrapper{
+			display: table-cell;
+			vertical-align: middle;
+			padding: 10px 0 15px 0;
+		}
+
+		.table-wrapper{
+			display: table;
+			width: 100%;
+		}
+
+		.book-metadata-wrapper{
+			padding: 0 8px 15px 15px;
+			position: relative;
+			display: table-cell;
+			vertical-align: top;
+			cursor: default;
+		}
+
+		.meta-title{
+			display: block;
+			margin-top: 3px;
+			margin-bottom: 7px;
+			font-size: 13px;
+		}
+
+		.title-link{
+			text-decoration: none;
+			color: #666;
+		}
+
+		.title-text{
+			font-size: 13px;
+			color: #000;
+			font-weight: 700;
+			line-height: 1.4em;
+			text-overflow: ellipsis;
+			word-wrap: break-word;
+			word-break: break-all;
+			white-space: normal;
+			max-height: 2.7em;
+			overflow: hidden;
+		}
+
+		.meta-author{
+			height: auto;
 			padding: 0;
-		}
-
-		.checkout-info-table>tbody>tr>th{
-			width: 100px;
-			display: flex;
-			align-items: center;
-			padding: 12.5px 10px;
-			border-right: 1px solid #e6e6e6;
-			background: #fafafa;
-			color: #787878;
-			font-size: 15px;
-			font-weight: 500;
-		}
-
-		.checkout-info-table>tbody>tr>td{
-			display: flex;
-			align-items: center;
-			flex: 1;
-			justify-content: space-between;
-			padding: 12.5px 10px;
-			color: #141414;
-			font-size: 15px;
-			font-weight: 600;
-		}
-
-		.checkout-episode-text{
-			display: flex;
-			text-decoration: none;
-			flex: 1;
-			align-items: center;
-			justify-content: flex-start;
-			color: inherit;
-		}
-
-		.checkout-episode-text:hover{
-			text-decoration: none;
-			color: inherit;
-		}
-
-		.history-btn{
-			display: flex;
-			justify-content: flex-start;
-			flex-direction: row;
-			margin: 0;
-			padding: 0;
-		}
-
-		.history-text{
-			text-decoration: none;
-			display: flex;
-			height: 33px;
-			justify-content: center;
-			align-items: center;
-			color: #787878;
-			text-align: center;
-			font-size: 14px;
-			font-weight: 600;
-			border-radius: 4px;
-			border: 1px solid #e6e6e6;
-			padding: 10px 8px;
-		}
-
-		.history-text:hover{
-			color: #787878;
-			text-decoration: none;
-		}
-
-		.history-btn:hover a{
-			border: 1px solid #b6b6b6;
+			margin-left: 0;
+			display: block;
+			margin-top: 3px;
+			position: relative;
+			font-size: 12px;
+			color: #666;
+			font-weight: 400;
+			word-break: break-all;
+			line-height: 1.5em;
 		}
 	</style>
 </head>
 
 <body>
 	<main layout:fragment="content" class="container d-flex" style="min-height: 650px;">
-		<div class="checkout-container">
-			<img src="/resources/static/img/check_icon.png" alt="체크 아이콘" style="height: 64px;" class="check-icon orange">
-			<h2 class="checkout-text">결제가 완료되었습니다.</h2>
-			<div class="btn-wrapper">
-				<button type="button" class="direct-view-btn">바로 보기</button>
-				<button type="button" class="download-in-viewer">PC 뷰어에서 다운로드</button>
-				<a th:href="@{/}" class="download-viewer">
-					<img src="/resources/static/img/download.png" alt="다운로드 아이콘" class="download-icon">
-					<span class="download-text">PC 뷰어 설치</span>
-				</a>
-			</div>
-			<table class="checkout-info-table">
-				<tbody>
-					<tr>
-						<th>결제 내역</th>
-						<td>
-						<a th:href="@{/}" class="checkout-episode-text">이세계 착각 헌터 4화</a>
-					</td>
-					</tr>
-					<tr>
-						<th>결제 금액</th>
-						<td>0원</td>
-					</tr>
-				</tbody>
-			</table>
-			<div class="history-btn">
-				<a th:href="@{/}" class="history-text">결제 내역</a>
+		<div class="books-content">
+			<div>
+				<h2 class="indent-hidden">주문/결제</h2>
+				<section class="page-checkout">
+					<div class="order-list-wrapper">
+						<article class="order-list">
+							<h3 class="order-list-title">주문 목록
+								<span class="list-count" th:text="${epList.size()}"></span>
+							</h3>
+							<ul class="book-order-list-wrapper">
+								<li class="book-order-list" th:each="episode : ${epList}" th:attr="data-ep-code=${episode.ep_code}">
+									<div class="book-macro">
+										<div class="book-thumbnail-wrapper" th:attr="data-bo-code=${episode.ep_bo_code}">
+											<div class="book-thumbnail">
+												<div class="thumbnail-img">
+													<img class="thumbnail" src="/resources/static/covers/cover1.png" alt="썸네일 이미지" th:attr="data-src=${episode.ep_cover_img}">
+													<span class="border"></span>
+												</div>
+												<a class="thumbnail-btn" th:href="@{'/books/' + ${episode.ep_bo_code}}" >
+													<span class="indent-hidden">상세페이지 바로가기</span>
+												</a>
+											</div>
+										</div>
+										<div class="table-cell-wrapper">
+											<div class="table-wrapper">
+												<div class="book-metadata-wrapper">
+													<div class="meta-title">
+														<a class="title-link" th:href="@{'/books/' + ${episode.ep_bo_code}}">
+															<span class="title-text" th:text="${episode.ep_title}"></span>
+														</a>
+													</div>
+													<p class="meta-author"></p>
+												</div>
+											</div>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</article>
+					</div>
+				</section>
 			</div>
 		</div>
 	</main>
