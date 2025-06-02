@@ -1,12 +1,14 @@
 package kr.kh.kihibooks.controller;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +28,7 @@ import kr.kh.kihibooks.service.ApiService;
 import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.utils.CustomUser;
 import kr.kh.kihibooks.model.vo.EmailVO;
+import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 
 @Controller
@@ -220,7 +223,36 @@ public class UserController {
     }
 
     @GetMapping("/cart")
-    public String cart(){
+    public String cart(Model model, @AuthenticationPrincipal CustomUser customUser){
+        List<EpisodeVO> epList = userService.getCartEpList(customUser.getUser().getUr_num());
+
+        model.addAttribute("epList", epList);
         return "/user/cart";
+    }
+
+    @PostMapping("/cart/delete")
+    @ResponseBody
+    public boolean deleteCart(@RequestBody Map<String, String> payload, @AuthenticationPrincipal CustomUser customUser) {
+        String epCode = payload.get("epCode");
+        int urNum = customUser.getUser().getUr_num();
+
+        if(epCode == null || epCode.isEmpty()) {
+            return false;
+        }
+
+        return userService.deleteCart(urNum, epCode);
+    }
+
+    @PostMapping("/cart/deleteSelected")
+    @ResponseBody
+    public boolean deleteSelected(@RequestBody Map<String, List<String>> payload, @AuthenticationPrincipal CustomUser customUser) {
+        List<String> epCodes = payload.get("epCodes");
+        int urNum = customUser.getUser().getUr_num();
+
+        if(epCodes == null || epCodes.isEmpty()) {
+            return false;
+        }
+
+        return userService.deleteSelected(urNum, epCodes);
     }
 }

@@ -293,7 +293,7 @@
     </select>
 
     <select id="selectBook" resultType="BookVO">
-        select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher, sub_cate.sc_name AS bo_sub_cate, main_cate.mc_name AS bo_main_cate from book
+        select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher, sub_cate.sc_name AS bo_sub_cate, main_cate.mc_name AS bo_main_cate, (select count(*) from `interest` where it_bo_code = #{bo_code}) AS bo_like_count from book
         join `author` on bo_au_num = au_num
         join `publisher_id` on bo_pi_num = pi_num
         join `publisher` on pi_pu_code = pu_code
@@ -560,14 +560,6 @@
         update book set bo_fin = 'N' where bo_code = #{bo_code}
     </update>
 
-    <!-- <select id="getNoticeListUsePi_num" resultType="NoticeVO">
-        select * from notice
-        join publisher_id on nt_pi_num = pi_num
-        join user on pi_ur_num = ur_num
-        where nt_bo_code = #{bo_code}
-        order by nt_date desc
-    </select> -->
-
     <insert id="insertNotice">
         insert into notice(nt_title, nt_content, nt_pi_num, nt_bo_code)
         values(#{nt_title},#{nt_content},#{nt_pi_num},#{nt_bo_code})
@@ -584,4 +576,14 @@
         order by nt_date desc
         LIMIT #{limit} OFFSET #{offset}
     </select>
+
+    <select id="getCartEpCodesByUser" resultType="String">
+        select ca_ep_code from cart
+        where ca_ur_num = #{ur_num}
+    </select>
+
+    <insert id="addCart">
+        insert into `cart`(ca_ep_code, ca_ur_num)
+        value(#{ep_code}, #{ur_num})
+    </insert>
 </mapper>

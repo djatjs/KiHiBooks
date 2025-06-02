@@ -132,6 +132,10 @@ public interface BookDAO {
 
     Integer getBookCount(String pu_code);
 
+    int addCart(int ur_num, String ep_code);
+
+	List<String> getCartEpCodesByUser(int ur_num);
+
 	Integer getBookCount_BoFinIsN(String pu_code);
 
 	Integer getBookCount_BoFinIsY(String pu_code);

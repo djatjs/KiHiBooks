@@ -168,11 +168,11 @@ public class BookService {
         String scCode = book.getBo_sc_code();
 
         // 3. 도서번호 3자리
-        String psCode = puCode+ scCode;
+        String psCode = puCode + scCode;
         String boNum = bookDAO.getLatestBoNum(psCode);
 
         // 4. 생성된 bo_code 반환
-        String bo_code = psCode + boNum +"";
+        String bo_code = psCode + boNum + "";
         book.setBo_code(bo_code);
         return bookDAO.insertBook(book);
     }
@@ -198,23 +198,24 @@ public class BookService {
     public List<BookVO> getEditorsBookList(int pi_num) {
         return bookDAO.selectEditorsBookList(pi_num);
     }
-    
+
     @Transactional
     public boolean updateBookInfo(BookVO book, List<String> bo_keywords) {
-        if(book == null || book.getBo_code() == null || book.getBo_title().length() == 0 || book.getBo_author().length() == 0 ) {
+        if (book == null || book.getBo_code() == null || book.getBo_title().length() == 0
+                || book.getBo_author().length() == 0) {
             throw new IllegalArgumentException("도서 정보가 잘못됨");
         }
-        if(bo_keywords == null) {
+        if (bo_keywords == null) {
             throw new IllegalArgumentException("키워드 목록이 잘못됨");
         }
-        if(!bookDAO.updateBookInfo(book)) {
+        if (!bookDAO.updateBookInfo(book)) {
             throw new RuntimeException("도서 정보 수정 실패");
         }
-        if(!keywordDao.deleteKeywordFromBook(book.getBo_code())) {
+        if (!keywordDao.deleteKeywordFromBook(book.getBo_code())) {
             throw new RuntimeException("키워드 삭제 실패");
         }
-        for(String keywordCode : bo_keywords){
-            if(!bookDAO.insertBookKeyword(book.getBo_code(), keywordCode)) {
+        for (String keywordCode : bo_keywords) {
+            if (!bookDAO.insertBookKeyword(book.getBo_code(), keywordCode)) {
                 throw new RuntimeException("키워드 추가 실패");
             }
         }
@@ -236,11 +237,12 @@ public class BookService {
     }
 
     public boolean insertEpisode(EpisodeVO ep, String bo_code, MultipartFile epubFile, MultipartFile coverImage) {
-        if(ep == null || epubFile == null || epubFile.getOriginalFilename().isEmpty() || coverImage == null || coverImage.getOriginalFilename().isEmpty()){
+        if (ep == null || epubFile == null || epubFile.getOriginalFilename().isEmpty() || coverImage == null
+                || coverImage.getOriginalFilename().isEmpty()) {
             return false;
         }
         // 에피소드 코드 생성
-        String ep_code = bo_code+bookDAO.getLatestEpNum(bo_code);
+        String ep_code = bo_code + bookDAO.getLatestEpNum(bo_code);
         // 썸네일 작업
         String coverName = coverImage.getOriginalFilename();
         String coverSuffix = getSuffix(coverName);
@@ -249,25 +251,27 @@ public class BookService {
         String epubName = epubFile.getOriginalFilename();
         String epubSuffix = getSuffix(epubName);
         String newFilerName = ep_code + epubSuffix;
-        //설정한 값들 ep에 저장후 DB에 저장
+        // 설정한 값들 ep에 저장후 DB에 저장
         ep.setEp_file_name(newFilerName);
         ep.setEp_cover_img(newCoverName);
         ep.setEp_bo_code(bo_code);
         ep.setEp_code(ep_code);
-        
+
         boolean res = bookDAO.insertEpisode(ep);
-        if(!res) {
+        if (!res) {
             return false;
         }
         String ep_cover_img;
         String ep_file_name;
-        try{
-            ep_cover_img = UploadFileUtils.uploadFile(uploadPath, newCoverName, coverImage.getBytes(), bo_code+"/covers");
+        try {
+            ep_cover_img = UploadFileUtils.uploadFile(uploadPath, newCoverName, coverImage.getBytes(),
+                    bo_code + "/covers");
             ep.setEp_cover_img(ep_cover_img);
-            ep_file_name = UploadFileUtils.uploadFile(uploadPath, newFilerName, epubFile.getBytes(), bo_code+"/epubs");
+            ep_file_name = UploadFileUtils.uploadFile(uploadPath, newFilerName, epubFile.getBytes(),
+                    bo_code + "/epubs");
             ep.setEp_file_name(ep_file_name);
             return bookDAO.updateEpisode(ep);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -278,8 +282,9 @@ public class BookService {
         return index < 0 ? null : fileName.substring(index);
     }
 
-    public boolean updateEpisode(EpisodeVO ep, String ep_code, String bo_code, MultipartFile epubFile, MultipartFile coverImage) {
-        if(ep == null || ep.getEp_code() == null){
+    public boolean updateEpisode(EpisodeVO ep, String ep_code, String bo_code, MultipartFile epubFile,
+            MultipartFile coverImage) {
+        if (ep == null || ep.getEp_code() == null) {
             return false;
         }
         // 기존 정보 가져오기
@@ -292,26 +297,28 @@ public class BookService {
         String ep_file_name;
         try {
             // 썸네일 변경 처리
-            if(coverImage != null && !coverImage.isEmpty()){
-                //이미지 삭제
+            if (coverImage != null && !coverImage.isEmpty()) {
+                // 이미지 삭제
                 UploadFileUtils.deleteFile(uploadPath, existing.getEp_cover_img());
                 String coverName = coverImage.getOriginalFilename();
                 String coverSuffix = getSuffix(coverName);
                 String newCoverName = ep.getEp_code() + coverSuffix;
                 System.out.println(newCoverName);
-                ep_cover_img = UploadFileUtils.uploadFile(uploadPath, newCoverName, coverImage.getBytes(), bo_code+"/covers");
+                ep_cover_img = UploadFileUtils.uploadFile(uploadPath, newCoverName, coverImage.getBytes(),
+                        bo_code + "/covers");
                 ep.setEp_cover_img(ep_cover_img);
                 System.out.println("이미지 삭제 및 재업로드 완료");
             }
             // epub 변경 처리
-            if(epubFile != null && !epubFile.isEmpty()){
-                //EPUB 파일 삭제
+            if (epubFile != null && !epubFile.isEmpty()) {
+                // EPUB 파일 삭제
                 UploadFileUtils.deleteFile(uploadPath, existing.getEp_file_name());
                 String epubName = epubFile.getOriginalFilename();
                 String epubSuffix = getSuffix(epubName);
                 String newFilerName = ep.getEp_code() + epubSuffix;
                 System.out.println(newFilerName);
-                ep_file_name = UploadFileUtils.uploadFile(uploadPath, newFilerName, epubFile.getBytes(), bo_code+"/epubs");
+                ep_file_name = UploadFileUtils.uploadFile(uploadPath, newFilerName, epubFile.getBytes(),
+                        bo_code + "/epubs");
                 System.out.println("EPUB 파일 삭제 및 재업로드 완료");
                 ep.setEp_file_name(ep_file_name);
             }
@@ -451,5 +458,23 @@ public class BookService {
 
     public List<NoticeVO> getNoticeListForPage(String bo_code, int pageSize, int offset) {
         return bookDAO.selectNoticeList(bo_code, pageSize, offset);
+    }
+    
+    public boolean addCart(int ur_num, List<String> epCodes) {
+        List<String> existingEpCodes = bookDAO.getCartEpCodesByUser(ur_num);
+
+        List<String> newEpCodes = epCodes.stream()
+                .filter(epCode -> !existingEpCodes.contains(epCode))
+                .collect(Collectors.toList());
+        boolean add = false;
+
+        for (String ep_code : newEpCodes) {
+            int result = bookDAO.addCart(ur_num, ep_code);
+            if(result > 0) {
+                add = true;
+            }
+        }
+
+        return add;
     }
 }
