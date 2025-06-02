@@ -139,4 +139,12 @@ public interface BookDAO {
 	boolean bookFinToY(String bo_code);
 
 	boolean bookFinToN(String bo_code);
+
+	// List<NoticeVO> getNoticeListForPublisher(String bo_code);
+
+	boolean insertNotice(NoticeVO nt);
+
+	Integer getNoticeCount(String bo_code);
+
+	List<NoticeVO> selectNoticeList(@Param("bo_code")String bo_code, @Param("limit")int pageSize, @Param("offset")int offset);
 }

@@ -21,6 +21,7 @@ import kr.kh.kihibooks.model.vo.EditorVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
 import kr.kh.kihibooks.model.vo.KeywordVO;
+import kr.kh.kihibooks.model.vo.NoticeVO;
 import kr.kh.kihibooks.model.vo.PublisherVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 import kr.kh.kihibooks.pagination.PageInfo;
@@ -73,8 +74,7 @@ public class PublisherContoller {
     }
 
     @GetMapping("/publisher/editors")
-    public String editors(@RequestParam(defaultValue = "1") int page,
-                        Model model, Authentication auth) {
+    public String editors(@RequestParam(defaultValue = "1") int page, Model model, Authentication auth) {
         CustomUser user = (CustomUser) auth.getPrincipal();
         String puCode = user.getPu_code();
 
@@ -226,7 +226,6 @@ public class PublisherContoller {
     }
     @PostMapping("/editor/registerEpisode/{bo_code}")
     public String registerEpisodePost(@PathVariable String bo_code, EpisodeVO ep, MultipartFile epubFile, MultipartFile coverImage) {
-        System.out.println(ep);
         if(bookService.insertEpisode(ep, bo_code, epubFile, coverImage)){
             return "redirect:/editor/manageEpisode/"+bo_code;
         }
@@ -236,14 +235,12 @@ public class PublisherContoller {
     @GetMapping("/editor/updateEpisode/{ep_code}")
     public String updateEpisode(@PathVariable String ep_code, Model model) {
         EpisodeVO episode = bookService.getEpisodeByCode(ep_code);
-        System.out.println(episode);
         model.addAttribute("episode", episode);
 
         return "/publisher/editor_updateEpisode";
     }
     @PostMapping("/editor/updateEpisode/{ep_code}")
     public String updateEpisodePost(@PathVariable String ep_code, EpisodeVO ep, MultipartFile epubFile, MultipartFile coverImage) {
-        System.out.println(ep);
         String bo_code = ep.getEp_bo_code();
         if(bookService.updateEpisode(ep, ep_code, bo_code, epubFile, coverImage)){
             return "redirect:/editor/manageEpisode/"+bo_code;
@@ -263,4 +260,47 @@ public class PublisherContoller {
         if(bo_code == null || bo_code.isEmpty()){return false;}
         return bookService.bookFinToN(bo_code);
     }
+
+    @GetMapping("/editor/manageNotice/{bo_code}")
+    public String myContent(@AuthenticationPrincipal CustomUser customUser,
+                            @PathVariable String bo_code,
+                            Model model,
+                            @RequestParam(defaultValue = "1") int page) {
+        
+        BookVO book = bookService.getBook(bo_code);
+        List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
+
+        int totalCount = bookService.getNoticeCount(bo_code);
+        int pageSize = 5;
+        int blockSize = 3;
+        int offset = (page - 1) * pageSize;
+
+        List<NoticeVO> noticeList = bookService.getNoticeListForPage(bo_code, pageSize, offset);
+        PageInfo<NoticeVO> pageInfo = PaginationUtils.paginate(noticeList, totalCount, page, pageSize, blockSize);
+
+        model.addAttribute("bo_code", bo_code);
+        model.addAttribute("book", book);
+        model.addAttribute("epiList", epiList);
+        model.addAttribute("pageInfo", pageInfo);
+        
+        return "/publisher/editor_manageNotice";
+    }
+
+
+
+    @GetMapping("/editor/registerNotice/{bo_code}")
+    public String registerNotice(@PathVariable String bo_code, @AuthenticationPrincipal CustomUser customUser, Model model) {
+        model.addAttribute("pi_num", customUser.getPi_num());
+        model.addAttribute("bo_code", bo_code);
+        return "/publisher/editor_registerNotice";
+    }
+    @PostMapping("/editor/registerNotice/{bo_code}")
+    public String registerNotice(@PathVariable String bo_code, NoticeVO nt) {
+        if(bookService.insertNotice(nt)){
+            return "redirect:/editor/manageNotice/"+bo_code;
+        }
+        return "redirect:/editor/registerNotice/"+bo_code;
+    }
+
+
 }

@@ -373,9 +373,6 @@
 <body>
     <main layout:fragment="content" class="container">
         <h2 class="titleH2">📖 도서 회차 관리</h2>
-        <!-- <span th:text="${book}"></span> -->
-        <!-- <br><br> -->
-        <!-- <span th:text="${epiList}"></span> -->
         <div id="page_detail" class="page-detail">
             <div class="detail-wrap">
                 <div class="detail-content">
@@ -422,7 +419,7 @@
 													<th:block th:if="${book.bo_fin == 'Y'}">
 														<button class="register-btn" id="book_finToN-btn" th:data-bocode="${book.bo_code}">연재로 전환</button>
 													</th:block>
-													
+													<a th:href="@{/editor/manageNotice/{boCode}(boCode=${book.bo_code})}" class="register-btn">공지 사항 관리</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -464,7 +461,6 @@
 														<div class="table-wrap">
 															<div class="epi-info">
 																<div class="info-title-with-badge">
-																	<!-- 무료 회차가 아닌 경우 무료 배지 미노출 | 키다무 도서 & 무료X 회차인 경우 clock_badge로 노출 -->
 																	<div th:if="${episode.ep_price == 0}" class="badge-list">
 																		<div class="badge">
 																			<img class="free-badge" src="/resources/static/img/free.png" alt="무료 배지">
@@ -503,6 +499,7 @@
 						<div class="direct-view-wrapper">
 							<a th:href="@{/editor/myContent}" class="checkout-btn">목록으로</a>
 						</div>
+						
                     </div>
                 </div>
             </div>
@@ -542,6 +539,9 @@
 					});
 				}
 			});
+		</script>
+		<script>
+			// $("#book_notice-btn").on("click", )
 		</script>
     </main>
 </body>

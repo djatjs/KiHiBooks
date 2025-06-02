@@ -559,4 +559,29 @@
     <update id="bookFinToN">
         update book set bo_fin = 'N' where bo_code = #{bo_code}
     </update>
+
+    <!-- <select id="getNoticeListUsePi_num" resultType="NoticeVO">
+        select * from notice
+        join publisher_id on nt_pi_num = pi_num
+        join user on pi_ur_num = ur_num
+        where nt_bo_code = #{bo_code}
+        order by nt_date desc
+    </select> -->
+
+    <insert id="insertNotice">
+        insert into notice(nt_title, nt_content, nt_pi_num, nt_bo_code)
+        values(#{nt_title},#{nt_content},#{nt_pi_num},#{nt_bo_code})
+    </insert>
+    <select id="getNoticeCount" resultType="Integer">
+        select count(*) from notice
+        where nt_bo_code = #{bo_code}
+    </select>
+    <select id="selectNoticeList" resultType="NoticeVO">
+        select * from notice
+        join publisher_id on nt_pi_num = pi_num
+        join user on pi_ur_num = ur_num
+        WHERE nt_bo_code = #{bo_code}
+        order by nt_date desc
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
 </mapper>

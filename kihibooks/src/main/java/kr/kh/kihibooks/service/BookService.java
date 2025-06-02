@@ -432,4 +432,24 @@ public class BookService {
     public boolean bookFinToN(String bo_code) {
         return bookDAO.bookFinToN(bo_code);
     }
+
+    // public List<NoticeVO> getNoticeListForPublisher(String bo_code) {
+    //     return bookDAO.getNoticeListForPublisher(bo_code);
+    // }
+
+    public boolean insertNotice(NoticeVO nt) {
+        return bookDAO.insertNotice(nt);
+    }
+
+    public int getNoticeCount(String bo_code) {
+        Integer count = bookDAO.getNoticeCount(bo_code);
+        if(count == null){
+            return 0;
+        }
+        return count;
+    }
+
+    public List<NoticeVO> getNoticeListForPage(String bo_code, int pageSize, int offset) {
+        return bookDAO.selectNoticeList(bo_code, pageSize, offset);
+    }
 }
