@@ -1,52 +1,43 @@
 package kr.kh.kihibooks.service;
 
 import java.util.List;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import kr.kh.kihibooks.dao.AttendanceDAO;
-import kr.kh.kihibooks.model.vo.AttendanceRewardVO;
 
 @Service
 public class AttendanceService {
 
-	@Autowired
-	AttendanceDAO attendanceDAO;
+    @Autowired
+    private AttendanceDAO attendanceDAO;
 
-	// 출석했는지 확인
-	public boolean hasAlreadyCheckedToday(String userId) {
-		return attendanceDAO.hasCheckedToday(userId);
-	}
+    /** 이메일로 회원 번호 조회 */
+    public int getUserNumByEmail(String email) {
+        return attendanceDAO.selectUserNumByEmail(email);
+    }
 
-	// 랜덤 보상 추첨
-	public AttendanceRewardVO drawRandomReward() {
-		List<AttendanceRewardVO> rewards = attendanceDAO.selectRewardList();
-		if(rewards == null || rewards.isEmpty()){
-			return null;
-		}
+    /** 오늘 이미 출석했는지 확인 */
+    public boolean hasAlreadyCheckedToday(int userNum) {
+        Boolean result = attendanceDAO.hasCheckedToday(userNum);
+        if (result != null && result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-		int total = 0;
-		for(AttendanceRewardVO reward : rewards){
-			total += reward.getAr_probability(); //확률 총합
-		}
+    /** 출석 정보 저장 및 포인트 지급 (트랜잭션 처리) */
+    @Transactional
+    public void saveAttendance(int userNum, int point) {
+        attendanceDAO.insertAttendance(userNum, point);
+        attendanceDAO.updateUserPoint(userNum, point);
+    }
 
-		int rand = new Random().nextInt(total) + 1;
-		int cumulative = 0;
-
-		for(AttendanceRewardVO reward : rewards){
-			cumulative += reward.getAr_probability();
-			if(rand < cumulative){
-				return reward;
-			}
-		}
-		// 예외 처리 : 확률 총합이 100이 안될 경우 대비 : 마지막 보상 반환
-		return rewards.get(0);
-	}
-
-	public void saveAttendance(String userId, AttendanceRewardVO reward) {
-		attendanceDAO.insertAttendance(userId, reward);
-	}
-	
+    /** 이번 달 출석한 날짜 리스트 조회 */
+    public List<Integer> getCheckedDays(int userNum) {
+        return attendanceDAO.selectCheckedDays(userNum);
+    }
 }

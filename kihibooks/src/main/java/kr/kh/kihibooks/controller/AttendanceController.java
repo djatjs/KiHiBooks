@@ -1,82 +1,61 @@
 package kr.kh.kihibooks.controller;
 
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
-import kr.kh.kihibooks.model.vo.AttendanceRewardVO;
 import kr.kh.kihibooks.service.AttendanceService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-
-
-
+import kr.kh.kihibooks.utils.CustomUser;
+import kr.kh.kihibooks.model.dto.AttendanceDTO;
 
 @Controller
 @RequestMapping("/attendance")
 public class AttendanceController {
 
-	@Autowired
-	private AttendanceService attendanceService;
+    @Autowired
+    private AttendanceService attendanceService;
 
-	@GetMapping("")
-	public String attendancePage(Model model, Principal principal) {
-			String userId = (principal != null) ?  principal.getName() : "guest";
+    @GetMapping
+		public String attendancePage(Model model, @AuthenticationPrincipal CustomUser customUser) {
+				System.out.println("✅ attendancePage() 호출됨");
 
-			// 테스트용 더미값 세팅 (500 방지)
-			model.addAttribute("attendanceCount", 0);
-			model.addAttribute("totalPoint", 0);
-			model.addAttribute("todayChecked", false);
+				if (customUser == null) {
+						System.out.println("❌ customUser is NULL");
+						model.addAttribute("isLoggedIn", false); // ✅ 이름 맞춤
+						return "attendance/attendance";
+				}
 
-			// calendarDays 더미 리스트로 대체
-			List<String> dummyDays = Arrays.asList("1", "2", "3", "4", "5", "6", "7");
-			model.addAttribute("calendarDays", dummyDays);
+				int userNum = customUser.getUser().getUr_num();
+				List<Integer> checkedDays = attendanceService.getCheckedDays(userNum);
 
-			return "attendance/attendance";
-	}
-
-	@PostMapping("/check")
-	@ResponseBody
-	public Map<String, Object> checkAttendance(Principal principal) {
-		
-		Map<String, Object> result = new HashMap<>();
-		if(principal == null){
-			result.put("status", "fail");
-			result.put("message", "로그인이 필요합니다.");
-			return result;
+				model.addAttribute("isLoggedIn", true); // ✅ JS에서 쓰는 이름
+				model.addAttribute("checkedDays", checkedDays);
+				return "attendance/attendance";
 		}
 
-		 String userId = principal.getName();
-		// 이미 출석했는지 확인
-		if (attendanceService.hasAlreadyCheckedToday(userId)) {
-				result.put("status", "already");
-				result.put("message", "오늘은 이미 출석하셨습니다.");
-				return result;
+		@PostMapping("/check")
+		@ResponseBody
+		public AttendanceDTO checkAttendance(@AuthenticationPrincipal CustomUser customUser) {
+				System.out.println("✅ checkAttendance() 호출됨");
+
+				if (customUser == null) {
+						System.out.println("❌ customUser is NULL");
+						return new AttendanceDTO("fail", "로그인이 필요합니다.", 0);
+				}
+
+				int userNum = customUser.getUser().getUr_num();
+
+				if (attendanceService.hasAlreadyCheckedToday(userNum)) {
+						return new AttendanceDTO("already", "이미 출석하셨습니다.", 0);
+				}
+
+				int point = 100;
+				attendanceService.saveAttendance(userNum, point);
+				return new AttendanceDTO("success", "출석 완료! +" + point + "P 지급", point);
 		}
-		// 랜덤 보상 추첨
-		AttendanceRewardVO reward = attendanceService.drawRandomReward();
-		// 출석 기록 저장
-		attendanceService.saveAttendance(userId, reward);
-
-		result.put("status", "success");
-		result.put("point", reward.getAr_point());
-		result.put("message", reward.getAr_message());
-		
-		return result;
-	}
-	
-
-	
-	
 }

@@ -1,31 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.kh.kihibooks.dao.AttendanceDAO">
-	<!-- 1. 오늘 출석했는지 확인 -->
-	<select id="hasCheckedToday" resultType="boolean">
-			SELECT COUNT(*) > 0
-			FROM ATTENDANCE A
-			JOIN USER U ON A.AT_UR_NUM = U.UR_NUM
-			WHERE U.UR_EMAIL = #{userId}
-				AND A.AT_DATE = CURDATE()
-	</select>
+	<!-- 1. 이메일로 회원 번호 조회 -->
+    <select id="selectUserNumByEmail" parameterType="string" resultType="int">
+        SELECT ur_num
+        FROM user
+        WHERE ur_email = #{email}
+    </select>
 
-	<!-- 2. 보상 리스트 전부 조회 -->
-	<select id="selectRewardList" resultType="kr.kh.kihibooks.model.vo.AttendanceRewardVO">
-			SELECT *
-			FROM ATTENDANCE_REWARD
-	</select>
+    <!-- 2. 오늘 출석 여부 확인 -->
+    <select id="hasCheckedToday" parameterType="int" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM attendance
+        WHERE at_ur_num = #{userNum}
+          AND DATE(at_date) = CURDATE()
+    </select>
 
-	<!-- 3. 출석 기록 저장 -->
-	<insert id="insertAttendance">
-			INSERT INTO ATTENDANCE (
-					AT_DATE, AT_POINT, AT_UR_NUM, AR_ID
-			)
-			VALUES (
-					CURDATE(),
-					#{reward.ar_point},
-					(SELECT UR_NUM FROM USER WHERE UR_EMAIL = #{userId}),
-					#{reward.ar_id}
-			)
-	</insert>
+    <!-- 3. 출석 데이터 삽입 -->
+    <insert id="insertAttendance">
+        INSERT INTO attendance (at_ur_num, at_point)
+        VALUES (#{userNum}, #{point})
+    </insert>
+
+    <!-- 4. 유저 포인트 증가 -->
+    <update id="updateUserPoint">
+        UPDATE user
+        SET ur_point = ur_point + #{point}
+        WHERE ur_num = #{userNum}
+    </update>
+
+    <!-- 5. 이번 달 출석 날짜 조회 -->
+    <select id="selectCheckedDays" parameterType="int" resultType="int">
+        SELECT DAY(at_date)
+        FROM attendance
+        WHERE at_ur_num = #{userNum}
+          AND MONTH(at_date) = MONTH(CURDATE())
+          AND YEAR(at_date) = YEAR(CURDATE())
+    </select>
 </mapper>
