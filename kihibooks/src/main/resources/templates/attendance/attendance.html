@@ -1,71 +1,235 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/layout.html}">>
+      layout:decorate="~{layout/layout.html}">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <title>출석체크</title>
-    <style>
-        .attendance-container {
-            padding: 20px;
-        }
+  <meta charset="UTF-8">
+  <title>출석체크</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    .attendance-container h2,
+    .attendance-container .month-title,
+    .attendance-container #checkAttendanceBtn {
+      text-align: center;
+      margin: 30px auto;
+    }
 
-        .attendance-container h2 {
-            font-size: 24px;
-            margin-bottom: 16px;
-        }
+    .calendar, .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+    }
 
-        .attendance-container button.btn {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #ff7f50;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
+    .calendar-header {
+      background-color: #ff7f50;
+      color: white;
+      padding: 10px 0;
+      font-weight: bold;
+      border: 1px solid #ccc;
+    }
 
-        .attendance-container #attendanceResult {
-            margin-top: 15px;
-            font-weight: bold;
-        }
-    </style>
+    .calendar-day {
+      border: 1px solid #ccc;
+      padding: 10px 0;
+      height: 75px;
+      font-size: 12px;
+      position: relative;
+    }
+
+    .date-label {
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .stamp {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .today {
+      border: 2px solid #ff7f50;
+    }
+
+    button#checkAttendanceBtn {
+      display: block;
+      margin: 30px auto;
+      padding: 12px 24px;
+      font-size: 18px;
+      background-color: #ff7f50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 35vh;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 300px;
+      margin: auto;
+    }
+
+    .modal-content button {
+      margin-top: 20px;
+      padding: 8px 16px;
+      background-color: #ff7f50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+  </style>
 </head>
-<body>
-    <div class="container" layout:fragment="content">
-        <h2>출석 체크</h2>
-        <button id="checkAttendanceBtn" class="btn">출석하기</button>
-        <div id="attendanceResult"></div>
 
+<body>
+<div class="container attendance-container" layout:fragment="content">
+  <h2>출석 체크</h2>
+  <p class="month-title" id="monthTitle"></p>
+
+  <div class="calendar" id="calendarHeader"></div>
+  <div class="calendar-grid" id="calendar"></div>
+
+  <button id="checkAttendanceBtn">출석하기</button>
+
+  <div class="modal" id="attendanceModal">
+    <div class="modal-content">
+      <div id="modalMessage"></div>
+      <button id="closeModal">확인</button>
     </div>
-    <div layout:fragment="script">
-        <script th:inline="javascript">
-        const checkUrl = /*[[@{/attendance/check}]]*/ '';
-        $("#checkAttendanceBtn").click(function () {
-            $.ajax({
-                url: checkUrl,
-                type: "POST",
-                success: function (response) {
-                    if (response.status === "success") {
-                        $("#attendanceResult").html(
-                            `🎉 출석 완료! ${response.point}포인트 지급<br>${response.message}`
-                        );
-                    } else if (response.status === "already") {
-                        $("#attendanceResult").html("⚠ 오늘은 이미 출석하셨습니다.");
-                    } else if (response.status === "fail") {
-                        $("#attendanceResult").html("❌ 로그인 후 이용 가능합니다.");
-                    } else {
-                        $("#attendanceResult").html("❗알 수 없는 오류");
-                    }
-                },
-                error: function () {
-                    $("#attendanceResult").html("🚨 서버 오류가 발생했습니다.");
-                }
-            });
-        });
-        </script>
-    </div>
+  </div>
+</div>
+
+<div layout:fragment="script">
+<script th:inline="javascript">
+  const checkUrl = /*[[@{/attendance/check}]]*/ '';
+  const isLoggedIn = /*[[${isLoggedIn}]]*/ false;
+  let checkedDays = /*[[${checkedDays}]]*/ [];
+
+  if (!Array.isArray(checkedDays)) {
+    checkedDays = [];
+  }
+
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth();
+
+  function renderCalendar() {
+    const calendarHeader = document.getElementById('calendarHeader');
+    const calendar = document.getElementById('calendar');
+    const monthTitle = document.getElementById('monthTitle');
+    calendarHeader.innerHTML = '';
+    calendar.innerHTML = '';
+
+    const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
+    monthTitle.textContent = `${currentMonth + 1}월`;
+
+    weekDays.forEach(day => {
+      const headerCell = document.createElement('div');
+      headerCell.className = 'calendar-header';
+      headerCell.textContent = day;
+      calendarHeader.appendChild(headerCell);
+    });
+
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const offset = firstDay.getDay();
+
+    for (let i = 0; i < offset; i++) {
+      const emptyCell = document.createElement('div');
+      emptyCell.className = 'calendar-day';
+      calendar.appendChild(emptyCell);
+    }
+
+    for (let i = 1; i <= lastDay.getDate(); i++) {
+      const date = new Date(currentYear, currentMonth, i);
+      const day = document.createElement('div');
+      day.className = 'calendar-day';
+
+      const dateLabel = document.createElement('div');
+      dateLabel.className = 'date-label';
+      dateLabel.textContent = `${i}일`;
+
+      const stamp = document.createElement('div');
+      stamp.className = 'stamp';
+
+      const isToday = i === today.getDate();
+      const isFuture = date > today;
+      const isChecked = checkedDays.includes(i);
+
+      if (isToday) day.classList.add("today");
+
+      if (!isFuture) {
+        if (isChecked) {
+          stamp.style.backgroundImage = "url('/resources/static/img/stamp_checked.png')";
+        } else if (isLoggedIn) {
+          stamp.style.backgroundImage = "url('/resources/static/img/stamp_missed.png')";
+        }
+      }
+
+      day.appendChild(dateLabel);
+      day.appendChild(stamp);
+      calendar.appendChild(day);
+    }
+  }
+
+  renderCalendar();
+
+  $("#checkAttendanceBtn").click(function () {
+    if (!isLoggedIn) {
+      showModal("⚠ 로그인 후 이용 가능합니다.");
+      return;
+    }
+
+    $.ajax({
+      url: checkUrl,
+      type: "POST",
+      success: function (response) {
+        if (response.status === "success") {
+          showModal(`🎉 출석 완료!<br>${response.point}P<br>${response.message}`);
+          location.reload();
+        } else if (response.status === "already") {
+          showModal("⚠ 오늘은 이미 출석하셨습니다.");
+        } else {
+          showModal("❗알 수 없는 오류");
+        }
+      },
+      error: function () {
+        showModal("🚨 서버 오류가 발생했습니다.");
+      }
+    });
+  });
+
+  function showModal(msg) {
+    $("#modalMessage").html(msg);
+    $("#attendanceModal").fadeIn();
+  }
+
+  $("#closeModal").click(function () {
+    $("#attendanceModal").fadeOut();
+  });
+</script>
+</div>
+
 </body>
 </html>
