@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import kr.kh.kihibooks.dao.BookDAO;
 import kr.kh.kihibooks.dao.KeywordDAO;
+import kr.kh.kihibooks.dao.PublisherDAO;
 import kr.kh.kihibooks.model.vo.BookKeywordVO;
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
@@ -40,6 +41,9 @@ public class BookService {
 
     @Autowired
     BookDAO bookDAO;
+
+    @Autowired
+    PublisherDAO publisherDao;
 
     @Autowired
     KeywordDAO keywordDao;
@@ -491,5 +495,18 @@ public class BookService {
         }
 
         return epList;
+    }
+
+    public List<BookVO> getPublishersBookList(String pu_code) {
+        return bookDAO.getPublishersBookList(pu_code);
+    }
+
+    public boolean changeEditor(String bo_code, int pi_num) {
+        return bookDAO.changeEditor(bo_code, pi_num);
+    }
+
+    public boolean keepBook(String bo_code, String pu_code) {
+        int superNum = publisherDao.selectSuperNum(pu_code);
+        return bookDAO.changeEditor(bo_code, superNum);
     }
 }

@@ -118,7 +118,6 @@ public class PublisherContoller {
     @ResponseBody
     @PostMapping("/publisher/deleteEditor")
     public boolean deleteEditor(@RequestParam int userNum) {
-        System.out.println(userNum);
         try {
             return publisherService.deleteEditor(userNum);
         } catch (Exception e) {
@@ -286,8 +285,6 @@ public class PublisherContoller {
         return "/publisher/editor_manageNotice";
     }
 
-
-
     @GetMapping("/editor/registerNotice/{bo_code}")
     public String registerNotice(@PathVariable String bo_code, @AuthenticationPrincipal CustomUser customUser, Model model) {
         model.addAttribute("pi_num", customUser.getPi_num());
@@ -302,5 +299,37 @@ public class PublisherContoller {
         return "redirect:/editor/registerNotice/"+bo_code;
     }
 
+    @GetMapping("/publisher/manageEditorsBook/{pu_code}")
+    public String manageEditorsBook(@PathVariable String pu_code, Model model) {
+        List<BookVO> books = bookService.getPublishersBookList(pu_code);
+        List<EditorVO> editors = publisherService.getEditorList(pu_code);
+        model.addAttribute("books",books);
+        model.addAttribute("editors",editors);
+        return "/publisher/manageEditorsBook";
+    }
+
+    @ResponseBody
+    @GetMapping("/publisher/checkHaveBook")
+    public boolean checkHaveBook(@RequestParam int userNum) {
+        return publisherService.checkHaveBook(userNum);
+    }
+    
+    @ResponseBody
+    @PostMapping("/publisher/changeEditor")
+    public boolean changeEditor (@RequestParam String bo_code, @RequestParam int pi_num) {
+        if(bo_code == null || pi_num == 0){
+            return false;
+        }
+        return bookService.changeEditor(bo_code, pi_num);
+    }
+    @ResponseBody
+    @PostMapping("/publisher/keepBook")
+    public boolean keepBook (@RequestParam String bo_code, @AuthenticationPrincipal CustomUser customUser) {
+        if(bo_code == null){
+            return false;
+        }
+        return bookService.keepBook(bo_code, customUser.getPu_code());
+    }
+    
 
 }

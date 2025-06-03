@@ -30,11 +30,13 @@ public interface PublisherDAO {
 
     int countEditor(String puCode);
 
-    List<EditorVO> selectEditorList(@Param("puCode") String puCode,
-                                @Param("limit") int limit,
-                                @Param("offset") int offset);
+    List<EditorVO> selectEditorList(@Param("puCode") String puCode, @Param("limit") int limit, @Param("offset") int offset);
 
     int selectEditorCount(@Param("puCode") String puCode);
 
     List<EditorVO> selectEditors(String pu_code);
+
+    int countEditorHaveBook(int userNum);
+
+    int selectSuperNum(String pu_code);
 }

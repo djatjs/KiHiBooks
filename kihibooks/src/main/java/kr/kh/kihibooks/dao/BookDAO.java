@@ -154,4 +154,9 @@ public interface BookDAO {
 			@Param("offset") int offset);
 
 	Integer getBookCount(String pu_code);
+
+    List<BookVO> getPublishersBookList(String pu_code);
+
+	boolean changeEditor(@Param("bo_code") String bo_code, @Param("pi_num") int pi_num);
+
 }
