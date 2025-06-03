@@ -8,190 +8,246 @@
     <meta charset="UTF-8">
     <title>KiHiBooks - 콘텐츠 관리</title>
     <style>
-        /* 페이지 고유 스타일을 위한 클래스 */
-.content-management-page h2 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #ff7f50;
-    padding-bottom: 10px;
-    font-weight: bold;
-}
-
-/* 각 섹션 컨테이너 스타일 */
-.series-container,
-.registration-container {
-    margin-top: 30px;
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-/* 섹션 제목 스타일 */
-.series-container h4 {
-    color: #34495e;
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-weight: bold;
-}
-
-/* 연재 중인 작품 목록 컨테이너 */
-.series-body {
-    display: grid; /* 페이징 기반이므로 grid 형태로 나열 */
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 20px;
-}
-
-/* 개별 작품 아이템 스타일 */
-.series-item {
-    width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    background-color: #fff;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.series-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-}
-.series-item img {
-    display: block;
-    margin: 0 auto;
-    height: 150px; /* 원하는 고정 높이 */
-    object-fit: cover; /* 비율 유지하면서 채우기 */
-}
-.series-item h5 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #2c3e50;
-    font-size: 1.1rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.series-item p {
-    margin-bottom: 5px;
-    color: #555;
-    font-size: 0.9rem;
-}
-.series-item .status {
-    font-weight: bold;
-    color: #ff7f50;
-}
-.series-item .status.finished {
-    color: #6c757d;
-}
-
-/* 작품 등록 컨테이너 스타일 */
-.registration-container {
-    text-align: center;
-}
-
-/* 작품 등록 버튼 스타일 */
-.orenge-btn {
-    padding: 6px 20px;
-    font-size: 1rem;
-    background-color: #ff7f50;
-    color: white;
-    border: none;
-    border-radius: .25rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-}
-.orenge-btn:hover {
-    background-color: #ff6347;
-    color: #fff;
-}
-
-/* 모달용 스타일 */
-.modal-item {
-    width: 500px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    background-color: #fff;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.center-img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-
+        .content-management-page h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ff7f50;
+            padding-bottom: 10px;
+            font-weight: bold;
+        }
+        .series-container,
+        .registration-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        .series-container h4 {
+            color: #34495e;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .series-body {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+        .series-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #fff;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            max-width: 200px;
+        }
+        .series-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .series-item img {
+            display: block;
+            margin: 0 auto;
+            height: 150px;
+            object-fit: cover;
+        }
+        .series-item h5 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+            display: block;
+        }
+        .series-item p {
+            margin-bottom: 5px;
+            color: #555;
+            font-size: 0.9rem;
+        }
+        .series-item .status {
+            font-weight: bold;
+            color: #ff7f50;
+        }
+        .series-item .status.finished {
+            color: #6c757d;
+        }
+        .no-works {
+            grid-column: 1 / -1;
+            text-align: center;
+            font-size: 1rem;
+            color: #888;
+            padding: 20px 0;
+        }
+        .registration-container {
+            text-align: center;
+        }
+        .orenge-btn {
+            padding: 6px 20px;
+            font-size: 1rem;
+            background-color: #ff7f50;
+            color: white;
+            border: none;
+            border-radius: .25rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .orenge-btn:hover {
+            background-color: #ff6347;
+            color: #fff;
+        }
+        .modal-item {
+            width: 500px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #fff;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .center-img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding: 0;
+            list-style: none;
+            border-radius: .25rem;
+        }
+        .pagination a,
+        .pagination span a {
+            position: relative;
+            display: block;
+            padding: .5rem .75rem;
+            margin-left: -1px;
+            line-height: 1.25;
+            color: #ff7f50;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .pagination a:first-child {
+            margin-left: 0;
+            border-top-left-radius: .25rem;
+            border-bottom-left-radius: .25rem;
+        }
+        .pagination a:last-child {
+            border-top-right-radius: .25rem;
+            border-bottom-right-radius: .25rem;
+        }
+        .pagination a:hover {
+            color: #ff7f50;
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+        }
+        .pagination .active {
+            z-index: 1;
+            color: #fff;
+            background-color: #ff7f50;
+            border-color: #ff7f50;
+            pointer-events: none;
+        }
+        .pagination > a:first-child {
+            margin-right: 5px;
+        }
+        .pagination > a:last-child {
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
 	<main layout:fragment="content">
-		<div class="container content-management-page">
+    <div class="container content-management-page">
 
-			<h2 class="mb-3">📖 콘텐츠 관리</h2>
-            <p>에디터님이 담당하거나 등록하신 작품(도서 시리즈)을 관리할 수 있습니다.</p>
-            <!-- 1. 담당 작품 리스트 섹션 (연재 중인 작품) -->
-            <div class="series-container">
-                <h4>연재 중인 작품</h4>
-                <div class="series-body">
-                    <th:block th:if="${books != null and !books.isEmpty()}">
-                        <div class="series-item" th:each="work : ${books}" th:data-title="${work.bo_title}" th:data-author="${work.bo_author}" th:data-code="${work.bo_code}" th:data-fin="${work.bo_fin}" th:data-description="${work.bo_description}">
-                            <div data-toggle="modal" data-target="#workModal">
-                                <h5 th:text="${work.bo_title}">작품 제목</h5>
-                                <img class="mt-1" src="/resources/static/img/default_thumb.png" alt="썸네일" style="height: 150px;">
-                                <p class="mt-2" th:text="${work.bo_author}">저자명</p>
-                                <p><span class="status" th:classappend="${work.bo_fin == 'Y' ? 'finished' : ''}" th:text="${work.bo_fin == 'Y' ? '완결' : '연재 중'}">연재 중</span></p>
-                            </div>
-                        </div>
-                    </th:block>
-                    <th:block th:unless="${books != null and !books.isEmpty()}">
-                        <p class="text-center" style="width: 100%;">현재 연재 중인 작품이 없습니다.</p>
-                    </th:block>
-                </div>
-            </div>
+        <h2 class="mb-3">📖 콘텐츠 관리</h2>
+        <p>에디터님이 담당하거나 등록하신 작품(도서 시리즈)을 관리할 수 있습니다.</p>
+        
+        <!-- 1. 담당 작품 리스트 섹션 (연재 중인 작품) -->
+        <div class="series-container">
+            <h4>연재 중인 작품</h4>
             <hr>
+            <div class="series-body">
+                <th:block th:if="${pageInfo != null and pageInfo.content != null and !pageInfo.content.isEmpty()}">
+                    <div class="series-item" th:each="work : ${pageInfo.content}" th:data-title="${work.bo_title}" th:data-author="${work.bo_author}" th:data-code="${work.bo_code}" th:data-fin="${work.bo_fin}" th:data-description="${work.bo_description}">
+                        <div data-toggle="modal" data-target="#workModal">
+                            <h5 th:text="${work.bo_title}">작품 제목</h5>
+                            <img class="mt-1" src="/resources/static/img/default_thumb.png" alt="썸네일" style="height: 150px;">
+                            <p class="mt-2" th:text="${work.bo_author}">저자명</p>
+                            <p><span class="status" th:classappend="${work.bo_fin == 'Y' ? 'finished' : ''}" th:text="${work.bo_fin == 'Y' ? '완결' : '연재 중'}">연재 중</span></p>
+                        </div>
+                    </div>
+                    
+                </th:block>
+                <th:block th:unless="${pageInfo != null and pageInfo.content != null and !pageInfo.content.isEmpty()}">
+                    <p class="no-works">현재 연재 중인 작품이 없습니다.</p>
+                </th:block>
+            </div>
+            <div class="pagination" th:if="${pageInfo.totalCount > 0}">
+                <a th:if="${pageInfo.startPage > 1}"
+                th:href="@{/editor/myContent(page=${pageInfo.startPage - 1})}">«</a>
+
+                <span th:each="i : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}">
+                    <a th:href="@{/editor/myContent(page=${i})}"
+                    th:classappend="${i == pageInfo.currentPage} ? 'active' : ''"
+                    th:text="${i}"></a>
+                </span>
+
+                <a th:if="${pageInfo.endPage < pageInfo.totalPages}"
+                th:href="@{/editor/myContent(page=${pageInfo.endPage + 1})}">»</a>
+            </div>
             <!-- 2. 작품 등록 섹션 -->
             <div class="registration-container">
                 <h3>새로운 작품 등록</h3>
                 <p>새로운 도서 시리즈를 등록하려면 아래 버튼을 클릭하세요.</p>
                 <button class="orenge-btn" type="button" onclick="location.href='/editor/registerNew'">작품 등록</button>
             </div>
-            
-            <!-- 담당 작품 클릭시 모달 -->
-            <div class="modal" id="workModal">
-                <div class="modal-dialog ">
-                    <div class="modal-content modal-item">
-                        <!-- Modal Header -->
-                        <div class="modal-header">
-                            <h4 class="modal-title">도서 정보</h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-                        <!-- Modal body -->
-                        <div class="modal-body">
-                            <p><strong>작품 제목 : </strong> <span id="modalBoTitle"></span></p>
-                            <img class="mt-1 mb-3 center-img" src="/resources/static/img/default_thumb.png" alt="썸네일" style="height: 150px;">
-                            <p><strong>저자:</strong> <span id="modalBoAuthor"></span></p>
-                            <p><strong>상태:</strong> <span id="modalBoFin"></span></p>
-                            <p>
-                                <strong>내용:</strong>
-                                <span id="modalBoDescription"></span>
-                                <span id="toggleMoreBtn" style="color: #ff7f50; cursor: pointer; display: none;"> 더보기</span>
-                            </p>
-                            <input type="hidden" name="modalBoCode" id="modalBoCode">
-                        </div>
-                        <!-- Modal footer -->
-                        <div class="modal-footer">
-                            <div class="btn orenge-btn" id="manageEpisodeBtn">회차 관리</div>
-                            <div class="btn orenge-btn" id="updateBookInfoBtn">수정</div>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-                        </div>
+        </div>
+        
+        <!-- 담당 작품 클릭시 모달 -->
+        <div class="modal" id="workModal">
+            <div class="modal-dialog ">
+                <div class="modal-content modal-item">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">도서 정보</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <p><strong>작품 제목 : </strong> <span id="modalBoTitle"></span></p>
+                        <img class="mt-1 mb-3 center-img" src="/resources/static/img/default_thumb.png" alt="썸네일" style="height: 150px;">
+                        <p><strong>저자:</strong> <span id="modalBoAuthor"></span></p>
+                        <p><strong>상태:</strong> <span id="modalBoFin"></span></p>
+                        <p>
+                            <strong>내용:</strong>
+                            <span id="modalBoDescription"></span>
+                            <span id="toggleMoreBtn" style="color: #ff7f50; cursor: pointer; display: none;"> 더보기</span>
+                        </p>
+                        <input type="hidden" name="modalBoCode" id="modalBoCode">
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <div class="btn orenge-btn" id="manageEpisodeBtn">회차 관리</div>
+                        <div class="btn orenge-btn" id="updateBookInfoBtn">수정</div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
                     </div>
                 </div>
             </div>
-		</div>
-        <button type="button" onclick="location.href='/publisher/dashboard'" class="orenge-btn mt-3 ml-3">목록으로</button>
+        </div>
+    </div>
+    <button type="button" onclick="location.href='/publisher/dashboard'" class="orenge-btn mt-3 ml-3">목록으로</button>
         <script>
             $(document).ready(function () {
                 const maxLength = 100; // 최대 표시할 글자 수

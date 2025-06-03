@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>KiHiBooks - 공지사항 등록</title>
+    <title>KiHiBooks - 공지사항 수정</title>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -74,7 +74,8 @@
             background-color: #5a6268;
         }
         .nt_content{
-            width: 100%; padding: 10px;
+            width: 100%; 
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box;
@@ -92,31 +93,32 @@
 <body>
     <main layout:fragment="content">
         <div class="container register-work-page">
-            <h2>📖 공지 등록</h2>
-            <p>공지 사항으로 등록할 내용을 입력하세요.</p>
-
-            <form th:action="@{/editor/registerNotice/{bo_code}(bo_code=${bo_code})}" method="post" class="register-work-form">
-                <input type="hidden" name="nt_bo_code" th:value="${bo_code}">
-                <input type="hidden" name="nt_pi_num" th:value="${pi_num}">
+            <h2>📖 공지 수정</h2>
+            <p>수정할 공지 내용을 입력하세요.</p>
+            <form th:action="@{/editor/updateNotice/{nt_num}(nt_num=${notice.nt_num})}" method="post" class="register-work-form">
+                <input type="hidden" name="nt_bo_code" th:value="${notice.nt_bo_code}">
+                <input type="hidden" name="nt_pi_num" th:value="${notice.nt_pi_num}">
 
                 <!-- 공지 제목 -->
                 <div class="form-group">
                     <label class="form-label" for="nt_title">공지 제목 <span style="color: red;">*</span></label>
-                    <input type="text" id="nt_title" name="nt_title" required>
+                    <input type="text" id="nt_title" name="nt_title" th:value="${notice.nt_title}" required>
                     <label id="nt_title-error" class="error" style="color: red; font-size: 12px; display: none;"></label>
                 </div>
                 <!-- 공지 내용 -->
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label class="form-label" for="nt_content" style="display: block; font-weight: bold; margin-bottom: 5px;">공지 내용 <span style="color: red;">*</span></label>
-                    <textarea id="nt_content" name="nt_content" class="nt_content" rows="6" required></textarea>
+                    <textarea id="nt_content" name="nt_content" class="nt_content" th:text="${notice.nt_content}" rows="6" required></textarea>
                     <label id="nt_content-error" class="error" style="color: red; font-size: 12px; display: none;"></label>
                 </div>
+
                 <!-- 버튼 -->
                 <div class="button-group">
                     <button type="submit" class="btn btn-primary">등록</button>
                     <button type="button" class="btn btn-secondary" onclick="history.back()">취소</button>
                 </div>
             </form>
+            
             <!-- validate -->
             <script>
                 $(".register-work-form").validate({

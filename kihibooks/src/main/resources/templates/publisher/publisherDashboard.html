@@ -122,7 +122,6 @@ layout:decorate="~{layout/layout.html}">
 		<div class="publisher-dashboard">
 			<div class="d-flex justify-content-between">
 				<h1>📊 출판사 대시보드</h1>
-				<p th:text="${#authentication.principal.authority}"></p>
 			</div>
 			<div class="dashboard-summary">
 				<div class="summary-card" th:if="${#authentication.principal.authority == 'SUPER'}">

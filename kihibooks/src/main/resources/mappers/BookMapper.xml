@@ -604,4 +604,23 @@
     <update id="changeEditor">
         update book set bo_pi_num = #{pi_num} where bo_code = #{bo_code}
     </update>
+    <select id="getEditorsBookListToPage" resultType="BookVO">
+        select book.*, author.au_name as bo_author, publisher.pu_name as bo_publisher from book
+        join author on bo_au_num = au_num
+        join publisher_id on bo_pi_num = pi_num
+        join publisher on pi_pu_code = pu_code
+        where bo_pi_num = #{pi_num}
+        order by bo_title asc
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    <select id="selectNotice" resultType="NoticeVO">
+        select * from notice where nt_num = #{nt_num}
+    </select>
+    <update id="updateNotice">
+        update notice set nt_title = #{nt_title}, nt_content = #{nt_content}
+        where nt_num = #{nt_num}
+    </update>
+    <delete id="deleteNotice">
+        delete from notice where nt_num = #{nt_num}
+    </delete>
 </mapper>

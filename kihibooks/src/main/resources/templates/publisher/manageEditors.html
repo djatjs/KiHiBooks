@@ -260,7 +260,7 @@ layout:decorate="~{layout/layout.html}">
                 </tbody>
             </table>
             
-            <div class="pagination">
+            <div class="pagination" th:if="${pageInfo.totalCount > 0}">
                 <a th:if="${pageInfo.startPage > 1}"
                 th:href="@{/publisher/editors(page=${pageInfo.startPage - 1})}">«</a>
 

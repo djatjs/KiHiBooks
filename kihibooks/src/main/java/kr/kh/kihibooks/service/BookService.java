@@ -509,4 +509,23 @@ public class BookService {
         int superNum = publisherDao.selectSuperNum(pu_code);
         return bookDAO.changeEditor(bo_code, superNum);
     }
+
+    public List<BookVO> getEditorsBookListToPage(int pi_num, int pageSize, int offset) {
+        return bookDAO.getEditorsBookListToPage(pi_num, pageSize, offset);
+    }
+
+    public NoticeVO getNotice(int nt_num) {
+        return bookDAO.selectNotice(nt_num);
+    }
+
+    public boolean updateNotice(NoticeVO nt) {
+        if(nt == null || nt.getNt_title() == null || nt.getNt_content() == null){
+            return false;
+        }
+        return bookDAO.updateNotice(nt);
+    }
+
+    public boolean deleteNotice(int nt_num) {
+        return bookDAO.deleteNotice(nt_num);
+    }
 }
