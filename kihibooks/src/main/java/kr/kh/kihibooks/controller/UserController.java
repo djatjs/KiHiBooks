@@ -307,12 +307,13 @@ public class UserController {
             }
         }
         int point = customUser.getUser().getUr_point();
-        System.out.println(point);
         NumberFormat formatter = NumberFormat.getInstance();
         String formattedPoint = formatter.format(point);
+        String formattedTotal = formatter.format(total);
 
         model.addAttribute("epList", epList);
         model.addAttribute("total", total);
+        model.addAttribute("formattedTotal", formattedTotal);
         model.addAttribute("point", point);
         model.addAttribute("formattedPoint", formattedPoint);
 

@@ -415,7 +415,370 @@
 			color: #ff7f50 !important;
 		}
 
-		
+		.kihipay-wrapper{
+			font-size: 14px;
+			overflow-wrap: break-word;
+			word-wrap: break-word;
+			line-height: normal;
+			margin: 0;
+			padding: 0;
+			color: #000;
+			font-weight: 400;
+		}
+
+		.kihipay-wrap{
+			display: flex;
+			flex-direction: column;
+		}
+
+		.kihipay-banner{
+			align-items: center;
+			width: 100%;
+			border-radius: 4px;
+			overflow: hidden;
+			display: block;
+			margin-top: 25px;
+		}
+
+		.kihipay-banner>a{
+			display: flex;
+		}
+
+		.kihipay-banner{
+			width: 100%;
+		}
+
+		.kihipay-method-section{
+			margin-top: 25px;
+		}
+
+		.kihipay-method-title{
+			color: #141414;
+			font-size: 18px;
+			font-weight: 700;
+			line-height: normal;
+			padding: 4px 0;
+			margin: 0;
+		}
+
+		.kihipay-method-ul{
+			margin-top: 8px;
+		}
+
+		.kihipay-method-li{
+			display: flex;
+			width: 100%;
+			flex-direction: column;
+			align-items: center;
+			background: rgb(255, 255, 255);
+			border: 2px solid #ff7f50;
+		}
+
+		.kihipay-charge-payment{
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			height: 57px;
+			padding: 0px 13px;
+		}
+
+		.kihipay-payment-wrapper{
+			flex-direction: column;
+			display: flex;
+			width: 100%;
+		}
+
+		.kihipay-charge-and-pay{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			border-top: 1px solid rgb(230, 230, 230);
+		}
+
+		.kihipay-charge-label{
+			width: 100%;
+			display: flex;
+			align-items: center;
+			padding: 0px 13px;
+		}
+
+		.kihipay-charge-checkbox{
+			width: 0px;
+			height: 0px;
+			border: 0px;
+		}
+
+		.kihipay-charge-check-img{
+			display: flex;
+			align-self: center;
+			cursor: pointer;
+			width: 22px;
+		}
+
+		.kihipay-charge-text{
+			display: flex;
+			align-items: center;
+			height: 64px;
+			padding: 0px 10px;
+		}
+
+		.kihipay-charge-title{
+			color: rgb(20, 20, 20);
+			font-size: 14px;
+			font-weight: 600;
+			line-height: normal;
+			margin-top: 6px;
+		}
+
+		.kihipay-charge-bonus{
+			font-size: 13px;
+			font-weight: 600;
+			line-height: normal;
+			margin-left: 5px;
+			color: rgb(142, 88, 255);
+		}
+
+		.kihipay-charge-wrapper{
+			flex-direction: column;
+			display: flex;
+			width: 100%;
+		}
+
+		.kihipay-charge-select-wrapper{
+			position: relative;
+			width: 100%;
+			padding-bottom: 16px;
+		}
+
+		.kihipay-charge-select{
+			position: relative;
+			display: flex;
+			justify-content: center;
+		}
+
+		.kihipay-charge-select-text{
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			max-width: 260px;
+			height: 42px;
+			margin: 0px auto;
+			border-radius: 3px;
+			border: 1px solid rgb(204, 204, 204);
+			padding: 0px 10px;
+		}
+
+		.kihipay-charge-sel-text{
+			display: flex;
+			color: rgb(120, 120, 120);
+			font-size: 14px;
+			font-weight: 500;
+			line-height: normal;
+			margin-right: auto;
+		}
+
+		.kihipay-charge-selected{
+			display: flex;
+			overflow: hidden;
+			flex-basis: 181px;
+			justify-content: flex-end;
+			margin-top: 17px;
+			margin-right: 4px;
+		}
+
+		.kihipay-charge-selected > p{
+			color: rgb(20, 20, 20);
+			font-size: 14px;
+			font-weight: 600;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			overflow-wrap: break-word;
+			word-break: keep-all;
+			max-height: calc(16px);
+			line-height: 16px;
+			display: block;
+			white-space: nowrap;
+			text-align: right;
+		}
+
+		.kihipay-detail-section{
+			margin-top: 25px;
+		}
+
+		.kihipay-detail-title{
+			color: #141414;
+			font-size: 18px;
+			font-weight: 700;
+			line-height: normal;
+			padding: 4px 0;
+		}
+
+		.kihipay-detail-wrapper{
+			display: flex;
+			flex-direction: column;
+			margin-top: 8px;
+			border: 1px solid rgb(204, 204, 204);
+		}
+
+		.kihipay-detail-order{
+			display: flex;
+			align-items: center;
+			flex-direction: column;
+			padding: 13px 14px;
+		}
+
+		.kihipay-detail-text{
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+			color: rgb(20, 20, 20);
+			font-size: 14px;
+			line-height: normal;
+		}
+
+		.kihipay-detail-text>span:first-of-type{
+			font-weight: 600;
+		}
+
+		.kihipay-detail-text>span:last-of-type{
+			font-weight: 700;
+		}
+
+		.kihipay-detail-use{
+			display: flex;
+			flex-direction: column;
+			padding: 14px 14px 13px;
+			border-top: 1px solid rgb(230, 230, 230);
+		}
+
+		.kihipay-detail-left{
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			margin-top: 8px;
+		}
+
+		.kihipay-detail-left::before{
+			content: "";
+			position: absolute;
+			width: 2px;
+			height: calc(100% - 4px);
+			top: 2px;
+			left: 3px;
+			background: rgb(204, 204, 204);
+		}
+
+		.kihipay-detail-left>li{
+			display: flex;
+			justify-content: space-between;
+			padding-left: 12px;
+			color: rgb(120, 120, 120);
+			font-size: 13px;
+			font-weight: 400;
+			line-height: normal;
+		}
+
+		.kihipay-checkout-section{
+			margin-top: 25px;
+		}
+
+		.kihipay-checkbox-wrapper{
+			display: flex;
+			width: 100%;
+			flex-direction: column;
+		}
+
+		.kihipay-checkbox-label{
+			width: 100%;
+			align-items: center;
+			box-sizing: border-box;
+		}
+
+		label{
+			display: flex;
+		}
+
+		.kihipay-checkbox{
+			width: 0px;
+			height: 0px;
+			border: 0px;
+		}
+
+		.kihipay-checkbox-description{
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+		}
+
+		.kihipay-checkbox-text{
+			padding: 0;
+			margin: 0;
+			color: rgb(20, 20, 20);
+			font-size: 14px;
+			font-weight: 500;
+			line-height: 20px;
+			padding-left: 10px;
+			cursor: pointer;
+		}
+
+		.kihipay-checkbox-img {
+			cursor: pointer;
+		}
+
+		.kihipay-checkout-submit{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin-top: 20px;
+			width: 100%;
+			height: 46px;
+			border-radius: 6px;
+			background-color: #ff7f50;
+			font-size: 15px;
+			font-weight: 600;
+			color: #fff;
+			line-height: normal;
+			appearance: none;
+			border: 0;
+		}
+
+		.kihipay-checkout-title{
+			color: rgb(120, 120, 120);
+			font-size: 14px;
+			font-weight: 700;
+			line-height: normal;
+			margin-top: 20px;
+		}
+
+		.kihipay-checkout-note-ul{
+			position: relative;
+			padding-right: 11px;
+			margin-top: 7px;
+		}
+
+		.kihipay-checkout-note-ul>li{
+			position: relative;
+			color: rgb(120, 120, 120);
+			font-size: 13px;
+			font-weight: 400;
+			line-height: 20px;
+			margin-left: 12px;
+		}
+
+		.kihipay-checkout-note-ul>li::before{
+			content: " ";
+			position: absolute;
+			top: 8px;
+			left: -12px;
+			width: 4px;
+			height: 4px;
+			background-color: rgb(204, 204, 204);
+			border-radius: 50%;
+		}
 	</style>
 </head>
 
@@ -486,7 +849,7 @@
 												</div>
 												<div class="total-order-price-wrapper">
 													<p class="total-regular-price">
-														<span th:text="${total} + '원'"></span>
+														<span th:text="${formattedTotal} + '원'"></span>
 													</p>
 												</div>
 											</li>
@@ -524,6 +887,101 @@
 												</p>
 											</li>
 										</ul>
+									</div>
+									<div id="kihipay">
+										<div class="kihipay-wrapper">
+											<div class="kihipay-wrap">
+												<div class="kihipay-banner">
+													<a th:href="@{/order/checkout/point}">
+														<img src="/resources/static/banners/point_banner.png" alt="포인트 충전 배너" class="kihipay-banner">
+													</a>
+												</div>
+												<section class="kihipay-method-section">
+													<h2 class="kihipay-method-title">결제 수단</h2>
+													<ul class="kihipay-method-ul">
+														<li class="kihipay-method-li">
+															<div class="kihipay-charge-payment">
+																<h4>
+																	<img src="/resources/static/check/kihipay.png" alt="키히페이" style="width: 76px;" class="mt-1">
+																</h4>
+															</div>
+															<div class="kihipay-payment-wrapper">
+																<div class="kihipay-charge-and-pay">
+																	<label class="kihipay-charge-label">
+																		<input type="checkbox" class="kihipay-charge-checkbox" readonly checked>
+																		<span class="kihipay-charge-check-img">
+																			<img src="/resources/static/check/radio.png" alt="체크박스" style="width: 24px;">
+																		</span>
+																		<span class="kihipay-charge-text">
+																			<h5 class="kihipay-charge-title">충전 후 결제</h5>
+																			<span class="kihipay-charge-bonus">최대 적립 5%</span>
+																		</span>
+																	</label>
+																</div>
+																<div class="kihipay-charge-wrapper">
+																	<div class="kihipay-charge-select-wrapper">
+																		<div class="kihipay-charge-select">
+																			<div class="kihipay-charge-select-text">
+																				<span class="kihipay-charge-sel-text">충전</span>
+																				<span class="kihipay-charge-selected">
+																					<p>2,000원 (포인트 3% 적립)</p>
+																				</span>
+																				<img src="/resources/static/img/down-triangle.png" alt="아래 삼각형" style="width: 10px; height: 11px;">
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</li>
+													</ul>
+												</section>
+												<section class="kihipay-detail-section">
+													<h2 class="kihipay-detail-title">결제 상세</h2>
+													<div class="kihipay-detail-wrapper">
+														<div class="kihipay-detail-order">
+															<h3 class="kihipay-detail-text">
+																<span>주문 금액</span>
+																<span th:text="${formattedTotal} + '원'"></span>
+															</h3>
+														</div>
+														<div class="kihipay-detail-use">
+															<h4 class="kihipay-detail-text">
+																<span>포인트 사용</span>
+																<span>- 0원</span>
+															</h4>
+															<ul class="kihipay-detail-left">
+																<li>
+																	<span>결제 후 잔여 포인트</span>
+																	<span>0원</span>
+																</li>
+															</ul>
+														</div>
+													</div>
+												</section>
+												<section class="kihipay-checkout-section">
+													<div class="kihipay-checkbox-wrapper">
+														<label class="kihipay-checkout-label">
+															<input type="checkbox" class="kihipay-checkbox" readonly>
+															<span class="kihipay-checkbox-img">
+																<img src="/resources/static/check/circle.png" alt="체크박스" style="height: 22px;">
+															</span>
+															<span class="kihipay-checkbox-description">
+																<p class="kihipay-checkbox-text">상품, 가격, 유의 사항 등을 확인하였으며 구매에 동의합니다. (필수)</p>
+															</span>
+														</label>
+													</div>
+													<form action="/order/payment/contents" method="post">
+														<button type="submit" class="kihipay-checkout-submit">결제</button>
+													</form>
+													<h4 class="kihipay-checkout-title">결제 유의사항</h4>
+													<ul class="kihipay-checkout-note-ul">
+														<li>키히포인트는 먼저 충전한 순서대로 사용됩니다.</li>
+														<li>문화비 소득공제는 주문 도서와 결제 수단에 따라 적용됩니다.</li>
+														<li>미성년자의 경우 결제 시 법정대리인의 동의가 필요하며, 이에 따라 법정대리인의 동의를 받았음을 확인합니다.</li>
+													</ul>
+												</section>
+											</div>
+										</div>
 									</div>
 								</div>
 							</article>
