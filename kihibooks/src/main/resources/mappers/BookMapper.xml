@@ -592,4 +592,5 @@
         insert into `cart`(ca_ep_code, ca_ur_num)
         value(#{ep_code}, #{ur_num})
     </insert>
+
 </mapper>

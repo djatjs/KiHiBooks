@@ -152,4 +152,6 @@ public interface BookDAO {
 
 	List<NoticeVO> selectNoticeList(@Param("bo_code") String bo_code, @Param("limit") int pageSize,
 			@Param("offset") int offset);
+
+	Integer getBookCount(String pu_code);
 }
