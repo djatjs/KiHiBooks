@@ -68,6 +68,16 @@ public class BookService {
         return bookDAO.selectWaitFreeBooks();
     }
 
+    public PageInfo<BookVO> getWaitFreeBooks(int page, String sort, String keyword) {
+        int size = PageConstants.PAGE_SIZE;
+        int offset = (page - 1) * size;
+
+        List<BookVO> books = bookDAO.selectWaitFreeBooksFiltered(sort, keyword, offset, size);
+        int totalCount = bookDAO.countWaitFreeBooksFiltered(keyword);
+
+        return PaginationUtils.paginate(books, totalCount, page, size, PageConstants.BLOCK_SIZE);
+    }
+
     public List<BookVO> getNewBooks() {
         return bookDAO.selectNewBooks();
     }

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>기다리면 무료</title>
+  <style>
+    .waitfree-header {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-top: 30px;
+      padding: 0 10px;
+    }
+
+    .waitfree-filters {
+      display: flex; gap: 10px;
+    }
+
+    .filter-btn {
+      padding: 6px 12px;
+      background: #f5f5f5;
+      border: 1px solid #ccc;
+      border-radius: 16px;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background-color: #ff7f50;
+      color: white;
+      border-color: #ff7f50;
+    }
+
+    .search-box {
+      display: flex; align-items: center;
+    }
+
+    .search-box input {
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 16px;
+    }
+
+    .book-list {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      padding: 0 10px;
+    }
+
+    .book-card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .book-thumbnail {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      background-color: #f2f2f2;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .book-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .badge {
+      position: absolute;
+      top: 8px;
+      padding: 4px 8px;
+      font-size: 12px;
+      color: white;
+      border-radius: 8px;
+    }
+
+    .badge.left {
+      left: 8px;
+      background-color: #ff7f50;
+    }
+
+    .badge.right {
+      right: 8px;
+      background-color: #666;
+    }
+
+    .book-title {
+      margin-top: 8px;
+      font-weight: bold;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .book-meta {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .no-result {
+      margin-top: 40px;
+      text-align: center;
+      color: #888;
+    }
+
+    .back-btn {
+      margin-top: 16px;
+      padding: 6px 12px;
+      background-color: #ff7f50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .pagination-container {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .pagination {
+      display: inline-flex;
+      list-style: none;
+      padding: 0;
+    }
+
+    .pagination li {
+      margin: 0 4px;
+    }
+
+    .pagination a {
+      display: inline-block;
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      text-decoration: none;
+      color: #333;
+    }
+
+    .pagination .active a {
+      background-color: #ff7f50;
+      color: #fff;
+      border-color: #ff7f50;
+    }
+  </style>
+</head>
+
+<body>
+<div layout:fragment="content" class="container">
+
+  <!-- 1. 상단 배너 -->
+  <div style="height: 200px; background-color: #eee; border-radius: 12px; margin: 20px;"> 
+    <!-- 배너 이미지 들어갈 자리 -->
+  </div>
+
+  <!-- 2. 정렬 필터 & 검색 -->
+  <div class="waitfree-header">
+    <div class="waitfree-filters">
+      <a th:href="@{/book/wait_for_free(sort='recent', keyword=${keyword})}" 
+         th:classappend="${sort == 'recent'} ? 'active'" class="filter-btn">최신순</a>
+      <a th:href="@{/book/wait_for_free(sort='popular', keyword=${keyword})}" 
+         th:classappend="${sort == 'popular'} ? 'active'" class="filter-btn">인기순</a>
+      <a th:href="@{/book/wait_for_free(sort='rating', keyword=${keyword})}" 
+         th:classappend="${sort == 'rating'} ? 'active'" class="filter-btn">평점순</a>
+      <a th:href="@{/book/wait_for_free(sort='review', keyword=${keyword})}" 
+         th:classappend="${sort == 'review'} ? 'active'" class="filter-btn">리뷰순</a>
+    </div>
+
+    <div class="search-box">
+      <form th:action="@{/book/wait_for_free}" method="get">
+        <input type="hidden" name="sort" th:value="${sort}" />
+        <input type="text" name="keyword" placeholder="제목 검색" th:value="${keyword}" />
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. 검색 결과 -->
+  <div th:if="${#lists.isEmpty(books)}" class="no-result">
+    <p th:text="'\'' + ${keyword} + '\' 에 대한 결과가 없습니다.'"></p>
+    <a th:href="@{/book/wait_for_free}" class="back-btn">돌아가기</a>
+  </div>
+
+  <!-- 4. 도서 리스트 -->
+  <div class="book-list" th:if="${!#lists.isEmpty(books)}">
+    <div class="book-card" th:each="book : ${books}">
+      <div class="badge left">기다무</div>
+      <div class="badge right">완결</div> <!-- 추후 조건부로 출력 예정 -->
+      <div class="book-thumbnail">
+        <img th:src="@{'/resources/static/covers/cover' + ${bookStat.index + 1} + '.png'}" />
+      </div>
+      <div class="book-title" th:text="${book.bo_title}">도서 제목</div>
+      <div class="book-meta" th:text="${book.bo_author}">작가</div>
+      <div class="book-meta">
+        ★ <span th:text="${#numbers.formatDecimal((book.bo_total_rating / book.bo_review_count) / 2, 1, 1)}">0.0</span>
+        | 리뷰 <span th:text="${book.bo_review_count}">0</span>
+      </div>
+      <div class="book-meta" th:text="'총 ' + ${book.bo_total_episode} + '화'">총 회차</div>
+    </div>
+  </div>
+
+  <!-- 페이지네이션 -->
+  <div class="pagination-container" th:if="${pageInfo.totalPages > 1}">
+    <ul class="pagination">
+      <!-- 이전 버튼 -->
+      <li th:if="${pageInfo.currentPage > 1}">
+        <a th:if="${keyword != null}"
+          th:href="@{|/book/wait_for_free?page=${pageInfo.currentPage - 1}&sort=${sort}&keyword=${keyword}|}">이전</a>
+        <a th:if="${keyword == null}"
+          th:href="@{|/book/wait_for_free?page=${pageInfo.currentPage - 1}&sort=${sort}|}">이전</a>
+      </li>
+
+      <!-- 페이지 번호 -->
+      <li th:each="i : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}"
+          th:classappend="${i == pageInfo.currentPage} ? 'active'">
+        <a th:if="${keyword != null}"
+          th:href="@{|/book/wait_for_free?page=${i}&sort=${sort}&keyword=${keyword}|}"
+          th:text="${i}">1</a>
+        <a th:if="${keyword == null}"
+          th:href="@{|/book/wait_for_free?page=${i}&sort=${sort}|}"
+          th:text="${i}">1</a>
+      </li>
+
+      <!-- 다음 버튼 -->
+      <li th:if="${pageInfo.currentPage < pageInfo.totalPages}">
+        <a th:if="${keyword != null}"
+          th:href="@{|/book/wait_for_free?page=${pageInfo.currentPage + 1}&sort=${sort}&keyword=${keyword}|}">다음</a>
+        <a th:if="${keyword == null}"
+          th:href="@{|/book/wait_for_free?page=${pageInfo.currentPage + 1}&sort=${sort}|}">다음</a>
+      </li>
+    </ul>
+  </div>
+
+
+</div>
+</body>
+</html>

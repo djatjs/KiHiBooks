@@ -168,6 +168,8 @@
 		}
 
 		.book-title {
+			display: inline-block;
+			max-width: 120px;
 			font-size: 15px;
 			font-weight: bold;
 			color: #111;
@@ -260,6 +262,7 @@
 			align-items: flex-start;
 			font-size: 13px;
 			color: #333;
+			max-width: 100px;
 		}
 
 		.waitfree-thumb {
@@ -281,6 +284,8 @@
 			margin-top: 6px;
 			font-weight: bold;
 			white-space: nowrap;
+			max-width: 100px;
+			display: inline-block;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			text-decoration: none !important;
@@ -472,6 +477,8 @@
 			margin-top: 6px;
 			font-weight: bold;
 			white-space: nowrap;
+			display: inline-block;
+			max-width: 100px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			text-decoration: none !important;
@@ -543,7 +550,7 @@
 			background-color: #f2f2f2;
 		}
 
-  	</style>
+	</style>
 </head>
 
 <body>
@@ -598,7 +605,7 @@
 				</div>
 				<div class="button-text">매일랜덤티켓</div>
 			</a>
-			<a th:href="@{/}" class="button-wrapper">
+			<a th:href="@{/book/wait_for_free}" class="button-wrapper">
 				<div class="round-button">
 					<img src="/resources/static/img/clock.png" alt="키다무" class="button-icon">
 				</div>
