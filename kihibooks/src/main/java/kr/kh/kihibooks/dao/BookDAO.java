@@ -1,9 +1,11 @@
 package kr.kh.kihibooks.dao;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.SqlSession;
 
 import kr.kh.kihibooks.model.vo.BookKeywordVO;
 import kr.kh.kihibooks.model.vo.BookVO;
@@ -23,6 +25,13 @@ public interface BookDAO {
 	List<BookVO> selectTopBooks();
 
 	List<BookVO> selectWaitFreeBooks();
+	
+	List<BookVO> selectWaitFreeBooksFiltered(@Param("sort")String sort, 
+		@Param("keyword")String keyword, 
+		@Param("offset")int offset, 
+		@Param("limit")int limit);
+
+	int countWaitFreeBooksFiltered(String keyword);
 
 	List<BookVO> selectNewBooks();
 

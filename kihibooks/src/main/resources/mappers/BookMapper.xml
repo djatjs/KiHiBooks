@@ -85,6 +85,40 @@
         ORDER BY BO_PUBLISH_DATE DESC
         LIMIT 20
     </select>
+    <select id="selectWaitFreeBooksFiltered" resultMap="bookFilteredMap">
+        select b.*, a.au_name
+        from book b
+        join author a on b.bo_au_num = a.au_num
+        where bo_wait_for_free = 'Y'
+        <if test="keyword != null and keyword != ''">
+            and (
+                bo_title like concat('%', #{keyword}, '%')
+                or a.au_name like concat('%', #{keyword}, '%')
+            )
+        </if>
+        order by
+        <choose>
+            <when test="sort == 'popular'">bo_review_count desc</when>
+            <when test="sort == 'rating'">
+                if(bo_review_count = 0, 0, (bo_total_rating / bo_review_count))  desc
+            </when>
+            <when test="sort == 'review'">bo_review_count desc</when>
+            <otherwise>bo_publish_date desc</otherwise>
+        </choose>
+        LIMIT #{offset}, #{limit}
+    </select>
+    <select id="countWaitFreeBooksFiltered" resultType="int">
+        select count(*)
+        from book b
+        join author a on b.bo_au_num = a.au_num
+        where bo_wait_for_free = 'Y'
+        <if test="keyword != null and keyword !=''">
+            and (
+                bo_title like concat('%', #{keyword}, '%')
+                or a.au_name like concat('%', #{keyword}, '%')
+            )
+        </if>
+    </select>
     <select id="selectNewBooks" resultMap="bookNewMap">
         SELECT
             BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, AU_NAME
