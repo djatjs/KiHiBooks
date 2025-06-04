@@ -60,7 +60,6 @@ public class UserService {
 		try {
 			// 코드 생성
 			String code = createCode(6);
-			System.out.println(code);
 			// 코드 발송
 			boolean sendRes = sendCodeToMail(email.getEv_email(), "[KIHIBooks]이메일 인증",
 					"인증번호는 <b>" + code + "</b> 입니다. 유출되지 않도록 해주세요.");
@@ -91,7 +90,6 @@ public class UserService {
 		while (code.length() < size) {
 			// 램덤 정수 생성
 			int r = (int) (Math.random() * (62));
-
 			if (r < 10) {
 				code += r;
 			} else if (r < 36) {
@@ -150,7 +148,6 @@ public class UserService {
 		if (user == null) {
 			return false;
 		}
-		// 이미 가입된 계정인지 확인
 		if (userDAO.selectEmail(user.getUr_email()) != null) {
 			return false;
 		}
@@ -158,8 +155,6 @@ public class UserService {
 		// 비번 암호화
 		String encPw = passwordEncoder.encode(user.getUr_pw());
 		user.setUr_pw(encPw);
-		// 가입된 이메일, 닉네임인지는 html에서 확인했으므로 생략
-
 		try {
 			return userDAO.insertUserWithPw(user);
 		} catch (Exception e) {
@@ -181,15 +176,16 @@ public class UserService {
 		// 비번 암호화
 		String encPw = passwordEncoder.encode(user.getUr_pw());
 		user.setUr_pw(encPw);
-
-		return userDAO.updatePw(user);
+		if(userDAO.updatePw(user)){
+			return true;
+		}
+		return false;
 	}
 
 	public UserVO getUserByNickName(String searchInput) {
 		if (searchInput == null) {
 			return null;
 		}
-		// System.out.println(searchInput)
 		return userDAO.selectUserByNickName(searchInput);
 	}
 

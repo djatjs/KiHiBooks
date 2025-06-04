@@ -56,7 +56,6 @@ public class UserController {
     public String mypage(Model model) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserVO user = userService.selectUser(userDetails.getUsername());
-        System.out.println(user);
         model.addAttribute("user", user);
         return "user/mypage";
     }
@@ -109,7 +108,6 @@ public class UserController {
         EmailVO newEmail = new EmailVO();
         newEmail.setEv_email(email.trim());
         boolean evRes = userService.sendEmail(newEmail);
-        System.out.println(evRes);
         if(!evRes) return false;
         return evRes;
     }
@@ -183,24 +181,17 @@ public class UserController {
         return true;
     }
     
-    
-    
-
-
-
     @GetMapping("/signup/kakao") // 실제 Redirect URI 경로로 수정
     public String kakaoLogin(@RequestParam String code, HttpServletRequest request) {
         System.out.println("인가 코드: " + code);
 
         // 1. 인가 코드를 사용하여 액세스 토큰을 요청
         String accessToken = apiService.getKakaoAccessToken(code); 
-
         // 2. 액세스 토큰을 사용하여 사용자 정보를 요청
         Map<String, Object> userInfo = apiService.getKakaoUserInfo(accessToken); 
         System.out.println("사용자 정보:" + userInfo);
         // 3. 받은 사용자 정보(이메일, 닉네임 등)를 기반으로 회원가입 또는 로그인 처리
         UserDetails userDetails = apiService.processKakaoUser(userInfo);
-
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
             userDetails,
@@ -242,7 +233,6 @@ public class UserController {
     @GetMapping("/cart")
     public String cart(Model model, @AuthenticationPrincipal CustomUser customUser){
         List<EpisodeVO> epList = userService.getCartEpList(customUser.getUser().getUr_num());
-
         model.addAttribute("epList", epList);
         return "/user/cart";
     }
