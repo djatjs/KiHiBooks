@@ -56,6 +56,7 @@ public class UserController {
     public String mypage(Model model) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserVO user = userService.selectUser(userDetails.getUsername());
+        System.out.println(user);
         model.addAttribute("user", user);
         return "user/mypage";
     }
