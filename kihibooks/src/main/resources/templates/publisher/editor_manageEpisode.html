@@ -269,7 +269,9 @@
 			white-space: nowrap;
 			display: table-cell;
 		}
-        
+        .btnArea{
+			text-align: right;
+		}
         .update-btn {
 			font-size: 13px;
 			padding: 8px 14px;
@@ -314,8 +316,9 @@
         .register-btn{
             background-color: #ff7f50; color: white;
 			border: #fff;
+			font-size: 12px;
             font-weight: bold;
-            padding: 8px 14px; border-radius: 6px;
+            padding: 8px 12px; border-radius: 6px;
             display: inline-block;
             text-align: center;
         }
@@ -345,8 +348,10 @@
             }
             .info-grid {
                 width: 100%;
-                text-align: center;
+				text-align: center;
             }
+			.cate-title, .book-title{
+			}
             .category,
             .info-content,
             .bottom-content {
@@ -361,6 +366,10 @@
             .bottom-content {
                 width: 90%;
             }
+			.register-btn{
+				font-size: 9px;
+				padding: 5px 8px; border-radius: 6px;
+			}
         }
     </style>
 </head>
@@ -392,30 +401,28 @@
                                     </div>
                                     <h3 class="book-title" th:text="${book.bo_title}"></h3>
                                     <div class="info-content">
-                                        <div class="d-flex justify-content-between">
-                                            <div class="infomation">
-                                                <div class="author">
-                                                    <span class="author-name" th:text="${book.bo_author}"></span>
-                                                    <span class="ml-1"> 저</span>
-                                                </div>
-                                                <div class="publisher mt-1">
-                                                    <span class="publisher-link" th:text="${book.bo_publisher}"></span> 출판
-                                                </div>
-                                                <div class="total-episode mt-1 mb-3" th:text="'총 ' + ${epiList.size()} + '화'"></div>
-                                            </div>
-                                            <div class="btnArea">
-                                                <div style="margin-top: 40px;">
-													<th:block th:if="${book.bo_fin == 'N'}">
-														<a th:href="@{/editor/registerEpisode/{bo_code}(bo_code=${book.bo_code})}" class="register-btn">회차 등록</a>
-														<button class="register-btn" id="book_finToY-btn" th:data-bocode="${book.bo_code}">완결 처리</button>
-													</th:block>
-													<th:block th:if="${book.bo_fin == 'Y'}">
-														<button class="register-btn" id="book_finToN-btn" th:data-bocode="${book.bo_code}">연재로 전환</button>
-													</th:block>
-													<a th:href="@{/editor/manageNotice/{boCode}(boCode=${book.bo_code})}" class="register-btn">공지 사항 관리</a>
-                                                </div>
-                                            </div>
-                                        </div>
+										<div class="infomation">
+											<div class="author">
+												<span class="author-name" th:text="${book.bo_author}"></span>
+												<span class="ml-1"> 저</span>
+											</div>
+											<div class="publisher mt-1">
+												<span class="publisher-link" th:text="${book.bo_publisher}"></span> 출판
+											</div>
+											<div class="total-episode mt-1 mb-3" th:text="'총 ' + ${epiList.size()} + '화'"></div>
+										</div>
+										<div class="btnArea">
+											<div>
+												<th:block th:if="${book.bo_fin == 'N'}">
+													<a th:href="@{/editor/registerEpisode/{bo_code}(bo_code=${book.bo_code})}" class="register-btn">회차 등록</a>
+													<button class="register-btn" id="book_finToY-btn" th:data-bocode="${book.bo_code}">완결 처리</button>
+												</th:block>
+												<th:block th:if="${book.bo_fin == 'Y'}">
+													<button class="register-btn" id="book_finToN-btn" th:data-bocode="${book.bo_code}">연재로 전환</button>
+												</th:block>
+												<a th:href="@{/editor/manageNotice/{boCode}(boCode=${book.bo_code})}" class="register-btn">공지 사항 관리</a>
+											</div>
+										</div>
                                     </div>
                                 </div>
                                 <div class="info-bottom-grid">
