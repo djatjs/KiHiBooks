@@ -51,9 +51,9 @@
 						equalTo : "·비번과 비번 확인이 같지 않습니다."
 					}
 				},
-				submitHandler: function () {
-					form.submit();
-				},
+				// submitHandler: function () {
+				// 	form.submit();
+				// },
 				errorPlacement: function (error, element) {
 					const name = element.attr("name");
 					const target = $(`#${name}-error`);
@@ -72,33 +72,32 @@
 			}, "정규 표현식을 확인하세요.");
 		</script>
 		<script>
-			$("#checkVerificationCode").click(function(){
-				const email = $("#email").val().trim();
-				const vCode = $("#verificationCode").val().trim();
-				
-				if (!vCode) {
-					alert("인증번호를 입력해주세요.");
-					return;
-				}
+			$("#signup-form").on("submit", function(event){
+				event.preventDefault();
+				var ur_email = $("#ur_email").val();
+				var newPw = $("#ur_pw").val();
+				console.log(ur_email);
+				console.log(newPw);
+				const userVO = {
+					ur_email: ur_email,
+					ur_pw: newPw
+				};
+				if(!confirm("비밀번호를 변경하시겠습니까?"))return;
 				$.ajax({
-					url : "/email/verifyCode",
-					method: "POST",
-					data: {
-						email: email,
-						userCode: vCode
-					},
-					success : function(response){
-						if(response){
-							alert("인증 성공! 비밀번호 재설정 페이지로 이동합니다.");
-							location.href = "/?";
-							
+					url : "/resetPw",
+					method : "post",
+					data: JSON.stringify(userVO),
+					contentType: "application/json",
+					success : function(res){
+						if(res){
+							alert("비밀번호가 성공적으로 변경되었습니다.");
+							window.location.href ="/";
 						}
 						else{
-							alert("인증에 실패하였습니다. 다시 시도해주세요.");
+							alert("비밀번호 변경에 실패했습니다.");
 						}
 					}
 				})
-				return;
 			})
 		</script>
 	</main>

@@ -165,6 +165,10 @@
         .pagination > a:last-child {
             margin-left: 5px;
         }
+        .button-container {
+            text-align: right;
+        }
+
     </style>
 </head>
 <body>
@@ -214,6 +218,9 @@
                 <button class="orenge-btn" type="button" onclick="location.href='/editor/registerNew'">작품 등록</button>
             </div>
         </div>
+        <div class="button-container">
+            <button type="button" onclick="location.href='/publisher/dashboard'" class="rightBtn orenge-btn mt-3 ml-3">목록으로</button>
+        </div>
         
         <!-- 담당 작품 클릭시 모달 -->
         <div class="modal" id="workModal">
@@ -247,7 +254,6 @@
             </div>
         </div>
     </div>
-    <button type="button" onclick="location.href='/publisher/dashboard'" class="orenge-btn mt-3 ml-3">목록으로</button>
         <script>
             $(document).ready(function () {
                 const maxLength = 100; // 최대 표시할 글자 수

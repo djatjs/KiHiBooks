@@ -262,4 +262,8 @@ public class UserService {
 		return epList;
 	}
 
+    public boolean changeNickname(int ur_num, String ur_nickname) {
+		return userDAO.updateNickname(ur_num, ur_nickname);
+    }
+
 }

@@ -70,10 +70,8 @@ public class UserController {
 	@ResponseBody
 	public boolean checkPw(@RequestParam String pw, @AuthenticationPrincipal CustomUser customUser) {
         if(pw == null || customUser == null) {
-            System.out.println("1");
             return false;
         }
-        System.out.println("2");
 		return userService.checkPw(customUser, pw);
 	}
 
@@ -82,6 +80,15 @@ public class UserController {
         model.addAttribute("user", customUser.getUser());
 		return "user/editForm";
 	}
+
+    @ResponseBody
+    @PostMapping("/edit/changeNickname")
+    public boolean changeNickname(@RequestParam String nickname, @AuthenticationPrincipal CustomUser customUser){
+        if(nickname == null || nickname.length() == 0 || customUser == null){
+            return false;
+        }
+        return userService.changeNickname(customUser.getUser().getUr_num(), nickname);
+    }
 
     //회원가입 선택 창
     @GetMapping("/signup")
@@ -158,19 +165,22 @@ public class UserController {
         model.addAttribute("ur_email", email);
         return "user/resetPw";
     }
+    @ResponseBody
     @PostMapping("/resetPw")
-    public String resetPwPost(HttpSession session, UserVO user) {
+    public boolean resetPwPost(HttpSession session, @RequestBody UserVO user) {
         if(user == null || user.getUr_email() == null || user.getUr_pw() == null){
-            return "redirect:/findPw";
+            return false;
         }
         //비밀번호 재설정 후 세션 지우기
         boolean resetRes = userService.resetPw(user);
         if(!resetRes){
-            return "redirect:/findPw";
+            return false;
         }
-        //세션에서 email 지우기
-        session.removeAttribute("email");
-        return "redirect:/";
+        // 비번 찾기를 통해 비번 변경하는 경우 세션에서 email 지우기
+        if (session.getAttribute("email") != null) {
+            session.removeAttribute("email");
+        }
+        return true;
     }
     
     
