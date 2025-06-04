@@ -13,7 +13,7 @@
         SELECT COUNT(*) > 0
         FROM attendance
         WHERE at_ur_num = #{userNum}
-          AND DATE(at_date) = CURDATE()
+        AND DATE(at_date) = CURDATE()
     </select>
 
     <!-- 3. 출석 데이터 삽입 -->
@@ -34,7 +34,7 @@
         SELECT DAY(at_date)
         FROM attendance
         WHERE at_ur_num = #{userNum}
-          AND MONTH(at_date) = MONTH(CURDATE())
-          AND YEAR(at_date) = YEAR(CURDATE())
+        AND MONTH(at_date) = MONTH(CURDATE())
+        AND YEAR(at_date) = YEAR(CURDATE())
     </select>
 </mapper>

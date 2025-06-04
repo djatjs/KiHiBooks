@@ -21,63 +21,51 @@ layout:decorate="~{layout/layout.html}">
 	.publisher-dashboard h1,
 	.publisher-dashboard h2 {
 		color: #2c3e50;
-		margin-bottom: 20px; /* 아래 여백 */
-		border-bottom: 2px solid #ff7f50; /* 아래쪽 경계선 */
-		padding-bottom: 10px; /* 경계선과 텍스트 사이 여백 */
+		margin-bottom: 20px;
+		border-bottom: 2px solid #ff7f50;
+		padding-bottom: 10px;
 	}
-
-	/* 요약 정보 카드 섹션 (관리자 대시보드 내) */
 	.publisher-dashboard .dashboard-summary {
-		display: flex; /* 플렉스 박스 레이아웃 사용 */
-		gap: 20px; /* 카드 간 간격 */
-		margin-bottom: 30px; /* 아래 여백 */
-		flex-wrap: wrap; /* 화면이 좁아지면 줄 바꿈 */
+		display: flex;
+		gap: 20px;
+		margin-bottom: 30px;
+		flex-wrap: wrap;
 	}
-
-	/* 각 요약 정보 카드 스타일 (관리자 대시보드 내) */
 	.publisher-dashboard .summary-card {
-		flex: 1; /* 공간 균등 분배 */
-		background-color: #ecf0f1; /* 배경색 */
-		padding: 20px; /* 내부 여백 */
-		border-radius: 8px; /* 모서리 둥글게 */
-		text-align: center; /* 텍스트 가운데 정렬 */
-		min-width: 150px; /* 최소 너비 */
-		transition: transform 0.2s ease-in-out; /* 호버 효과를 위한 전환 효과 */
-		cursor: pointer; /* 클릭 가능한 요소처럼 보이게 커서 변경 */
+		flex: 1;
+		background-color: #ecf0f1;
+		padding: 20px;
+		border-radius: 8px;
+		text-align: center;
+		min-width: 150px;
+		transition: transform 0.2s ease-in-out;
+		cursor: pointer;
 	}
-
 	.publisher-dashboard .summary-card:hover {
-		transform: translateY(-5px); /* 호버 시 살짝 위로 이동 */
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 호버 시 그림자 강화 */
+		transform: translateY(-5px);
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	}
-
 	.publisher-dashboard .summary-card .card-title {
-		font-size: 1em; /* 제목 폰트 크기 */
-		color: #7f8c8d; /* 제목 색상 */
-		margin-bottom: 10px; /* 아래 여백 */
+		font-size: 1em;
+		color: #7f8c8d;
+		margin-bottom: 10px;
 	}
-
 	.publisher-dashboard .summary-card .card-value {
-		font-size: 2em; /* 값 폰트 크기 */
-		font-weight: bold; /* 글씨 두껍게 */
-		color: #ff7f50; /* 값 색상 */
+		font-size: 2em;
+		font-weight: bold;
+		color: #ff7f50;
 	}
-
-	/* 바로가기/주요 기능 섹션 */
 	.publisher-dashboard .dashboard-links {
-		margin-bottom: 30px; /* 아래 여백 */
+		margin-bottom: 30px;
 	}
-
 	.publisher-dashboard .dashboard-links h2 {
-		margin-top: 0; /* 상단 여백 제거 */
+		margin-top: 0;
 	}
-
 	.publisher-dashboard .link-buttons {
 		display: flex;
 		gap: 15px;
 		flex-wrap: wrap;
 	}
-
 	.publisher-dashboard .link-button {
 		display: inline-block;
 		background-color: #ff7f50;
@@ -88,50 +76,38 @@ layout:decorate="~{layout/layout.html}">
 		font-size: 1em;
 		transition: background-color 0.2s ease-in-out;
 	}
-
 	.publisher-dashboard .link-button:hover {
 		background-color: #ff6347;
 	}
-
-	/* 최근 활동/목록 섹션 */
 	.publisher-dashboard .recent-activity {
 		margin-bottom: 30px;
 	}
-
 	.publisher-dashboard .recent-activity h2 {
 		margin-top: 0;
 	}
-
-	/* 예시 목록 스타일 (필요에 따라 테이블 등으로 변경 가능) */
 	.publisher-dashboard .activity-list {
 		background-color: white;
 		padding: 20px;
 		border-radius: 8px;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 	}
-
 	.publisher-dashboard .activity-item {
 		padding: 10px 0;
 		border-bottom: 1px solid #eee;
 	}
-
 	.publisher-dashboard .activity-item:last-child {
-		border-bottom: none; /* 마지막 항목 하단 경계선 제거 */
+		border-bottom: none;
 	}
-
-	/* 컨테이너 스타일 - 필요에 따라 조정 */
 	.container {
 		max-width: 1200px;
-		margin: 0 auto; /* 가운데 정렬 */
+		margin: 0 auto;
 		padding: 0 20px;
 	}
-	
 	@media (max-width: 800px) {
 		.container {
-			padding: 0; /* 작은 화면에서 패딩 제거 */
+			padding: 0;
 		}
 	}
-	/* 사용자 선택 방지 스타일 (HTML에 이미 있음) */
 	main {
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -146,25 +122,17 @@ layout:decorate="~{layout/layout.html}">
 		<div class="publisher-dashboard">
 			<div class="d-flex justify-content-between">
 				<h1>📊 출판사 대시보드</h1>
-				<p th:text="${#authentication.principal?.authority}"></p>
 			</div>
-
 			<div class="dashboard-summary">
-				<!-- SUPER 권한에게만 총 에디터 수를 보여주는 카드 -->
-				<div class="summary-card" th:if="${#authentication.principal?.authority == 'SUPER'}">
+				<div class="summary-card" th:if="${#authentication.principal.authority == 'SUPER'}">
 					<div class="card-title">총 에디터 수</div>
 					<div class="card-value" th:text="${editorCount}"></div>
 				</div>
-
-				<!-- 등록 도서 수 요약 카드 추가 -->
 				<div class="summary-card">
 					<div class="card-title">총 등록 도서 수</div>
-					<!-- 서버에서 가져온 도서 수 표시 -->
 					<div class="card-value" th:text="${totalBookCount}"></div>
-					<!-- 예시: 15 -->
 				</div>
-				<!-- EDITOR 권한에게만 본인 관련 정보나 통계를 보여주는 카드 (예시) -->
-				<th:block th:if="${#authentication.principal?.authority == 'EDITOR'}">
+				<th:block th:if="${#authentication.principal.authority == 'EDITOR'}">
 					<div class="summary-card">
 						<div class="card-title">내가 등록한 도서</div>
 						<div class="card-value" th:text="${editorsBookCount}"></div>
@@ -172,60 +140,40 @@ layout:decorate="~{layout/layout.html}">
 				</th:block>
 				<div class="summary-card">
 					<div class="card-title">연재 중 도서</div>
-					<div class="card-value" th:text="${totalBookCount}">0</div>
+					<div class="card-value" th:text="${totalPublishingCount}">0</div>
 				</div>
 				<div class="summary-card">
 					<div class="card-title">완결 도서</div>
 					<div class="card-value" th:text="${totalCompletedCount}">0</div>
 				</div>
 			</div>
-
-			<!-- 주요 기능 바로가기 섹션 -->
 			<div class="dashboard-links">
 				<h2>🚀 바로가기</h2>
 				<div class="link-buttons">
-					<!-- 에디터 관리 페이지로 이동하는 버튼 -->
-					<th:block th:if="${#authentication.principal?.authority == 'SUPER'}">
+					<th:block th:if="${#authentication.principal.authority == 'SUPER'}">
 						<a th:href="@{/publisher/editors}" class="link-button">에디터 관리</a>
 					</th:block>
-					<!-- 도서 담당 에디터를 설정하는 페이지로 이동하는 버튼 -->
-					<th:block th:if="${#authentication.principal?.authority == 'SUPER'}">
-						<a th:href="@{/publisher/manageEditorsBook}" class="link-button">도서 담당 에디터 설정</a>
+					<th:block th:if="${#authentication.principal.authority == 'SUPER'}">
+						<a th:href="@{/publisher/manageEditorsBook/{pu_code}(pu_code = ${#authentication.principal.pu_code})}" class="link-button">도서 담당 에디터 설정</a>
 					</th:block>
-					<!-- 신규 도서 등록 페이지로 이동하는 버튼 -->
-					<th:block th:if="${#authentication.principal?.authority == 'EDITOR'}">
+					<th:block th:if="${#authentication.principal.authority == 'EDITOR'}">
 						<a th:href="@{/editor/myContent}" class="link-button">내 콘텐츠 관리</a>
 					</th:block>
 					<a th:href="@{/account/modify}" class="link-button">계정 설정</a>
 				</div>
 			</div>
-
-			<!-- 최근 활동 또는 최근 등록 도서 목록 섹션 (예시) -->
 			<div class="recent-activity">
 				<h2>⏳ 최근 등록 도서</h2>
 				<div class="activity-list">
-					<!-- 서버에서 가져온 최근 등록 도서 목록을 표시 -->
-					<!-- 이 부분은 실제 데이터를 Thymeleaf 루프로 표시해야 합니다. -->
-					<!-- 예시 데이터: -->
 					<div class="activity-item">제목: 판타지 소설 1화 등록 완료 (2023-10-27)</div>
 					<div class="activity-item">제목: 로맨스 웹툰 표지 수정 (2023-10-26)</div>
 					<div class="activity-item">제목: 추리 소설 신규 등록 (2023-10-25)</div>
-					<!-- 실제 Thymeleaf 코드 예시:
-					<div th:each="book : ${recentBooks}" class="activity-item">
-						제목: <span th:text="${book.title}">예시 제목</span>
-						<span th:if="${book.episodeTitle}">(<span th:text="${book.episodeTitle}">예시 회차</span>)</span> 등록 완료
-						(<span th:text="${#temporals.format(book.registrationDate, 'yyyy-MM-dd')}">날짜</span>)
-					</div>
-					-->
 					<div th:if="${recentBooks == null or #lists.isEmpty(recentBooks)}" class="activity-item">
 						최근 등록된 도서가 없습니다.
 					</div>
 				</div>
 			</div>
 		</div>
-		<!-- 기존 유저를 검색하거나 확인하여 에디터 권한을 부여하고, 필요에 따라 권한을 해제하는 기능이 포함되어야 합니다.  -->
-
-		<!-- 자사의 에디터를 추가하고 관리하는 기능입니다. 이는 출판사가 직접 콘텐츠를 등록하고 관리할 인력을 운영하는 데 필수적입니다. -->
 	</main>
 </body>
 </html>

@@ -50,10 +50,9 @@
 			padding: 0;
 			cursor: default;
 			font-weight: 400;
-
-            margin-top: 10px; /* 섹션 간 상단 여백 */
+            margin-top: 10px;
             padding: 20px;
-            background-color: #f8f9fa; /* 섹션 배경색 */
+            background-color: #f8f9fa;
             border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 		}
@@ -65,11 +64,9 @@
 			margin: 0;
 			padding: 0;
 			color: black;
-			
 			padding: 0 30px;
 			box-sizing: border-box;
 			margin: 0;
-			
 			display: grid;
 			grid-template: 'left right' auto
 				'left bottom' auto/fit-content(30%) 1fr;
@@ -102,7 +99,6 @@
 		}
 		.cate-title span:hover {
 			text-decoration: none;
-			/* color: #8a8a8a; */
 		}
         .category{
             margin-left: 22px;
@@ -132,7 +128,6 @@
 		}
 		.author-name:hover {
 			text-decoration: none;
-			/* color: #8a8a8a; */
 		}
 		.publisher-link {
 			font-weight: 600;
@@ -140,7 +135,6 @@
 		}
 		.publisher-link:hover {
 			text-decoration: none;
-			/* color: #8a8a8a; */
 		}
         .bottom-content {
             margin-left: 22px;
@@ -386,7 +380,6 @@
 									<th:block th:if="${!#lists.isEmpty(epiList)}">
 										<img class="thumb-img" th:src="@{/file/{path}(path=${epiList[epiList.size() - 1].ep_cover_img})}">
 									</th:block>
-
                                 </div>
                                 <div class="info-grid">
                                     <div class="category">
@@ -412,8 +405,8 @@
                                             </div>
                                             <div class="btnArea">
                                                 <div style="margin-top: 40px;">
-                                                    <a th:href="@{/editor/registerEpisode/{bo_code}(bo_code=${book.bo_code})}" class="register-btn">회차 등록</a>
 													<th:block th:if="${book.bo_fin == 'N'}">
+														<a th:href="@{/editor/registerEpisode/{bo_code}(bo_code=${book.bo_code})}" class="register-btn">회차 등록</a>
 														<button class="register-btn" id="book_finToY-btn" th:data-bocode="${book.bo_code}">완결 처리</button>
 													</th:block>
 													<th:block th:if="${book.bo_fin == 'Y'}">
@@ -499,7 +492,6 @@
 						<div class="direct-view-wrapper">
 							<a th:href="@{/editor/myContent}" class="checkout-btn">목록으로</a>
 						</div>
-						
                     </div>
                 </div>
             </div>
@@ -539,9 +531,6 @@
 					});
 				}
 			});
-		</script>
-		<script>
-			// $("#book_notice-btn").on("click", )
 		</script>
     </main>
 </body>

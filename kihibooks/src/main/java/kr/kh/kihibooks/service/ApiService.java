@@ -18,6 +18,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -35,6 +36,9 @@ public class ApiService {
 
     @Value("${kakao.redirect.uri}")
     private String kakaoRedirectUri;
+    
+    @Autowired
+	PasswordEncoder passwordEncoder;
 
     @Autowired
 	RestTemplate restTemplate; // HTTP 통신을 위한 RestTemplate 주입
@@ -182,9 +186,11 @@ public class ApiService {
             // 신규 사용자일 경우 -> 회원가입 처리
             System.out.println("신규 카카오 사용자 발견: " + email + ", 닉네임: " + nickname);
 
+            String encPw = passwordEncoder.encode(email);
+
             UserVO newUser = new UserVO();
             newUser.setUr_email(email);
-            newUser.setUr_pw(email);
+            newUser.setUr_pw(encPw);
             newUser.setUr_nickname(nickname);
             newUser.setUr_year(birthyear);
             

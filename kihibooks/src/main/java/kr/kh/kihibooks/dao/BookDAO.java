@@ -159,8 +159,20 @@ public interface BookDAO {
 
 	Integer getNoticeCount(String bo_code);
 
-	List<NoticeVO> selectNoticeList(@Param("bo_code") String bo_code, @Param("limit") int pageSize,
-			@Param("offset") int offset);
+	List<NoticeVO> selectNoticeList(@Param("bo_code") String bo_code, @Param("limit") int pageSize, @Param("offset") int offset);
 
 	Integer getBookCount(String pu_code);
+
+    List<BookVO> getPublishersBookList(String pu_code);
+
+	boolean changeEditor(@Param("bo_code") String bo_code, @Param("pi_num") int pi_num);
+
+	List<BookVO> getEditorsBookListToPage(@Param("pi_num") int pi_num, @Param("limit") int pageSize, @Param("offset") int offset);
+
+	NoticeVO selectNotice(int nt_num);
+
+	boolean updateNotice(NoticeVO nt);
+
+	boolean deleteNotice(int nt_num);
+
 }

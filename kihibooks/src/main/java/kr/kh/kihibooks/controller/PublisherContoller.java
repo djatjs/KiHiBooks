@@ -118,7 +118,6 @@ public class PublisherContoller {
     @ResponseBody
     @PostMapping("/publisher/deleteEditor")
     public boolean deleteEditor(@RequestParam int userNum) {
-        System.out.println(userNum);
         try {
             return publisherService.deleteEditor(userNum);
         } catch (Exception e) {
@@ -128,13 +127,25 @@ public class PublisherContoller {
     }
 
     @GetMapping("/editor/myContent")
-    public String myContent(@AuthenticationPrincipal CustomUser customUser, Model model) {
+    public String myContent(@RequestParam(defaultValue = "1") int page, @AuthenticationPrincipal CustomUser customUser, Model model) {
         //등록한 작품 가져오기 (+ 출판사명(publisher), 작가명(author))
-        List<BookVO> books = bookService.getEditorsBookList(customUser.getPi_num());
-        //System.out.println(books);
+        List<BookVO> bookList = bookService.getEditorsBookList(customUser.getPi_num());
         
+        int totalCount = bookList.size(); // 전체 수
+        // int pageSize = PageConstants.PAGE_SIZE;
+        int pageSize = 5;
+        // int blockSize = PageConstants.BLOCK_SIZE;
+        int blockSize = 5;
+        int offset = (page - 1) * pageSize;
+
+        List<BookVO> books = bookService.getEditorsBookListToPage(customUser.getPi_num(), pageSize, offset);
+        PageInfo<BookVO> pageInfo = PaginationUtils.paginate(books, totalCount, page, pageSize, blockSize);
+
+        model.addAttribute("pageInfo", pageInfo);
+
+
         model.addAttribute("user", customUser.getUser());
-        model.addAttribute("books", books);
+        // model.addAttribute("books", books);
         return "/publisher/editor_myContent";
     }
     
@@ -286,8 +297,6 @@ public class PublisherContoller {
         return "/publisher/editor_manageNotice";
     }
 
-
-
     @GetMapping("/editor/registerNotice/{bo_code}")
     public String registerNotice(@PathVariable String bo_code, @AuthenticationPrincipal CustomUser customUser, Model model) {
         model.addAttribute("pi_num", customUser.getPi_num());
@@ -302,5 +311,60 @@ public class PublisherContoller {
         return "redirect:/editor/registerNotice/"+bo_code;
     }
 
+    @GetMapping("/publisher/manageEditorsBook/{pu_code}")
+    public String manageEditorsBook(@PathVariable String pu_code, Model model) {
+        List<BookVO> books = bookService.getPublishersBookList(pu_code);
+        List<EditorVO> editors = publisherService.getEditorList(pu_code);
+        model.addAttribute("books",books);
+        model.addAttribute("editors",editors);
+        return "/publisher/manageEditorsBook";
+    }
+
+    @ResponseBody
+    @GetMapping("/publisher/checkHaveBook")
+    public boolean checkHaveBook(@RequestParam int userNum) {
+        return publisherService.checkHaveBook(userNum);
+    }
+    
+    @ResponseBody
+    @PostMapping("/publisher/changeEditor")
+    public boolean changeEditor (@RequestParam String bo_code, @RequestParam int pi_num) {
+        if(bo_code == null || pi_num == 0){
+            return false;
+        }
+        return bookService.changeEditor(bo_code, pi_num);
+    }
+    @ResponseBody
+    @PostMapping("/publisher/keepBook")
+    public boolean keepBook (@RequestParam String bo_code, @AuthenticationPrincipal CustomUser customUser) {
+        if(bo_code == null){
+            return false;
+        }
+        return bookService.keepBook(bo_code, customUser.getPu_code());
+    }
+    
+    @GetMapping("/editor/updateNotice/{nt_num}")
+    public String updateNotice(@PathVariable int nt_num, Model model) {
+        NoticeVO notice = bookService.getNotice(nt_num);
+        model.addAttribute("notice", notice);
+        return "/publisher/editor_updateNotice";
+    }
+    @PostMapping("/editor/updateNotice/{nt_num}")
+    public String updateNoticePost(@PathVariable int nt_num, NoticeVO nt) {
+        if(bookService.updateNotice(nt)){
+            return "redirect:/editor/manageNotice/"+nt.getNt_bo_code();
+        }
+        return "redirect:/editor/updateNotice/"+nt_num;
+    }
+
+    @ResponseBody
+    @PostMapping("/editor/deleteNotice")
+    public boolean postMethodName(@RequestParam int nt_num) {
+        if(nt_num == 0){
+            return false;
+        }
+        return bookService.deleteNotice(nt_num);
+    }
+    
 
 }
