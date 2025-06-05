@@ -25,7 +25,8 @@
         /* 각 섹션의 제목 스타일 */
         .section-title {
             color: #2c3e50;
-            margin-top: 30px;
+            margin-top: 10px;
+            margin-left: 30px;
             margin-bottom: 15px;
             font-weight: bold;
             font-size: 1.8rem; /* 탭 제목보다 약간 크게 */
@@ -36,7 +37,7 @@
             border: 0;
             height: 1px;
             background: #eee;
-            margin: 40px 0;
+            margin: 20px 0;
         }
 
         /* Series Container (전체 내용을 감싸는 컨테이너) 스타일 */
@@ -59,7 +60,7 @@
         }
         
         /* 반응형 디자인을 위한 미디어 쿼리 (필요하다면 주석 해제) */
-        @media (max-width: 1200px) {
+        /* @media (max-width: 1200px) {
             .book-list {
                 grid-template-columns: repeat(4, 1fr);
             }
@@ -78,7 +79,7 @@
             .book-list {
                 grid-template-columns: repeat(1, 1fr);
             }
-        }
+        } */
 
         /* 도서 아이템 스타일 */
         .book-item {
@@ -100,26 +101,32 @@
         .book-item img {
             display: block;
             margin: 0 auto;
-            height: 150px;
+            height: 200px;
             object-fit: cover;
+            width: 148px;
+            
         }
 
-        .book-item h5 {
-            margin-top: 0;
-            margin-bottom: 10px;
+        .book-item h3 {
+            margin-top: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
             color: #2c3e50;
-            font-size: 1.1rem;
+            border-bottom: 1px solid #e1d2d2;
+            font-size: 1.3rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             width: 100%;
             display: block;
+            text-align: center;
         }
 
         .book-item p {
             margin-bottom: 5px;
             color: #555;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
+            text-align: center;
         }
 
         /* 도서가 없을 때 메시지 */
@@ -129,6 +136,55 @@
             font-size: 1rem;
             color: #888;
             padding: 20px 0;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding: 0;
+            list-style: none;
+            border-radius: .25rem;
+        }
+        .pagination a,
+        .pagination span a {
+            position: relative;
+            display: block;
+            padding: .5rem .75rem;
+            margin-left: -1px;
+            line-height: 1.25;
+            color: #ff7f50;
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .pagination a:first-child {
+            margin-left: 0;
+            border-top-left-radius: .25rem;
+            border-bottom-left-radius: .25rem;
+        }
+        .pagination a:last-child {
+            border-top-right-radius: .25rem;
+            border-bottom-right-radius: .25rem;
+        }
+        .pagination a:hover {
+            color: #ff7f50;
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+        }
+        .pagination .active {
+            z-index: 1;
+            color: #fff;
+            background-color: #ff7f50;
+            border-color: #ff7f50;
+            pointer-events: none;
+        }
+        .pagination > a:first-child {
+            margin-right: 5px;
+        }
+        .pagination > a:last-child {
+            margin-left: 5px;
         }
     </style>
 </head>
@@ -141,34 +197,77 @@
             <div class="series-container">
                 <h3 class="section-title">소장중인 책</h3>
                 <div class="book-list">
-                    <th:block th:if="${!#lists.isEmpty(myBooks)}">
-                        <div class="book-item" th:each="book : ${myBooks}">
+                    <th:block th:if="${!#lists.isEmpty(bookPageInfo.content)}">
+                        <div class="book-item" th:each="book : ${bookPageInfo.content}">
                             <div class="book-info">
-                                <h5 th:text="${book.lb_bo_title}"></h5>
-                                <img th:src="@{/file/{lb_ep_cover_img}(lb_ep_cover_img = ${book.lb_ep_cover_img})}" alt="도서 썸네일">
-                                <p th:text="'작가 : '+${book.lb_au_name}"></p>
+                                <h3 th:text="${book.lb_bo_title}"></h3>
+                                <th:block th:if="${book.lb_ep_cover_img != null}">
+                                    <img th:src="@{/file/{lb_ep_cover_img}(lb_ep_cover_img = ${book.lb_ep_cover_img})}" alt="도서 썸네일">
+                                </th:block>
+                                <th:block th:if="${book.lb_ep_cover_img == null}">
+                                    <img src="/resources/static/img/default_thumb.png" alt="도서 썸네일">
+                                </th:block>
+                                <p class="mt-2" th:text="${book.lb_au_name}"></p>
                             </div>
                         </div>
                     </th:block>
-                    <th:block th:if="${#lists.isEmpty(myBooks)}">
+                    <th:block th:if="${#lists.isEmpty(bookPageInfo.content)}">
                         <div class="no-works">소장중인 도서가 없습니다.</div>
                     </th:block>
                 </div>
-                <hr class="section-divider"> <h3 class="section-title">관심 목록</h3>
+                <th:block th:if="${!#lists.isEmpty(bookPageInfo)}">
+                    <div class="pagination" th:if="${bookPageInfo.totalCount > 0}">
+                        <a th:if="${bookPageInfo.startPage > 1}"
+                        th:href="@{/mylibrary(Bpage=${bookPageInfo.startPage - 1})}">«</a>
+    
+                        <span th:each="i : ${#numbers.sequence(bookPageInfo.startPage, bookPageInfo.endPage)}">
+                            <a th:href="@{/mylibrary(Ipage=${i})}"
+                            th:classappend="${i == bookPageInfo.currentPage} ? 'active' : ''"
+                            th:text="${i}"></a>
+                        </span>
+    
+                        <a th:if="${bookPageInfo.endPage < bookPageInfo.totalPages}"
+                        th:href="@{/mylibrary(Bpage=${bookPageInfo.endPage + 1})}">»</a>
+                    </div>
+                </th:block>
+                <hr class="section-divider">
+
+                <h3 class="section-title">관심 목록</h3>
                 <div class="book-list">
-                    <th:block th:if="${!#lists.isEmpty(myInterests)}">
-                        <div class="book-item" th:each="book : ${myInterests}">
+                    <th:block th:if="${!#lists.isEmpty(interestPageInfo.content)}">
+                        <div class="book-item" th:each="book : ${interestPageInfo.content}">
                             <div class="book-info">
-                                <h5 th:text="${book.it_bo_title}"></h5>
-                                <img th:src="@{/file/{it_ep_cover_img}(it_ep_cover_img = ${book.it_ep_cover_img})}" alt="도서 썸네일">
-                                <p th:text="'작가 : '+${book.it_au_name}"></p>
+                                <h3 th:text="${book.it_bo_title}"></h3>
+                                <th:block th:if="${book.it_ep_cover_img != null}">
+                                    <img th:src="@{/file/{it_ep_cover_img}(it_ep_cover_img = ${book.it_ep_cover_img})}" alt="도서 썸네일">
+                                </th:block>
+                                <th:block th:if="${book.it_ep_cover_img == null}">
+                                    <img src="/resources/static/img/default_thumb.png" alt="도서 썸네일">
+                                </th:block>
+                                <p class="mt-2" th:text="${book.it_au_name}"></p>
                             </div>
                         </div>
+                        
                     </th:block>
-                    <th:block th:if="${#lists.isEmpty(myInterests)}">
+                    <th:block th:if="${#lists.isEmpty(interestPageInfo.content)}">
                         <div class="no-works">소장중인 도서가 없습니다.</div>
                     </th:block>
                 </div>
+                <th:block th:if="${!#lists.isEmpty(interestPageInfo.content)}">
+                    <div class="pagination" th:if="${interestPageInfo.totalCount > 0}">
+                        <a th:if="${interestPageInfo.startPage > 1}"
+                        th:href="@{/mylibrary(Ipage=${interestPageInfo.startPage - 1})}">«</a>
+    
+                        <span th:each="i : ${#numbers.sequence(interestPageInfo.startPage, interestPageInfo.endPage)}">
+                            <a th:href="@{/mylibrary(Ipage=${i})}"
+                            th:classappend="${i == interestPageInfo.currentPage} ? 'active' : ''"
+                            th:text="${i}"></a>
+                        </span>
+    
+                        <a th:if="${interestPageInfo.endPage < interestPageInfo.totalPages}"
+                        th:href="@{/mylibrary(Ipage=${interestPageInfo.endPage + 1})}">»</a>
+                    </div>
+                </th:block>
             </div>
         </div>
         </main>

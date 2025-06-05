@@ -21,4 +21,12 @@ public class LibraryService {
     public List<InterestVO> getMyInterests(int ur_num) {
         return libraryDAO.selectMyInterests(ur_num);
     }
+
+    public List<InterestVO> getInterestListForPage(int ur_num, int pageSize, int offset) {
+        return libraryDAO.selectInterestListForPage(ur_num, pageSize, offset);
+    }
+
+    public List<LibraryVO> getBookListForPage(int ur_num, int pageSize, int offset) {
+        return libraryDAO.selectBookListForPage(ur_num, pageSize, offset);
+    }
 }
