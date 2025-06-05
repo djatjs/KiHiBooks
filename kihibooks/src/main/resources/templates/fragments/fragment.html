@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div th:fragment="keywordRecommend">
+      <div class="keyword-section">
+        <ul class="keyword-list">
+          <li th:each="keyword : ${randomKeywords}" th:text="${keyword.kw_name}">키워드</li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>

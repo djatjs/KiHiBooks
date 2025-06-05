@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <link rel="stylesheet" th:href="@{/css/genre.css}">
+  <title>장르 웹소설</title>
+</head>
+
+<body>
+<section class="container" layout:fragment="content">
+
+  <!-- 메인 배너 -->
+  <div th:replace="~{fragments/banner :: mainBanner}"></div>
+
+  <!-- 버튼 5개 영역 -->
+  <div class="button-row">
+    <a href="#" class="nav-button">#로맨스</a>
+    <a href="#" class="nav-button">#로판</a>
+    <a href="#" class="nav-button">#판타지</a>
+    <a href="#" class="nav-button">#무협</a>
+    <a href="#" class="nav-button">#키워드검색</a>
+  </div>
+
+  <!-- 실시간 랭킹 -->
+  <div>
+    <h2 class="section-title">실시간 랭킹</h2>
+    <div th:replace="~{fragments/realtime :: rankingSection}"></div>
+  </div>
+
+  <!-- 기다리면 무료 -->
+  <div>
+    <div class="section-header">
+      <h2 class="section-title">기다리면 무료</h2>
+      <a th:href="@{/waitfree}" class="more-link">더보기</a>
+    </div>
+    <div class="book-grid">
+      <div class="book-card" th:each="book : ${waitFreeBooks}">
+        <a th:href="@{/book/detail/{id}(id=${book.bo_code})}" class="thumb-wrapper">
+          <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
+        </a>
+        <p class="book-title" th:text="${book.bo_title}">책 제목</p>
+        <p class="book-author" th:text="${book.bo_author}">작가명</p>
+        <p class="book-meta">
+          <span class="highlight-rating"
+                th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal(book.bo_total_rating / book.bo_review_count, 1, 1)} : '0.0')">평점</span>
+          <span>|</span>
+          <span th:text="'(' + ${book.bo_review_count} + ')'">리뷰 수</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 베스트 -->
+  <div>
+    <div class="section-header">
+      <h2 class="section-title">베스트</h2>
+      <a th:href="@{/best}" class="more-link">더보기</a>
+    </div>
+    <div class="book-grid">
+      <div class="book-card" th:each="book : ${bestBooks}">
+        <a th:href="@{/book/detail/{id}(id=${book.bo_code})}" class="thumb-wrapper">
+          <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
+        </a>
+        <p class="book-title" th:text="${book.bo_title}">책 제목</p>
+        <p class="book-author" th:text="${book.bo_author}">작가명</p>
+        <p class="book-meta">
+          <span class="highlight-rating"
+                th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal(book.bo_total_rating / book.bo_review_count, 1, 1)} : '0.0')">평점</span>
+          <span>|</span>
+          <span th:text="'(' + ${book.bo_review_count} + ')'">리뷰 수</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 키워드 추천 -->
+  <div>
+    <div class="section-header">
+      <h2 class="section-title">키워드 추천</h2>
+      <a th:href="@{/book/keyword}" class="more-link">더보기</a>
+    </div>
+    <div th:replace="~{fragments/fragment :: keywordRecommend}"></div>
+  </div>
+
+  <!-- 신작 -->
+  <div>
+    <div class="section-header">
+      <h2 class="section-title">신작 웹소설</h2>
+      <a th:href="@{/book/new-released}" class="more-link">더보기</a>
+    </div>
+    <div class="book-grid">
+      <div class="book-card" th:each="book : ${newBooks}">
+        <a th:href="@{/book/detail/{id}(id=${book.bo_code})}" class="thumb-wrapper">
+          <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
+        </a>
+        <p class="book-title" th:text="${book.bo_title}">책 제목</p>
+        <p class="book-author" th:text="${book.bo_author}">작가명</p>
+        <p class="book-meta">
+          <span class="highlight-rating"
+                th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal(book.bo_total_rating / book.bo_review_count, 1, 1)} : '0.0')">평점</span>
+          <span>|</span>
+          <span th:text="'(' + ${book.bo_review_count} + ')'">리뷰 수</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<script layout:fragment="script">
+  document.addEventListener("DOMContentLoaded", function () {
+    const swiper = new Swiper('#mainBannerSwiper', {
+      loop: true,
+      slidesPerView: 1,
+      autoplay: {
+        delay: 4000,
+        disableOnInteraction: false
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        type: 'fraction',
+        clickable: true,
+        renderFraction: function(currentClass, totalClass){
+          return `<span class="${currentClass}"></span> / <span class="${totalClass}"></span>`;
+        }
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev'
+      },
+      effect: 'slide',
+      breakpoints: {
+        768: { slidesPerView: 1 },
+        1024: { slidesPerView: 1 }
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

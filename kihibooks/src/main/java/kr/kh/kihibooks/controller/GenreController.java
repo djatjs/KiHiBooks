@@ -24,4 +24,8 @@ public class GenreController {
         model.addAttribute("genre", "무협");
         return "genre/martial";
     }
+    @GetMapping("/test")
+    public String testPage(Model model) {
+        return "genre/genre-template"; // 또는 "genre/rofan"
+    }
 }
