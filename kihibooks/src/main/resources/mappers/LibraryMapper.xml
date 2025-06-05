@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.kh.kihibooks.dao.LibraryDAO">
+    <select id="selectMyBooks" resultType="LibraryVO">
+        SELECT b.BO_CODE as lb_bo_code, b.BO_TITLE as lb_bo_title, b.BO_DESCRIPTION as lb_bo_description, e.EP_COVER_IMG as lb_ep_cover_img, a.AU_NAME as lb_au_name
+        FROM library l
+        JOIN episode le ON l.LB_EP_CODE = le.EP_CODE
+        JOIN book b ON le.EP_BO_CODE = b.BO_CODE
+        JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        JOIN
+            (SELECT EP_BO_CODE, MAX(EP_CODE) AS 최신_EP_CODE FROM episode GROUP BY EP_BO_CODE)
+            latest_ep ON b.BO_CODE = latest_ep.EP_BO_CODE
+        JOIN episode e ON latest_ep.EP_BO_CODE = e.EP_BO_CODE AND latest_ep.최신_EP_CODE = e.EP_CODE
+        WHERE l.LB_UR_NUM = #{ur_num}
+        GROUP BY b.BO_CODE, b.BO_TITLE, b.BO_DESCRIPTION, e.EP_COVER_IMG, a.AU_NAME;
+    </select>
+    <select id="selectMyInterests" resultType="InterestVO">
+        SELECT
+            b.BO_CODE as it_bo_code,
+            b.BO_TITLE as it_bo_title,
+            b.BO_DESCRIPTION as it_bo_description,
+            e.EP_COVER_IMG as it_ep_cover_img,
+            a.AU_NAME as it_au_name
+        FROM
+            interest i
+        JOIN
+            book b ON i.IT_BO_CODE = b.BO_CODE
+        LEFT JOIN
+            (
+                SELECT EP_BO_CODE, MAX(EP_CODE) AS 최신_EP_CODE
+                FROM episode
+                GROUP BY EP_BO_CODE
+            ) latest_ep ON b.BO_CODE = latest_ep.EP_BO_CODE
+        LEFT JOIN
+            episode e ON latest_ep.EP_BO_CODE = e.EP_BO_CODE AND latest_ep.최신_EP_CODE = e.EP_CODE
+        JOIN
+            author a ON b.BO_AU_NUM = a.AU_NUM
+        WHERE
+            i.IT_UR_NUM = #{ur_num}
+        GROUP BY
+            b.BO_CODE, b.BO_TITLE, b.BO_DESCRIPTION, e.EP_COVER_IMG, a.AU_NAME;
+    </select>
+</mapper>
