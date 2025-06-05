@@ -268,7 +268,7 @@
 			color: #141414;
 		}
 
-		.none-asset{
+		.none-asset {
 			padding: 15px 14px;
 			text-align: right;
 			font-size: 13px;
@@ -512,7 +512,7 @@
 		}
 
 		.kihipay-charge-label,
-		.kihipay-pay-label {
+		.kihipay-just-pay-label {
 			cursor: pointer;
 			width: 100%;
 			display: flex;
@@ -931,7 +931,7 @@
 						</article>
 					</div>
 					<div class="order-receipt-wrapper">
-						<form id="order_form" method="post">
+						<form id="order_form" method="post" th:action="@{/payment/request}">
 							<article class="order-info-article">
 								<div class="order-info-article-inner-wrapper">
 									<h3 class="order-info-article-title">포인트</h3>
@@ -1005,7 +1005,7 @@
 															<div class="kihipay-payment-wrapper">
 																<div class="kihipay-charge-or-pay">
 																	<label class="kihipay-charge-label">
-																		<input type="checkbox" class="kihipay-charge-checkbox" readonly>
+																		<input type="checkbox" class="kihipay-charge-checkbox" readonly checked>
 																		<span class="kihipay-charge-check-img">
 																			<img src="/resources/static/check/radio.png" alt="체크박스" style="width: 24px;">
 																		</span>
@@ -1045,13 +1045,12 @@
 																		</div>
 																	</div>
 																	<div class="kihipay-pay-wrapper">
-
 																		<div class="pay-ul-wrapper">
 																			<h5 class="kihipay-pay-method-title">결제 방법</h5>
 																			<ul class="kihipay-pay-ul">
 																				<li>
-																					<label class="kihipay-pay-label">
-																						<input type="checkbox" class="kihipay-pay-method-checkbox" readonly>
+																					<label class="kihipay-pay-label" data-method-type="naver">
+																						<input type="checkbox" class="kihipay-pay-method-checkbox" readonly checked>
 																						<span class="kihipay-pay-method-check-img">
 																							<img src="/resources/static/check/radio.png" alt="체크박스"
 																								style="width: 24px;">
@@ -1065,7 +1064,7 @@
 																					</label>
 																				</li>
 																				<li>
-																					<label class="kihipay-pay-label">
+																					<label class="kihipay-pay-label" data-method-type="kakao">
 																						<input type="checkbox" class="kihipay-pay-method-checkbox" readonly>
 																						<span class="kihipay-pay-method-check-img">
 																							<img src="/resources/static/check/circle.png" alt="체크박스"
@@ -1080,7 +1079,7 @@
 																					</label>
 																				</li>
 																				<li>
-																					<label class="kihipay-pay-label">
+																					<label class="kihipay-pay-label" data-method-type="toss">
 																						<input type="checkbox" class="kihipay-pay-method-checkbox" readonly>
 																						<span class="kihipay-pay-method-check-img">
 																							<img src="/resources/static/check/circle.png" alt="체크박스"
@@ -1099,7 +1098,7 @@
 																	</div>
 																</div>
 																<div class="kihipay-charge-or-pay">
-																	<label class="kihipay-pay-label">
+																	<label class="kihipay-just-pay-label">
 																		<input type="checkbox" class="kihipay-pay-checkbox" readonly>
 																		<span class="kihipay-pay-check-img">
 																			<img src="/resources/static/check/circle.png" alt="체크박스" style="width: 24px;">
@@ -1115,7 +1114,7 @@
 																			<h5 class="kihipay-pay-method-title">결제 방법</h5>
 																			<ul class="kihipay-pay-ul">
 																				<li>
-																					<label class="kihipay-pay-label">
+																					<label class="kihipay-pay-label" data-method-type="naver">
 																						<input type="checkbox" class="kihipay-pay-method-checkbox" readonly checked>
 																						<span class="kihipay-pay-method-check-img">
 																							<img src="/resources/static/check/radio.png" alt="체크박스"
@@ -1130,7 +1129,7 @@
 																					</label>
 																				</li>
 																				<li>
-																					<label class="kihipay-pay-label">
+																					<label class="kihipay-pay-label" data-method-type="kakao">
 																						<input type="checkbox" class="kihipay-pay-method-checkbox" readonly>
 																						<span class="kihipay-pay-method-check-img">
 																							<img src="/resources/static/check/circle.png" alt="체크박스"
@@ -1145,7 +1144,7 @@
 																					</label>
 																				</li>
 																				<li>
-																					<label class="kihipay-pay-label">
+																					<label class="kihipay-pay-label" data-method-type="toss">
 																						<input type="checkbox" class="kihipay-pay-method-checkbox" readonly>
 																						<span class="kihipay-pay-method-check-img">
 																							<img src="/resources/static/check/circle.png" alt="체크박스"
@@ -1179,7 +1178,7 @@
 														<div class="kihipay-detail-use">
 															<h4 class="kihipay-detail-text">
 																<span>포인트 사용</span>
-																<span>- 0원</span>
+																<span></span>
 															</h4>
 															<ul class="kihipay-detail-left">
 																<li>
@@ -1188,6 +1187,9 @@
 																</li>
 															</ul>
 														</div>
+													</div>
+													<div class="kihipay-charge-detail-wrapper">
+														
 													</div>
 												</section>
 												<section class="kihipay-checkout-section">
@@ -1212,98 +1214,6 @@
 												</section>
 											</div>
 										</div>
-										<script>
-											document.addEventListener('DOMContentLoaded', function () {
-												const chargeCheckbox = document.querySelector('.kihipay-charge-checkbox');
-												const directPayCheckbox = document.querySelector('.kihipay-pay-checkbox');
-
-												const chargeArea = document.querySelector('.kihipay-charge');
-												const payArea = document.querySelector('.kihipay-pay');
-
-												const chargeCheckImg = document.querySelector('.kihipay-charge-check-img img');
-												const payCheckImg = document.querySelector('.kihipay-pay-check-img img');
-
-												const chargeSelect = document.querySelector('.kihipay-charge-sel');
-												const chargeSelectedText = document.querySelector('.kihipay-charge-selected p');
-
-												function showCharge() {
-													chargeArea.style.display = 'block';
-													payArea.style.display = 'none';
-													chargeCheckImg.src = '/resources/static/check/radio.png';
-													payCheckImg.src = '/resources/static/check/circle.png';
-												}
-
-												function showDirectPay() {
-													chargeArea.style.display = 'none';
-													payArea.style.display = 'block';
-													chargeCheckImg.src = '/resources/static/check/circle.png';
-													payCheckImg.src = '/resources/static/check/radio.png';
-												}
-
-												// 충전 후 결제 선택
-												chargeCheckbox.parentElement.addEventListener('click', function () {
-													showCharge();
-												});
-
-												// 일반 결제 선택
-												directPayCheckbox.parentElement.addEventListener('click', function () {
-													showDirectPay();
-												});
-
-												// 옵션 변경 시 문구 반영
-												chargeSelect.addEventListener('change', function () {
-													const selectedOption = chargeSelect.options[chargeSelect.selectedIndex];
-													chargeSelectedText.textContent = selectedOption.textContent;
-												});
-
-												// 초기 상태
-												showCharge();
-
-											});
-										</script>
-										<script>
-											document.addEventListener('DOMContentLoaded', function () {
-												const checkboxList = document.querySelectorAll('.kihipay-pay-method-checkbox');
-
-												checkboxList.forEach((checkbox, index) => {
-													checkbox.addEventListener('click', function (e) {
-														e.preventDefault(); // readonly이므로 클릭 이벤트 수동 처리
-
-														// 전체 checkbox 순회하면서 상태 초기화
-														checkboxList.forEach((cb, i) => {
-															cb.checked = false;
-															const img = cb.closest('label').querySelector('.kihipay-pay-method-check-img img');
-															img.src = '/resources/static/check/circle.png';
-														});
-
-														// 현재 선택한 checkbox만 체크 처리
-														checkbox.checked = true;
-														const currentImg = checkbox.closest('label').querySelector('.kihipay-pay-method-check-img img');
-														currentImg.src = '/resources/static/check/radio.png';
-													});
-												});
-											});
-										</script>
-										<script>
-											document.addEventListener('DOMContentLoaded', function () {
-												const label = document.querySelector('.kihipay-checkout-label');
-												const checkbox = label.querySelector('.kihipay-checkbox');
-												const img = label.querySelector('.kihipay-checkbox-img img');
-
-												// checkbox 자체 클릭은 무효화
-												checkbox.addEventListener('click', e => e.preventDefault());
-
-												// label 클릭 시 상태 토글
-												label.addEventListener('click', function () {
-													const isChecked = checkbox.checked;
-
-													checkbox.checked = !isChecked;
-													img.src = checkbox.checked
-														? '/resources/static/check/radio.png'
-														: '/resources/static/check/circle.png';
-												});
-											});
-										</script>
 									</div>
 								</div>
 							</article>
@@ -1312,8 +1222,149 @@
 				</section>
 			</div>
 		</div>
+		<script>
+			document.addEventListener("DOMContentLoaded", () => {
+				const pointInput = document.getElementById("use_point");
+				const useAllBtn = document.querySelector(".asset-use-all-btn");
+				const totalAmount = parseInt(document.querySelector(".total-regular-price span").innerText.replace(/[^0-9]/g, ""));
+				const pointEl = document.querySelector("span[data-amount]");
+				const userPoint = parseInt(pointEl.getAttribute("data-amount"));
+				const lackPriceEl = document.querySelector(".price-num");
+
+				const updatePointUsage = (usedPoint) => {
+					pointInput.value = usedPoint.toLocaleString();
+					const lack = totalAmount - usedPoint;
+					lackPriceEl.textContent = lack > 0 ? lack.toLocaleString() : "0";
+				};
+
+				// 초기 설정
+				if (userPoint >= totalAmount) {
+					updatePointUsage(totalAmount);
+				} else {
+					updatePointUsage(userPoint);
+				}
+
+				// 전액 사용 버튼 클릭 시
+				useAllBtn.addEventListener("click", () => {
+					if (userPoint >= totalAmount) {
+						updatePointUsage(totalAmount);
+					} else {
+						updatePointUsage(userPoint);
+					}
+				});
+			});
+
+			document.addEventListener("DOMContentLoaded", function () {
+				// 결제 방식 영역
+				const chargeLabel = document.querySelector(".kihipay-charge-label");
+				const justPayLabel = document.querySelector(".kihipay-just-pay-label");
+				const chargeCheckbox = chargeLabel?.querySelector("input[type='checkbox']");
+				const justPayCheckbox = justPayLabel?.querySelector("input[type='checkbox']");
+				const chargeImg = chargeLabel?.querySelector("img");
+				const justPayImg = justPayLabel?.querySelector("img");
+
+				// 하위 결제 수단 영역
+				const chargeSection = document.querySelector(".kihipay-charge");
+				const paySection = document.querySelector(".kihipay-pay");
+
+				// 결제 수단 라벨들 (네이버, 카카오, 토스)
+				const allPayLabels = document.querySelectorAll(".kihipay-pay-label[data-method-type]");
+
+				// [1] 하위 결제 수단 중 첫 번째(네이버 페이)를 자동 선택
+				function selectFirstMethod(containerSelector) {
+					const container = document.querySelector(containerSelector);
+					if (!container) return;
+
+					const labels = container.querySelectorAll(".kihipay-pay-label[data-method-type]");
+					labels.forEach(function (label, index) {
+						const checkbox = label.querySelector("input");
+						const img = label.querySelector("img");
+
+						if (index === 0) {
+							checkbox.checked = true;
+							img.src = "/resources/static/check/radio.png";
+						} else {
+							checkbox.checked = false;
+							img.src = "/resources/static/check/circle.png";
+						}
+					});
+				}
+
+				// [2] 결제 방식 선택 시
+				chargeLabel?.addEventListener("click", function () {
+					chargeCheckbox.checked = true;
+					chargeImg.src = "/resources/static/check/radio.png";
+
+					justPayCheckbox.checked = false;
+					justPayImg.src = "/resources/static/check/circle.png";
+
+					chargeSection.style.display = "block";
+					paySection.style.display = "none";
+
+					selectFirstMethod(".kihipay-charge");
+				});
+
+				justPayLabel?.addEventListener("click", function () {
+					justPayCheckbox.checked = true;
+					justPayImg.src = "/resources/static/check/radio.png";
+
+					chargeCheckbox.checked = false;
+					chargeImg.src = "/resources/static/check/circle.png";
+
+					chargeSection.style.display = "none";
+					paySection.style.display = "block";
+
+					selectFirstMethod(".kihipay-pay");
+				});
+
+				// [3] 결제 수단 선택 시 (충전 후 결제 + 일반 결제 모두 포함)
+				allPayLabels.forEach(function (label) {
+					label.addEventListener("click", function () {
+						const currentGroup = label.closest(".kihipay-charge") || label.closest(".kihipay-pay");
+						if (!currentGroup) return;
+
+						const groupLabels = currentGroup.querySelectorAll(".kihipay-pay-label[data-method-type]");
+						groupLabels.forEach(function (lbl) {
+							lbl.querySelector("input").checked = false;
+							lbl.querySelector("img").src = "/resources/static/check/circle.png";
+						});
+
+						label.querySelector("input").checked = true;
+						label.querySelector("img").src = "/resources/static/check/radio.png";
+					});
+				});
+
+				// [4] 초기 UI 상태 반영
+				function updateInitialState() {
+					if (chargeCheckbox?.checked) {
+						chargeImg.src = "/resources/static/check/radio.png";
+						justPayImg.src = "/resources/static/check/circle.png";
+						chargeSection.style.display = "block";
+						paySection.style.display = "none";
+						selectFirstMethod(".kihipay-charge");
+					} else if (justPayCheckbox?.checked) {
+						justPayImg.src = "/resources/static/check/radio.png";
+						chargeImg.src = "/resources/static/check/circle.png";
+						chargeSection.style.display = "none";
+						paySection.style.display = "block";
+						selectFirstMethod(".kihipay-pay");
+					} else {
+						chargeSection.style.display = "none";
+						paySection.style.display = "none";
+					}
+
+					// 결제 수단 UI 체크 이미지 초기화
+					allPayLabels.forEach(function (label) {
+						const checkbox = label.querySelector("input");
+						const img = label.querySelector("img");
+						img.src = checkbox.checked ? "/resources/static/check/radio.png" : "/resources/static/check/circle.png";
+					});
+				}
+
+				updateInitialState(); // 페이지 로드시 초기 상태 적용
+			});
+		</script>
 	</main>
-	
 </body>
 
 </html>
