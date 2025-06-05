@@ -1,0 +1,267 @@
+/* ======================== 공통 레이아웃 ======================== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ======================== 섹션 제목 & 헤더 ======================== */
+.section-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 40px;
+  margin-bottom: 16px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.more-link {
+  font-size: 14px;
+  color: #888;
+  text-decoration: none;
+}
+
+/* ===== 상단 버튼 5개 영역 ===== */
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin: 32px 0;
+}
+
+.nav-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nav-button-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.nav-button-icon:hover {
+  background-color: #ffe5dc;
+  border-color: #ff7f50;
+  color: #ff7f50;
+}
+
+.nav-button-text {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+
+/* ======================== 메인 배너 Swiper ======================== */
+.main-banner-container {
+  position: relative;
+  margin-bottom: 30px;
+  height: 500px;
+  overflow: hidden;
+}
+
+#mainBannerSwiper {
+  width: 100%;
+  height: 100%;
+}
+
+#mainBannerSwiper .swiper-wrapper {
+  display: flex;
+}
+
+#mainBannerSwiper .swiper-slide {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.swiper-wrapper,
+.swiper-slide {
+  height: 100%;
+}
+
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* 메인배너 좌우 화살표 */
+.swiper-button-prev,
+.swiper-button-next {
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  background-size: 50% 50%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: white;
+  border-radius: 50%;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.swiper-button-prev {
+  left: 10px;
+  background-image: url('/img/back.png');
+}
+
+.swiper-button-next {
+  right: 10px;
+  background-image: url('/img/next.png');
+}
+
+/* 메인배너 페이징 */
+.swiper-pagination {
+  bottom: 10px !important;
+}
+
+#mainBannerSwiper .swiper-pagination {
+  position: absolute;
+  bottom: 10px;
+  right: 16px;
+  left: auto;
+  transform: none;
+  z-index: 10;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+}
+
+#mainBannerSwiper .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  opacity: 0.7;
+  border-radius: 50%;
+  margin: 0 4px;
+  display: inline-block;
+}
+
+#mainBannerSwiper .swiper-pagination-bullet-active {
+  background: #ff7f50;
+  opacity: 1;
+}
+
+/* ======================== 실시간 랭킹 Swiper ======================== */
+.realtime-swiper {
+  padding: 10px 0;
+}
+
+.realtime-swiper .swiper-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.realtime-swiper .swiper-slide img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.realtime-swiper .book-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* ======================== 도서 카드 공통 ======================== */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+}
+
+.book-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.book-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.book-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.book-author {
+  font-size: 13px;
+  color: #777;
+}
+
+.book-meta {
+  font-size: 13px;
+  color: #999;
+}
+
+.highlight-rating {
+  color: crimson;
+}
+
+/* ======================== 키워드 추천 영역 ======================== */
+.keyword-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.keyword-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.keyword-list li {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  background-color: #f9f9f9;
+  font-size: 13px;
+  cursor: default;
+}
+
+/* ======================== 반응형 처리 ======================== */
+@media (max-width: 800px) {
+  .book-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

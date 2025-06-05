@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <div th:fragment="rankingSection">
+      <div class="swiper" id="realtimeSwiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" th:each="book : ${realtimeBooks}">
+            <a th:href="@{/book/detail/{id}(id=${book.bo_code})}">
+              <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
+              <p class="book-title" th:text="${book.bo_title}">제목</p>
+              <p class="book-author" th:text="${book.bo_author}">작가</p>
+              <p class="book-meta">
+                <span class="highlight-rating"
+                      th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal(book.bo_total_rating / book.bo_review_count, 1, 1)} : '0.0')">평점</span>
+                <span>|</span>
+                <span th:text="'(' + ${book.bo_review_count} + ')'">리뷰 수</span>
+              </p>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
