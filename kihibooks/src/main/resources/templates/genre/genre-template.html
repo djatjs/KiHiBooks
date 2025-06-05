@@ -111,27 +111,34 @@
 </section>
 
 <script layout:fragment="script">
-  const swiper = new Swiper('#mainBannerSwiper', {
-    loop: true,
-    autoplay: {
-      delay: 4000,
-      disableOnInteraction: false
-    },
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
+  document.addEventListener("DOMContentLoaded", function () {
+    const swiper = new Swiper('#mainBannerSwiper', {
+      loop: true,
+      slidesPerView: 1,
+      autoplay: {
+        delay: 4000,
+        disableOnInteraction: false
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        type: 'fraction',
+        clickable: true,
+        renderFraction: function(currentClass, totalClass){
+          return `<span class="${currentClass}"></span> / <span class="${totalClass}"></span>`;
+        }
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev'
+      },
       effect: 'slide',
-      fadeEffect: {
-        crossFade: true
+      breakpoints: {
+        768: { slidesPerView: 1 },
+        1024: { slidesPerView: 1 }
       }
-    },
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true
-    }
-    
+    });
   });
-  
 </script>
+
 </body>
 </html>
