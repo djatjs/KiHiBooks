@@ -4,20 +4,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
 import kr.kh.kihibooks.model.vo.UserRole;
 import kr.kh.kihibooks.service.MemberDetailService;
+import kr.kh.kihibooks.utils.CustomLoginFailureHandler;
+import kr.kh.kihibooks.utils.CustomUser;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     @Autowired
 	MemberDetailService memberDetailService;
+
+    @Autowired
+    private CustomLoginFailureHandler customLoginFailureHandler;
 	
 	@Value("${spring.rememeber.me.key}")
 	String rememberMeKey;
@@ -38,9 +50,10 @@ public class SecurityConfig {
             )
             .formLogin((form) -> form
                 .loginPage("/login")
+                .failureHandler(customLoginFailureHandler)
                 .permitAll()
                 .loginProcessingUrl("/login")
-                .failureUrl("/login?error")
+                // .failureUrl("/login?error")
                 .defaultSuccessUrl("/")
             )
             //자동 로그인 처리
@@ -58,6 +71,25 @@ public class SecurityConfig {
                 .permitAll())
             ;
         return http.build();
+    }
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider() {
+            @Override
+            protected void additionalAuthenticationChecks(UserDetails userDetails,
+                    UsernamePasswordAuthenticationToken authentication)
+                    throws AuthenticationException {
+                super.additionalAuthenticationChecks(userDetails, authentication);
+
+                CustomUser customUser = (CustomUser) userDetails;
+                if ("Y".equals(customUser.getUser().getUr_del())) {
+                    throw new DisabledException("탈퇴한 사용자입니다.");
+                }
+            }
+        };
+        provider.setUserDetailsService(memberDetailService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
     }
 
     @Bean

@@ -17,6 +17,9 @@
     <select id="selectEmail" resultType="UserVO">
         select * from user where ur_email = #{email} and ur_del = "N"
     </select>
+    <select id="selectEmailIncludeDel" resultType="UserVO">
+        select * from user where ur_email = #{email}
+    </select>
     <select id="selectNickName" resultType="int">
         select count(*) from user where ur_nickname = #{nickName}
     </select>

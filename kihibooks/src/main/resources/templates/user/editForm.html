@@ -422,8 +422,20 @@
 					$("#del-btn").on("click", function(){
 						if(!confirm("정말 탈퇴하시겠습니까?")){
 							console.log("탈퇴 취소");
+							return;
 						}
-						console.log("탈퇴");
+						var ur_email = $("#urEmail").val();
+						console.log(ur_email);
+						$.ajax({
+							url : "",
+							method :"",
+							data : {ur_email : ur_email},
+							success : function(res){
+								alert("회원 탈퇴 처리 되었습니다.");
+								window.location.href ="/logout";
+							}
+						})
+
 					});
 				</script>
 			</div>
