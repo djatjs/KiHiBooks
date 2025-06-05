@@ -53,4 +53,6 @@ public interface UserDAO {
 
     boolean updateNickname(int ur_num, String ur_nickname);
 
+    boolean updateUserDeleted(String ur_email);
+
 }

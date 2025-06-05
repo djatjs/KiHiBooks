@@ -262,4 +262,8 @@ public class UserService {
 		return userDAO.updateNickname(ur_num, ur_nickname);
     }
 
+    public boolean deleteUser(String ur_email) {
+		return userDAO.updateUserDeleted(ur_email);
+    }
+
 }

@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>회원정보 변경</title>
-	
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css">
 	<style>
 		.page-modify{
 			width: 100%;
@@ -418,24 +418,55 @@
 						})
 					})
 				</script>
+				<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
 				<script>
 					$("#del-btn").on("click", function(){
-						if(!confirm("정말 탈퇴하시겠습니까?")){
-							console.log("탈퇴 취소");
-							return;
-						}
-						var ur_email = $("#urEmail").val();
-						console.log(ur_email);
-						$.ajax({
-							url : "",
-							method :"",
-							data : {ur_email : ur_email},
-							success : function(res){
-								alert("회원 탈퇴 처리 되었습니다.");
-								window.location.href ="/logout";
+						Swal.fire({
+							title: '정말 탈퇴하시겠습니까?', // 모달 제목
+							text: '한번 탈퇴하면 되돌릴 수 없어요! 😢',
+							icon: 'warning',
+							showCancelButton: true,
+							confirmButtonColor: '#3085d6', // '확인' 버튼 색깔 (원하면 바꿔봐!)
+							cancelButtonColor: '#d33', // '취소' 버튼 색깔 (이것도 원하면!)
+							confirmButtonText: '네, 탈퇴할래요', // '확인' 버튼에 표시될 텍스트
+							cancelButtonText: '아니요, 취소할래요' // '취소' 버튼에 표시될 텍스트
+						}).then((result) => {
+							// 사용자가 버튼을 클릭하면 이 부분이 실행돼! (비동기 처리)
+							if (result.isConfirmed) {
+								// 사용자가 '네, 탈퇴할래요' (확인) 버튼을 눌렀을 때!
+								var ur_email = $("#urEmail").val();
+								$.ajax({
+									url : "/user/resign",
+									method : "post",
+									data : {ur_email : ur_email},
+									success : function(res){
+										if(res){
+											Swal.fire({
+												title: '탈퇴 완료',
+												text: '보고싶을거에요 😢',
+												// icon: 'warning',
+												confirmButtonColor: '#3085d6',
+												confirmButtonText: '메인으로',
+												
+											}).then((result) => {
+												if (result.isConfirmed) {
+													window.location.href ="/logout";
+												}
+											});
+										}
+										else{
+											Swal.fire({
+												title: '탈퇴 신청 실패', // 모달 제목
+												text: '과정중 오류가 생겼습니다. 다시 시도해주세요 😢',
+												icon: 'warning',
+												confirmButtonColor: '#3085d6',
+												confirmButtonText: '확인',
+											})
+										}
+									}
+								})
 							}
-						})
-
+						});
 					});
 				</script>
 			</div>

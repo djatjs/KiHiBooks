@@ -91,4 +91,8 @@
     <update id="updateNickname">
         update user set ur_nickname = #{ur_nickname} where ur_num = #{ur_num}
     </update>
+    <update id="updateUserDeleted">
+        update user set ur_del = 'Y', ur_nickname = '탈퇴한 사용자'
+        where ur_email = #{ur_email}
+    </update>
 </mapper>
