@@ -4,29 +4,26 @@
 <head>
 	<meta charset="UTF-8">
 	<title>회원정보 변경</title>
+	
 	<style>
 		.page-modify{
 			width: 100%;
 		}
-
 		.table-wrap{
 			border-collapse: collapse;
 			border-spacing: 0;
 			border-bottom: 1px solid #e6e8eb;
 			width: 100%;
 		}
-
 		tbody{
 			display: table-row-group;
 			vertical-align: middle;
 			unicode-bidi: isolate;
 			border-color: inherit;
 		}
-
 		.bt{
 			border-top: 1px solid #e6e8eb;
 		}
-
 		th{
 			text-align: right;
 			background: #f2f4f5;
@@ -38,13 +35,11 @@
 			font-size: 14px;
 			vertical-align: top;
 		}
-
 		td{
 			font-size: 14px;
 			text-align: left;
 			padding: 10px 14px;
 		}
-
 		.deleteBtn{
 			appearance: none;
 			outline: 0;
@@ -61,12 +56,10 @@
 			padding: 6px 14px;
 			color: #867c77;
 		}
-
 		.deleteBtn:hover{
 			text-decoration: none;
 			color: #867c77;
 		}
-
 		.input_wrapper input{
 			position: relative;
 			width: 240px;
@@ -78,11 +71,9 @@
 			font-size: 14px;
 			font-weight: 700;
 		}
-
 		.pw_row{
 			margin-top: 10px;
 		}
-
 		.pw_row input{
 			position: relative;
 			width: 240px;
@@ -94,7 +85,6 @@
 			font-size: 14px;
 			font-weight: 700;
 		}
-
 		.changeNickBtn, .changePwBtn {
 			padding: 7px 14px;
 			box-sizing: border-box;
@@ -106,32 +96,35 @@
 			line-height: 1em;
 			vertical-align: baseline;
 			color: #fff;
-			background: #968c89;
-			border: 1px solid #736863;
+			background: #ff7f50;
+			border: 1px solid #fd7848;
 			font-size: 14px;
 		}
-
+		.changeNickBtn:disabled{
+			background: #968c89;
+			border: 1px solid #968c89;
+		}
+		.changePwBtn:disabled{
+			background: #968c89;
+			border: 1px solid #968c89;
+		}
 		.change_pw_guide{
 			padding: 18px 0 3px 0;
 			line-height: 1em;
 		}
-
 		.guide_title{
 			font-weight: 700;
 			color: #736863;
 		}
-
 		ul{
 			padding: 0;
 			margin: 0;
 			list-style-position: inside;
 		}
-		
 		li{
 			margin: 3px 0;
 			padding: 2px 0;
 		}
-
 		.guide{
 			position: relative;
 			padding: 3px 0 5px 10px;
@@ -140,97 +133,301 @@
 			color: #666;
 			font-size: 13px;
 		}
-
 		input::placeholder{
 			color: #a0a0a0;
 		}
+		.error-message {
+			display: none;
+			color: #ff7f50;
+			font-size: 12px;
+			margin-top: 5px;
+		}
 	</style>
 </head>
-
 <body>
 	<main layout:fragment="content" class="container d-flex">
-
 		<div class="page-modify">
 			<h5 style="font-weight: 600; color: #333;">내 정보 관리</h5>
 			<div class="edit-info mt-4">
-				<table class="table-wrap">
-					<tbody>
-						<tr class="ur_email bt">
-							<th>이메일</th>
-							<td>
-								<span th:text="${user.ur_email}">이메일</span>
-								<button type="button" class="deleteBtn" id="del-btn" style="float: right;">회원 탈퇴</button>
-							</td>
-						</tr>
-						<tr class="ur_nickname bt">
-							<th>닉네임</th>
-							<td>
-								<div class="nick_edit">
-									<div class="input_wrapper">
-										<input type="text" name="nickname" id="input_nick" placeholder="닉네임">
+				<input type="hidden" id="urEmail" th:value="${user.ur_email}">
+				<form class="nicknameForm" id="nickname-form">
+					<table class="table-wrap">
+						<tbody>
+							<tr class="ur_email bt">
+								<th>이메일</th>
+								<td>
+									<span th:text="${user.ur_email}">이메일</span>
+									<th:block th:if="${#authentication.principal.authority != 'SUPER' and #authentication.principal.authority != 'EDITOR'}">
+										<button type="button" class="deleteBtn" id="del-btn" style="float: right;">회원 탈퇴</button>
+									</th:block>
+								</td>
+							</tr>
+							<tr class="ur_nickname bt">
+								<th>닉네임</th>
+								<td>
+									<div class="nick_edit">
+										<div class="input_wrapper">
+											<input type="text" name="ur_nickname" id="ur_nickname" placeholder="닉네임">
+											<div id="ur_nickname-error" class="error-message error "></div>
+										</div>
+										<ul class="checkNick"></ul>
+										<div class="change_nick_guide">
+											<ul class="guide_wrapper">
+												<li class="guide">3자 이상, 영문/숫자만 입력해주세요.</li>
+											</ul>
+										</div>
+										<div class="edit_button_wrapper">
+											<button type="submit" class="changeNickBtn" disabled>닉네임 변경</button>
+										</div>
 									</div>
-									<ul class="checkNick"></ul>
-									<div class="change_nick_guide">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</form>
+				
+				<form class="passwordForm">
+					<table class="table-wrap">
+						<tbody>
+							<tr class="ur_pw bt">
+								<th>비밀번호 변경</th>
+								<td>
+									<div class="pw_row">
+										<input type="password" id="current_pw" name="current_pw" title="현재 비밀번호 입력" placeholder="현재 비밀번호">
+										<div id="current_pw-error" class="error-message"></div>
+									</div>
+									<div class="pw_row">
+										<input type="password" id="newPw" name="newPw" title="변경할 비밀번호 입력" placeholder="새 비밀번호">
+										<div id="newPw-error" class="error-message"></div>
+									</div>
+									<div class="pw_row">
+										<input type="password" id="newPw2" name="newPw2" title="변경할 비밀번호 확인" placeholder="새 비밀번호 확인">
+										<div id="newPw2-error" class="error-message"></div>
+									</div>
+									<div class="change_pw_guide">
+										<p class="guide_title">비밀번호 변경 시 유의사항</p>
 										<ul class="guide_wrapper">
-											<li class="guide">3자 이상, 영문/숫자만 입력해주세요.</li>
+											<li class="guide">3자 이상, 영문/숫자/특수문자(!@#$)만 입력해주세요.</li>
+											<li class="guide">닉네임과 동일한 비밀번호는 사용할 수 없습니다.</li>
 										</ul>
 									</div>
 									<div class="edit_button_wrapper">
-										<button type="button" class="changeNickBtn">닉네임 변경</button>
+										<button type="submit" class="changePwBtn" disabled>비밀번호 변경</button>
 									</div>
-								</div>
-							</td>
-						</tr>
-						<tr class="ur_pw bt">
-							<th>비밀번호 변경</th>
-							<td>
-								<div class="pw_row">
-									<input type="password" id="current_pw" name="pw" title="현재 비밀번호 입력" placeholder="현재 비밀번호">
-								</div>
-								<div class="pw_row">
-									<input type="password" id="new_pw" name="pw" title="변경할 비밀번호 입력" placeholder="새 비밀번호">
-								</div>
-								<div class="pw_row">
-									<input type="password" id="check_new_pw" name="pw" title="변경할 비밀번호 한 번 더 입력" placeholder="새 비밀번호 확인">
-								</div>
-								<div class="change_pw_guide">
-									<p class="guide_title">비밀번호 변경 시 유의사항</p>
-									<ul class="guide_wrapper">
-										<li class="guide">3자 이상, 영문/숫자/특수문자(!@#$)만 입력해주세요.</li>
-										<li class="guide">닉네임과 동일한 비밀번호는 사용할 수 없습니다.</li>
-									</ul>
-								</div>
-								<div class="edit_button_wrapper">
-									<button type="button" class="changePwBtn">비밀번호 변경</button>
-								</div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</form>
+				<!-- 닉네임 validate -->
+				<script>
+					// jQuery Validate 설정
+					$(".nicknameForm").validate({
+						rules : {
+							ur_nickname : {
+								required : true,
+								duplicateNickName : true,
+								regex : /^[ㄱ-ㅎ가-힣a-zA-Z0-9]{3,12}$/,
+								notEqualToReservedNickname : true
+							}
+						},
+						messages : {
+							ur_nickname : {
+								required : "·닉네임은 필수 항목입니다.",
+								duplicateNickName : "·이미 사용중인 닉네임입니다.",
+								regex : "·닉네임은 한글, 영어, 숫자만 가능하며 3~12자입니다.",
+								notEqualToReservedNickname : "·사용할 수 없는 닉네임입니다."
+							}
+						},
+						errorPlacement: function (error, element) {
+							const name = element.attr("name");
+							$(`#${name}-error`).html(error).show();
+						},
+						success: function (label, element) {
+							const name = $(element).attr("name");
+							$(`#${name}-error`).html("").hide();
+						}
+					});
+					
+					// 커스텀 메서드
+					$.validator.addMethod("regex", function(value, element, regex){
+						var re = new RegExp(regex);
+						return this.optional(element) || re.test(value);
+					}, "형식을 확인하세요.");
+					$.validator.addMethod("duplicateNickName", function(value, element){
+						return checkNickName(value);
+					}, "이미 사용 중인 닉네임입니다.");
+					$.validator.addMethod("notEqualToReservedNickname", function(value, element){
+						const reservedNicknames = [
+							"탈퇴한사용자",
+							"운영자",
+							"관리자",
+							"admin",
+							"administrator",
+							"testuser",
+							"씨발", "개새끼", "지랄", "병신" // 예시 비속어 (실제 목록은 더 상세해야 합니다)
+						];
+						const lowerCaseValue = value.toLowerCase();
+						return this.optional(element) || !reservedNicknames.includes(lowerCaseValue);
+					}, "사용할 수 없는 닉네임입니다.");
+
+					//닉네임 중복 체크
+					function checkNickName(nickName){
+						let res = true;
+						$.ajax({
+							async : false,
+							url: "/check/nickName",
+							method : "POST",
+							data : nickName,
+							contentType: "text/plain",
+							success : function(data){
+								res = data === true;
+							},
+							error : function(){
+								res = false;
+							}
+						});
+						return res;
+					}
+					// 닉네임 필드의 모든 유효성 검사 결과를 종합하여 버튼 상태를 결정하는 함수
+					function checkOverallNicknameValidity() {
+						const isFormValid = $(".nicknameForm").valid();
+						$(".changeNickBtn").prop("disabled", !isFormValid);
+					}
+					$("#ur_nickname").on("input", function() {
+						checkOverallNicknameValidity();
+					});
+				</script>
+				<!-- 비번 validate -->
+				<script>
+					$(".passwordForm").validate({
+						rules : {
+							current_pw : {
+								required : true,
+								checkPw : true
+							},
+							newPw : {
+								required : true,
+								regex : /^[a-zA-Z0-9!@#$]{3,12}$/
+							},
+							newPw2 : {
+								equalTo : newPw
+							}
+						},
+						messages : {
+							current_pw : {
+								required : "·현재 비밀번호를 입력해주세요.",
+								checkPw : "·비밀번호를 올바르게 입력해주세요."
+							},
+							newPw : {
+								required : "·비번은 필수 항목입니다.",
+								regex : "·비번은 영어, 숫자, 특수문자(!@#$)로 이루어져 있으며, 3~12자입니다."
+							},
+							newPw2 : {
+								equalTo : "·비번과 비번 확인이 같지 않습니다."
+							}
+						},
+						errorPlacement: function (error, element) {
+							const name = element.attr("name");
+							$(`#${name}-error`).html(error).show();
+						},
+						success: function (label, element) {
+							const name = $(element).attr("name");
+							$(`#${name}-error`).html("").hide();
+						},
+						onkeyup: togglePwButton,
+						onfocusout: togglePwButton,
+						onchange: togglePwButton
+					});
+
+					$.validator.addMethod("checkPw", function(value, element){
+						return checkPw(value);
+					}, "비밀번호가 일치하지 않습니다.");
+					
+					//비번 일치 체크
+					function checkPw(pw){
+						let res = false;
+						$.ajax({
+							async: false,
+							url: "/edit/checkPw",
+							method: "post",
+							data: { pw : pw },
+							success: function (data) {
+								res = data === true;
+							},
+							error : function(){
+								res = false;
+							}
+						});
+						return res;
+					}
+
+					function togglePwButton() {
+						const isFormValid = $(".passwordForm").valid();
+						$(".changePwBtn").prop("disabled", !isFormValid);
+					}
+				</script>
+				<!-- 닉네임 변경 처리 -->
+				<script>
+					$(".nicknameForm").on("submit", function(event){
+						event.preventDefault();
+						var nickname = $("#ur_nickname").val();
+						if(!confirm(nickname+"으로 닉네임을 변경하시겠습니까?"))return;
+
+    					// Ajax 닉네임 변경 요청
+						$.ajax({
+							url: "/edit/changeNickname",
+							type: "POST",
+							data: {nickname: nickname},
+							success: function(res) {
+								if(res){
+									alert("닉네임이 성공적으로 변경되었습니다.");
+									location.reload();
+								}else{alert("닉네임 변경에 실패했습니다.");}
+							},
+							error: function() {
+								alert("닉네임 변경에 실패했습니다.");
+							}
+						});
+					})
+				</script>
+				<script>
+					$(".passwordForm").on("submit", function(event){
+						event.preventDefault();
+						var newPw = $("#newPw").val();
+						var ur_email = $("#urEmail").val();
+						const userVO = {
+							ur_email: ur_email,
+							ur_pw: newPw
+						};
+						if(!confirm("비밀번호를 변경하시겠습니까?"))return;
+						$.ajax({
+							url : "/resetPw",
+							method : "post",
+							data: JSON.stringify(userVO),
+							contentType: "application/json",
+							success : function(res){
+								if(res){
+									alert("비밀번호가 성공적으로 변경되었습니다. 다시 로그인해주세요.");
+									window.location.href ="/logout";
+								}
+								else{
+									alert("비밀번호 변경에 실패했습니다.");
+								}
+							}
+						})
+					})
+				</script>
 				<script>
 					$("#del-btn").on("click", function(){
 						if(!confirm("정말 탈퇴하시겠습니까?")){
 							console.log("탈퇴 취소");
 						}
 						console.log("탈퇴");
-
 					});
-					// $(".changeNickBtn").on("click", function(){
-					// 	var nickname = $("#input_nick").val();
-					// 	var checkNick = $(".checkNick");
-					// 	var guide = $(".guide_wrapper");
-					// 	var guideTitle = $(".guide_title");
-					// 	var guideGuide = $(".guide");
-					// 	var nick = $(".ur_nickname");
-					// 	var nickGuide = $(".nick_guide");
-					// 	var nickGuideTitle = $(".nick_guide_title");
-					// 	var nickGuideGuide = $(".nick_guide_guide");
-					// })
 				</script>
 			</div>
 		</div>
-
 	</main>
 </body>
-
 </html>

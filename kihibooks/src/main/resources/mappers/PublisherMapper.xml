@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.kh.kihibooks.dao.PublisherDAO">
     <select id="selectPublisher" resultType="PublisherVO">
-        select * from publisher where pu_name = #{pu_name}
+        select * from publisher where pu_name = #{pu_name} and pi_del = 'N'
     </select>
     <insert id="insertPublisher">
         insert into publisher(pu_name, pu_code)
@@ -12,17 +12,17 @@
         SELECT p.PU_CODE, p.PU_NAME, u.UR_EMAIL FROM publisher p
         JOIN publisher_id pi ON p.PU_CODE = pi.PI_PU_CODE
         JOIN user u ON pi.PI_UR_NUM = u.UR_NUM
-        where pi.pi_authority = 'SUPER'
+        where pi.pi_authority = 'SUPER' and pi_del = 'N'
         ORDER BY p.PU_CODE ASC;
     </select>
     <select id="selectPublisherId" resultType="PublisherIdVO">
-        select * from publisher_id where pi_ur_num = #{pi_ur_num} and pi_pu_code = #{pi_pu_code}
+        select * from publisher_id where pi_ur_num = #{pi_ur_num} and pi_pu_code = #{pi_pu_code} and pi_del = 'N'
     </select>
     <insert id="insertPublisherId">
         insert into publisher_id(pi_ur_num, pi_pu_code, pi_authority) values(#{pi_ur_num}, #{pi_pu_code}, #{pi_authority})
     </insert>
     <select id="selectPublisherIdByNum" resultType="PublisherIdVO">
-        select pi_pu_code FROM publisher_id WHERE pi_ur_num = #{ur_num}
+        select pi_pu_code FROM publisher_id WHERE pi_ur_num = #{ur_num} and pi_del = 'N'
     </select>
     <insert id="insertEditor">
         insert into publisher_id (pi_authority, pi_pu_code, pi_ur_num)
@@ -31,9 +31,9 @@
     <select id="getLatestPuCode" resultType="String">
         select max(pi_pu_code) from publisher_id
     </select>
-    <delete id="deleteEditorByUserNum">
-        DELETE FROM publisher_id WHERE pi_ur_num = #{userNum}
-    </delete>
+    <update id="deleteEditorByUserNum">
+        update publisher_id set pi_del = 'Y' where pi_ur_num = #{userNum}
+    </update>
     <select id="selectEditorList" resultType="EditorVO">
         SELECT u.UR_NICKNAME AS ur_nickname,
             u.UR_EMAIL AS ur_email,
@@ -43,7 +43,7 @@
         FROM publisher_id pi
         JOIN user u ON pi.PI_UR_NUM = u.UR_NUM
         JOIN publisher p ON pi.PI_PU_CODE = p.PU_CODE
-        WHERE pi.PI_PU_CODE = #{puCode}
+        WHERE pi.PI_PU_CODE = #{puCode} and pi_del = 'N'
         AND pi.PI_AUTHORITY = 'EDITOR'
         ORDER BY ur_nickname ASC
         LIMIT #{limit} OFFSET #{offset}
@@ -52,13 +52,24 @@
         SELECT COUNT(*)
         FROM publisher_id
         WHERE PI_PU_CODE = #{puCode}
-        AND PI_AUTHORITY = 'EDITOR'
+        AND PI_AUTHORITY = 'EDITOR' and pi_del = 'N'
     </select>
     <select id="selectEditors" resultType="EditorVO">
         select * from publisher
         join publisher_id on pi_pu_code = pu_code
         join user on ur_num = pi_ur_num
-        where pu_code = #{pu_code} and pi_authority = 'EDITOR'
+        where pu_code = #{pu_code} and pi_authority = 'EDITOR' and pi_del = 'N'
         order by ur_nickname asc
+    </select>
+    <select id="countEditorHaveBook" resultType="int">
+        select count(*) from user
+        join publisher_id on PI_UR_NUM = UR_NUM
+        join book on BO_PI_NUM = PI_NUM
+        where ur_num = #{userNum}
+    </select>
+    <select id="selectSuperNum" resultType="int">
+        select pi_num from publisher_id
+        join publisher on pi_pu_code = pu_code
+        where pi_authority = 'SUPER' and pu_code = #{pu_code}
     </select>
 </mapper>

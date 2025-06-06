@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>기다리면 무료</title>
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .filter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .sort-options {
+      display: flex;
+      gap: 16px;
+      font-size: 15px;
+    }
+
+    .sort-option {
+      cursor: pointer;
+      color: #aaa;
+      text-decoration: none;
+    }
+    .sort-option:hover {
+      color: #aaa;
+      text-decoration: none;
+    }
+
+    .sort-option.active {
+      color: #111;
+      font-weight: bold;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-box input[type="text"] {
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      height: 34px;
+    }
+
+    .search-box button {
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #f5f5f5;
+      cursor: pointer;
+    }
+
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .book-card {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .thumb-wrapper {
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+      display: block;
+    }
+
+    .thumb-wrapper img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+
+    .badge {
+      position: absolute;
+      font-size: 12px;
+      padding: 2px 6px;
+      color: white;
+      border-radius: 4px;
+      background-color: red;
+    }
+
+    .badge.left {
+      top: 6px;
+      left: 6px;
+      background-color: #ff7f50;
+    }
+
+    .badge.right {
+      top: 6px;
+      right: 6px;
+      background-color: #666;
+    }
+
+    .title {
+      font-weight: bold;
+      font-size: 14px;
+      margin-top: 6px;
+      white-space: nowrap;
+      max-width: 175px;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .meta {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .highlight-rating {
+      color: crimson;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 30px;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .pagination a {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 32px;
+      height: 32px;
+      padding: 0 8px;
+      border: 1px solid #ddd;
+      color: #333;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+      line-height: 1;
+      box-sizing: border-box;
+    }
+
+    .pagination a:hover {
+      background-color: #f0f0f0;
+    }
+
+    .pagination a.active {
+      background-color: #111;
+      color: white;
+      border-color: #111;
+    }
+    .no-result {
+      margin-top: 80px;
+      text-align: center;
+      color: #888;
+      font-size: 18px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 8px 16px;
+      background-color: #ff7f50; /* 메인색 */
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+  </style>
+</head>
+
+<body>
+<div layout:fragment="content" class="container">
+
+  <!-- 필터 헤더 -->
+  <div class="filter-header">
+    <!-- 좌측 정렬 탭 -->
+    <div class="sort-options">
+      <a th:href="@{/book/wait_for_free(sort='recent', keyword=${keyword})}" 
+         th:class="'sort-option ' + (${sort} == 'recent' ? 'active' : '')">최신순</a>
+      <a th:href="@{/book/wait_for_free(sort='popular', keyword=${keyword})}" 
+         th:class="'sort-option ' + (${sort} == 'popular' ? 'active' : '')">인기순</a>
+      <a th:href="@{/book/wait_for_free(sort='rating', keyword=${keyword})}" 
+         th:class="'sort-option ' + (${sort} == 'rating' ? 'active' : '')">평점순</a>
+      <a th:href="@{/book/wait_for_free(sort='review', keyword=${keyword})}" 
+         th:class="'sort-option ' + (${sort} == 'review' ? 'active' : '')">리뷰순</a>
+    </div>
+
+    <!-- 우측 검색창 -->
+    <div class="search-box">
+      <form th:action="@{/book/wait_for_free}" method="get">
+        <input type="hidden" name="sort" th:value="${sort}" />
+        <input type="text" name="keyword" placeholder="제목 검색" th:value="${keyword != null} ? ${keyword} : ''" />
+        <button type="submit">검색</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 결과 없음 -->
+  <div th:if="${#lists.isEmpty(books)}" class="no-result">
+    <p th:text="'\'' + ${keyword} + '\' 에 대한 결과가 없습니다.'"></p>
+    <a th:href="@{/book/wait_for_free}" class="back-btn">돌아가기</a>
+  </div>
+
+  <!-- 도서 리스트 -->
+  <div class="book-grid" th:if="${!#lists.isEmpty(books)}">
+    <div class="book-card" th:each="book : ${books}">
+      <a class="thumb-wrapper">
+        <img th:src="@{'/resources/static/covers/cover' + ${bookStat.index + 1} + '.png'}" />
+        <span class="badge left">기다무</span>
+        <span class="badge right">완결</span>
+      </a>
+      <p class="title" th:text="${book.bo_title}">도서 제목</p>
+      <p class="meta" th:text="${book.bo_author}">작가</p>
+      <p class="meta">
+        <span class="highlight-rating" th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal(book.bo_total_rating / book.bo_review_count / 2, 1, 1)} : '0.0')">0.0</span>
+        <span>|</span>
+        <span th:text="${book.bo_review_count}">0</span>
+      </p>
+      <p class="meta" th:text="'총 ' + ${book.bo_total_episode} + '화'">총 회차</p>
+    </div>
+  </div>
+
+  <!-- 페이지네이션 -->
+  <div class="pagination" th:if="${pageInfo.totalPages > 1}">
+    <a th:if="${pageInfo.currentPage > 1}" 
+       th:href="@{|/book/wait_for_free?page=${pageInfo.currentPage - 1}&sort=${sort}&keyword=${keyword}|}">&laquo;</a>
+
+    <span th:each="i : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}">
+      <a th:href="@{|/book/wait_for_free?page=${i}&sort=${sort}&keyword=${keyword}|}"
+         th:class="${pageInfo.currentPage == i} ? 'active' : ''"
+         th:text="${i}">1</a>
+    </span>
+
+    <a th:if="${pageInfo.currentPage < pageInfo.totalPages}" 
+       th:href="@{|/book/wait_for_free?page=${pageInfo.currentPage + 1}&sort=${sort}&keyword=${keyword}|}">&raquo;</a>
+  </div>
+
+</div>
+</body>
+</html>

@@ -130,7 +130,8 @@
 					ur_nickname : {
 						required : true,
 						duplicateNickName : true,
-						regex : /^[ㄱ-ㅎ가-힣a-zA-Z0-9]{3,12}$/
+						regex : /^[ㄱ-ㅎ가-힣a-zA-Z0-9]{3,12}$/,
+						notEqualToReservedNickname : true
 					},
 					ur_pw : {
 						required : true,
@@ -150,7 +151,8 @@
 					ur_nickname : {
 						required : "·닉네임은 필수 항목입니다.",
 						duplicateNickName : "·이미 사용중인 닉네임입니다.",
-						regex : "·닉네임은 영어, 숫자로 이루어져 있으며, 3~12자입니다."
+						regex : "·닉네임은 영어, 숫자로 이루어져 있으며, 3~12자입니다.",
+						notEqualToReservedNickname : "·사용할 수 없는 닉네임입니다."
 					},
 					ur_pw : {
 						required : "·비번은 필수 항목입니다.",
@@ -186,11 +188,19 @@
 			$.validator.addMethod("duplicateNickName", function(value, element){
 				return this.optional(element) || checkNickName(value);
 			}, "이미 사용중인 닉네임입니다.");
-			/**
-			 * 아이디가 주어지면 사용 가능여부를 반환하는 함수
-			 * @params id 중복 검사를 할 아이디
-			 * @return 사용 가능 여부. true 사용 가능, false 이미 사용 중
-			*/
+			$.validator.addMethod("notEqualToReservedNickname", function(value, element){
+				const reservedNicknames = [
+					"탈퇴한사용자",
+					"운영자",
+					"관리자",
+					"admin",
+					"administrator",
+					"testuser",
+					"씨발", "개새끼", "지랄", "병신" // 예시 비속어 (실제 목록은 더 상세해야 합니다)
+				];
+				const lowerCaseValue = value.toLowerCase();
+				return this.optional(element) || !reservedNicknames.includes(lowerCaseValue);
+			}, "사용할 수 없는 닉네임입니다.");
 			function checkNickName(nickName){
 				$.ajax({
 					async : false,

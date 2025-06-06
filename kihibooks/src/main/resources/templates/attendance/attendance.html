@@ -40,6 +40,8 @@
     .date-label {
       font-weight: bold;
       font-size: 15px;
+      position: relative;
+      z-index: 1;
     }
 
     .stamp {
@@ -51,6 +53,7 @@
       background-position: center;
       opacity: 0.6;
       pointer-events: none;
+      z-index: 0;
     }
 
     .today {
@@ -195,6 +198,8 @@
 
   renderCalendar();
 
+  let reloadAfterClose = false;
+
   $("#checkAttendanceBtn").click(function () {
     if (!isLoggedIn) {
       showModal("⚠ 로그인 후 이용 가능합니다.");
@@ -206,8 +211,8 @@
       type: "POST",
       success: function (response) {
         if (response.status === "success") {
-          showModal(`🎉 출석 완료!<br>${response.point}P<br>${response.message}`);
-          location.reload();
+          const msg = `🎉 출석 완료!<br>${response.point}P<br>${response.message}`;
+          showModal(msg,true);
         } else if (response.status === "already") {
           showModal("⚠ 오늘은 이미 출석하셨습니다.");
         } else {
@@ -219,14 +224,21 @@
       }
     });
   });
+  
+  
 
-  function showModal(msg) {
+  function showModal(msg, shouldReload = false) {
+    reloadAfterClose = shouldReload;
     $("#modalMessage").html(msg);
     $("#attendanceModal").fadeIn();
   }
 
   $("#closeModal").click(function () {
-    $("#attendanceModal").fadeOut();
+    $("#attendanceModal").fadeOut(()=>{
+      if(reloadAfterClose){
+        location.reload();
+      }
+    });
   });
 </script>
 </div>

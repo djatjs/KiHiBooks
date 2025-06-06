@@ -84,4 +84,8 @@
         join author on bo_au_num = au_num
         where ep_code = #{ep_code}
     </select>
+
+    <update id="updateNickname">
+        update user set ur_nickname = #{ur_nickname} where ur_num = #{ur_num}
+    </update>
 </mapper>

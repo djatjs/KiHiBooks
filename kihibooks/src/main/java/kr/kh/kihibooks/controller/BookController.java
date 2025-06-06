@@ -48,6 +48,7 @@ import kr.kh.kihibooks.service.KeywordService;
 import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.utils.CustomUser;
 import kr.kh.kihibooks.utils.PageConstants;
+import kr.kh.kihibooks.utils.PaginationUtils;
 
 @Controller
 public class BookController {
@@ -312,9 +313,21 @@ public class BookController {
         return "book/keyword :: bookResultFragment";
     }
 
+    @GetMapping("/book/wait_for_free")
+    public String waitfreePage(@RequestParam(defaultValue = "1") int page,
+                            @RequestParam(defaultValue = "recent") String sort,
+                             @RequestParam(required = false) String keyword, 
+                             Model model) {
 
+        PageInfo<BookVO> pageInfo = bookService.getWaitFreeBooks(page, sort, keyword);
 
-
+        model.addAttribute("books", pageInfo.getContent());
+        model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("sort", sort);
+        model.addAttribute("keyword", keyword);
+        
+        return "book/wait_for_free";
+    }
     
     @ResponseBody
     @GetMapping("/book/getSubCategory")

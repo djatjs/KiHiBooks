@@ -34,8 +34,6 @@ public class PublisherService {
         if(pb!= null){
             return false;
         }
-
-        //출판사 등록
         return publisherDAO.insertPublisher(pu_name, pu_code);
     }
 
@@ -51,8 +49,6 @@ public class PublisherService {
                 throw new RuntimeException("코드 형식 오류: " + latestCode);
             }
         }
-
-        // "P" 접두사 + 3자리 숫자 형식 (예: P001, P002, ...)
         return String.format("P%03d", nextNumber);
     }
 
@@ -95,7 +91,7 @@ public class PublisherService {
 
     @Transactional
     public boolean deleteEditor(int userNum) {
-        // 1. 출판사 ID 테이블에서 해당 유저 삭제
+        // 1. 출판사 ID 테이블에서 해당 유저 PI_NUM = "Y"로 수정
         if (!publisherDAO.deleteEditorByUserNum(userNum)) {
             throw new RuntimeException("에디터 삭제 실패");
         }
@@ -115,6 +111,13 @@ public class PublisherService {
 
     public List<EditorVO> getEditorList(String pu_code) {
         return publisherDAO.selectEditors(pu_code);
+    }
+
+    public boolean checkHaveBook(int userNum) {
+        if(publisherDAO.countEditorHaveBook(userNum) == 0){
+            return false;
+        }
+        return true;
     }
     
 }

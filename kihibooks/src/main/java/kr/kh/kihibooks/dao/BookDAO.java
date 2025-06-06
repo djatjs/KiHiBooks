@@ -1,9 +1,11 @@
 package kr.kh.kihibooks.dao;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.SqlSession;
 
 import kr.kh.kihibooks.model.vo.BookKeywordVO;
 import kr.kh.kihibooks.model.vo.BookVO;
@@ -23,6 +25,13 @@ public interface BookDAO {
 	List<BookVO> selectTopBooks();
 
 	List<BookVO> selectWaitFreeBooks();
+	
+	List<BookVO> selectWaitFreeBooksFiltered(@Param("sort")String sort, 
+		@Param("keyword")String keyword, 
+		@Param("offset")int offset, 
+		@Param("limit")int limit);
+
+	int countWaitFreeBooksFiltered(String keyword);
 
 	List<BookVO> selectNewBooks();
 
@@ -150,8 +159,20 @@ public interface BookDAO {
 
 	Integer getNoticeCount(String bo_code);
 
-	List<NoticeVO> selectNoticeList(@Param("bo_code") String bo_code, @Param("limit") int pageSize,
-			@Param("offset") int offset);
+	List<NoticeVO> selectNoticeList(@Param("bo_code") String bo_code, @Param("limit") int pageSize, @Param("offset") int offset);
 
 	Integer getBookCount(String pu_code);
+
+    List<BookVO> getPublishersBookList(String pu_code);
+
+	boolean changeEditor(@Param("bo_code") String bo_code, @Param("pi_num") int pi_num);
+
+	List<BookVO> getEditorsBookListToPage(@Param("pi_num") int pi_num, @Param("limit") int pageSize, @Param("offset") int offset);
+
+	NoticeVO selectNotice(int nt_num);
+
+	boolean updateNotice(NoticeVO nt);
+
+	boolean deleteNotice(int nt_num);
+
 }

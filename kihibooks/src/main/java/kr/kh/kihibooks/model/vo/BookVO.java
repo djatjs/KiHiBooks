@@ -28,5 +28,6 @@ public class BookVO {
     private String bo_sub_cate;
     private int bo_like_count;
     private String bo_thumbnail;
+    private String bo_editor;
     private List<KeywordVO> keywordList;
 }

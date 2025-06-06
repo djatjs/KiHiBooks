@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import kr.kh.kihibooks.dao.BookDAO;
 import kr.kh.kihibooks.dao.KeywordDAO;
+import kr.kh.kihibooks.dao.PublisherDAO;
 import kr.kh.kihibooks.model.vo.BookKeywordVO;
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
@@ -42,6 +43,9 @@ public class BookService {
     BookDAO bookDAO;
 
     @Autowired
+    PublisherDAO publisherDao;
+
+    @Autowired
     KeywordDAO keywordDao;
 
     @Autowired
@@ -62,6 +66,16 @@ public class BookService {
 
     public List<BookVO> getWaitFreeBooks() {
         return bookDAO.selectWaitFreeBooks();
+    }
+
+    public PageInfo<BookVO> getWaitFreeBooks(int page, String sort, String keyword) {
+        int size = PageConstants.PAGE_SIZE;
+        int offset = (page - 1) * size;
+
+        List<BookVO> books = bookDAO.selectWaitFreeBooksFiltered(sort, keyword, offset, size);
+        int totalCount = bookDAO.countWaitFreeBooksFiltered(keyword);
+
+        return PaginationUtils.paginate(books, totalCount, page, size, PageConstants.BLOCK_SIZE);
     }
 
     public List<BookVO> getNewBooks() {
@@ -491,5 +505,37 @@ public class BookService {
         }
 
         return epList;
+    }
+
+    public List<BookVO> getPublishersBookList(String pu_code) {
+        return bookDAO.getPublishersBookList(pu_code);
+    }
+
+    public boolean changeEditor(String bo_code, int pi_num) {
+        return bookDAO.changeEditor(bo_code, pi_num);
+    }
+
+    public boolean keepBook(String bo_code, String pu_code) {
+        int superNum = publisherDao.selectSuperNum(pu_code);
+        return bookDAO.changeEditor(bo_code, superNum);
+    }
+
+    public List<BookVO> getEditorsBookListToPage(int pi_num, int pageSize, int offset) {
+        return bookDAO.getEditorsBookListToPage(pi_num, pageSize, offset);
+    }
+
+    public NoticeVO getNotice(int nt_num) {
+        return bookDAO.selectNotice(nt_num);
+    }
+
+    public boolean updateNotice(NoticeVO nt) {
+        if(nt == null || nt.getNt_title() == null || nt.getNt_content() == null){
+            return false;
+        }
+        return bookDAO.updateNotice(nt);
+    }
+
+    public boolean deleteNotice(int nt_num) {
+        return bookDAO.deleteNotice(nt_num);
     }
 }

@@ -49,4 +49,6 @@ public interface UserDAO {
 
     EpisodeVO getEpisodeByCode(String ep_code);
 
+    boolean updateNickname(int ur_num, String ur_nickname);
+
 }

@@ -405,7 +405,7 @@ layout:decorate="~{layout/layout.html}">
 													<th th:text="${#strings.substring(notice.nt_date, 0, 16)}"></th>
 													<td class="direct-view-wrapper">
 														<a th:href="@{/editor/updateNotice/{nt_num}(nt_num=${notice.nt_num})}" class="update-btn">수정</a>
-														<button class="delete-btn">삭제</button>
+														<button class="delete-btn" th:data-nt_num="${notice.nt_num}" th:data-bo_code="${notice.nt_bo_code}">삭제</button>
 													</td>
 												</tr>
 											</table>
@@ -430,6 +430,28 @@ layout:decorate="~{layout/layout.html}">
 				</div>
 			</div>
 		</div>
+		<script>
+			$(".delete-btn").on("click", function(){
+				// const bo_code = $(this).data("bo_code");
+				const nt_num = $(this).data("nt_num");
+				$.ajax({
+					url : "/editor/deleteNotice",
+					method : "post",
+					data : {
+						nt_num : nt_num
+					},
+					success : function(res){
+						if(res){
+							alert("공지 삭제 완료");
+							location.reload();
+						}
+						else{
+							alert("공지 삭제 실패");
+						}
+					}
+				})
+			})
+		</script>
 	</main>
 </body>
 </html>
