@@ -88,4 +88,31 @@
     <update id="updateNickname">
         update user set ur_nickname = #{ur_nickname} where ur_num = #{ur_num}
     </update>
+
+    <select id="getUrItNum" resultType="Integer">
+        select it_num from interest
+        where it_ur_num = #{ur_num}
+    </select>
+
+    <select id="getUrNsNum" resultType="Integer">
+        select ns_num from noti_set
+        where ns_ur_num = #{ur_num}
+    </select>
+
+    <insert id="insertInterest">
+        insert into interest(it_ur_num, it_bo_code)
+        value(#{ur_num}, #{bo_code})
+    </insert>
+    <delete id="deleteInterest">
+        delete from interest
+        where it_ur_num = #{ur_num} and it_bo_code = #{bo_code}
+    </delete>
+    <insert id="insertNotiSet">
+        insert into noti_set(ns_ur_num, ns_bo_code)
+        value(#{ur_num}, #{bo_code})
+    </insert>
+    <delete id="deleteNotiSet">
+        delete from noti_set
+        where ns_ur_num = #{ur_num} and ns_bo_code = #{bo_code}
+    </delete>
 </mapper>

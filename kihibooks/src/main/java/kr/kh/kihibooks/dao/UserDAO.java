@@ -51,4 +51,16 @@ public interface UserDAO {
 
     boolean updateNickname(int ur_num, String ur_nickname);
 
+    Integer getUrItNum(int ur_num);
+
+    Integer getUrNsNum(int ur_num);
+
+    boolean insertInterest(int ur_num, String bo_code);
+
+    boolean deleteInterest(int ur_num, String bo_code);
+
+    boolean insertNotiSet(int ur_num, String bo_code);
+
+    boolean deleteNotiSet(int ur_num, String bo_code);
+
 }

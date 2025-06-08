@@ -13,4 +13,6 @@ public class UserVO {
 	String ur_gender;
 	String ur_year;
 	String ur_del;
+	int ur_it_num;
+	int ur_ns_num;
 }

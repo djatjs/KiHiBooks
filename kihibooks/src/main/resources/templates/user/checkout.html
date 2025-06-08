@@ -987,12 +987,6 @@
 									<div id="kihipay">
 										<div class="kihipay-wrapper">
 											<div class="kihipay-wrap">
-												<div class="kihipay-banner">
-													<a th:href="@{/order/checkout/point}">
-														<img src="/resources/static/banners/point_banner.png" alt="포인트 충전 배너"
-															class="kihipay-banner">
-													</a>
-												</div>
 												<section class="kihipay-method-section">
 													<h2 class="kihipay-method-title">결제 수단</h2>
 													<ul class="kihipay-method-ul">
@@ -1059,6 +1053,15 @@
 																			</div>
 																		</div>
 																	</div>
+																	<script>
+																		const select = document.querySelector('.kihipay-charge-sel');
+																		const selectedText = document.querySelector('.kihipay-charge-selected p');
+
+																		select.addEventListener('change', function () {
+																			const selectedOption = select.options[select.selectedIndex];
+																			selectedText.textContent = selectedOption.text;
+																		});
+																	</script>
 																	<div class="kihipay-pay-wrapper">
 																		<div class="pay-ul-wrapper">
 																			<h5 class="kihipay-pay-method-title">결제 방법
@@ -1389,7 +1392,156 @@
 
 				updateInitialState(); // 페이지 로드시 초기 상태 적용
 			});
+
+			document.addEventListener('DOMContentLoaded', function () {
+				const label = document.querySelector('.kihipay-checkout-label');
+				const checkbox = label.querySelector('.kihipay-checkbox');
+				const img = label.querySelector('.kihipay-checkbox-img img');
+
+				// checkbox 자체 클릭은 무효화
+				checkbox.addEventListener('click', e => e.preventDefault());
+
+				// label 클릭 시 상태 토글
+				label.addEventListener('click', function () {
+					const isChecked = checkbox.checked;
+
+					checkbox.checked = !isChecked;
+					img.src = checkbox.checked
+						? '/resources/static/check/radio.png'
+						: '/resources/static/check/circle.png';
+				});
+			});
+
+
+			document.addEventListener('DOMContentLoaded', function () {
+				const form = document.getElementById('order_form');
+				const submitBtn = document.querySelector('.kihipay-checkout-submit');
+				const agreementCheckbox = document.querySelector('.kihipay-checkbox');
+				const usePointInput = document.getElementById('use_point');
+				const totalOrderSpan = document.querySelector('.total-regular-price span');
+				const chargeOptionSelect = document.querySelector('.kihipay-charge-sel');
+				const chargeAfterCheckbox = document.querySelector('.kihipay-charge-checkbox');
+				const justPayCheckbox = document.querySelector('.kihipay-pay-checkbox');
+				const chargeWrapper = document.querySelector('.kihipay-charge-wrapper');
+
+				// ✅ 결제 수단 확인 함수
+				function getSelectedPayMethod(containerSelector) {
+					const methodCheckboxes = document.querySelectorAll(`${containerSelector} .kihipay-pay-method-checkbox`);
+					for (let checkbox of methodCheckboxes) {
+						if (checkbox.checked) {
+							const label = checkbox.closest('.kihipay-pay-label');
+							return label?.dataset?.methodType || 'unknown';
+						}
+					}
+					return 'none';
+				}
+
+				// ✅ 충전 영역 on/off 제어
+				function toggleChargeArea() {
+					const isChargeAfter = chargeAfterCheckbox.checked;
+					if (isChargeAfter) {
+						chargeWrapper.style.display = 'block';
+						chargeOptionSelect.disabled = false;
+					} else {
+						chargeWrapper.style.display = 'none';
+						chargeOptionSelect.disabled = true;
+						chargeOptionSelect.value = ''; // 값 초기화 (안전하게 처리)
+					}
+				}
+
+				// ✅ 최초 로드 시 상태 반영
+				toggleChargeArea();
+
+				// ✅ 라디오 버튼 변경 시 반영
+				chargeAfterCheckbox?.addEventListener('change', toggleChargeArea);
+				justPayCheckbox?.addEventListener('change', toggleChargeArea);
+
+				// ✅ 제출 시 유효성 및 데이터 정리
+				submitBtn.addEventListener('click', function (e) {
+					// 1. 구매 동의 체크 확인
+					if (!agreementCheckbox.checked) {
+						e.preventDefault();
+						alert('구매 동의를 체크해 주세요.');
+						return;
+					}
+
+					// 2. 사용 포인트 값
+					const usePoint = parseInt(usePointInput?.value?.replace(/[^0-9]/g, '') || '0', 10);
+
+					// 3. 총 주문 금액
+					const totalText = totalOrderSpan?.textContent?.replace(/[^\d]/g, '');
+					const totalAmount = parseInt(totalText || '0', 10);
+
+					// 4. 최종 결제 금액
+					const finalAmount = Math.max(totalAmount - usePoint, 0);
+
+					// 5. 결제 방식
+					const isChargeAfter = chargeAfterCheckbox.checked;
+					const isJustPay = justPayCheckbox.checked;
+
+					// 6. 결제 수단
+					const methodContainerSelector = isChargeAfter ? '.kihipay-charge' : '.kihipay-pay';
+					const selectedMethod = getSelectedPayMethod(methodContainerSelector);
+
+					// 7. 콘솔 확인
+					console.log('--- 결제 요청 정보 ---');
+					console.log('총 주문 금액:', totalAmount);
+					console.log('사용 포인트:', usePoint);
+					console.log('최종 결제 금액:', finalAmount);
+					console.log('결제 방식:', isChargeAfter ? '충전 후 결제' : '일반 결제');
+					console.log('결제 수단:', selectedMethod);
+					console.log('충전 금액:', isChargeAfter ? chargeOptionSelect.value : '사용 안 함');
+
+					// 8. 서버로 전송할 데이터 구성
+					const payload = {
+						totalAmount,
+						usePoint,
+						finalAmount,
+						paymentType: isChargeAfter ? 'charge' : 'just',
+						method: selectedMethod,
+						chargeAmount: isChargeAfter ? chargeOptionSelect.value : 0,
+					};
+
+					// 9. AJAX 전송
+					$.ajax({
+						url: '/payment/process',
+						method: 'POST',
+						contentType: 'application/json; charset=utf-8',
+						data: JSON.stringify(payload),
+						dataType: 'json',
+						success: function (response) {
+							if (response.success) {
+								// 5. 결제 수단 분기 처리
+								switch (selectedMethod) {
+									case 'naver':
+										window.location.href = '/payment/naver/start?orderId=' + response.orderId;
+										break;
+									case 'kakao':
+										window.location.href = '/payment/kakao/start?orderId=' + response.orderId;
+										break;
+									case 'toss':
+										window.location.href = '/payment/toss/start?orderId=' + response.orderId;
+										break;
+									default:
+										alert('알 수 없는 결제 수단입니다.');
+										break;
+								}
+							} else {
+								alert(response.message || '결제 요청에 실패했습니다.');
+							}
+						},
+						error: function (xhr, status, error) {
+							console.error('결제 실패:', error);
+							alert('서버 오류가 발생했습니다.');
+						}
+					});
+				});
+			});
+
+
+
 		</script>
+
 	</main>
 </body>
 

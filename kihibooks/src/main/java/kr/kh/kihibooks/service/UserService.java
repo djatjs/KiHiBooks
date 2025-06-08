@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
@@ -261,5 +262,29 @@ public class UserService {
     public boolean changeNickname(int ur_num, String ur_nickname) {
 		return userDAO.updateNickname(ur_num, ur_nickname);
     }
+
+    public Integer getUrItNum(int ur_num) {
+        return userDAO.getUrItNum(ur_num);
+    }
+
+	public Integer getUrNsNum(int ur_num) {
+		return userDAO.getUrNsNum(ur_num);
+	}
+
+	public boolean insertInterest(int ur_num, String bo_code) {
+		return userDAO.insertInterest(ur_num, bo_code);
+	}
+
+	public boolean deleteInterest(int ur_num, String bo_code) {
+		return userDAO.deleteInterest(ur_num, bo_code);
+	}
+
+	public boolean insertNotiSet(int ur_num, String bo_code) {
+		return userDAO.insertNotiSet(ur_num, bo_code);
+	}
+
+	public boolean deleteNotiSet(int ur_num, String bo_code) {
+		return userDAO.deleteNotiSet(ur_num, bo_code);
+	}
 
 }
