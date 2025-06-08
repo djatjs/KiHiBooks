@@ -21,12 +21,6 @@ public class LibraryService {
     @Autowired
     LibraryDAO libraryDAO;
 
-    @Autowired
-    BookDAO bookDao;
-    
-    @Value("${spring.path.upload}")
-    String uploadPath;
-
     public List<LibraryVO> getMyBooks(int ur_num) {
         return libraryDAO.selectMyBooks(ur_num);
     }
@@ -43,28 +37,4 @@ public class LibraryService {
         return libraryDAO.selectBookListForPage(ur_num, pageSize, offset);
     }
 
-    public Resource loadEpubFileAsResource(String epCode) {
-        try {
-            String epubRelativePath = getEpubFileName(epCode);
-            if (epubRelativePath == null) { return null; }
-
-            Path filePath = Paths.get(this.uploadPath).resolve(epubRelativePath).normalize();
-
-            Resource resource = new UrlResource(filePath.toUri());
-
-            if (resource.exists() && resource.isReadable()) {
-                return resource;
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public String getEpubFileName(String epCode) {
-        EpisodeVO episode = bookDao.getEpisodeByCode(epCode);
-        return episode != null ? episode.getEp_file_name() : null;
-    }
 }

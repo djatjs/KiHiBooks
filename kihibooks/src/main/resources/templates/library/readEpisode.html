@@ -8,14 +8,11 @@
     <meta charset="UTF-8">
     <title>EPUB 읽기</title>
     <style>
-        #epub-area {
-            width: 800px;
-            height: 600px; /* 고정 높이 설정 */
-            margin: 20px auto;
-            border: 2px solid #ddd; /* 테두리 색상 변경 */
-            background-color: #f9f9f9; /* 배경색 변경 */
-            overflow-y: hidden; /* Epub.js가 내부적으로 스크롤을 처리하므로 hidden */
-            position: relative;
+        main {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         .series-container {
             margin-top: 30px;
@@ -23,42 +20,21 @@
             background-color: #f8f9fa;
             border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-            text-align: center; /* 버튼 중앙 정렬을 위해 추가 */
+            text-align: center;
         }
         #extracted-text-area {
-            margin-top: 20px;
+            /* margin-top: 20px; */
             border: 1px dashed #ccc;
             padding: 10px;
-            /* white-space: pre-wrap; 제거 - HTML을 렌더링할 것이므로 */
-            max-height: 500px; /* 높이 설정 유지 */
-            overflow-y: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
-            text-align: left; /* 텍스트는 왼쪽 정렬 */
-            min-height: 500px; /* 최소 높이 유지 */
-            background-color: #ffffff; /* 배경색 설정 */
-            box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+            margin: 30px;
+            min-height: 700px;
+            max-height: 500px;
+            overflow-y: auto;
+            text-align: left;
+            background-color: #ffffff;
+            box-sizing: border-box;
         }
-        /* 추출된 HTML 내의 SVG Image 스타일 */
-        #extracted-text-area svg image {
-            max-width: 100%; /* 이미지가 부모 컨테이너를 넘지 않도록 */
-            height: auto;
-            display: block; /* 이미지 하단 여백 제거 */
-            margin: 5px auto; /* 이미지 중앙 정렬 및 상하 여백 */
-            border: 1px solid #eee; /* 이미지가 있는지 확인하기 위한 테두리 */
-        }
-        button {
-            padding: 10px 20px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        /* 기존 스타일 유지 및 필요한 경우 조정 */
+
         .content-management-page h2 {
             color: #2c3e50;
             margin-bottom: 20px;
@@ -72,64 +48,22 @@
     <main layout:fragment="content">
         <div class="container content-management-page">
             <h2 class="mb-3">📖 EPUB 읽기</h2>
-            <p>에피소드 코드: <span th:text="${epCode}"></span></p>
             <input type="hidden" th:value="${epCode}" id="epCode">
             <input type="hidden" th:value="${boCode}" id="boCode">
 
             <div class="series-container">
-                <div id="extracted-text-area">
-                    EPUB 내용 추출 결과가 여기에 HTML 형식으로 표시됩니다.
-                    (이미지 로딩 여부는 콘솔을 확인해주세요)
-                </div>
-
-                <div id="epub-area"></div>
-                <div style="margin-top: 10px;">
-                    <button id="prevBtn">이전 페이지</button>
-                    <button id="nextBtn">다음 페이지</button>
-                </div>
+                <div id="extracted-text-area"></div>
             </div>
-        </div>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        
         <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
-        
         <script src="https://unpkg.com/xmldom@0.6.0/dom-parser.js"></script>
-        
         <script src="/resources/static/js/epub.min.js"></script>
 
-        <script>
-            console.log(">>> 스크립트 로드 완료! 디버깅 정보 <<<");
-            console.log("JSZip 객체 타입:", typeof JSZip); 
-            console.log("DOMParser 객체 타입:", typeof DOMParser); 
-            console.log("Epub.js 스크립트 로드 직후 ePub 객체 타입:", typeof ePub); 
-            console.log("Epub.js 스크립트 로드 직후 window.ePub 객체 타입:", typeof window.ePub); 
-            console.log(">>> 디버깅 정보 끝 <<<");
-        </script>
-
         <script th:inline="javascript">
-            // 파일 확장자에 따른 MIME 타입 반환 헬퍼 함수
-            function getMimeType(filename) {
-                const ext = filename.split('.').pop().toLowerCase();
-                switch (ext) {
-                    case 'jpg':
-                    case 'jpeg': return 'image/jpeg';
-                    case 'png': return 'image/png';
-                    case 'gif': return 'image/gif';
-                    case 'svg': return 'image/svg+xml';
-                    case 'bmp': return 'image/bmp';
-                    case 'webp': return 'image/webp';
-                    default: return 'application/octet-stream'; // 알 수 없는 경우 기본값
-                }
-            }
-
             const epCode = $("#epCode").val();
             const boCode = $("#boCode").val();
-            console.log("가져온 에피소드 코드:", epCode);
-            console.log("가져온 책 코드:", boCode);
-
             const epubFileUrl = "/file/" + boCode + "/epubs/" + epCode + ".epub";
-            console.log("EPUB 파일을 가져올 URL:", epubFileUrl);
 
             try {
                 const EpubConstructor = typeof ePub !== 'undefined' ? ePub : Epub;
@@ -151,15 +85,6 @@
                     });
                     rendition.display();
 
-                    document.getElementById("nextBtn").addEventListener("click", function(){
-                        rendition.next();
-                        console.log("다음 페이지로 이동");
-                    });
-                    document.getElementById("prevBtn").addEventListener("click", function(){
-                        rendition.prev();
-                        console.log("이전 페이지로 이동");
-                    });
-
                     const spineItems = book.spine.items;
                     console.log("책에 있는 섹션/챕터 수:", spineItems.length);
                     
@@ -168,145 +93,60 @@
 
                         return book.load(item.href)
                             .then(loadedContent => { 
-                                let extractedHtml = "";
-                                
+                                let processedContent;
+
+                                // loadedContent가 XMLDocument 객체인 경우 (ePub.js가 이미 DOM으로 파싱해 넘겨준 경우)
                                 if (loadedContent && typeof loadedContent.documentElement === 'object' && loadedContent.documentElement.nodeName) {
-                                    const serializer = new XMLSerializer();
-                                    extractedHtml = serializer.serializeToString(loadedContent);
-
                                     console.log(`DEBUG: Loaded content is XMLDocument object for ${item.href}`);
-
-                                    // head 및 title 태그 내용 제거
-                                    extractedHtml = extractedHtml.replace(/<head[^>]*>[\s\S]*?<\/head>/i, '');
-                                    extractedHtml = extractedHtml.replace(/<title[^>]*>[\s\S]*?<\/title>/i, '');
-
-                                    const tempDiv = document.createElement('div');
-                                    tempDiv.innerHTML = extractedHtml; // Parse the HTML string into a temporary DOM
-
-                                    // SVG 내부의 <image> 태그 xlink:href 속성 처리
-                                    const svgImages = tempDiv.querySelectorAll('svg image');
-                                    console.log(`DEBUG: Found ${svgImages.length} svg image elements in tempDiv (XMLDocument branch).`);
-
-                                    // 각 이미지 처리는 비동기이므로 Promise.all로 묶습니다.
-                                    const imageProcessingPromises = [];
-
-                                    svgImages.forEach((svgImg, index) => {
-                                        const originalXlinkHref = svgImg.getAttributeNS('http://www.w3.org/1999/xlink', 'href'); 
-                                        console.log(`DEBUG:   SVG Image #${index} - Original outerHTML BEFORE change: ${svgImg.outerHTML}`);
-
-                                        // 이미 http나 data:로 시작하는 경우 중복 처리 방지
-                                        if (originalXlinkHref && !originalXlinkHref.startsWith('http') && !originalXlinkHref.startsWith('data:')) {
-                                            let internalResolvedPath;
-                                            try {
-                                                // 1. item.href를 기준으로 상대 경로를 먼저 EPUB 내부의 '절대' 경로화
-                                                internalResolvedPath = new URL(originalXlinkHref, item.href).toString();
-                                            } catch (e) {
-                                                console.error(`URL 해석 오류 (originalXlinkHref: ${originalXlinkHref}, item.href: ${item.href}):`, e);
-                                                return; // 이 이미지 처리를 건너뛰고 다음 이미지로 넘어감
-                                            }
-                                            
-                                            console.log(`DEBUG:   SVG Image #${index} - 내부 해결된 경로: ${internalResolvedPath}`);
-                                            const mimeType = getMimeType(internalResolvedPath); // MIME 타입 추론
-
-                                            // 2. book.archive.getBase64()를 통해 이미지 Base64 데이터 직접 얻기 (비동기)
-                                            const imagePromise = book.archive.getBase64(internalResolvedPath)
-                                                .then(base64Data => {
-                                                    if (base64Data) {
-                                                        // 3. Base64 데이터를 바탕으로 Data URL 생성
-                                                        const newDataUrl = `data:${mimeType};base64,${base64Data}`;
-                                                        // 4. 생성된 Data URL을 xlink:href 속성에 적용
-                                                        svgImg.setAttributeNS('http://www.w3.org/1999/xlink', 'href', newDataUrl);
-                                                        console.log(`DEBUG:   SVG Image #${index} - Base64 obtained. New xlink:href (data URL, snippet): ${newDataUrl.substring(0, 100)}...`);
-                                                        console.log(`DEBUG:   SVG Image #${index} - outerHTML AFTER change (from async update): ${svgImg.outerHTML}`); // 변경 후 확인
-                                                    } else {
-                                                        console.warn(`DEBUG:   SVG Image #${index} - Base64 data not found for path: ${internalResolvedPath}`);
-                                                    }
-                                                })
-                                                .catch(error => {
-                                                    console.error(`DEBUG:   SVG Image #${index} - Error getting Base64 for ${internalResolvedPath}:`, error);
-                                                });
-                                            imageProcessingPromises.push(imagePromise);
-                                        }
-                                    });
-
-                                    // 모든 이미지 처리가 완료될 때까지 기다린 후 HTML 반환
-                                    return Promise.all(imageProcessingPromises).then(() => {
-                                        extractedHtml = tempDiv.innerHTML; // 수정된 HTML 문자열 다시 읽어오기
-                                        console.log(`DEBUG: Final tempDiv.innerHTML (XMLDocument branch, first 500 chars): ${extractedHtml.substring(0, 500)}...`); 
-                                        return extractedHtml; // 이 섹션의 최종 HTML 반환
-                                    });
-
+                                    processedContent = loadedContent; // 직접 조작할 DOM 객체
                                 } else if (typeof loadedContent === 'string') {
-                                    console.log(`DEBUG: Loaded content is string for ${item.href}`);
-
-                                    // HTML 문자열인 경우에도 head/title 제거 시도
-                                    extractedHtml = loadedContent.replace(/<head[^>]*>[\s\S]*?<\/head>/i, '');
-                                    extractedHtml = extractedHtml.replace(/<title[^>]*>[\s\S]*?<\/title>/i, '');
-                                    
-                                    // 이미지 경로 변환 로직 (문자열 파싱 후)
-                                    const tempDiv = document.createElement('div');
-                                    tempDiv.innerHTML = extractedHtml;
-                                    
-                                    const svgImages = tempDiv.querySelectorAll('svg image');
-                                    console.log(`DEBUG: Found ${svgImages.length} svg image elements in tempDiv (string branch).`);
-
-                                    const imageProcessingPromises = []; // 문자열 브랜치에서도 비동기 처리
-
-                                    svgImages.forEach((svgImg, index) => {
-                                        const originalXlinkHref = svgImg.getAttributeNS('http://www.w3.org/1999/xlink', 'href'); 
-                                        console.log(`DEBUG:   SVG Image #${index} (string) - Original outerHTML BEFORE change: ${svgImg.outerHTML}`);
-
-                                        if (originalXlinkHref && !originalXlinkHref.startsWith('http') && !originalXlinkHref.startsWith('data:')) {
-                                            let internalResolvedPath;
-                                            try {
-                                                internalResolvedPath = new URL(originalXlinkHref, item.href).toString();
-                                            } catch (e) {
-                                                console.error(`URL 해석 오류 (string, originalXlinkHref: ${originalXlinkHref}, item.href: ${item.href}):`, e);
-                                                return;
-                                            }
-
-                                            console.log(`DEBUG:   SVG Image #${index} (string) - 내부 해결된 경로: ${internalResolvedPath}`);
-                                            const mimeType = getMimeType(internalResolvedPath);
-
-                                            const imagePromise = book.archive.getBase64(internalResolvedPath)
-                                                .then(base64Data => {
-                                                    if (base64Data) {
-                                                        const newDataUrl = `data:${mimeType};base64,${base64Data}`;
-                                                        svgImg.setAttributeNS('http://www.w3.org/1999/xlink', 'href', newDataUrl);
-                                                        console.log(`DEBUG:   SVG Image #${index} (string) - Base64 obtained. New xlink:href (data URL, snippet): ${newDataUrl.substring(0, 100)}...`);
-                                                        console.log(`DEBUG:   SVG Image #${index} (string) - outerHTML AFTER change (from async update): ${svgImg.outerHTML}`);
-                                                    } else {
-                                                        console.warn(`DEBUG:   SVG Image #${index} (string) - Base64 data not found for path: ${internalResolvedPath}`);
-                                                    }
-                                                })
-                                                .catch(error => {
-                                                    console.error(`DEBUG:   SVG Image #${index} (string) - Error getting Base64 for ${internalResolvedPath}:`, error);
-                                                });
-                                            imageProcessingPromises.push(imagePromise);
-                                        }
-                                    });
-
-                                    return Promise.all(imageProcessingPromises).then(() => {
-                                        extractedHtml = tempDiv.innerHTML;
-                                        console.log(`DEBUG: Final tempDiv.innerHTML (string branch, first 500 chars): ${extractedHtml.substring(0, 500)}...`);
-                                        return extractedHtml;
-                                    });
-
+                                    console.log(`DEBUG: Loaded content is string for ${item.href}. Using DOMParser.`);
+                                    const parser = new DOMParser();
+                                    processedContent = parser.parseFromString(loadedContent, 'application/xhtml+xml');
                                 } else {
                                     console.warn(`섹션 '${item.href}'의 콘텐츠 형식을 알 수 없습니다.`, loadedContent);
-                                    return Promise.resolve(""); // 알 수 없는 콘텐츠도 Promise로 감싸서 반환
+                                    return ""; // 알 수 없는 콘텐츠는 빈 문자열 반환
                                 }
+
+                                // head 및 title 태그 내용 제거
+                                const headElement = processedContent.querySelector('head');
+                                if (headElement) headElement.remove();
+                                const titleElement = processedContent.querySelector('title');
+                                if (titleElement) titleElement.remove();
+
+                                // 모든 <img> 태그 제거
+                                processedContent.querySelectorAll('img').forEach(img => img.remove());
+                                console.log(`DEBUG: Removed all <img> tags from ${item.href}`);
+
+                                // 모든 <svg> 태그 제거 (SVG 내부의 <image> 태그도 함께 제거됨)
+                                processedContent.querySelectorAll('svg').forEach(svg => svg.remove());
+                                console.log(`DEBUG: Removed all <svg> tags (and their contents, including <image> tags) from ${item.href}`);
+
+                                // height: 100vh 또는 height: 100%를 가진 비어있는 div 제거
+                                const emptyDivsWithVh = processedContent.querySelectorAll('div[style*="height: 100vh"], div[style*="height: 100%"]');
+                                emptyDivsWithVh.forEach(div => {
+                                    const trimmedTextContent = (div.textContent || '').trim();
+                                    if (trimmedTextContent === '' && div.children.length === 0) {
+                                        console.log(`DEBUG: Removing empty div with height: 100vh/100% style: ${div.outerHTML.substring(0, 100)}...`);
+                                        div.remove();
+                                    }
+                                });
+
+                                // 수정된 DOM을 HTML 문자열로 직렬화
+                                const finalHtml = new XMLSerializer().serializeToString(processedContent);
+                                console.log(`DEBUG: Final processed HTML (first 500 chars): ${finalHtml.substring(0, 500)}...`);
+                                return finalHtml;
                             })
                             .catch(error => {
                                 console.error(`섹션 '${item.href}' 로드 중 오류:`, error);
-                                return Promise.resolve(""); // 오류 발생 시에도 Promise로 빈 문자열 반환
+                                return ""; // 오류 발생 시 빈 문자열 반환
                             });
                     });
 
                     // 모든 섹션의 HTML 추출 및 이미지 처리가 완료될 때까지 기다립니다.
                     Promise.all(htmlExtractionPromises)
                         .then(function(htmls) {
-                            let fullHtmlContent = htmls.join("<hr style='margin: 30px 0; border-top: 2px dashed #eee;'>");
+                            let fullHtmlContent = htmls.join(""); // HR 태그 없이 콘텐츠를 바로 연결
                             console.log("--- EPUB 전체 HTML 추출 완료 ---");
                             const extractedTextArea = document.getElementById("extracted-text-area");
                             if (extractedTextArea) {

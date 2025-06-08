@@ -90,22 +90,5 @@ public class LibraryCotroller {
         return "/library/readEpisode";
     }
 
-    @ResponseBody
-    @GetMapping("/files/epub/{ep_code}")
-    public ResponseEntity<Resource> serveEpubFile(@PathVariable("ep_code") String epCode) {
-        try {
-            Resource epubFileResource = libraryService.loadEpubFileAsResource(epCode);
-            if (epubFileResource == null || !epubFileResource.exists() || !epubFileResource.isReadable()) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType("application/epub+zip"))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + epubFileResource.getFilename() + "\"")
-                    .body(epubFileResource);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
-    }
 
 }
