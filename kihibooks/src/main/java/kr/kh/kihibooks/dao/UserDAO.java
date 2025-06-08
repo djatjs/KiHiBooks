@@ -1,5 +1,6 @@
 package kr.kh.kihibooks.dao;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -7,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EmailVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
+import kr.kh.kihibooks.model.vo.OrderVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 import kr.kh.kihibooks.model.vo.WaitForFreeVO;
 
@@ -62,5 +64,10 @@ public interface UserDAO {
     boolean insertNotiSet(int ur_num, String bo_code);
 
     boolean deleteNotiSet(int ur_num, String bo_code);
+
+    int countTodayOrders();
+
+    void insertOrder(OrderVO order);
+
 
 }

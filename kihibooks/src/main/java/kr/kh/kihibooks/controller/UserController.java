@@ -31,6 +31,7 @@ import kr.kh.kihibooks.service.ApiService;
 import kr.kh.kihibooks.service.BookService;
 import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.utils.CustomUser;
+import kr.kh.kihibooks.model.dto.PaymentDTO;
 import kr.kh.kihibooks.model.vo.EmailVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.UserVO;
@@ -323,5 +324,29 @@ public class UserController {
         model.addAttribute("formattedPoint", formattedPoint);
 
         return "user/checkout";
+    }
+
+    @PostMapping("/payment/process")
+    public Map<String, Object> processPayment(@RequestBody PaymentDTO payment) {
+        Map<String, Object> response = new HashMap<>();
+
+        if(payment.getUsePoint() > payment.getTotalAmount()) {
+            response.put("success", false);
+            response.put("error", "사용 포인트가 결제 금액을 초과합니다.");
+            return response;
+        }
+
+        String orderId = userService.saveTempOrder(payment);
+
+        String method = payment.getMethod();
+        String redirectUrl = "/payment/" + method.toLowerCase() + "/start?orderId=" + orderId;
+
+        response.put("success", true);
+        response.put("orderId", orderId);
+        response.put("amount", payment.getTotalAmount());
+        response.put("method", method);
+        response.put("redirectUrl", redirectUrl);
+
+        return response;
     }
 }

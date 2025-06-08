@@ -1251,7 +1251,7 @@
 				</section>
 			</div>
 		</div>
-		<script>
+		<script th:inline="javascript">
 			document.addEventListener("DOMContentLoaded", () => {
 				const pointInput = document.getElementById("use_point");
 				const useAllBtn = document.querySelector(".asset-use-all-btn");
@@ -1423,6 +1423,7 @@
 				const chargeAfterCheckbox = document.querySelector('.kihipay-charge-checkbox');
 				const justPayCheckbox = document.querySelector('.kihipay-pay-checkbox');
 				const chargeWrapper = document.querySelector('.kihipay-charge-wrapper');
+				const userNum = [[${user.ur_num}]];
 
 				// ✅ 결제 수단 확인 함수
 				function getSelectedPayMethod(containerSelector) {
@@ -1500,6 +1501,7 @@
 						paymentType: isChargeAfter ? 'charge' : 'just',
 						method: selectedMethod,
 						chargeAmount: isChargeAfter ? chargeOptionSelect.value : 0,
+						userNum: userNum
 					};
 
 					// 9. AJAX 전송

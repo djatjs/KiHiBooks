@@ -115,4 +115,8 @@
         delete from noti_set
         where ns_ur_num = #{ur_num} and ns_bo_code = #{bo_code}
     </delete>
+    <select id="countTodayOrders" resultType="int">
+        select count(*) from `order`
+        where date(od_created_at) = curdate()
+    </select>
 </mapper>

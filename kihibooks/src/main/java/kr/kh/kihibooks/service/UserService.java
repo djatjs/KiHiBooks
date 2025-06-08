@@ -1,5 +1,8 @@
 package kr.kh.kihibooks.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,9 +23,11 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.mail.internet.MimeMessage;
 import kr.kh.kihibooks.dao.UserDAO;
+import kr.kh.kihibooks.model.dto.PaymentDTO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EmailVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
+import kr.kh.kihibooks.model.vo.OrderVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 import kr.kh.kihibooks.model.vo.WaitForFreeVO;
 import kr.kh.kihibooks.utils.CustomUser;
@@ -285,6 +290,31 @@ public class UserService {
 
 	public boolean deleteNotiSet(int ur_num, String bo_code) {
 		return userDAO.deleteNotiSet(ur_num, bo_code);
+	}
+
+	public String saveTempOrder(PaymentDTO payment) {
+		
+		String od_id = generateOdId();
+
+		OrderVO order = new OrderVO();
+		order.setOd_id(od_id);
+		order.setOd_ur_num(payment.getUserNum());
+		order.setOd_total_amount(payment.getTotalAmount());
+		order.setOd_use_point(payment.getUsePoint());
+		order.setOd_final_amount(Math.max(payment.getTotalAmount() - payment.getUsePoint(), 0));
+		order.setOd_method(payment.getMethod());
+		order.setOd_created_at(LocalDateTime.now());
+
+		userDAO.insertOrder(order);
+
+		return od_id;
+	}
+
+	private String generateOdId() {
+		String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+		long count = userDAO.countTodayOrders() + 1;
+
+		return date + String.format("%05d", count);
 	}
 
 }
