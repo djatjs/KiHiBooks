@@ -1,6 +1,7 @@
 package kr.kh.kihibooks.controller;
 
 import java.security.Principal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,8 +38,8 @@ import kr.kh.kihibooks.model.vo.UserVO;
 @Controller
 public class UserController {
 
-	@Autowired
-	UserService userService;
+    @Autowired
+    UserService userService;
 
     @Autowired
     BookService bookService;
@@ -52,7 +53,7 @@ public class UserController {
     @Value("${kakao.redirect.uri}")
     private String kakaoRedirectUri;
 
-	@GetMapping("/account/mykihi")
+    @GetMapping("/account/mykihi")
     public String mypage(Model model) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserVO user = userService.selectUser(userDetails.getUsername());
@@ -60,10 +61,10 @@ public class UserController {
         return "user/mypage";
     }
 
-	@GetMapping("/account/modify")
-	public String edit() {
-		return "user/edit";
-	}
+    @GetMapping("/account/modify")
+    public String edit() {
+        return "user/edit";
+    }
 
 	@PostMapping("/edit/checkPw")
 	@ResponseBody
@@ -75,10 +76,10 @@ public class UserController {
 	}
 
     @GetMapping("/user/editForm")
-	public String editForm(Model model, @AuthenticationPrincipal CustomUser customUser) {
+    public String editForm(Model model, @AuthenticationPrincipal CustomUser customUser) {
         model.addAttribute("user", customUser.getUser());
-		return "user/editForm";
-	}
+        return "user/editForm";
+    }
 
     @ResponseBody
     @PostMapping("/edit/changeNickname")
@@ -91,12 +92,12 @@ public class UserController {
 
     //회원가입 선택 창
     @GetMapping("/signup")
-	public String signup(Model model) {
-		model.addAttribute("kakaoClientId", kakaoClientId);
+    public String signup(Model model) {
+        model.addAttribute("kakaoClientId", kakaoClientId);
         model.addAttribute("kakaoRedirectUri", kakaoRedirectUri);
-		return "user/signup";
-	}
-    
+        return "user/signup";
+    }
+
     @GetMapping("/signup/email")
     public String signupEmail() {
         return "user/signup_email";
@@ -115,7 +116,7 @@ public class UserController {
     @ResponseBody
     @PostMapping("/check/email")
     public boolean checkEmail(@RequestBody String email) {
-        if(email == null){
+        if (email == null) {
             return false;
         }
         return userService.checkEmail(email);
@@ -124,7 +125,7 @@ public class UserController {
     @ResponseBody
     @PostMapping("/check/nickName")
     public boolean checkNickName(@RequestBody String nickName) {
-        if(nickName == null){
+        if (nickName == null) {
             return false;
         }
         return userService.checkNickName(nickName);
@@ -133,11 +134,11 @@ public class UserController {
     @ResponseBody
     @PostMapping("/email/verifyCode")
     public boolean verifyCode(@RequestParam String userCode, @RequestParam String email, HttpSession session) {
-        if(userCode == null || email == null){
+        if (userCode == null || email == null) {
             return false;
         }
         boolean res = userService.checkCode(email, userCode);
-        if(res){
+        if (res) {
             session.setAttribute("email", email);
         }
         return res;
@@ -145,7 +146,7 @@ public class UserController {
 
     @PostMapping("/signup/email")
     public String signupEmailPost(UserVO user) {
-        if(userService.signup(user)){
+        if (userService.signup(user)) {
             return "redirect:/";
         }
         return "redirect:/signup/email";
@@ -159,7 +160,7 @@ public class UserController {
     @GetMapping("/resetPw")
     public String resetPw(HttpSession session, Model model) {
         String email = (String) session.getAttribute("email");
-        System.out.println("이메일 : "+email);
+        System.out.println("이메일 : " + email);
         model.addAttribute("ur_email", email);
         return "user/resetPw";
     }
@@ -169,7 +170,7 @@ public class UserController {
         if(user == null || user.getUr_email() == null || user.getUr_pw() == null){
             return false;
         }
-        //비밀번호 재설정 후 세션 지우기
+        // 비밀번호 재설정 후 세션 지우기
         boolean resetRes = userService.resetPw(user);
         if(!resetRes){
             return false;
@@ -198,48 +199,46 @@ public class UserController {
         // 1. 인가 코드를 사용하여 액세스 토큰을 요청
         String accessToken = apiService.getKakaoAccessToken(code); 
         // 2. 액세스 토큰을 사용하여 사용자 정보를 요청
-        Map<String, Object> userInfo = apiService.getKakaoUserInfo(accessToken); 
+        Map<String, Object> userInfo = apiService.getKakaoUserInfo(accessToken);
         System.out.println("사용자 정보:" + userInfo);
         // 3. 받은 사용자 정보(이메일, 닉네임 등)를 기반으로 회원가입 또는 로그인 처리
         UserDetails userDetails = apiService.processKakaoUser(userInfo);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-            userDetails,
-            null,
-            userDetails.getAuthorities()
-        );
+                userDetails,
+                null,
+                userDetails.getAuthorities());
 
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);
 
         HttpSession session = request.getSession(true);
         session.setAttribute(
-            HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-            securityContext
-        );
+                HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                securityContext);
 
         System.out.println("Spring Security 로그인 처리 완료: " + userDetails.getUsername());
 
         return "redirect:/";
     }
-    
+
     @GetMapping("/order/checkout/point")
-    public String point(){
+    public String point() {
         return "user/point";
     }
 
     @GetMapping("/order/history_point")
-    public String historyPoint(){
+    public String historyPoint() {
         return "user/historyPoint";
     }
 
     @GetMapping("/order/history")
-    public String history(){
+    public String history() {
         return "/user/history";
     }
 
     @GetMapping("/cart")
-    public String cart(Model model, @AuthenticationPrincipal CustomUser customUser){
+    public String cart(Model model, @AuthenticationPrincipal CustomUser customUser) {
         List<EpisodeVO> epList = userService.getCartEpList(customUser.getUser().getUr_num());
         model.addAttribute("epList", epList);
         return "/user/cart";
@@ -247,11 +246,12 @@ public class UserController {
 
     @PostMapping("/cart/delete")
     @ResponseBody
-    public boolean deleteCart(@RequestBody Map<String, String> payload, @AuthenticationPrincipal CustomUser customUser) {
+    public boolean deleteCart(@RequestBody Map<String, String> payload,
+            @AuthenticationPrincipal CustomUser customUser) {
         String epCode = payload.get("epCode");
         int urNum = customUser.getUser().getUr_num();
 
-        if(epCode == null || epCode.isEmpty()) {
+        if (epCode == null || epCode.isEmpty()) {
             return false;
         }
 
@@ -260,11 +260,12 @@ public class UserController {
 
     @PostMapping("/cart/deleteSelected")
     @ResponseBody
-    public boolean deleteSelected(@RequestBody Map<String, List<String>> payload, @AuthenticationPrincipal CustomUser customUser) {
+    public boolean deleteSelected(@RequestBody Map<String, List<String>> payload,
+            @AuthenticationPrincipal CustomUser customUser) {
         List<String> epCodes = payload.get("epCodes");
         int urNum = customUser.getUser().getUr_num();
 
-        if(epCodes == null || epCodes.isEmpty()) {
+        if (epCodes == null || epCodes.isEmpty()) {
             return false;
         }
 
@@ -272,14 +273,15 @@ public class UserController {
     }
 
     @GetMapping("/order/checkout/finished")
-    public String checkoutFin(@RequestParam("contents_id") String contentsId, Model model){
+    public String checkoutFin(@RequestParam("contents_id") String contentsId, Model model) {
         model.addAttribute("contentsId", contentsId);
         return "/user/checkoutFin";
     }
 
     @PostMapping("/get/blNum")
     @ResponseBody
-    public Map<String, Object> getBlNum(@RequestParam List<String> epCodes, @AuthenticationPrincipal CustomUser customUser) {
+    public Map<String, Object> getBlNum(@RequestParam List<String> epCodes,
+            @AuthenticationPrincipal CustomUser customUser) {
 
         int urNum = customUser.getUser().getUr_num();
         int blNum = userService.getBlNum(epCodes, urNum);
@@ -292,13 +294,14 @@ public class UserController {
 
     @PostMapping("/order/checkout")
     @ResponseBody
-    public boolean checkout(@RequestParam List<String> epCodes, @AuthenticationPrincipal CustomUser customUser, HttpSession session) {
-        if(epCodes == null) {
+    public boolean checkout(@RequestParam List<String> epCodes, @AuthenticationPrincipal CustomUser customUser,
+            HttpSession session) {
+        if (epCodes == null) {
             return false;
         }
 
         List<EpisodeVO> epList = userService.getEpisodeByCodes(epCodes);
-        if(epList == null) {
+        if (epList == null) {
             return false;
         }
 
@@ -308,17 +311,24 @@ public class UserController {
     }
 
     @GetMapping("/order/checkout")
-    public String checkout(Model model, HttpSession session) {
+    public String checkout(Model model, @AuthenticationPrincipal CustomUser customUser, HttpSession session) {
         List<EpisodeVO> epList = (List<EpisodeVO>) session.getAttribute("checkoutEpList");
         int total = 0;
-        if(epList != null) {
-            for(EpisodeVO episode : epList) {
+        if (epList != null) {
+            for (EpisodeVO episode : epList) {
                 total += episode.getEp_price();
             }
         }
+        int point = customUser.getUser().getUr_point();
+        NumberFormat formatter = NumberFormat.getInstance();
+        String formattedPoint = formatter.format(point);
+        String formattedTotal = formatter.format(total);
 
         model.addAttribute("epList", epList);
         model.addAttribute("total", total);
+        model.addAttribute("formattedTotal", formattedTotal);
+        model.addAttribute("point", point);
+        model.addAttribute("formattedPoint", formattedPoint);
 
         return "user/checkout";
     }
