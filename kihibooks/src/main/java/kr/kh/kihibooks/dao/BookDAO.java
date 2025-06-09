@@ -24,36 +24,40 @@ public interface BookDAO {
 
 	List<BookVO> selectTopBooks();
 
-	List<BookVO> selectWaitFreeBooks();
-	
-	List<BookVO> selectWaitFreeBooksFiltered(@Param("sort")String sort, 
-		@Param("keyword")String keyword, 
-		@Param("offset")int offset, 
-		@Param("limit")int limit);
+	// 🔹 신작
+	List<BookVO> selectNewBooks(@Param("mcCode") Integer mcCode,
+															@Param("sort") String sort,
+															@Param("adult") String adult,
+															@Param("offset") int offset,
+															@Param("pageSize") int pageSize);
 
-	int countWaitFreeBooksFiltered(String keyword);
+	int countNewBooks(@Param("mcCode") Integer mcCode,
+										@Param("sort") String sort,
+										@Param("adult") String adult);
 
-	List<BookVO> selectNewBooks();
+	// 🔹 베스트
+	List<BookVO> selectBestBooks(@Param("mcCode") Integer mcCode,
+																@Param("sort") String sort,
+																@Param("adult") String adult,
+																@Param("fin") String fin,
+																@Param("offset") int offset,
+																@Param("pageSize") int pageSize);
 
-	List<BookVO> selectFilteredBooks(@Param("offset") int offset,
-			@Param("limit") int limit,
-			@Param("order") String order,
-			@Param("adultYN") String adultYN);
+	int countBestBooks(@Param("mcCode") Integer mcCode,
+											@Param("sort") String sort,
+											@Param("adult") String adult,
+											@Param("fin") String fin);
 
-	int countFilteredBooks(@Param("oreder") String order,
-			@Param("adultYN") String adultYN
+	// 🔹 기다리면 무료
+	List<BookVO> selectWaitFreeBooks(@Param("mcCode") Integer mcCode,
+																		@Param("sort") String sort,
+																		@Param("keyword") String keyword,
+																		@Param("offset") int offset,
+																		@Param("pageSize") int pageSize);
 
-	);
-
-	List<BookVO> selectBestBooks(@Param("offset") int offset,
-			@Param("size") int size, // Mapper의 Limit 에 사용됨
-			@Param("range") String range, // 오늘의/주간/월간 베스트
-			@Param("adultYN") String adultYN,
-			@Param("finished") String finished);
-
-	int countBestBooks(@Param("range") String range,
-			@Param("adultYN") String adultYN,
-			@Param("finished") String finished);
+	int countWaitFreeBooks(@Param("mcCode") Integer mcCode,
+													@Param("sort") String sort,
+													@Param("keyword") String keyword);
 
 	List<KeywordCategoryVO> selectKeywordCategories();
 

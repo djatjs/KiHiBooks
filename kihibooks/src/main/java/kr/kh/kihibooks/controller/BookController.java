@@ -44,6 +44,7 @@ import kr.kh.kihibooks.model.vo.UserVO;
 import kr.kh.kihibooks.model.vo.WaitForFreeVO;
 import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.service.BookService;
+import kr.kh.kihibooks.service.HomeService;
 import kr.kh.kihibooks.service.KeywordService;
 import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.utils.CustomUser;
@@ -57,14 +58,95 @@ public class BookController {
     private BookService bookService;
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private HomeService homeService;
     @Autowired
     private KeywordService keywordService;
 
+    @GetMapping("/")
+    public String home(Model model) {
+        int mcCode = 1; // 로맨스 장르
+
+        List<BookVO> topBooks = bookService.getTopBooks(mcCode);
+        List<BookVO> bestBooks = bookService.getBestBooks(mcCode, "popular", null, null, 1);
+        List<BookVO> waitFreeBooks = bookService.getWaitFreeBooks(mcCode, "recent", null, 1);
+        List<BookVO> newBooks = bookService.getNewBooks(mcCode, "recent", null, 1);
+        List<KeywordVO> randomKeywords = homeService.getRandomKeywords(15);
+
+        model.addAttribute("topBooks", topBooks);
+        model.addAttribute("bestBooks", bestBooks);
+        model.addAttribute("waitFreeBooks", waitFreeBooks);
+        model.addAttribute("newBooks", newBooks);
+        model.addAttribute("keywords", randomKeywords);
+        model.addAttribute("mcCode", mcCode);
+
+        return "home";
+    }
+
+    @GetMapping("/book/{type}")
+    public String bookPage(@PathVariable("type") String type,
+                        @RequestParam(name = "mcCode", required = false) Integer mcCode,
+                        @RequestParam(name = "sort", defaultValue = "recent") String sort,
+                        @RequestParam(name = "adult", required = false) String adult,
+                        @RequestParam(name = "fin", required = false) String fin,
+                        @RequestParam(name = "keyword", required = false) String keyword,
+                        @RequestParam(name = "page", defaultValue = "1") int page,
+                        Model model) {
+
+        List<BookVO> bookList;
+        int totalCount;
+
+        switch (type) {
+            case "new-released":
+                bookList = bookService.getNewBooks(mcCode, sort, adult, page);
+                totalCount = bookService.countNewBooks(mcCode, sort, adult);
+                break;
+
+            case "best":
+                bookList = bookService.getBestBooks(mcCode, sort, adult, fin, page);
+                totalCount = bookService.countBestBooks(mcCode, sort, adult, fin);
+                break;
+
+            case "wait-for-free":
+                bookList = bookService.getWaitFreeBooks(mcCode, sort, keyword, page);
+                totalCount = bookService.countWaitFreeBooks(mcCode, sort, keyword);
+                break;
+
+            default:
+                return "redirect:/error";
+        }
+
+        PageInfo<BookVO> pageInfo = PaginationUtils.paginate(
+            bookList, totalCount, page,
+            PageConstants.PAGE_SIZE, PageConstants.BLOCK_SIZE
+        );
+
+        model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("mcCode", mcCode);
+        model.addAttribute("sort", sort);
+        model.addAttribute("adult", adult);
+        model.addAttribute("fin", fin);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("pageTitle", getPageTitle(type));
+
+        return "book/" + type;
+    }
+
+
+    private String getPageTitle(String type) {
+        switch (type) {
+            case "new-released": return "신작 웹소설";
+            case "best": return "베스트 웹소설";
+            case "wait-for-free": return "기다리면 무료";
+            default: return "웹소설";
+        }
+    }
+
     @GetMapping("/realtime")
     @ResponseBody
-    public Map<String, Object> getTopBooks() {
-        List<BookVO> books = bookService.getTopBooks();
+    public Map<String, Object> getTopBooks(@RequestParam("mcCode")int mcCode) {
+        List<BookVO> books = bookService.getTopBooks(mcCode);
         String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         Map<String, Object> map = new HashMap<>();
@@ -74,33 +156,78 @@ public class BookController {
         return map;
     }
 
-    @GetMapping("/best")
-    @ResponseBody
-    public List<BookVO> getBestBooks() {
-        List<BookVO> books = bookService.getTopBooks();
-        return books;
+    @GetMapping("/book/keyword")
+    public String keywordSearchPage(
+        @RequestParam(value = "keywordIds", required = false) List<String> keywordIds,
+        @RequestParam(defaultValue = "recent") String sort,
+        @RequestParam(defaultValue = "1") int page,
+        Model model,
+        HttpServletRequest request
+    ) {
+        // 1. 키워드 카테고리 + 키워드 리스트
+        List<KeywordCategoryVO> keywordCategories = keywordService.getAllKeywordCategories();
+        model.addAttribute("keywordCategories", keywordCategories);
+        model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
+
+        // 2. 검색 결과 도서 리스트
+        PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
+        model.addAttribute("bookList", pageInfo.getContent());
+        model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("selectedKeywordIds", keywordIds);
+
+        System.out.println("bookList size: " + pageInfo.getContent().size());  // 책 리스트 사이즈 확인
+        System.out.println("bookList: " + pageInfo.getContent()); 
+
+        List<KeywordVO> selectedKeywords = keywordService.getSelectedKeywordsPreserveOrder(keywordIds);
+        model.addAttribute("selectedKeywords", selectedKeywords);
+
+        // 3. Ajax 요청 여부 판별 (헤더로 구분)
+        String requestedWith = request.getHeader("X-Requested-With");
+        if ("XMLHttpRequest".equals(requestedWith)) {
+            // Ajax 요청에 대해서만 갱신된 HTML 반환
+            return "book/keyword :: bookResultFragment";
+        }
+
+        // 최초 접속 or 전체 페이지 렌더링
+        return "book/keyword";
     }
 
-    @GetMapping("/newpublish")
-    @ResponseBody
-    public List<BookVO> getNewPublishBooks() {
-        List<BookVO> books = bookService.getNewBooks();
-        return books;
+    @GetMapping("/book/keyword/updated")
+    public String updatedKeywordSearchPage(
+        @RequestParam(value = "keywordIds", required = false) List<String> keywordIds,
+        @RequestParam(defaultValue = "recent") String sort,
+        @RequestParam(defaultValue = "1") int page,
+        Model model,
+        HttpServletRequest request
+    ) {
+        // 1. 키워드 카테고리 + 키워드 리스트
+        List<KeywordCategoryVO> keywordCategories = keywordService.getAllKeywordCategories();
+        model.addAttribute("keywordCategories", keywordCategories);
+        model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
+
+        // 2. 검색 결과 도서 리스트
+        PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
+        model.addAttribute("bookList", pageInfo.getContent());
+        model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("selectedKeywordIds", keywordIds);
+
+        System.out.println("bookList size: " + pageInfo.getContent().size());  // 책 리스트 사이즈 확인
+        System.out.println("bookList: " + pageInfo.getContent()); 
+
+        List<KeywordVO> selectedKeywords = keywordService.getSelectedKeywordsPreserveOrder(keywordIds);
+        model.addAttribute("selectedKeywords", selectedKeywords);
+
+        // Ajax 요청에 대해 fragment만 리턴
+        return "book/keyword :: bookResultFragment";
     }
+
+    //준호 영역 끝
 
     @GetMapping("/library/recents")
     public String recentList(Model model, Integer ur_num) {
         List<BookVO> list = bookService.getBookList(ur_num == null ? 0 : ur_num);
         model.addAttribute("bookList", list);
         return "user/recentList";
-    }
-
-    @GetMapping("/waitfree/list")
-    @ResponseBody
-    public List<BookVO> getWaitFreeList() {
-        List<BookVO> list = bookService.getWaitFreeBooks();
-        // System.out.println(list.size());
-        return list;
     }
 
     @GetMapping("/books/{bo_code}")
@@ -199,134 +326,6 @@ public class BookController {
         ReviewVO reply = bookService.selectReply(review);
         System.out.println("reply: " + reply);
         return reply;
-    }
-
-    // 신간
-    @GetMapping("/book/new-released")
-    public String newReleased(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "latest") String order,
-            @RequestParam(required = false) String adult,
-            Model model) {
-
-        System.out.println(order);
-
-        if (order == null || order.equals("latest")) {
-            order = "recent";
-        }
-
-        PageInfo<BookVO> pageInfo = bookService.getFilteredBooks(page, order, adult);
-
-        model.addAttribute("bookList", pageInfo.getContent());
-        model.addAttribute("pageInfo", pageInfo);
-        model.addAttribute("order", order);
-        model.addAttribute("adult", adult);
-
-        return "book/new-released";
-    }
-
-    @GetMapping("/book/best")
-    public String bestBooks(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "day") String range,
-            @RequestParam(required = false) String adultYN,
-            @RequestParam(required = false) String finished,
-            Model model) {
-        if (range == null || range.isEmpty()) {
-            range = "day";
-        }
-        int size = PageConstants.PAGE_SIZE;
-        PageInfo<BookVO> pageInfo = bookService.getBestBooks(page, size, range, adultYN, finished);
-        System.out.println(pageInfo.getTotalPages());
-
-        model.addAttribute("bookList", pageInfo.getContent());
-        model.addAttribute("pageInfo", pageInfo);
-        model.addAttribute("range", range);
-        model.addAttribute("adultYN", adultYN);
-        model.addAttribute("finished", finished);
-
-        return "book/best";
-    }
-
-    @GetMapping("/book/keyword")
-    public String keywordSearchPage(
-        @RequestParam(value = "keywordIds", required = false) List<String> keywordIds,
-        @RequestParam(defaultValue = "recent") String sort,
-        @RequestParam(defaultValue = "1") int page,
-        Model model,
-        HttpServletRequest request
-    ) {
-        // 1. 키워드 카테고리 + 키워드 리스트
-        List<KeywordCategoryVO> keywordCategories = keywordService.getAllKeywordCategories();
-        model.addAttribute("keywordCategories", keywordCategories);
-        model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
-
-        // 2. 검색 결과 도서 리스트
-        PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
-        model.addAttribute("bookList", pageInfo.getContent());
-        model.addAttribute("pageInfo", pageInfo);
-        model.addAttribute("selectedKeywordIds", keywordIds);
-
-        System.out.println("bookList size: " + pageInfo.getContent().size());  // 책 리스트 사이즈 확인
-        System.out.println("bookList: " + pageInfo.getContent()); 
-
-        List<KeywordVO> selectedKeywords = keywordService.getSelectedKeywordsPreserveOrder(keywordIds);
-        model.addAttribute("selectedKeywords", selectedKeywords);
-
-        // 3. Ajax 요청 여부 판별 (헤더로 구분)
-        String requestedWith = request.getHeader("X-Requested-With");
-        if ("XMLHttpRequest".equals(requestedWith)) {
-            // Ajax 요청에 대해서만 갱신된 HTML 반환
-            return "book/keyword :: bookResultFragment";
-        }
-
-        // 최초 접속 or 전체 페이지 렌더링
-        return "book/keyword";
-    }
-
-    @GetMapping("/book/keyword/updated")
-    public String updatedKeywordSearchPage(
-        @RequestParam(value = "keywordIds", required = false) List<String> keywordIds,
-        @RequestParam(defaultValue = "recent") String sort,
-        @RequestParam(defaultValue = "1") int page,
-        Model model,
-        HttpServletRequest request
-    ) {
-        // 1. 키워드 카테고리 + 키워드 리스트
-        List<KeywordCategoryVO> keywordCategories = keywordService.getAllKeywordCategories();
-        model.addAttribute("keywordCategories", keywordCategories);
-        model.addAttribute("selectedKeywordIds", keywordIds != null ? keywordIds : new ArrayList<>());
-
-        // 2. 검색 결과 도서 리스트
-        PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
-        model.addAttribute("bookList", pageInfo.getContent());
-        model.addAttribute("pageInfo", pageInfo);
-        model.addAttribute("selectedKeywordIds", keywordIds);
-
-        System.out.println("bookList size: " + pageInfo.getContent().size());  // 책 리스트 사이즈 확인
-        System.out.println("bookList: " + pageInfo.getContent()); 
-
-        List<KeywordVO> selectedKeywords = keywordService.getSelectedKeywordsPreserveOrder(keywordIds);
-        model.addAttribute("selectedKeywords", selectedKeywords);
-
-        // Ajax 요청에 대해 fragment만 리턴
-        return "book/keyword :: bookResultFragment";
-    }
-
-    @GetMapping("/book/wait_for_free")
-    public String waitfreePage(@RequestParam(defaultValue = "1") int page,
-                            @RequestParam(defaultValue = "recent") String sort,
-                             @RequestParam(required = false) String keyword, 
-                             Model model) {
-
-        PageInfo<BookVO> pageInfo = bookService.getWaitFreeBooks(page, sort, keyword);
-
-        model.addAttribute("books", pageInfo.getContent());
-        model.addAttribute("pageInfo", pageInfo);
-        model.addAttribute("sort", sort);
-        model.addAttribute("keyword", keyword);
-        
-        return "book/wait_for_free";
     }
     
     @ResponseBody

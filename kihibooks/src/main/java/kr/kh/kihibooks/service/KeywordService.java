@@ -33,5 +33,9 @@ public class KeywordService {
 		}
 		return keywordDAO.selectKeywordsByIds(keywordIds);
 	}
+
+	public List<KeywordVO> getRandomKeywordsByGenre(int genreCode) {
+		return keywordDAO.getRandomKeywordsByGenre(genreCode);
+	}
 	
 }

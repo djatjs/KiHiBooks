@@ -4,7 +4,10 @@
     <div th:fragment="keywordRecommend">
       <div class="keyword-section">
         <ul class="keyword-list">
-          <li th:each="keyword : ${randomKeywords}" th:text="${keyword.kw_name}">키워드</li>
+          <li th:each="keyword : ${keywordList}">
+            <a th:href="@{/book/keyword(keywordIds=${keyword.kw_code})}"
+              th:text="${keyword.kw_name}" class="keyword-link"></a>
+          </li>
         </ul>
       </div>
     </div>

@@ -75,150 +75,133 @@
             BO_TOTAL_RATING DESC, BO_REVIEW_COUNT DESC
         LIMIT 18;
     </select>
-    <select id="selectWaitFreeBooks" resultMap="bookSimpleMap">
-        SELECT
-            BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_WAIT_FOR_FREE
-        FROM
-            book
-        WHERE
-            BO_WAIT_FOR_FREE = 'Y'
-        ORDER BY BO_PUBLISH_DATE DESC
-        LIMIT 20
-    </select>
-    <select id="selectWaitFreeBooksFiltered" resultMap="bookFilteredMap">
-        select b.*, a.au_name
-        from book b
-        join author a on b.bo_au_num = a.au_num
-        where bo_wait_for_free = 'Y'
-        <if test="keyword != null and keyword != ''">
-            and (
-                bo_title like concat('%', #{keyword}, '%')
-                or a.au_name like concat('%', #{keyword}, '%')
+    <!-- 🔹 신작 도서 리스트 -->
+    <select id="selectNewBooks" resultType="BookVO">
+        SELECT *
+        FROM book
+        WHERE 1 = 1
+        <if test="mcCode != null">
+            AND BO_SC_CODE IN (
+                SELECT SC_CODE FROM sub_category WHERE SC_MC_CODE = #{mcCode}
             )
         </if>
-        order by
-        <choose>
-            <when test="sort == 'popular'">bo_review_count desc</when>
-            <when test="sort == 'rating'">
-                if(bo_review_count = 0, 0, (bo_total_rating / bo_review_count))  desc
-            </when>
-            <when test="sort == 'review'">bo_review_count desc</when>
-            <otherwise>bo_publish_date desc</otherwise>
-        </choose>
-        LIMIT #{offset}, #{limit}
-    </select>
-    <select id="countWaitFreeBooksFiltered" resultType="int">
-        select count(*)
-        from book b
-        join author a on b.bo_au_num = a.au_num
-        where bo_wait_for_free = 'Y'
-        <if test="keyword != null and keyword !=''">
-            and (
-                bo_title like concat('%', #{keyword}, '%')
-                or a.au_name like concat('%', #{keyword}, '%')
-            )
+        <if test="adult != null">
+            AND BO_ADULT = #{adult}
         </if>
-    </select>
-    <select id="selectNewBooks" resultMap="bookNewMap">
-        SELECT
-            BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, AU_NAME
-        FROM
-            book
-        JOIN
-            author ON book.BO_AU_NUM = author.AU_NUM
-        WHERE
-            BO_PUBLISH_DATE >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-        ORDER BY BO_PUBLISH_DATE DESC
-    </select>
-
-    <select id="selectFilteredBooks" resultMap="bookFilteredMap">
-        SELECT
-            BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, AU_NAME AS bo_author,
-            BO_TOTAL_EPISODE, BO_ADULT, BO_FIN, BO_PUBLISH_DATE
-        FROM
-            book
-        JOIN
-            author ON book.BO_AU_NUM = author.AU_NUM
-        WHERE
-            BO_PUBLISH_DATE >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-        
-        <if test="adultYN != null and adultYN != ''">
-                AND BO_ADULT = #{adultYN}
-        </if>
-        
         <choose>
-            <when test="order == 'popular'">
-                ORDER BY BO_TOTAL_RATING DESC, BO_REVIEW_COUNT DESC
+            <when test="sort == 'popular'">
+                ORDER BY BO_REVIEW_COUNT DESC
             </when>
             <otherwise>
                 ORDER BY BO_PUBLISH_DATE DESC
             </otherwise>
         </choose>
-
-        LIMIT #{limit} OFFSET #{offset}
+        LIMIT #{offset}, #{pageSize}
     </select>
 
-    <select id="countFilteredBooks" resultType="int">
-        SELECT
-            COUNT(*)
-        FROM
-            book
-        WHERE
-            BO_PUBLISH_DATE >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
-
-        <if test="adultYN != null and adultYN !=''">
-            AND BO_ADULT = #{adultYN}
+    <!-- 🔹 신작 도서 총 개수 -->
+    <select id="countNewBooks" resultType="int">
+        SELECT COUNT(*)
+        FROM book
+        WHERE 1 = 1
+        <if test="mcCode != null">
+            AND BO_SC_CODE IN (
+                SELECT SC_CODE FROM sub_category WHERE SC_MC_CODE = #{mcCode}
+            )
+        </if>
+        <if test="adult != null">
+            AND BO_ADULT = #{adult}
         </if>
     </select>
-    <select id="selectBestBooks" resultMap="bookBestMap">
-        SELECT
-            BO_CODE, BO_TITLE, BO_TOTAL_RATING, COUNT(DISTINCT RV_NUM) AS BO_REVIEW_COUNT,
-            BO_FIN, BO_ADULT, BO_PUBLISH_DATE,
-            BO_TOTAL_EPISODE,
-            AU_NAME AS bo_author,
-            IFNULL(r_recent.recent_review_count, 0) AS recent_review_count
-        FROM
-            book
-        JOIN
-            author ON BO_AU_NUM = AU_NUM
-        LEFT JOIN
-            review ON RV_BO_CODE = BO_CODE
-        <!-- 최근 리뷰 수만 정렬용으로 별도 서브쿼리에서 가져오기 -->
-        LEFT JOIN(
-            SELECT
-                RV_BO_CODE, COUNT(*) AS recent_review_count
-            FROM
-                review
-            <choose>
-                <when test="range == 'day'">
-                    WHERE DATE(RV_DATE) = CURDATE()
-                </when>
-                <when test="range == 'week'">
-                    WHERE RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-                </when>
-                <when test="range == 'day'">
-                    WHERE RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
-                </when>
-                <otherwise>
-                    WHERE 1=1
-                </otherwise>
-            </choose>
-            GROUP BY RV_BO_CODE
-        )r_recent ON r_recent.RV_BO_CODE = BO_CODE
-        <!-- 날짜 필터: 오늘 / 주간 / 월간 -->
-        <where>
-            <!-- 성인 필터 -->
-            <if test="adultYN != null and adultYN != ''">
-                AND BO_ADULT = #{adultYN}
-            </if>
-            <!-- 완결 필터 -->
-            <if test="finished != null and finished != ''">
-                AND BO_FIN = #{finished}
-            </if>
-        </where>
-        GROUP BY BO_CODE
-        ORDER BY recent_review_count DESC, BO_TOTAL_RATING DESC
-        LIMIT #{size} OFFSET #{offset}
+    <!-- 🔹 베스트 -->
+    <select id="selectBestBooks" resultType="BookVO">
+        SELECT *
+        FROM book
+        WHERE 1 = 1
+        <if test="mcCode != null">
+            AND BO_SC_CODE IN (
+                SELECT SC_CODE FROM sub_category WHERE SC_MC_CODE = #{mcCode}
+            )
+        </if>
+        <if test="adult != null">
+            AND BO_ADULT = #{adult}
+        </if>
+        <if test="fin != null">
+            AND BO_FIN = #{fin}
+        </if>
+        <choose>
+            <when test="sort == 'weekly'">
+                ORDER BY BO_REVIEW_COUNT DESC, BO_PUBLISH_DATE DESC
+            </when>
+            <when test="sort == 'monthly'">
+                ORDER BY BO_TOTAL_RATING DESC, BO_REVIEW_COUNT DESC
+            </when>
+            <otherwise>
+                ORDER BY BO_REVIEW_COUNT DESC
+            </otherwise>
+        </choose>
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="countBestBooks" resultType="int">
+        SELECT COUNT(*)
+        FROM book
+        WHERE 1 = 1
+        <if test="mcCode != null">
+            AND BO_SC_CODE IN (
+                SELECT SC_CODE FROM sub_category WHERE SC_MC_CODE = #{mcCode}
+            )
+        </if>
+        <if test="adult != null">
+            AND BO_ADULT = #{adult}
+        </if>
+        <if test="fin != null">
+            AND BO_FIN = #{fin}
+        </if>
+    </select>
+
+    <!-- 🔹 기다리면 무료 -->
+    <select id="selectWaitFreeBooks" resultType="BookVO">
+        SELECT *
+        FROM book
+        WHERE BO_WAIT_FOR_FREE = 'Y'
+        <if test="mcCode != null">
+            AND BO_SC_CODE IN (
+                SELECT SC_CODE FROM sub_category WHERE SC_MC_CODE = #{mcCode}
+            )
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND BO_TITLE LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <choose>
+            <when test="sort == 'popular'">
+                ORDER BY BO_REVIEW_COUNT DESC
+            </when>
+            <when test="sort == 'rating'">
+                ORDER BY BO_TOTAL_RATING DESC
+            </when>
+            <when test="sort == 'review'">
+                ORDER BY BO_REVIEW_COUNT DESC
+            </when>
+            <otherwise>
+                ORDER BY BO_PUBLISH_DATE DESC
+            </otherwise>
+        </choose>
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <select id="countWaitFreeBooks" resultType="int">
+        SELECT COUNT(*)
+        FROM book
+        WHERE BO_WAIT_FOR_FREE = 'Y'
+        <if test="mcCode != null">
+            AND BO_SC_CODE IN (
+                SELECT SC_CODE FROM sub_category WHERE SC_MC_CODE = #{mcCode}
+            )
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND BO_TITLE LIKE CONCAT('%', #{keyword}, '%')
+        </if>
     </select>
     <select id="selectKeywordListByBookCode" resultType="KeywordVO">
         SELECT 
@@ -231,35 +214,6 @@
             bk_kw_code = kw_code
         WHERE 
             bk_bo_code = #{bo_code}
-    </select>
-    <select id="countBestBooks" resultType="int">
-        SELECT
-            COUNT(DISTINCT BO_CODE)
-        FROM
-            book
-        LEFT JOIN
-            review ON RV_BO_CODE = BO_CODE
-        <choose>
-            <when test="range == 'day'">
-            AND DATE(RV_DATE) = CURDATE()
-            </when>
-            <when test="range == 'week'">
-            AND RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-            </when>
-            <when test="range == 'month'">
-            AND RV_DATE >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)
-            </when>
-        </choose>
-
-        WHERE
-            1=1
-        <if test="adultYN != null and adultYN != ''">
-            AND BO_ADULT = #{adultYN}
-        </if>
-
-        <if test="finished != null and finished != ''">
-            AND BO_FIN = #{finished}
-        </if>
     </select>
 
     <!-- 키워드 검색 도서 리스트 -->

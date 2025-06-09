@@ -56,47 +56,34 @@ public class BookService {
 
     private final String NAMESPACE = "kr.kh.kihibooks.dao.BookDAO.";
 
-    public List<BookVO> getTopBooks() {
-        return bookDAO.selectTopBooks();
+    // 🔹 신작
+    public List<BookVO> getNewBooks(Integer mcCode, String sort, String adult, int page) {
+        int offset = (page - 1) * PageConstants.PAGE_SIZE;
+        return bookDAO.selectNewBooks(mcCode, sort, adult, offset, PageConstants.PAGE_SIZE);
     }
 
-    public List<BookVO> getBookList(int ur_num) {
-        return bookDAO.selectBookList(ur_num);
+    public int countNewBooks(Integer mcCode, String sort, String adult) {
+        return bookDAO.countNewBooks(mcCode, sort, adult);
     }
 
-    public List<BookVO> getWaitFreeBooks() {
-        return bookDAO.selectWaitFreeBooks();
+    // 🔹 베스트
+    public List<BookVO> getBestBooks(Integer mcCode, String sort, String adult, String fin, int page) {
+        int offset = (page - 1) * PageConstants.PAGE_SIZE;
+        return bookDAO.selectBestBooks(mcCode, sort, adult, fin, offset, PageConstants.PAGE_SIZE);
     }
 
-    public PageInfo<BookVO> getWaitFreeBooks(int page, String sort, String keyword) {
-        int size = PageConstants.PAGE_SIZE;
-        int offset = (page - 1) * size;
-
-        List<BookVO> books = bookDAO.selectWaitFreeBooksFiltered(sort, keyword, offset, size);
-        int totalCount = bookDAO.countWaitFreeBooksFiltered(keyword);
-
-        return PaginationUtils.paginate(books, totalCount, page, size, PageConstants.BLOCK_SIZE);
+    public int countBestBooks(Integer mcCode, String sort, String adult, String fin) {
+        return bookDAO.countBestBooks(mcCode, sort, adult, fin);
     }
 
-    public List<BookVO> getNewBooks() {
-        return bookDAO.selectNewBooks();
+    // 🔹 기다리면 무료
+    public List<BookVO> getWaitFreeBooks(Integer mcCode, String sort, String keyword, int page) {
+        int offset = (page - 1) * PageConstants.PAGE_SIZE;
+        return bookDAO.selectWaitFreeBooks(mcCode, sort, keyword, offset, PageConstants.PAGE_SIZE);
     }
 
-    public PageInfo<BookVO> getFilteredBooks(int page, String order, String adult) {
-        int offset = (page - 1) * PAGE_SIZE;
-        List<BookVO> books = bookDAO.selectFilteredBooks(offset, PageConstants.PAGE_SIZE, order, adult);
-        int totalCount = bookDAO.countFilteredBooks(order, adult);
-
-        return PaginationUtils.paginate(books, totalCount, page, PAGE_SIZE, BLOCK_SIZE);
-    }
-
-    public PageInfo<BookVO> getBestBooks(int page, int size, String range, String adultYN, String finished) {
-        int offset = (page - 1) * size;
-        int total = bookDAO.countBestBooks(range, adultYN, finished);
-
-        List<BookVO> content = bookDAO.selectBestBooks(offset, size, range, adultYN, finished);
-
-        return PaginationUtils.paginate(content, total, page, size, BLOCK_SIZE);
+    public int countWaitFreeBooks(Integer mcCode, String sort, String keyword) {
+        return bookDAO.countWaitFreeBooks(mcCode, sort, keyword);
     }
 
     public PageInfo<BookVO> getBooksByKeywords(List<String> keywordIds, String sort, int page) {
@@ -108,6 +95,14 @@ public class BookService {
         int totalCount = bookDAO.countBooksByKeywords(keywordIds, keywordIds.size());
 
         return PaginationUtils.paginate(books, totalCount, page, PAGE_SIZE, BLOCK_SIZE);
+    }
+    
+    public List<BookVO> getTopBooks(int mcCode) {
+        return bookDAO.selectTopBooks();
+    }
+
+    public List<BookVO> getBookList(int ur_num) {
+        return bookDAO.selectBookList(ur_num);
     }
 
     public BookVO getBook(String bo_code) {
@@ -538,4 +533,6 @@ public class BookService {
     public boolean deleteNotice(int nt_num) {
         return bookDAO.deleteNotice(nt_num);
     }
+
+    
 }
