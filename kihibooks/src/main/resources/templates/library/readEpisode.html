@@ -6,7 +6,7 @@
     layout:decorate="~{layout/layout.html}">
 <head>
     <meta charset="UTF-8">
-    <title>EPUB 읽기</title>
+    <title>작품 감상</title>
     <style>
         main {
             -webkit-user-select: none;
@@ -20,10 +20,9 @@
             background-color: #f8f9fa;
             border-radius: 8px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-            text-align: center;
+            /* text-align: center; */
         }
         #extracted-text-area {
-            /* margin-top: 20px; */
             border: 1px dashed #ccc;
             padding: 10px;
             margin: 30px;
@@ -34,7 +33,6 @@
             background-color: #ffffff;
             box-sizing: border-box;
         }
-
         .content-management-page h2 {
             color: #2c3e50;
             margin-bottom: 20px;
@@ -42,19 +40,42 @@
             padding-bottom: 10px;
             font-weight: bold;
         }
+        .goBack-btn {
+            margin-top: 20px;
+			font-size: 13px;
+			padding: 8px 14px;
+			margin: 7px 0 7px 30px;
+			color: #fff;
+			box-sizing: border-box;
+			border-radius: 4px;
+			font-weight: 700;
+			/* text-align:right; */
+            cursor: pointer;
+			background: #ff7f50;
+			border: 1px solid #ff6730;
+		}
+        .goBack-btn:hover{
+            text-decoration: none;
+            color: #fff;
+            background-color: #ff6347;
+        }
     </style>
 </head>
 <body>
     <main layout:fragment="content">
         <div class="container content-management-page">
-            <h2 class="mb-3">📖 EPUB 읽기</h2>
+            <h2 class="mb-3">📖 작품 감상</h2>
             <input type="hidden" th:value="${epCode}" id="epCode">
             <input type="hidden" th:value="${boCode}" id="boCode">
 
             <div class="series-container">
                 <div id="extracted-text-area"></div>
+                <a th:href="@{/library/books/{boCode}(boCode = ${boCode})}" class="goBack-btn">목록으로</a>
             </div>
+            <!-- 댓글 -->
 
+            <!-- 뒤로가기 -->
+        </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
         <script src="https://unpkg.com/xmldom@0.6.0/dom-parser.js"></script>
@@ -70,13 +91,10 @@
                 if (typeof EpubConstructor !== 'function') {
                     throw new Error("ePub.js 라이브러리가 전역에 'ePub' 또는 'Epub' 객체를 정의하지 못했습니다.");
                 }
-
                 const book = new EpubConstructor(epubFileUrl);
                 console.log("Epub 객체 생성됨:", book);
-
                 book.ready.then(function() {
                     console.log("책 로드 및 파싱 완료!");
-
                     const rendition = book.renderTo("epub-area", {
                         width: "800px",
                         height: "600px",
@@ -87,10 +105,8 @@
 
                     const spineItems = book.spine.items;
                     console.log("책에 있는 섹션/챕터 수:", spineItems.length);
-                    
                     const htmlExtractionPromises = spineItems.map(function(item) {
                         console.log(`--- 섹션 처리 시작: ${item.href} ---`);
-
                         return book.load(item.href)
                             .then(loadedContent => { 
                                 let processedContent;
@@ -114,24 +130,6 @@
                                 const titleElement = processedContent.querySelector('title');
                                 if (titleElement) titleElement.remove();
 
-                                // 모든 <img> 태그 제거
-                                processedContent.querySelectorAll('img').forEach(img => img.remove());
-                                console.log(`DEBUG: Removed all <img> tags from ${item.href}`);
-
-                                // 모든 <svg> 태그 제거 (SVG 내부의 <image> 태그도 함께 제거됨)
-                                processedContent.querySelectorAll('svg').forEach(svg => svg.remove());
-                                console.log(`DEBUG: Removed all <svg> tags (and their contents, including <image> tags) from ${item.href}`);
-
-                                // height: 100vh 또는 height: 100%를 가진 비어있는 div 제거
-                                const emptyDivsWithVh = processedContent.querySelectorAll('div[style*="height: 100vh"], div[style*="height: 100%"]');
-                                emptyDivsWithVh.forEach(div => {
-                                    const trimmedTextContent = (div.textContent || '').trim();
-                                    if (trimmedTextContent === '' && div.children.length === 0) {
-                                        console.log(`DEBUG: Removing empty div with height: 100vh/100% style: ${div.outerHTML.substring(0, 100)}...`);
-                                        div.remove();
-                                    }
-                                });
-
                                 // 수정된 DOM을 HTML 문자열로 직렬화
                                 const finalHtml = new XMLSerializer().serializeToString(processedContent);
                                 console.log(`DEBUG: Final processed HTML (first 500 chars): ${finalHtml.substring(0, 500)}...`);
@@ -139,14 +137,13 @@
                             })
                             .catch(error => {
                                 console.error(`섹션 '${item.href}' 로드 중 오류:`, error);
-                                return ""; // 오류 발생 시 빈 문자열 반환
+                                return "";
                             });
                     });
 
-                    // 모든 섹션의 HTML 추출 및 이미지 처리가 완료될 때까지 기다립니다.
                     Promise.all(htmlExtractionPromises)
                         .then(function(htmls) {
-                            let fullHtmlContent = htmls.join(""); // HR 태그 없이 콘텐츠를 바로 연결
+                            let fullHtmlContent = htmls.join("");
                             console.log("--- EPUB 전체 HTML 추출 완료 ---");
                             const extractedTextArea = document.getElementById("extracted-text-area");
                             if (extractedTextArea) {

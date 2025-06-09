@@ -37,4 +37,8 @@ public class LibraryService {
         return libraryDAO.selectBookListForPage(ur_num, pageSize, offset);
     }
 
+    public List<EpisodeVO> getPurchasedEpisodeList(String bo_code, int ur_num) {
+        return libraryDAO.selectPurchasedEpisodeList(bo_code, ur_num);
+    }
+
 }

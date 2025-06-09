@@ -63,4 +63,12 @@
         GROUP BY b.BO_CODE, b.BO_TITLE, b.BO_DESCRIPTION, e.EP_COVER_IMG, a.AU_NAME
         LIMIT #{limit} OFFSET #{offset};
     </select>
+
+    <select id="selectPurchasedEpisodeList" resultType="EpisodeVO">
+        select * from library
+        join user on LB_UR_NUM  = UR_NUM
+        join episode on LB_EP_CODE = EP_CODE
+        join book on EP_BO_CODE = BO_CODE
+        where bo_code = #{bo_code} and lb_ur_num = #{ur_num}
+    </select>
 </mapper>

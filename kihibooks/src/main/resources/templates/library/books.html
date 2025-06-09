@@ -52,9 +52,9 @@
 			font-weight: 400;
             margin-top: 10px;
             padding: 20px;
-            background-color: #f8f9fa;
             border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            /* background-color: #f8f9fa; */
+            /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); */
 		}
         .grid-left-top2 {
 			font-size: 14px;
@@ -137,6 +137,7 @@
 			text-decoration: none;
 		}
         .bottom-content {
+			padding-right: 20px;
             margin-left: 22px;
 			width: 100%;
 			display: flex;
@@ -151,6 +152,98 @@
 		}
 		.bottom-content>div:last-of-type {
 			border-bottom: 1px solid #e6e6e6;
+		}
+		.up-wrap {
+			padding: 16px 20px;
+			margin: 30px;
+			border: 1px solid #e6e6e6;
+			background: #fafafa;
+			font-size: 15px;
+			line-height: 24px;
+			text-align: left;
+			border-radius: 4px;
+		}
+		.meta {
+			margin: 30px;
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			row-gap: 10px;
+			column-gap: 16px;
+			padding: 24px;
+			border: 1px solid #e6e6e6;
+			border-radius: 6px;
+			background-color: #fafafa;
+		}
+		.m-wrap {
+			display: flex;
+			margin: 0;
+			padding: 0;
+		}
+		.wrap-title {
+			width: 100px;
+			flex: 0 0 auto;
+			font-size: 14px;
+			font-weight: 600;
+			line-height: 18px;
+			color: #141414;
+		}
+
+		.wrap-date {
+			font-size: 14px;
+			font-weight: 400;
+			line-height: 18px;
+			color: #787878;
+		}
+		.keyword-title {
+			margin-left: 30px;
+			display: flex;
+			align-items: center;
+			color: #141414;
+			font-size: 22px;
+			font-weight: 700;
+			line-height: 26px;
+			padding-top: 6px;
+			padding-bottom: 16px;
+		}
+		.wrapper-title {
+			margin-left: 30px;
+			color: #141414;
+			font-size: 22px;
+			font-weight: 700;
+			line-height: 26px;
+			padding-top: 6px;
+			padding-bottom: 16px;
+		}
+		
+		.keyword-list {
+			margin-left: 25px;
+			display: flex;
+			flex-wrap: wrap;
+			padding-bottom: 16px;
+		}
+
+		.keyword {
+			padding: 3px;
+		}
+
+		.keyword-btn {
+			background: #f0f0f0;
+			border-radius: 4px;
+			padding: 8px 10px;
+			color: #141414;
+			cursor: pointer;
+			appearance: none;
+			box-shadow: none;
+			border: 0;
+			margin: 0;
+		}
+
+		.keyword-name {
+			position: relative;
+			display: flex;
+			font-size: 15px;
+			font-weight: 600;
+			line-height: 18px;
 		}
         .episode-area {
 			display: block;
@@ -295,7 +388,7 @@
         .checkout-btn {
 			font-size: 13px;
 			padding: 8px 14px;
-			margin: 7px 0 7px 4px;
+			margin: 7px 0 7px 30px;
 			position: relative;
 			z-index: 5;
 			color: #fff;
@@ -350,8 +443,6 @@
                 width: 100%;
 				text-align: center;
             }
-			.cate-title, .book-title{
-			}
             .category,
             .info-content,
             .bottom-content {
@@ -375,7 +466,7 @@
 </head>
 <body>
     <main layout:fragment="content" class="container">
-        <h2 class="titleH2">📖 도서 회차 관리</h2>
+        <!-- <h2 class="titleH2" th:text="'📖 '+${book.bo_title}"> </h2> -->
         <div id="page_detail" class="page-detail">
             <div class="detail-wrap">
                 <div class="detail-content">
@@ -437,7 +528,33 @@
                                     </div>
                                 </div>
                             </div>
+							<div class="meta">
+								<div class="m-wrap">
+									<div class="wrap-title">업데이트</div>
+									<span class="wrap-date" th:text="${latestEpDate} + ' 업데이트'"></span>
+								</div>
+								<div class="m-wrap">
+									<div class="wrap-title">출간 정보</div>
+									<span class="wrap-date publish-date" th:attr="data-date=${book.bo_publish_date}"></span>
+									<script>
+										var dateSpan = document.querySelector(".publish-date");
+										var rawDateStr = dateSpan.dataset.date;
+
+										if (rawDateStr) {
+											var date = new Date(rawDateStr);
+											var yyyy = date.getFullYear();
+											var mm = String(date.getMonth() + 1).padStart(2, '0');
+											var dd = String(date.getDate()).padStart(2, '0');
+
+											dateSpan.innerText = `${yyyy}.${mm}.${dd} 출간`;
+										} else {
+											dateSpan.innerText = '-';
+										}
+									</script>
+								</div>
+							</div>
                             <div class="episode-area">
+								
                                 <div class="epi-line"></div>
                                 <div class="list-module">
                                     <div class="list-wrapper">
@@ -482,6 +599,34 @@
 										</th:block> -->
                                     </div>
                                 </div>
+								<div class="up-wrap">
+									<div class="upper-text">
+										본 도서는 출판사의 요청으로 무료 회차를 부분별로 서비스하고 있습니다.
+										<br>
+										<!-- 기본 무료 회차는 총 <span th:text="${freeCount} + '화(1~' + ${freeCount} + '화)'"></span>입니다. 도서 이용에 참고 부탁드립니다. -->
+									</div>
+								</div>
+								<!-- <div class="epi-line"></div> -->
+								<h2 class="keyword-title">이 작품의 키워드</h2>
+								<div class="keyword-list">
+									<ul class="keyword" th:each="keyword : ${kwList}">
+										<span>
+											<button class="keyword-btn">
+												<span class="keyword-name">
+													<span th:text="'#'+${keyword.bk_name}"></span>
+												</span>
+											</button>
+										</span>
+									</ul>
+								</div>
+								<h2 class="wrapper-title">작품 소개</h2>
+								<div class="descript-wrapper">
+									<div class="descript-wrap">
+										<div>
+											<span style="margin-left: 30px;" th:text="${book.bo_description}"></span>
+										</div>
+									</div>
+								</div>
 							</div>
                         </div>
 						<div class="direct-view-wrapper">

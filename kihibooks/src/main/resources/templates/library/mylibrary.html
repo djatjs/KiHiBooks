@@ -198,7 +198,7 @@
                 <div class="book-list">
                     <th:block th:if="${!#lists.isEmpty(interestPageInfo.content)}">
                         <th:block th:each="book : ${interestPageInfo.content}">
-                            <a th:href="@{/library/books/{bo_code}(bo_code=${book.it_bo_code})}" class="book-item-link">
+                            <a th:href="@{/books/{bo_code}(bo_code=${book.it_bo_code})}" class="book-item-link">
                                 <div class="book-item">
                                     <div class="book-info">
                                         <h3 th:text="${book.it_bo_title}"></h3>

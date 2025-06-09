@@ -1,6 +1,10 @@
 package kr.kh.kihibooks.controller;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +19,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.HttpHeaders;
 
-
+import kr.kh.kihibooks.model.vo.BookKeywordVO;
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.InterestVO;
@@ -73,10 +77,20 @@ public class LibraryCotroller {
     @GetMapping("/library/books/{bo_code}")
     public String getMethodName(@PathVariable String bo_code, Model model,@AuthenticationPrincipal CustomUser customUser) {
         BookVO book = bookService.getBook(bo_code);
-        List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
+        
+        List<EpisodeVO> epiList = libraryService.getPurchasedEpisodeList(bo_code, customUser.getUser().getUr_num());
+        Optional<Timestamp> latestDateOpt = epiList.stream()
+                .map(EpisodeVO::getEp_date)
+                .max(Comparator.naturalOrder());
+        List<BookKeywordVO> kwList = bookService.getKeywordList(bo_code);
+        String latestDate = latestDateOpt
+                .map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
+                .orElse("날짜 없음");
+        model.addAttribute("latestEpDate", latestDate);
         model.addAttribute("bo_code", bo_code);
         model.addAttribute("book", book);
         model.addAttribute("epiList", epiList);
+        model.addAttribute("kwList", kwList);
         return "/library/books";
     }
     
