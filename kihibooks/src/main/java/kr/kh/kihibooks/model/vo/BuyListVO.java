@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class BuyListVO {
-	private int bl_num;
+	private String bl_id;
 	private Timestamp bl_date;
 	private Timestamp bl_end_date;
 	private String bl_ep_code;

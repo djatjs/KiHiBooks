@@ -224,35 +224,6 @@ public class UserService {
 		return userDAO.getWff(ur_num, bo_code);
 	}
 
-	public int getBlNum(List<String> epCodes, int ur_num) {
-		List<String> existEpCodes = userDAO.getBlEpCodesByUser(ur_num);
-
-		List<String> newEpCodes = epCodes.stream().filter(epCode -> !existEpCodes.contains(epCode))
-				.collect(Collectors.toList());
-
-		boolean add = false;
-
-		for (String ep_code : newEpCodes) {
-			BuyListVO buyList = new BuyListVO();
-			buyList.setBl_ep_code(ep_code);
-			buyList.setBl_ur_num(ur_num);
-
-			int res = userDAO.insertBuyList(buyList);
-
-			if (res > 0) {
-				add = true;
-			}
-		}
-
-		int blNum = 0;
-
-		if (add) {
-			blNum = userDAO.selectLastBlNum(ur_num);
-		}
-
-		return blNum;
-	}
-
 	public List<EpisodeVO> getEpisodeByCodes(List<String> epCodes) {
 		List<EpisodeVO> epList = new ArrayList<>();
 		for (String ep_code : epCodes) {
@@ -292,7 +263,7 @@ public class UserService {
 		return userDAO.deleteNotiSet(ur_num, bo_code);
 	}
 
-	public String saveTempOrder(PaymentDTO payment) {
+	public String saveTempOrder(PaymentDTO payment, int ur_num) {
 		
 		String od_id = generateOdId();
 
@@ -304,7 +275,9 @@ public class UserService {
 		order.setOd_final_amount(Math.max(payment.getTotalAmount() - payment.getUsePoint(), 0));
 		order.setOd_method(payment.getMethod());
 		order.setOd_created_at(LocalDateTime.now());
+		order.setOd_ur_num(ur_num);
 
+		System.out.println(order);
 		userDAO.insertOrder(order);
 
 		return od_id;
@@ -315,6 +288,33 @@ public class UserService {
 		long count = userDAO.countTodayOrders() + 1;
 
 		return date + String.format("%05d", count);
+	}
+
+	public String insertFreeOrder(List<String> epCodes, int ur_num) {
+		
+		String od_id = generateOdId();
+
+		OrderVO order = new OrderVO();
+
+		order.setOd_id(od_id);
+		order.setOd_ur_num(ur_num);
+		order.setOd_total_amount(0);
+		order.setOd_created_at(LocalDateTime.now());
+		order.setOd_isFree(true);
+		order.setOd_method("FREE");
+
+		userDAO.insertOrder(order);
+
+		for(String epCode : epCodes) {
+			BuyListVO buy = new BuyListVO();
+			buy.setBl_id(od_id);
+			buy.setBl_ep_code(epCode);
+			buy.setBl_ur_num(ur_num);
+
+			userDAO.insertBuyList(buy);
+		}
+
+		return od_id;
 	}
 
 }

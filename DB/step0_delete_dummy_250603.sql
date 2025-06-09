@@ -13,8 +13,8 @@ DELETE FROM PUBLISHER_ID;
 DELETE FROM PUBLISHER;
 
 -- 3. 키워드 관련
-DELETE FROM keyword;
-DELETE FROM keyword_category;
+-- DELETE FROM keyword;
+-- DELETE FROM keyword_category;
 
  -- 4. 출석체크 관련 
 DELETE FROM ATTENDANCE;

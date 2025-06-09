@@ -271,16 +271,16 @@ public class UserController {
         return "/user/checkoutFin";
     }
 
-    @PostMapping("/get/blNum")
+    @PostMapping("/order/free")
     @ResponseBody
-    public Map<String, Object> getBlNum(@RequestParam List<String> epCodes,
-            @AuthenticationPrincipal CustomUser customUser) {
+    public Map<String, Object> processFreeOrder(@RequestBody Map<String, List<String>> payload, @AuthenticationPrincipal CustomUser customUser) {
 
-        int urNum = customUser.getUser().getUr_num();
-        int blNum = userService.getBlNum(epCodes, urNum);
+        List<String> epCodes = payload.get("epCodes");
+
+        String contentsId = userService.insertFreeOrder(epCodes, customUser.getUser().getUr_num());
 
         Map<String, Object> res = new HashMap<>();
-        res.put("bl_num", blNum);
+        res.put("contentsId", contentsId);
 
         return res;
     }
@@ -327,7 +327,8 @@ public class UserController {
     }
 
     @PostMapping("/payment/process")
-    public Map<String, Object> processPayment(@RequestBody PaymentDTO payment) {
+    @ResponseBody
+    public Map<String, Object> processPayment(@RequestBody PaymentDTO payment, @AuthenticationPrincipal CustomUser customUser) {
         Map<String, Object> response = new HashMap<>();
 
         if(payment.getUsePoint() > payment.getTotalAmount()) {
@@ -336,7 +337,9 @@ public class UserController {
             return response;
         }
 
-        String orderId = userService.saveTempOrder(payment);
+        int userNum = customUser.getUser().getUr_num();
+
+        String orderId = userService.saveTempOrder(payment, userNum);
 
         String method = payment.getMethod();
         String redirectUrl = "/payment/" + method.toLowerCase() + "/start?orderId=" + orderId;

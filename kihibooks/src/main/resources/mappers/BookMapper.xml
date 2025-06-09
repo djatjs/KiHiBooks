@@ -529,7 +529,8 @@
     </select>
 
     <select id="getAuthorAnotherBookList" resultType="BookVO">
-        select * from book
+        select *, author.au_name AS bo_author from book
+        join author on au_num = bo_au_num
         where bo_au_num = #{au_num}
         order by substring((bo_total_rating / bo_review_count / 2.0), 1, 3) desc, bo_review_count desc
     </select>
@@ -564,7 +565,8 @@
     </select>
 
     <select id="getBestList5" resultType="BookVO">
-        select * from book
+        select *, author.au_name AS bo_author from book
+        join author on bo_au_num = au_num
         where bo_sc_code = #{sc_code}
         order by substring((bo_total_rating / bo_review_count / 2.0), 1, 3) desc, bo_review_count desc
         limit 5

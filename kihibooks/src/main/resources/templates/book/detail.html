@@ -2732,14 +2732,14 @@
 													</div>
 												</div>
 												<script th:inline="javascript">
-													let boCode = [[${book.bo_code}]];
+													let boCode = [[${ book.bo_code }]];
 													$(document).ready(function () {
 														// 관심 등록
 														$('.interestBtn').click(function () {
 															$.ajax({
 																url: '/interest/toggle',
 																type: 'POST',
-																data: { action: 'add', boCode : boCode },
+																data: { action: 'add', boCode: boCode },
 																success: function () {
 																	location.reload(); // 또는 동적으로 상태 토글
 																}
@@ -2751,7 +2751,7 @@
 															$.ajax({
 																url: '/interest/toggle',
 																type: 'POST',
-																data: { action: 'remove', boCode : boCode },
+																data: { action: 'remove', boCode: boCode },
 																success: function () {
 																	location.reload();
 																}
@@ -2763,7 +2763,7 @@
 															$.ajax({
 																url: '/alarm/toggle',
 																type: 'POST',
-																data: { action: 'add', boCode : boCode },
+																data: { action: 'add', boCode: boCode },
 																success: function () {
 																	location.reload();
 																}
@@ -2775,7 +2775,7 @@
 															$.ajax({
 																url: '/alarm/toggle',
 																type: 'POST',
-																data: { action: 'remove', boCode : boCode },
+																data: { action: 'remove', boCode: boCode },
 																success: function () {
 																	location.reload();
 																}
@@ -4191,7 +4191,6 @@
 					checked.each(function () {
 						const epCode = $(this).data('ep-code');
 						const isFree = $(this).data('ep-price') === 0;
-						console.log(isFree);
 
 						buyList.push(epCode);
 
@@ -4201,33 +4200,31 @@
 					});
 
 					if (!hasPaidEpisode) {
-						const buyListParam = buyList.join(',');
-						const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-
 						$.ajax({
-							url: "/get/blNum",
+							url: "/order/free",
 							type: "post",
-							data: {
-								epCodes: buyList
-							},
+							contentType: "application/json",
+							data: JSON.stringify({ epCodes: buyList }),
 							traditional: true,
 							success: function (res) {
-								const blNum = res.bl_num;
-								location.href = `/order/checkout/finished?contents_id=${dateStr}${blNum}`;
+								const contentsId = res.contentsId; // 서버에서 생성한 식별자 (예: 날짜+번호 등)
+								location.href = `/order/checkout/finished?contents_id=${contentsId}`;
 							},
 							error: function () {
-								alert("결제 번호 가져오기 실패");
+								alert("무료 구매 처리 중 오류 발생");
 							}
 						});
 					} else {
 						$.ajax({
 							url: "/order/checkout",
 							type: "post",
-							data: {
-								epCodes: buyList
-							},
+							data: { epCodes: buyList },
+							traditional: true,
 							success: function () {
 								location.href = "/order/checkout";
+							},
+							error: function () {
+								alert("결제 페이지 이동 실패");
 							}
 						});
 					}

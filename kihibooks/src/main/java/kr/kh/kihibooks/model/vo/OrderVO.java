@@ -15,4 +15,5 @@ public class OrderVO {
     private LocalDateTime od_created_at;
     private Timestamp od_paid_at;
     private int od_ur_num;
+    private boolean od_isFree;
 }
