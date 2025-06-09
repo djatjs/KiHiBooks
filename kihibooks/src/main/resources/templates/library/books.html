@@ -137,9 +137,7 @@
 			text-decoration: none;
 		}
         .bottom-content {
-			padding-right: 20px;
-            margin-left: 22px;
-			width: 100%;
+			margin-left: 20px;
 			display: flex;
 			flex-direction: column;
 			min-width: 0;
@@ -462,10 +460,182 @@
 				padding: 5px 8px; border-radius: 6px;
 			}
         }
+		.au-other-book {
+			padding-top: 30px;
+			margin-left: 30px;
+		}
+		
+		.au-other-book-title {
+			display: flex;
+			justify-content: space-between;
+			padding: 7px 0 11px;
+			font-weight: 700;
+			font-size: 18px;
+			line-height: 21px;
+			columns: #141414;
+		}
+
+		.au-other-more {
+			font-size: 16px;
+			font-weight: 500;
+			line-height: 19px;
+			color: #a5a5a5;
+		}
+		.au-other-more:hover {
+			text-decoration: none;
+			color: #a5a5a5;
+		}
+
+		.other-book-list {
+			position: relative;
+			width: 100%;
+		}
+
+		.book-list {
+			display: flex;
+			flex-wrap: nowrap;
+			overflow: hidden;
+		}
+
+		.books {
+			display: flex;
+			flex: 1 0 auto;
+		}
+
+		.books-ul {
+			display: flex;
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		.book-li {
+			width: 141px;
+			min-height: 298px;
+			flex: 0 0 auto;
+			margin-right: 6px;
+		}
+
+		.book {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.book-img {
+			position: relative;
+			align-items: stretch;
+			width: 100%;
+			padding-bottom: 144.80519480519482%;
+		}
+
+		.bo-img {
+			border-radius: 4px;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			max-height: 100%;
+			cursor: pointer;
+		}
+
+		.bo-image {
+			position: relative;
+			width: 100%;
+			padding-bottom: 144.80519480519482%;
+			inset: 0;
+			border-radius: 4px;
+			outline: 1px solid rgba(0, 0, 0, 0.04);
+			outline-offset: -1px;
+			background: rgba(0, 0, 0, 0.04);
+		}
+
+		.book-info {
+			margin-top: 10px;
+			min-height: 84px;
+			padding-right: 10px;
+			width: 100%;
+		}
+
+		.bo-title {
+			display: inline-flex;
+		}
+
+		.b-title {
+			display: -webkit-box;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			word-wrap: break-word;
+			white-space: normal;
+			max-height: clac(19px * 2);
+			line-height: 19px;
+			font-size: 16px;
+			word-break: break-all;
+			color: #141414;
+			font-weight: 500;
+		}
+
+		.b-title:hover {
+			text-decoration: none;
+			color: #141414;
+		}
+
+		.book-author {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.bo-author {
+			margin-top: 6px;
+			font-size: 14px;
+			line-height: 17px;
+			display: block;
+			color: #787878;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			overflow-wrap: break-word;
+		}
+
+		.b-author {
+			color: #787878;
+		}
+
+		.b-author:hover {
+			color: #b8b8b8;
+			text-decoration: none;
+		}
+
+		.bo-rating {
+			margin-top: 7px;
+			font-size: 13px;
+			line-height: 16px;
+			display: flex;
+			align-items: center;
+			color: #dc3232;
+			overflow-wrap: break-word;
+		}
+
+		.b-rating-cnt {
+			margin-left: 1px;
+			color: #787878;
+		}
+
+		.book-click {
+			display: none;
+			position: absolute;
+			inset: 0;
+			text-decoration: none;
+		}
     </style>
 </head>
 <body>
     <main layout:fragment="content" class="container">
+		
         <!-- <h2 class="titleH2" th:text="'📖 '+${book.bo_title}"> </h2> -->
         <div id="page_detail" class="page-detail">
             <div class="detail-wrap">
@@ -554,56 +724,54 @@
 								</div>
 							</div>
                             <div class="episode-area">
-								
-                                <div class="epi-line"></div>
-                                <div class="list-module">
-                                    <div class="list-wrapper">
-										<th:block th:if="${!#lists.isEmpty(epiList)}">
-											<!-- 데이터 뿌려주기 시작 -->
-											<ul class="list-ul" th:each="episode : ${epiList}">
-												<li class="epi-list" data-id="${episode.ep_code}">
-													<div class="epi-list-wrapper">
-														<div class="table-wrap">
-															<div class="epi-info">
-																<div class="info-title-with-badge">
-																	<div th:if="${episode.ep_price == 0}" class="badge-list">
-																		<div class="badge">
-																			<img class="free-badge" src="/resources/static/img/free.png" alt="무료 배지">
-																		</div>
+								<div class="epi-line"></div>
+								<div class="list-module">
+									<div class="list-wrapper">
+										<ul class="list-ul" th:each="episode : ${epiList}">
+											<li class="epi-list" data-id="${episode.ep_code}">
+												<div class="epi-list-wrapper">
+													<div class="table-wrap">
+														<div class="epi-info">
+															<div class="info-title-with-badge">
+																<div th:if="${episode.ep_price == 0}" class="badge-list">
+																	<div class="badge">
+																		<img class="free-badge" src="/resources/static/img/free.png" alt="무료 배지">
 																	</div>
-																	<div th:if="${episode.ep_price != 0} and ${book.bo_wait_for_free == 'Y'}"
-																		class="badge-list">
-																		<div class="badge">
-																			<img class="clock-badge" src="/resources/static/img/clock_badge.png" alt="키다무 배지">
-																		</div>
+																</div>
+																<div th:if="${episode.ep_price != 0} and ${book.bo_wait_for_free == 'Y'}"
+																	class="badge-list">
+																	<div class="badge">
+																		<img class="clock-badge" src="/resources/static/img/clock_badge.png" alt="키다무 배지">
 																	</div>
-																	<div class="epi-title" th:text="${episode.ep_title}"></div>
 																</div>
-																<div>
-																	<ul class="info-list-wrapper">
-																		<li class="info-ep-date" th:text="${#strings.substring(episode.ep_date, 0, 10)}"></li>
-																		<li class="info-page-cnt" th:text="'| 약 ' + ${episode.ep_total_page} +'자'"></li>
-																	</ul>
-																</div>
+																<div class="epi-title" th:text="${episode.ep_title}"></div>
 															</div>
-															<div class="direct-view-wrapper">
-																<a th:href="@{/mylibrary/readEpisode/{ep_code}(ep_code=${episode.ep_code})}" class="update-btn">읽기</a>
+															<div>
+																<ul class="info-list-wrapper">
+																	<li class="info-ep-date" th:text="${#strings.substring(episode.ep_date, 0, 10)}"></li>
+																	<li class="info-page-cnt" th:text="'| 약 ' + ${episode.ep_total_page} +'자'"></li>
+																</ul>
 															</div>
 														</div>
+														<div class="direct-view-wrapper">
+															<a th:href="@{/mylibrary/readEpisode/{ep_code}(ep_code=${episode.ep_code})}" class="update-btn">읽기</a>
+														</div>
 													</div>
-												</li>
-											</ul>
-										</th:block>
-										<!-- <th:block th:if="${#lists.isEmpty(epiList)}">
-											<div>회차 정보가 없습니다. 등록해주세요.</div>
-										</th:block> -->
-                                    </div>
-                                </div>
+												</div>
+											</li>
+										</ul>
+									</div>
+								</div>
 								<div class="up-wrap">
 									<div class="upper-text">
-										본 도서는 출판사의 요청으로 무료 회차를 부분별로 서비스하고 있습니다.
-										<br>
-										<!-- 기본 무료 회차는 총 <span th:text="${freeCount} + '화(1~' + ${freeCount} + '화)'"></span>입니다. 도서 이용에 참고 부탁드립니다. -->
+										<th:block th:if="${book.bo_free_episode > 0}">
+											본 도서는 출판사의 요청으로 무료 회차를 부분별로 서비스하고 있습니다.
+											<br>
+											기본 무료 회차는 총 <span th:text="${book.bo_free_episode} + '화(1~' + ${book.bo_free_episode} + '화)'"></span>입니다. 도서 이용에 참고 부탁드립니다.
+										</th:block>
+										<th:block th:if="${book.bo_free_episode == 0}">
+											프롤로그 외에 무료 회차가 없는 작품입니다.
+										</th:block>
 									</div>
 								</div>
 								<!-- <div class="epi-line"></div> -->
@@ -624,6 +792,56 @@
 									<div class="descript-wrap">
 										<div>
 											<span style="margin-left: 30px;" th:text="${book.bo_description}"></span>
+										</div>
+									</div>
+								</div>
+								<div class="au-other-book">
+									<div class="au-other-book-title">
+										작가의 대표 작품
+										<a th:href="@{/}" class="au-other-more">더보기</a>
+									</div>
+									<div class="other-book-list">
+										<div class="book-list">
+											<div class="books">
+												<ul class="books-ul" th:each="anotherBook : ${abList}">
+													<li class="book-li">
+														<div class="book">
+															<div class="book-img">
+																<!-- <p th:text="${anotherBook}"></p> -->
+																<!-- <th:block th:if="${anotherBook.it_ep_cover_img != null}"> -->
+																	<a th:href="@{/}" class="bo-img">
+																		<img src="/resources/static/covers/cover1.png" alt="도서 이미지">
+																		<span class="bo-image"></span>
+																	</a>
+																<!-- </th:block> -->
+																<!-- <th:block th:if="${anotherBook.it_ep_cover_img == null}"> -->
+																	<!-- <a th:href="@{/}" class="bo-img">
+																		<img src="/resources/static/covers/cover1.png" alt="도서 이미지">
+																		<span class="bo-image"></span>
+																	</a> -->
+																<!-- </th:block> -->
+															</div>
+															<div class="book-info">
+																<div class="bo-title">
+																	<!-- bo-img와 동일한 링크 -->
+																	<a th:href="@{/}" class="b-title" th:text="${anotherBook.bo_title}"></a>
+																</div>
+																<div class="book-author">
+																	<span class="bo-author">
+																		<a th:href="@{/}" class="b-author" th:text="${anotherBook.bo_author}"></a>
+																	</span>
+																	<!-- <span class="bo-rating">
+																		<img class="red mb-1" src="/resources/static/img/star.png" alt="별" style="height: 12px; margin-right: 2px;" th:text="${anotherBook.bo_total_rating / anotherBook.bo_review_count / 2.0}">
+																		<span class="b-rating-cnt" th:text="'(' + ${anotherBook.bo_review_count} + ')'"></span>
+																	</span> -->
+																</div>
+															</div>
+															<!-- bo-img 와 동일한 링크 -->
+															<a th:href="@{/}" class="book-click"></a>
+														</div>
+													</li>
+												</ul>
+											</div>
 										</div>
 									</div>
 								</div>

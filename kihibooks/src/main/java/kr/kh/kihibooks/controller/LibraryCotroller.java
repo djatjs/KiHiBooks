@@ -83,6 +83,7 @@ public class LibraryCotroller {
                 .map(EpisodeVO::getEp_date)
                 .max(Comparator.naturalOrder());
         List<BookKeywordVO> kwList = bookService.getKeywordList(bo_code);
+        List<BookVO> abList = bookService.getAuthorAnotherBook(bo_code);
         String latestDate = latestDateOpt
                 .map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
                 .orElse("날짜 없음");
@@ -91,6 +92,7 @@ public class LibraryCotroller {
         model.addAttribute("book", book);
         model.addAttribute("epiList", epiList);
         model.addAttribute("kwList", kwList);
+        model.addAttribute("abList", abList);
         return "/library/books";
     }
     

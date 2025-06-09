@@ -59,6 +59,12 @@
             color: #fff;
             background-color: #ff6347;
         }
+        .reply-container{
+            margin: 30px;
+            padding: 10px;
+            border: 1px dashed #ccc;
+            background-color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -70,11 +76,26 @@
 
             <div class="series-container">
                 <div id="extracted-text-area"></div>
+                <!-- 댓글 -->
+                <hr style="margin: 30px;">
+                <div class="reply-container">
+                    <div class="re_head">
+                        <div class="d-flex justify-content-between">
+                            <div><span>댓글 274</span></div>
+                            <p>더보기</p>
+                        </div>
+                    </div>
+                    <div class="re-body">
+                        <!-- 대표 댓글 -->
+                        <div class="reply-item">
+                            
+                        </div>
+                    </div>
+                </div>
+                <!-- 뒤로가기 -->
                 <a th:href="@{/library/books/{boCode}(boCode = ${boCode})}" class="goBack-btn">목록으로</a>
             </div>
-            <!-- 댓글 -->
 
-            <!-- 뒤로가기 -->
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
