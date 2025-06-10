@@ -68,7 +68,7 @@
     </style>
 </head>
 <body>
-    <main layout:fragment="content">
+    <main layout:fragment="content" oncontextmenu="return false;">
         <div class="container content-management-page">
             <h2 class="mb-3">📖 작품 감상</h2>
             <input type="hidden" th:value="${epCode}" id="epCode">
@@ -97,6 +97,18 @@
             </div>
 
         </div>
+        <script>
+            document.onkeydown = function(e) {
+                if( e.keycode == 123) { // F12 키
+                    e.preventDefault();
+                    return false;
+                }
+                if( e.ctrlKey && e.shiftKey && (e.keycode == 73)) { // Ctrl + Shift + I 키 조합
+                    e.preventDefault();
+                    return false;
+                }
+            };
+        </script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
         <script src="https://unpkg.com/xmldom@0.6.0/dom-parser.js"></script>
@@ -195,6 +207,7 @@
                 }
             }
         </script>
+        
     </main>
 </body>
 </html>

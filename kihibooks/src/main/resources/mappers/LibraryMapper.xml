@@ -71,4 +71,11 @@
         join book on EP_BO_CODE = BO_CODE
         where bo_code = #{bo_code} and lb_ur_num = #{ur_num}
     </select>
+
+    <select id="selectComments" resultType="CommentVO">
+        select *, user.ur_nickname AS co_user from comment
+        join user on co_ur_num = ur_num
+        where co_ep_code = #{ep_code}
+        order by co_num desc
+    </select>
 </mapper>

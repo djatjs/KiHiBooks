@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.InterestVO;
 import kr.kh.kihibooks.model.vo.LibraryVO;
+import kr.kh.kihibooks.model.vo.CommentVO;
 import kr.kh.kihibooks.dao.BookDAO;
 import kr.kh.kihibooks.dao.LibraryDAO;
 
@@ -39,6 +40,10 @@ public class LibraryService {
 
     public List<EpisodeVO> getPurchasedEpisodeList(String bo_code, int ur_num) {
         return libraryDAO.selectPurchasedEpisodeList(bo_code, ur_num);
+    }
+
+    public List<CommentVO> getComments(String epCode) {
+        return libraryDAO.selectComments(epCode);
     }
 
 }

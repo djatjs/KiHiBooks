@@ -24,6 +24,7 @@ import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.InterestVO;
 import kr.kh.kihibooks.model.vo.LibraryVO;
+import kr.kh.kihibooks.model.vo.CommentVO;
 import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.service.BookService;
 import kr.kh.kihibooks.service.LibraryService;
@@ -102,6 +103,9 @@ public class LibraryCotroller {
         String bo_code = episode.getEp_bo_code();
         model.addAttribute("epCode", epCode);
         model.addAttribute("boCode", bo_code);
+
+        List<CommentVO> comments = libraryService.getComments(epCode);
+        System.out.println(comments);
 
         return "/library/readEpisode";
     }
