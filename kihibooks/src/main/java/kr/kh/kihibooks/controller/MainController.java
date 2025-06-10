@@ -16,15 +16,15 @@ public class MainController {
 	@Value("${kakao.redirect.uri}")
 	private String kakaoRedirectUri;
 
-	@GetMapping("/")
-	public String main(Model model) {
-		List<String> banners = List.of(
-				"/banners/banner1.png",
-				"/banners/banner2.png",
-				"/banners/banner3.png");
-		model.addAttribute("banners", banners);
-		return "home";
-	}
+	// @GetMapping("/")
+	// public String main(Model model) {
+	// 	List<String> banners = List.of(
+	// 			"/banners/banner1.png",
+	// 			"/banners/banner2.png",
+	// 			"/banners/banner3.png");
+	// 	model.addAttribute("banners", banners);
+	// 	return "home";
+	// }
 
 	@GetMapping("/login")
 	public String login(Model model) {

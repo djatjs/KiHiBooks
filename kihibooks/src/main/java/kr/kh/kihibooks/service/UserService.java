@@ -317,4 +317,8 @@ public class UserService {
 		return od_id;
 	}
 
+    public boolean deleteUser(String ur_email) {
+		return userDAO.updateUserDeleted(ur_email);
+    }
+
 }

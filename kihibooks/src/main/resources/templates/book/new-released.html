@@ -226,7 +226,7 @@
 
 		<!-- 작품 리스트 -->
 		<div class="book-grid">
-			<div class="book-card" th:each="book : ${bookList}">
+			<div class="book-card" th:each="book : ${pageInfo.content}">
 				<a th:href="@{/book/detail/{id}(id=${book.bo_code})}" class="thumb-wrapper">
 					<img th:src="@{/resources/static/img/default_thumb.png}" alt="thumbnail">
 					<span class="badge adult" th:if="${book.bo_adult == 'Y'}">19</span>

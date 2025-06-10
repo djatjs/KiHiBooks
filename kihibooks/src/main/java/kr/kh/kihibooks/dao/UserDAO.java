@@ -1,6 +1,5 @@
 package kr.kh.kihibooks.dao;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -22,6 +21,8 @@ public interface UserDAO {
     int selectCode(@Param("email") String email, @Param("userCode") String userCode);
 
     UserVO selectEmail(@Param("email") String email);
+    
+    UserVO selectEmailIncludeDel(@Param("email") String email);
 
     int selectNickName(@Param("nickName") String nickName);
 
@@ -71,5 +72,6 @@ public interface UserDAO {
 
     void insertFreeOrder(OrderVO order);
 
+    boolean updateUserDeleted(String ur_email);
 
 }

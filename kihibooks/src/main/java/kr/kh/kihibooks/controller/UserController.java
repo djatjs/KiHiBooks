@@ -182,6 +182,16 @@ public class UserController {
         }
         return true;
     }
+
+    @ResponseBody
+    @PostMapping("/user/resign")
+    public boolean resign(@RequestParam String ur_email){
+        System.out.println(ur_email);
+        if(ur_email == null){
+            return false;
+        }
+        return userService.deleteUser(ur_email);
+    }
     
     @GetMapping("/signup/kakao") // 실제 Redirect URI 경로로 수정
     public String kakaoLogin(@RequestParam String code, HttpServletRequest request) {
@@ -203,7 +213,6 @@ public class UserController {
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);
 
-        // 💡 세션에 SecurityContext 저장
         HttpSession session = request.getSession(true);
         session.setAttribute(
                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
@@ -211,7 +220,6 @@ public class UserController {
 
         System.out.println("Spring Security 로그인 처리 완료: " + userDetails.getUsername());
 
-        // 처리가 완료되면 적절한 페이지로 리다이렉트
         return "redirect:/";
     }
 

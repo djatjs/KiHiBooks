@@ -42,8 +42,6 @@ import kr.kh.kihibooks.service.BookService;
 import kr.kh.kihibooks.service.KeywordService;
 import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.utils.CustomUser;
-import kr.kh.kihibooks.utils.PageConstants;
-import kr.kh.kihibooks.utils.PaginationUtils;
 
 @Controller
 public class BookController {
@@ -58,8 +56,8 @@ public class BookController {
 
 	@GetMapping("/realtime")
 	@ResponseBody
-	public Map<String, Object> getTopBooks() {
-		List<BookVO> books = bookService.getTopBooks();
+	public Map<String, Object> getTopBooks(@RequestParam("mcCode") int mcCode) {
+		List<BookVO> books = bookService.getTopBooks(mcCode);
 		String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
 		Map<String, Object> map = new HashMap<>();
@@ -67,186 +65,6 @@ public class BookController {
 		map.put("lastUpdated", now);
 
 		return map;
-	}
-
-	@GetMapping("/best")
-	@ResponseBody
-	public List<BookVO> getBestBooks() {
-		List<BookVO> books = bookService.getTopBooks();
-		return books;
-	}
-
-	@GetMapping("/newpublish")
-	@ResponseBody
-	public List<BookVO> getNewPublishBooks() {
-		List<BookVO> books = bookService.getNewBooks();
-		return books;
-	}
-
-	@GetMapping("/library/recents")
-	public String recentList(Model model, Integer ur_num) {
-		List<BookVO> list = bookService.getBookList(ur_num == null ? 0 : ur_num);
-		model.addAttribute("bookList", list);
-		return "user/recentList";
-	}
-
-	@GetMapping("/waitfree/list")
-	@ResponseBody
-	public List<BookVO> getWaitFreeList() {
-		List<BookVO> list = bookService.getWaitFreeBooks();
-		// System.out.println(list.size());
-		return list;
-	}
-
-	@GetMapping("/books/{bo_code}")
-	public String bookDetail(Model model, @PathVariable String bo_code,
-			@AuthenticationPrincipal CustomUser customUser) {
-		BookVO book = bookService.getBook(bo_code);
-		List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
-		List<ReviewVO> rvList = bookService.getReviewList(bo_code);
-		Map<Integer, Double> rating = bookService.calcRating(rvList);
-		Map<Integer, Integer> replyCountMap = new HashMap<>();
-		for (ReviewVO r : rvList) {
-			int oriNum = r.getRv_ori_num();
-			if (oriNum != 0) { // 댓글이면
-				replyCountMap.put(oriNum, replyCountMap.getOrDefault(oriNum, 0) + 1);
-			}
-		}
-		long freeCount = epiList.stream().filter(e -> e.getEp_price() == 0).count();
-		Map<Integer, Integer> likeCountMap = new HashMap<>();
-		for (ReviewVO review : rvList) {
-			int rvNum = review.getRv_num();
-			int likeCount = bookService.getLikeCount(rvNum);
-			likeCountMap.put(rvNum, likeCount);
-		}
-		Set<Integer> likedReviewIds = new HashSet<>();
-
-		Optional<Timestamp> latestDateOpt = epiList.stream()
-				.map(EpisodeVO::getEp_date)
-				.max(Comparator.naturalOrder());
-
-		String latestDate = latestDateOpt
-				.map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
-				.orElse("날짜 없음");
-		List<BookVO> abList = bookService.getAuthorAnotherBook(bo_code);
-		List<NoticeVO> notiList = bookService.getNoticeList(bo_code);
-		List<BookVO> bestList10 = bookService.getBestList(bo_code);
-		List<BookVO> bestList5 = bookService.getBestList5(bo_code);
-		List<BuyListVO> buyList = new ArrayList<>();
-		Set<String> buyCodeSet = new HashSet<>();
-		List<BookKeywordVO> kwList = bookService.getKeywordList(bo_code);
-		WaitForFreeVO wff = new WaitForFreeVO();
-		UserVO user = new UserVO();
-
-		if (customUser != null) {
-			int ur_num = customUser.getUser().getUr_num();
-			likedReviewIds = bookService.getLikedReview(ur_num);
-			buyList = bookService.getBuyList(ur_num, bo_code);
-			buyCodeSet = buyList.stream().map(BuyListVO::getBl_ep_code).collect(Collectors.toSet());
-			wff = userService.getWff(ur_num, bo_code);
-			user = customUser.getUser();
-			Integer urItNum = userService.getUrItNum(ur_num);
-			int itNum = urItNum != null ? urItNum : 0;
-			user.setUr_it_num(itNum);
-			Integer urNsNum = userService.getUrNsNum(ur_num);
-			int nsNum = urNsNum != null ?  urNsNum : 0;
-			user.setUr_ns_num(nsNum);
-		}
-
-		model.addAttribute("book", book);
-		model.addAttribute("epiList", epiList);
-		model.addAttribute("rvList", rvList);
-		model.addAttribute("rating", rating);
-		model.addAttribute("replyCountMap", replyCountMap);
-		model.addAttribute("freeCount", freeCount);
-		model.addAttribute("likeCountMap", likeCountMap);
-		model.addAttribute("likedReviewIds", likedReviewIds);
-		model.addAttribute("latestEpDate", latestDate);
-		model.addAttribute("abList", abList);
-		model.addAttribute("notiList", notiList);
-		model.addAttribute("bestList10", bestList10);
-		model.addAttribute("bestList5", bestList5);
-		model.addAttribute("buyList", buyList);
-		model.addAttribute("buyCodeSet", buyCodeSet);
-		model.addAttribute("kwList", kwList);
-		model.addAttribute("wff", wff);
-		model.addAttribute("user", user);
-
-		return "book/detail";
-	}
-
-	@PostMapping("/review/insert")
-	@ResponseBody
-	public boolean insert(@RequestBody ReviewVO review, @AuthenticationPrincipal CustomUser customUser) {
-
-		int reviewCnt = bookService.countReview(review.getRv_bo_code(), customUser.getUser().getUr_num());
-		System.out.println(reviewCnt);
-
-		if (reviewCnt == 0) {
-			return bookService.insertReview(review, customUser);
-		}
-
-		return false;
-	}
-
-	@PostMapping("/rereview/insert")
-	@ResponseBody
-	public ReviewVO insertReview(@RequestBody ReviewVO review, @AuthenticationPrincipal CustomUser customUser) {
-		if (!bookService.insertReReview(review, customUser)) {
-			System.out.println("리뷰 등록 실패");
-			return null;
-		}
-		System.out.println("리뷰 등록은 성공함");
-		ReviewVO reply = bookService.selectReply(review);
-		System.out.println("reply: " + reply);
-		return reply;
-	}
-
-	// 신간
-	@GetMapping("/book/new-released")
-	public String newReleased(
-			@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "latest") String order,
-			@RequestParam(required = false) String adult,
-			Model model) {
-
-		System.out.println(order);
-
-		if (order == null || order.equals("latest")) {
-			order = "recent";
-		}
-
-		PageInfo<BookVO> pageInfo = bookService.getFilteredBooks(page, order, adult);
-
-		model.addAttribute("bookList", pageInfo.getContent());
-		model.addAttribute("pageInfo", pageInfo);
-		model.addAttribute("order", order);
-		model.addAttribute("adult", adult);
-
-		return "book/new-released";
-	}
-
-	@GetMapping("/book/best")
-	public String bestBooks(
-			@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "day") String range,
-			@RequestParam(required = false) String adultYN,
-			@RequestParam(required = false) String finished,
-			Model model) {
-		if (range == null || range.isEmpty()) {
-			range = "day";
-		}
-		int size = PageConstants.PAGE_SIZE;
-		PageInfo<BookVO> pageInfo = bookService.getBestBooks(page, size, range, adultYN, finished);
-		System.out.println(pageInfo.getTotalPages());
-
-		model.addAttribute("bookList", pageInfo.getContent());
-		model.addAttribute("pageInfo", pageInfo);
-		model.addAttribute("range", range);
-		model.addAttribute("adultYN", adultYN);
-		model.addAttribute("finished", finished);
-
-		return "book/best";
 	}
 
 	@GetMapping("/book/keyword")
@@ -312,6 +130,117 @@ public class BookController {
 		return "book/keyword :: bookResultFragment";
 	}
 
+	// 준호 영역 끝
+
+	@GetMapping("/library/recents")
+	public String recentList(Model model, Integer ur_num) {
+		List<BookVO> list = bookService.getBookList(ur_num == null ? 0 : ur_num);
+		model.addAttribute("bookList", list);
+		return "user/recentList";
+	}
+
+	@GetMapping("/books/{bo_code}")
+	public String bookDetail(Model model, @PathVariable String bo_code,
+			@AuthenticationPrincipal CustomUser customUser) {
+		BookVO book = bookService.getBook(bo_code);
+		List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
+		List<ReviewVO> rvList = bookService.getReviewList(bo_code);
+		Map<Integer, Double> rating = bookService.calcRating(rvList);
+		Map<Integer, Integer> replyCountMap = new HashMap<>();
+		for (ReviewVO r : rvList) {
+			int oriNum = r.getRv_ori_num();
+			if (oriNum != 0) { // 댓글이면
+				replyCountMap.put(oriNum, replyCountMap.getOrDefault(oriNum, 0) + 1);
+			}
+		}
+		long freeCount = epiList.stream().filter(e -> e.getEp_price() == 0).count();
+		Map<Integer, Integer> likeCountMap = new HashMap<>();
+		for (ReviewVO review : rvList) {
+			int rvNum = review.getRv_num();
+			int likeCount = bookService.getLikeCount(rvNum);
+			likeCountMap.put(rvNum, likeCount);
+		}
+		Set<Integer> likedReviewIds = new HashSet<>();
+
+		Optional<Timestamp> latestDateOpt = epiList.stream()
+				.map(EpisodeVO::getEp_date)
+				.max(Comparator.naturalOrder());
+		String latestDate = latestDateOpt
+				.map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
+				.orElse("날짜 없음");
+		List<BookVO> abList = bookService.getAuthorAnotherBook(bo_code);
+		List<NoticeVO> notiList = bookService.getNoticeList(bo_code);
+		List<BookVO> bestList10 = bookService.getBestList(bo_code);
+		List<BookVO> bestList5 = bookService.getBestList5(bo_code);
+		List<BuyListVO> buyList = new ArrayList<>();
+		Set<String> buyCodeSet = new HashSet<>();
+		List<BookKeywordVO> kwList = bookService.getKeywordList(bo_code);
+		WaitForFreeVO wff = new WaitForFreeVO();
+		UserVO user = new UserVO();
+
+		if (customUser != null) {
+			int ur_num = customUser.getUser().getUr_num();
+			likedReviewIds = bookService.getLikedReview(ur_num);
+			buyList = bookService.getBuyList(ur_num, bo_code);
+			buyCodeSet = buyList.stream().map(BuyListVO::getBl_ep_code).collect(Collectors.toSet());
+			wff = userService.getWff(ur_num, bo_code);
+			user = customUser.getUser();
+			Integer urItNum = userService.getUrItNum(ur_num);
+			int itNum = urItNum != null ? urItNum : 0;
+			user.setUr_it_num(itNum);
+			Integer urNsNum = userService.getUrNsNum(ur_num);
+			int nsNum = urNsNum != null ? urNsNum : 0;
+			user.setUr_ns_num(nsNum);
+		}
+
+		model.addAttribute("book", book);
+		model.addAttribute("epiList", epiList);
+		model.addAttribute("rvList", rvList);
+		model.addAttribute("rating", rating);
+		model.addAttribute("replyCountMap", replyCountMap);
+		model.addAttribute("freeCount", freeCount);
+		model.addAttribute("likeCountMap", likeCountMap);
+		model.addAttribute("likedReviewIds", likedReviewIds);
+		model.addAttribute("latestEpDate", latestDate);
+		model.addAttribute("abList", abList);
+		model.addAttribute("notiList", notiList);
+		model.addAttribute("bestList10", bestList10);
+		model.addAttribute("bestList5", bestList5);
+		model.addAttribute("buyList", buyList);
+		model.addAttribute("buyCodeSet", buyCodeSet);
+		model.addAttribute("kwList", kwList);
+		model.addAttribute("wff", wff);
+		model.addAttribute("user", user);
+
+		return "book/detail";
+	}
+
+	@PostMapping("/rereview/insert")
+	@ResponseBody
+	public ReviewVO insertReview(@RequestBody ReviewVO review, @AuthenticationPrincipal CustomUser customUser) {
+		if (!bookService.insertReReview(review, customUser)) {
+			System.out.println("리뷰 등록 실패");
+			return null;
+		}
+		System.out.println("리뷰 등록은 성공함");
+		ReviewVO reply = bookService.selectReply(review);
+		System.out.println("reply: " + reply);
+		return reply;
+	}
+
+	@ResponseBody
+	@GetMapping("/book/getSubCategory")
+	public List<SubCategoryVO> getSubCategory(@RequestParam int mainCategoryValue) {
+		if (mainCategoryValue == 0) {
+			return null;
+		}
+		List<SubCategoryVO> subCategories = bookService.getSubCategory(mainCategoryValue);
+		if (subCategories != null && !subCategories.isEmpty()) {
+			return subCategories;
+		}
+		return null;
+	}
+
 	@GetMapping("/book/wait_for_free")
 	public String waitfreePage(@RequestParam(defaultValue = "1") int page,
 			@RequestParam(defaultValue = "recent") String sort,
@@ -326,19 +255,6 @@ public class BookController {
 		model.addAttribute("keyword", keyword);
 
 		return "book/wait_for_free";
-	}
-
-	@ResponseBody
-	@GetMapping("/book/getSubCategory")
-	public List<SubCategoryVO> getSubCategory(@RequestParam int mainCategoryValue) {
-		if (mainCategoryValue == 0) {
-			return null;
-		}
-		List<SubCategoryVO> subCategories = bookService.getSubCategory(mainCategoryValue);
-		if (subCategories != null && !subCategories.isEmpty()) {
-			return subCategories;
-		}
-		return null;
 	}
 
 	@GetMapping("/review/sort")
@@ -394,17 +310,18 @@ public class BookController {
 
 	@PostMapping("/interest/toggle")
 	@ResponseBody
-	public boolean toggleInterest(@RequestParam String action, @RequestParam String boCode, @AuthenticationPrincipal CustomUser customUser) {
+	public boolean toggleInterest(@RequestParam String action, @RequestParam String boCode,
+			@AuthenticationPrincipal CustomUser customUser) {
 		int ur_num = customUser.getUser().getUr_num();
 
 		boolean res = false;
 
-		if("add".equals(action))  {
-			if(userService.insertInterest(ur_num, boCode)) {
+		if ("add".equals(action)) {
+			if (userService.insertInterest(ur_num, boCode)) {
 				res = userService.insertNotiSet(ur_num, boCode);
 			}
 		} else {
-			if(userService.deleteInterest(ur_num, boCode)) {
+			if (userService.deleteInterest(ur_num, boCode)) {
 				res = userService.deleteNotiSet(ur_num, boCode);
 			}
 		}
@@ -414,12 +331,13 @@ public class BookController {
 
 	@PostMapping("/alarm/toggle")
 	@ResponseBody
-	public boolean toggleNOtiSet(@RequestParam String action, @RequestParam String boCode, @AuthenticationPrincipal CustomUser customUser) {
+	public boolean toggleNOtiSet(@RequestParam String action, @RequestParam String boCode,
+			@AuthenticationPrincipal CustomUser customUser) {
 		int ur_num = customUser.getUser().getUr_num();
 
 		boolean res = false;
 
-		if("add".equals(action))  {
+		if ("add".equals(action)) {
 			res = userService.insertNotiSet(ur_num, boCode);
 		} else {
 			res = userService.deleteNotiSet(ur_num, boCode);

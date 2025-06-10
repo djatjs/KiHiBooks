@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.kh.kihibooks.dao.HomeDAO">
+	<!-- 최신 도서 조회 -->
+  <select id="selectNewBooks" parameterType="int" resultType="kr.kh.kihibooks.model.vo.BookVO">
+    SELECT *
+    FROM book
+    WHERE BO_SC_CODE IN (
+      SELECT SC_CODE FROM sub_category WHERE SC_MC_CODE = #{mcCode}
+    )
+    ORDER BY BO_PUBLISH_DATE DESC
+    LIMIT 10
+  </select>
+
+  <!-- 베스트 도서 조회 -->
+  <select id="selectBestBooks" parameterType="int" resultType="kr.kh.kihibooks.model.vo.BookVO">
+    SELECT *
+    FROM book
+    WHERE BO_SC_CODE IN (
+      SELECT SC_CODE FROM sub_category WHERE SC_MC_CODE = #{mcCode}
+    )
+    ORDER BY BO_TOTAL_RATING DESC
+    LIMIT 10
+  </select>
+
+  <!-- 기다리면 무료 도서 조회 -->
+  <select id="selectWaitFreeBooks" parameterType="int" resultType="kr.kh.kihibooks.model.vo.BookVO">
+    SELECT *
+    FROM book
+    WHERE BO_SC_CODE IN (
+      SELECT SC_CODE FROM sub_category WHERE SC_MC_CODE = #{mcCode}
+    )
+    AND BO_WAIT_FOR_FREE = 'Y'
+    ORDER BY BO_PUBLISH_DATE DESC
+    LIMIT 10
+  </select>
+
+  <!-- 실시간 랭킹 도서 조회 -->
+  <select id="selectRealtimeBooks" parameterType="int" resultType="kr.kh.kihibooks.model.vo.BookVO">
+    SELECT *
+    FROM book
+    WHERE BO_SC_CODE IN (
+      SELECT SC_CODE FROM sub_category WHERE SC_MC_CODE = #{mcCode}
+    )
+    ORDER BY RAND()
+    LIMIT 10
+  </select>
+
+  <!-- 랜덤 키워드 조회 -->
+  <select id="selectRandomKeywords" parameterType="int" resultType="kr.kh.kihibooks.model.vo.KeywordVO">
+    SELECT *
+    FROM keyword
+    ORDER BY RAND()
+    LIMIT #{count}
+  </select>
+</mapper>
