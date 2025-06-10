@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EmailVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
+import kr.kh.kihibooks.model.vo.OrderVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 import kr.kh.kihibooks.model.vo.WaitForFreeVO;
 
@@ -52,6 +53,24 @@ public interface UserDAO {
     EpisodeVO getEpisodeByCode(String ep_code);
 
     boolean updateNickname(int ur_num, String ur_nickname);
+
+    Integer getUrItNum(int ur_num);
+
+    Integer getUrNsNum(int ur_num);
+
+    boolean insertInterest(int ur_num, String bo_code);
+
+    boolean deleteInterest(int ur_num, String bo_code);
+
+    boolean insertNotiSet(int ur_num, String bo_code);
+
+    boolean deleteNotiSet(int ur_num, String bo_code);
+
+    int countTodayOrders();
+
+    void insertOrder(OrderVO order);
+
+    void insertFreeOrder(OrderVO order);
 
     boolean updateUserDeleted(String ur_email);
 

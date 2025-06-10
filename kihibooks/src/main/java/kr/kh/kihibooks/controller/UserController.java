@@ -31,6 +31,7 @@ import kr.kh.kihibooks.service.ApiService;
 import kr.kh.kihibooks.service.BookService;
 import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.utils.CustomUser;
+import kr.kh.kihibooks.model.dto.PaymentDTO;
 import kr.kh.kihibooks.model.vo.EmailVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.UserVO;
@@ -278,16 +279,16 @@ public class UserController {
         return "/user/checkoutFin";
     }
 
-    @PostMapping("/get/blNum")
+    @PostMapping("/order/free")
     @ResponseBody
-    public Map<String, Object> getBlNum(@RequestParam List<String> epCodes,
-            @AuthenticationPrincipal CustomUser customUser) {
+    public Map<String, Object> processFreeOrder(@RequestBody Map<String, List<String>> payload, @AuthenticationPrincipal CustomUser customUser) {
 
-        int urNum = customUser.getUser().getUr_num();
-        int blNum = userService.getBlNum(epCodes, urNum);
+        List<String> epCodes = payload.get("epCodes");
+
+        String contentsId = userService.insertFreeOrder(epCodes, customUser.getUser().getUr_num());
 
         Map<String, Object> res = new HashMap<>();
-        res.put("bl_num", blNum);
+        res.put("contentsId", contentsId);
 
         return res;
     }
@@ -331,5 +332,32 @@ public class UserController {
         model.addAttribute("formattedPoint", formattedPoint);
 
         return "user/checkout";
+    }
+
+    @PostMapping("/payment/process")
+    @ResponseBody
+    public Map<String, Object> processPayment(@RequestBody PaymentDTO payment, @AuthenticationPrincipal CustomUser customUser) {
+        Map<String, Object> response = new HashMap<>();
+
+        if(payment.getUsePoint() > payment.getTotalAmount()) {
+            response.put("success", false);
+            response.put("error", "사용 포인트가 결제 금액을 초과합니다.");
+            return response;
+        }
+
+        int userNum = customUser.getUser().getUr_num();
+
+        String orderId = userService.saveTempOrder(payment, userNum);
+
+        String method = payment.getMethod();
+        String redirectUrl = "/payment/" + method.toLowerCase() + "/start?orderId=" + orderId;
+
+        response.put("success", true);
+        response.put("orderId", orderId);
+        response.put("amount", payment.getTotalAmount());
+        response.put("method", method);
+        response.put("redirectUrl", redirectUrl);
+
+        return response;
     }
 }

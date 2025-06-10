@@ -323,6 +323,37 @@
 			font-weight: 600;
 		}
 
+		.interestBtn-check,
+		.alarmBtn-check {
+			display: flex;
+			align-items: center;
+			height: 34px;
+			padding: 1px 9.5px 0px 9.5px;
+			flex-shrink: 0;
+			border-radius: 30px;
+			font-weight: 600;
+			font-size: 14px;
+			line-height: 17px;
+			background: #fff0eb;
+			border: 1px solid #fff;
+			color: #ff7f50;
+		}
+
+		.alarmBtn-uncheck {
+			display: flex;
+			align-items: center;
+			height: 34px;
+			padding: 1px 9.5px 0px 9.5px;
+			flex-shrink: 0;
+			border-radius: 30px;
+			font-weight: 600;
+			font-size: 14px;
+			line-height: 17px;
+			background: #fff;
+			border: 1px solid rgb(230, 230, 230);
+			color: rgb(165, 165, 165);
+		}
+
 		.plusBtn {
 			margin-top: 2px;
 		}
@@ -2126,6 +2157,11 @@
 			color: #141414;
 		}
 
+		.bb-title:hover {
+			text-decoration: none;
+			color: #141414;
+		}
+
 		.b-book-info {
 			display: flex;
 			flex-direction: column;
@@ -2676,9 +2712,77 @@
 													</div>
 												</div>
 												<div class="interest-content">
-													<button class="interestBtn"><img src="/resources/static/img/plus.png" alt="plus"
-															style="height: 20px;" class="plusBtn orange">관심</button>
+													<button class="interestBtn" th:if="${user.ur_it_num == 0}">
+														<img src="/resources/static/img/plus.png" alt="plus" style="height: 20px;"
+															class="plusBtn orange">관심
+													</button>
+													<div class="d-flex" th:if="${user.ur_it_num != 0}">
+														<button class="interestBtn-check">
+															<img src="/resources/static/img/check_icon2.png" alt="plus" style="height: 20px;"
+																class="plusBtn orange">관심
+														</button>
+														<button class="alarmBtn-check" th:if="${user.ur_ns_num != 0}">
+															<img src="/resources/static/img/bell2.png" alt="bell" style="height: 15px;"
+																class="alarm orange mr-1">알림 받는 중
+														</button>
+														<button class="alarmBtn-uncheck" th:if="${user.ur_ns_num == 0}">
+															<img src="/resources/static/img/bell3.png" alt="bell-uncheck" style="height: 15px;"
+																class="alarm dark-gray mr-1">알림 받기
+														</button>
+													</div>
 												</div>
+												<script th:inline="javascript">
+													let boCode = [[${ book.bo_code }]];
+													$(document).ready(function () {
+														// 관심 등록
+														$('.interestBtn').click(function () {
+															$.ajax({
+																url: '/interest/toggle',
+																type: 'POST',
+																data: { action: 'add', boCode: boCode },
+																success: function () {
+																	location.reload(); // 또는 동적으로 상태 토글
+																}
+															});
+														});
+
+														// 관심 해제
+														$('.interestBtn-check').click(function () {
+															$.ajax({
+																url: '/interest/toggle',
+																type: 'POST',
+																data: { action: 'remove', boCode: boCode },
+																success: function () {
+																	location.reload();
+																}
+															});
+														});
+
+														// 알림 등록
+														$('.alarmBtn-uncheck').click(function () {
+															$.ajax({
+																url: '/alarm/toggle',
+																type: 'POST',
+																data: { action: 'add', boCode: boCode },
+																success: function () {
+																	location.reload();
+																}
+															});
+														});
+
+														// 알림 해제
+														$('.alarmBtn-check').click(function () {
+															$.ajax({
+																url: '/alarm/toggle',
+																type: 'POST',
+																data: { action: 'remove', boCode: boCode },
+																success: function () {
+																	location.reload();
+																}
+															});
+														});
+													});
+												</script>
 											</div>
 											<div class="info-bottom-grid">
 												<div class="bottom-content">
@@ -2870,11 +2974,12 @@
 												</li>
 											</ul>
 										</div>
-										<script>
+										<script th:inline="javascript">
 											document.addEventListener('DOMContentLoaded', function () {
 												const checkboxes = document.querySelectorAll('.episode-check');
 												const countEl = document.getElementById('selected-count');
 												const priceEl = document.getElementById('total-price');
+												const isLoggedIn = [[${ #authorization.expression('isAuthenticated()') }]];
 
 												checkboxes.forEach(cb => {
 													cb.addEventListener('change', updateSummary);
@@ -2902,6 +3007,11 @@
 												cartBtn.addEventListener('click', function () {
 													const checkedBoxes = document.querySelectorAll('.episode-check:checked');
 
+													if(!isLoggedIn) {
+														alert("로그인 후 이용해주세요.");
+														return;
+													}
+													
 													if (checkedBoxes.length === 0) {
 														alert('카트에 담을 작품을 선택해주세요');
 														return;
@@ -3046,7 +3156,7 @@
 																			<li class="book-li">
 																				<div class="book">
 																					<div class="book-img">
-																						<a th:href="@{/}" class="bo-img">
+																						<a th:href="@{'/books/' + ${anotherBook.bo_code}}" class="bo-img">
 																							<img src="/resources/static/covers/cover1.png" alt="도서 이미지">
 																							<span class="bo-image"></span>
 																						</a>
@@ -3054,7 +3164,8 @@
 																					<div class="book-info">
 																						<div class="bo-title">
 																							<!-- bo-img와 동일한 링크 -->
-																							<a th:href="@{/}" class="b-title" th:text="${anotherBook.bo_title}"></a>
+																							<a th:href="@{'/books/' + ${anotherBook.bo_code}}" class="b-title"
+																								th:text="${anotherBook.bo_title}"></a>
 																						</div>
 																						<div class="book-author">
 																							<span class="bo-author">
@@ -3590,13 +3701,14 @@
 																	<li class="bst-li">
 																		<div class="bst-book">
 																			<div class="b-book-img-wrap">
-																				<a th:href="@{/}" class="b-book-img">
+																				<a th:href="@{'/books/' + ${best5.bo_code}}" class="b-book-img">
 																					<img src="/resources/static/covers/cover1.png" alt="책 표지">
 																				</a>
 																			</div>
 																			<div class="b-book-info-wrap">
 																				<div class="b-book-title">
-																					<a th:href="@{/}" class="bb-title" th:text="${best5.bo_title}"></a>
+																					<a th:href="@{'/books/' + ${best5.bo_code}}" class="bb-title"
+																						th:text="${best5.bo_title}"></a>
 																				</div>
 																				<div class="b-book-info">
 																					<span class="b-book-author">
@@ -3654,7 +3766,7 @@
 									</a>
 									<ol class="best-list-ol">
 										<li style="line-height: initial;" th:each="best : ${bestList10}">
-											<a th:href="@{/}" class="b-list">
+											<a th:href="@{'/books/' + ${best.bo_code}}" class="b-list">
 												<span class="b-list-title" th:text="${best.bo_title}"></span>
 											</a>
 										</li>
@@ -3728,7 +3840,8 @@
 							<p class="sub-description">키히포인트를 충전하고 결제없이 편하게 감상하세요.<br>포인트 적립 혜택도 놓치지 마세요!</p>
 						</div>
 						<div class="checkout-btns">
-							<button type="button" class="orange-btn payment-charge-cash-and-payment-book">충전하고 결제</button>
+							<button type="button" class="orange-btn payment-charge-cash-and-payment-book">충전하고
+								결제</button>
 							<button type="button" class="white-btn payment-book">일반 결제</button>
 						</div>
 					</div>
@@ -4031,7 +4144,8 @@
 				const boWff = [[${ book.bo_wait_for_free }]];
 				const wff = [[${ wff }]];
 				const urPoint = [[${ user.ur_point }]];
-
+				const isLoggedIn = [[${ #authorization.expression('isAuthenticated()') }]];
+				
 				function openPopup(popupId) {
 					$(popupId).addClass('active');
 					$('#full_page_spinner').addClass('active');
@@ -4073,6 +4187,11 @@
 				$("#select_buy_btn").on("click", function () {
 					const checked = $('.episode-check:checked');
 
+					if(!isLoggedIn) {
+						alert("로그인 후 이용해주세요.");
+						return;
+					}
+
 					if (checked.length === 0) {
 						alert("선택된 작품이 없습니다.");
 						return;
@@ -4084,7 +4203,6 @@
 					checked.each(function () {
 						const epCode = $(this).data('ep-code');
 						const isFree = $(this).data('ep-price') === 0;
-						console.log(isFree);
 
 						buyList.push(epCode);
 
@@ -4094,33 +4212,31 @@
 					});
 
 					if (!hasPaidEpisode) {
-						const buyListParam = buyList.join(',');
-						const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-
 						$.ajax({
-							url: "/get/blNum",
+							url: "/order/free",
 							type: "post",
-							data: {
-								epCodes: buyList
-							},
+							contentType: "application/json",
+							data: JSON.stringify({ epCodes: buyList }),
 							traditional: true,
 							success: function (res) {
-								const blNum = res.bl_num;
-								location.href = `/order/checkout/finished?contents_id=${dateStr}${blNum}`;
+								const contentsId = res.contentsId; // 서버에서 생성한 식별자 (예: 날짜+번호 등)
+								location.href = `/order/checkout/finished?contents_id=${contentsId}`;
 							},
 							error: function () {
-								alert("결제 번호 가져오기 실패");
+								alert("무료 구매 처리 중 오류 발생");
 							}
 						});
 					} else {
 						$.ajax({
 							url: "/order/checkout",
 							type: "post",
-							data: {
-								epCodes: buyList
-							},
+							data: { epCodes: buyList },
+							traditional: true,
 							success: function () {
 								location.href = "/order/checkout";
+							},
+							error: function () {
+								alert("결제 페이지 이동 실패");
 							}
 						});
 					}

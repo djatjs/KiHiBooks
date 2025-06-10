@@ -65,8 +65,8 @@
     </select>
     
     <insert id="insertBuyList">
-        insert into `buy_list`(bl_ep_code, bl_ur_num)
-        values(#{bl_ep_code}, #{bl_ur_num})
+        insert into `buy_list`(bl_id, bl_ep_code, bl_ur_num)
+        values(#{bl_id}, #{bl_ep_code}, #{bl_ur_num})
     </insert>
 
     <select id="selectLastBlNum" resultType="int">
@@ -91,6 +91,45 @@
     <update id="updateNickname">
         update user set ur_nickname = #{ur_nickname} where ur_num = #{ur_num}
     </update>
+
+    <select id="getUrItNum" resultType="Integer">
+        select it_num from interest
+        where it_ur_num = #{ur_num}
+    </select>
+
+    <select id="getUrNsNum" resultType="Integer">
+        select ns_num from noti_set
+        where ns_ur_num = #{ur_num}
+    </select>
+
+    <insert id="insertInterest">
+        insert into interest(it_ur_num, it_bo_code)
+        value(#{ur_num}, #{bo_code})
+    </insert>
+    <delete id="deleteInterest">
+        delete from interest
+        where it_ur_num = #{ur_num} and it_bo_code = #{bo_code}
+    </delete>
+    <insert id="insertNotiSet">
+        insert into noti_set(ns_ur_num, ns_bo_code)
+        value(#{ur_num}, #{bo_code})
+    </insert>
+    <delete id="deleteNotiSet">
+        delete from noti_set
+        where ns_ur_num = #{ur_num} and ns_bo_code = #{bo_code}
+    </delete>
+    <select id="countTodayOrders" resultType="int">
+        select count(*) from `order`
+        where date(od_created_at) = curdate()
+    </select>
+    <insert id="insertOrder">
+        insert into `order`(od_id, od_total_amount, od_use_point, od_final_amount, od_method, od_created_at, od_ur_num)
+        value(#{od_id}, #{od_total_amount}, #{od_use_point}, #{od_final_amount}, #{od_method}, #{od_created_at}, #{od_ur_num})
+    </insert>
+    <insert id="insertFreeOrder">
+        insert into `order`(od_id, od_total_amount, od_use_point, od_final_amount, od_mehtod, od_created_at, od_ur_num, od_status)
+        value(#{od_id}, #{od_total_amount}, #{od_use_point}, #{od_final_amount}, #{od_method}, #{od_created_at}, #{od_ur_num}, 'PAID')
+    </insert>
     <update id="updateUserDeleted">
         update user set ur_del = 'Y', ur_nickname = '탈퇴한 사용자'
         where ur_email = #{ur_email}
