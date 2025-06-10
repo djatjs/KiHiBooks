@@ -1,6 +1,7 @@
 package kr.kh.kihibooks.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -22,5 +23,9 @@ public interface LibraryDAO {
     List<EpisodeVO> selectPurchasedEpisodeList(String bo_code, int ur_num);
 
     List<CommentVO> selectComments(String ep_code);
+
+    int selectLikeCount(int coNum);
+
+    Set<Integer> selectLikedComment(int ur_num);
     
 }

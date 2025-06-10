@@ -3,6 +3,7 @@ package kr.kh.kihibooks.service;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +45,14 @@ public class LibraryService {
 
     public List<CommentVO> getComments(String epCode) {
         return libraryDAO.selectComments(epCode);
+    }
+
+    public int getLikeCount(int coNum) {
+        return libraryDAO.selectLikeCount(coNum);
+    }
+
+    public Set<Integer> getLikedComment(int ur_num) {
+        return libraryDAO.selectLikedComment(ur_num);
     }
 
 }

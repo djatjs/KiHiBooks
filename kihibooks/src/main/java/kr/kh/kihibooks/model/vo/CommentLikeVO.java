@@ -6,7 +6,6 @@ import lombok.Data;
 public class CommentLikeVO {
 	
 	private int rl_num;
-	private int rl_state;
 	private int rl_ur_num;
 	private int rl_co_num;
 }

@@ -78,4 +78,13 @@
         where co_ep_code = #{ep_code}
         order by co_num desc
     </select>
+    <select id="selectLikeCount" resultType="int">
+        select count(*) from `like`
+        where li_co_num = #{co_num}
+    </select>
+    <select id="selectLikedComment" resultType="int">
+        select li_co_num from `like`
+        where li_ur_num = #{ur_num}
+    </select>
+    
 </mapper>

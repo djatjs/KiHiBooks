@@ -3,21 +3,20 @@ package kr.kh.kihibooks.controller;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.core.io.Resource;
-import org.springframework.http.MediaType;
-import org.springframework.http.HttpHeaders;
 
 import kr.kh.kihibooks.model.vo.BookKeywordVO;
 import kr.kh.kihibooks.model.vo.BookVO;
@@ -98,14 +97,35 @@ public class LibraryCotroller {
     }
     
     @GetMapping("/mylibrary/readEpisode/{ep_code}")
-    public String readEpubEpisode(@PathVariable("ep_code") String epCode, Model model) {
+    public String readEpubEpisode(@PathVariable("ep_code") String epCode, Model model, @AuthenticationPrincipal CustomUser customUser) {
         EpisodeVO episode = bookService.getEpisodeByCode(epCode);
         String bo_code = episode.getEp_bo_code();
+        
+        List<CommentVO> comments = libraryService.getComments(epCode);
+        Map<Integer, Integer> commentCountMap = new HashMap<>();
+        for (CommentVO c : comments) {
+            int oriNum = c.getCo_ori_num();
+            if (oriNum != 0) { // 댓글이면
+                commentCountMap.put(oriNum, commentCountMap.getOrDefault(oriNum, 0) + 1);
+            }
+        }
+        Map<Integer, Integer> likeCountMap = new HashMap<>();
+        for (CommentVO c : comments) {
+            int coNum = c.getCo_num();
+            int likeCount = libraryService.getLikeCount(coNum);
+            likeCountMap.put(coNum, likeCount);
+        }
+        Set<Integer> likedReviewIds = new HashSet<>();
+        likedReviewIds = libraryService.getLikedComment(customUser.getUser().getUr_num());
+        
+
         model.addAttribute("epCode", epCode);
         model.addAttribute("boCode", bo_code);
-
-        List<CommentVO> comments = libraryService.getComments(epCode);
-        System.out.println(comments);
+        model.addAttribute("comments", comments);
+        model.addAttribute("commentCountMap", commentCountMap);
+        model.addAttribute("likeCountMap", likeCountMap);
+        model.addAttribute("user", customUser.getUser());
+        model.addAttribute("likedReviewIds", likedReviewIds);
 
         return "/library/readEpisode";
     }
