@@ -12,7 +12,6 @@ import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
-import kr.kh.kihibooks.model.vo.KeywordVO;
 import kr.kh.kihibooks.model.vo.NoticeVO;
 import kr.kh.kihibooks.model.vo.ReviewLikeVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
@@ -23,37 +22,6 @@ public interface BookDAO {
 	List<BookVO> selectBookList(int ur_num);
 
 	List<BookVO> selectTopBooks();
-
-	List<BookVO> selectWaitFreeBooks();
-	
-	List<BookVO> selectWaitFreeBooksFiltered(@Param("sort")String sort, 
-		@Param("keyword")String keyword, 
-		@Param("offset")int offset, 
-		@Param("limit")int limit);
-
-	int countWaitFreeBooksFiltered(String keyword);
-
-	List<BookVO> selectNewBooks();
-
-	List<BookVO> selectFilteredBooks(@Param("offset") int offset,
-			@Param("limit") int limit,
-			@Param("order") String order,
-			@Param("adultYN") String adultYN);
-
-	int countFilteredBooks(@Param("oreder") String order,
-			@Param("adultYN") String adultYN
-
-	);
-
-	List<BookVO> selectBestBooks(@Param("offset") int offset,
-			@Param("size") int size, // Mapper의 Limit 에 사용됨
-			@Param("range") String range, // 오늘의/주간/월간 베스트
-			@Param("adultYN") String adultYN,
-			@Param("finished") String finished);
-
-	int countBestBooks(@Param("range") String range,
-			@Param("adultYN") String adultYN,
-			@Param("finished") String finished);
 
 	List<KeywordCategoryVO> selectKeywordCategories();
 

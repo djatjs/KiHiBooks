@@ -43,4 +43,18 @@
 			#{id}
 		</foreach>
 	</select>
+	<!-- 장르별 메인페이지에 랜덤으로 15개 키워드를 뿌려주는 매퍼 -->
+	<select id="getRandomKeywordsByGenre" resultType="KeywordVO">
+		SELECT DISTINCT
+					k.KW_CODE AS kw_code,
+					k.KW_NAME AS kw_name
+		FROM keyword k
+				JOIN book_keyword bk ON k.KW_CODE = bk.BK_KW_CODE
+				JOIN book b          ON bk.BK_BO_CODE = b.BO_CODE
+				JOIN sub_cate sc     ON b.BO_SC_CODE = sc.SC_CODE
+		WHERE sc.SC_MC_CODE = #{genreCode}
+		ORDER BY RAND()
+		LIMIT 25
+	</select>
+
 </mapper>
