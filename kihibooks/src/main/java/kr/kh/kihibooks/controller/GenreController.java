@@ -48,6 +48,7 @@ public class GenreController {
             System.out.println("🔑 keywordList: " + (keywordList != null ? keywordList.size() : "null"));
 
             model.addAttribute("genreCode", genreCode);
+            model.addAttribute("mcCode", genreCode);
             model.addAttribute("genreName", getGenreName(genreCode));
             model.addAttribute("newBooks", newBooks);
             model.addAttribute("bestBooks", bestBooks);
