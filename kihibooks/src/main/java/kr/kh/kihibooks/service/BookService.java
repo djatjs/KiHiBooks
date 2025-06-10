@@ -56,35 +56,6 @@ public class BookService {
 
     private final String NAMESPACE = "kr.kh.kihibooks.dao.BookDAO.";
 
-    // 🔹 신작
-    public List<BookVO> getNewBooks(Integer mcCode, String sort, String adult, int page) {
-        int offset = (page - 1) * PageConstants.PAGE_SIZE;
-        return bookDAO.selectNewBooks(mcCode, sort, adult, offset, PageConstants.PAGE_SIZE);
-    }
-
-    public int countNewBooks(Integer mcCode, String sort, String adult) {
-        return bookDAO.countNewBooks(mcCode, sort, adult);
-    }
-
-    // 🔹 베스트
-    public List<BookVO> getBestBooks(Integer mcCode, String sort, String adult, String fin, int page) {
-        int offset = (page - 1) * PageConstants.PAGE_SIZE;
-        return bookDAO.selectBestBooks(mcCode, sort, adult, fin, offset, PageConstants.PAGE_SIZE);
-    }
-
-    public int countBestBooks(Integer mcCode, String sort, String adult, String fin) {
-        return bookDAO.countBestBooks(mcCode, sort, adult, fin);
-    }
-
-    // 🔹 기다리면 무료
-    public List<BookVO> getWaitFreeBooks(Integer mcCode, String sort, String keyword, int page) {
-        int offset = (page - 1) * PageConstants.PAGE_SIZE;
-        return bookDAO.selectWaitFreeBooks(mcCode, sort, keyword, offset, PageConstants.PAGE_SIZE);
-    }
-
-    public int countWaitFreeBooks(Integer mcCode, String sort, String keyword) {
-        return bookDAO.countWaitFreeBooks(mcCode, sort, keyword);
-    }
 
     public PageInfo<BookVO> getBooksByKeywords(List<String> keywordIds, String sort, int page) {
         if (keywordIds == null) {

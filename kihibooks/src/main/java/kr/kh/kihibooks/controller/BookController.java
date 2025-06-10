@@ -44,12 +44,9 @@ import kr.kh.kihibooks.model.vo.UserVO;
 import kr.kh.kihibooks.model.vo.WaitForFreeVO;
 import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.service.BookService;
-import kr.kh.kihibooks.service.HomeService;
 import kr.kh.kihibooks.service.KeywordService;
 import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.utils.CustomUser;
-import kr.kh.kihibooks.utils.PageConstants;
-import kr.kh.kihibooks.utils.PaginationUtils;
 
 @Controller
 public class BookController {
@@ -58,90 +55,9 @@ public class BookController {
     private BookService bookService;
     @Autowired
     private UserService userService;
-    @Autowired
-    private HomeService homeService;
+
     @Autowired
     private KeywordService keywordService;
-
-    @GetMapping("/")
-    public String home(Model model) {
-        int mcCode = 1; // 로맨스 장르
-
-        List<BookVO> topBooks = bookService.getTopBooks(mcCode);
-        List<BookVO> bestBooks = bookService.getBestBooks(mcCode, "popular", null, null, 1);
-        List<BookVO> waitFreeBooks = bookService.getWaitFreeBooks(mcCode, "recent", null, 1);
-        List<BookVO> newBooks = bookService.getNewBooks(mcCode, "recent", null, 1);
-        List<KeywordVO> randomKeywords = homeService.getRandomKeywords(15);
-
-        model.addAttribute("topBooks", topBooks);
-        model.addAttribute("bestBooks", bestBooks);
-        model.addAttribute("waitFreeBooks", waitFreeBooks);
-        model.addAttribute("newBooks", newBooks);
-        model.addAttribute("keywords", randomKeywords);
-        model.addAttribute("mcCode", mcCode);
-
-        return "home";
-    }
-
-    @GetMapping("/book/{type}")
-    public String bookPage(@PathVariable("type") String type,
-                        @RequestParam(name = "mcCode", required = false) Integer mcCode,
-                        @RequestParam(name = "sort", defaultValue = "recent") String sort,
-                        @RequestParam(name = "adult", required = false) String adult,
-                        @RequestParam(name = "fin", required = false) String fin,
-                        @RequestParam(name = "keyword", required = false) String keyword,
-                        @RequestParam(name = "page", defaultValue = "1") int page,
-                        Model model) {
-
-        List<BookVO> bookList;
-        int totalCount;
-
-        switch (type) {
-            case "new-released":
-                bookList = bookService.getNewBooks(mcCode, sort, adult, page);
-                totalCount = bookService.countNewBooks(mcCode, sort, adult);
-                break;
-
-            case "best":
-                bookList = bookService.getBestBooks(mcCode, sort, adult, fin, page);
-                totalCount = bookService.countBestBooks(mcCode, sort, adult, fin);
-                break;
-
-            case "wait-for-free":
-                bookList = bookService.getWaitFreeBooks(mcCode, sort, keyword, page);
-                totalCount = bookService.countWaitFreeBooks(mcCode, sort, keyword);
-                break;
-
-            default:
-                return "redirect:/error";
-        }
-
-        PageInfo<BookVO> pageInfo = PaginationUtils.paginate(
-            bookList, totalCount, page,
-            PageConstants.PAGE_SIZE, PageConstants.BLOCK_SIZE
-        );
-
-        model.addAttribute("pageInfo", pageInfo);
-        model.addAttribute("mcCode", mcCode);
-        model.addAttribute("sort", sort);
-        model.addAttribute("adult", adult);
-        model.addAttribute("fin", fin);
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("pageTitle", getPageTitle(type));
-
-        return "book/" + type;
-    }
-
-
-    private String getPageTitle(String type) {
-        switch (type) {
-            case "new-released": return "신작 웹소설";
-            case "best": return "베스트 웹소설";
-            case "wait-for-free": return "기다리면 무료";
-            default: return "웹소설";
-        }
-    }
 
     @GetMapping("/realtime")
     @ResponseBody

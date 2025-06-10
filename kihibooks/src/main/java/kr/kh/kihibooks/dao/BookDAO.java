@@ -12,7 +12,6 @@ import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
-import kr.kh.kihibooks.model.vo.KeywordVO;
 import kr.kh.kihibooks.model.vo.NoticeVO;
 import kr.kh.kihibooks.model.vo.ReviewLikeVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
@@ -23,41 +22,6 @@ public interface BookDAO {
 	List<BookVO> selectBookList(int ur_num);
 
 	List<BookVO> selectTopBooks();
-
-	// 🔹 신작
-	List<BookVO> selectNewBooks(@Param("mcCode") Integer mcCode,
-															@Param("sort") String sort,
-															@Param("adult") String adult,
-															@Param("offset") int offset,
-															@Param("pageSize") int pageSize);
-
-	int countNewBooks(@Param("mcCode") Integer mcCode,
-										@Param("sort") String sort,
-										@Param("adult") String adult);
-
-	// 🔹 베스트
-	List<BookVO> selectBestBooks(@Param("mcCode") Integer mcCode,
-																@Param("sort") String sort,
-																@Param("adult") String adult,
-																@Param("fin") String fin,
-																@Param("offset") int offset,
-																@Param("pageSize") int pageSize);
-
-	int countBestBooks(@Param("mcCode") Integer mcCode,
-											@Param("sort") String sort,
-											@Param("adult") String adult,
-											@Param("fin") String fin);
-
-	// 🔹 기다리면 무료
-	List<BookVO> selectWaitFreeBooks(@Param("mcCode") Integer mcCode,
-																		@Param("sort") String sort,
-																		@Param("keyword") String keyword,
-																		@Param("offset") int offset,
-																		@Param("pageSize") int pageSize);
-
-	int countWaitFreeBooks(@Param("mcCode") Integer mcCode,
-													@Param("sort") String sort,
-													@Param("keyword") String keyword);
 
 	List<KeywordCategoryVO> selectKeywordCategories();
 
