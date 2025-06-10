@@ -69,5 +69,7 @@ public interface UserDAO {
 
     void insertOrder(OrderVO order);
 
+    void insertFreeOrder(OrderVO order);
+
 
 }

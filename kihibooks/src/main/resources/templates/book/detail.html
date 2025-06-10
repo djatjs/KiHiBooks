@@ -2974,11 +2974,12 @@
 												</li>
 											</ul>
 										</div>
-										<script>
+										<script th:inline="javascript">
 											document.addEventListener('DOMContentLoaded', function () {
 												const checkboxes = document.querySelectorAll('.episode-check');
 												const countEl = document.getElementById('selected-count');
 												const priceEl = document.getElementById('total-price');
+												const isLoggedIn = [[${ #authorization.expression('isAuthenticated()') }]];
 
 												checkboxes.forEach(cb => {
 													cb.addEventListener('change', updateSummary);
@@ -3006,6 +3007,11 @@
 												cartBtn.addEventListener('click', function () {
 													const checkedBoxes = document.querySelectorAll('.episode-check:checked');
 
+													if(!isLoggedIn) {
+														alert("로그인 후 이용해주세요.");
+														return;
+													}
+													
 													if (checkedBoxes.length === 0) {
 														alert('카트에 담을 작품을 선택해주세요');
 														return;
@@ -4138,7 +4144,8 @@
 				const boWff = [[${ book.bo_wait_for_free }]];
 				const wff = [[${ wff }]];
 				const urPoint = [[${ user.ur_point }]];
-
+				const isLoggedIn = [[${ #authorization.expression('isAuthenticated()') }]];
+				
 				function openPopup(popupId) {
 					$(popupId).addClass('active');
 					$('#full_page_spinner').addClass('active');
@@ -4179,6 +4186,11 @@
 
 				$("#select_buy_btn").on("click", function () {
 					const checked = $('.episode-check:checked');
+
+					if(!isLoggedIn) {
+						alert("로그인 후 이용해주세요.");
+						return;
+					}
 
 					if (checked.length === 0) {
 						alert("선택된 작품이 없습니다.");

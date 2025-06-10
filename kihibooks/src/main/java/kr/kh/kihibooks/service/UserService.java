@@ -303,7 +303,7 @@ public class UserService {
 		order.setOd_isFree(true);
 		order.setOd_method("FREE");
 
-		userDAO.insertOrder(order);
+		userDAO.insertFreeOrder(order);
 
 		for(String epCode : epCodes) {
 			BuyListVO buy = new BuyListVO();

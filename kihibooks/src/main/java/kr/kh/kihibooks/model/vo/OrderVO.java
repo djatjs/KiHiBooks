@@ -2,6 +2,7 @@ package kr.kh.kihibooks.model.vo;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.Data;
 
@@ -16,4 +17,6 @@ public class OrderVO {
     private Timestamp od_paid_at;
     private int od_ur_num;
     private boolean od_isFree;
+    
+    private List<String> epCodes;
 }
