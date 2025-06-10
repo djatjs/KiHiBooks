@@ -5,11 +5,11 @@
       <div class="swiper-container realtime-swiper" id="realtimeSwiper">
         <div class="swiper-wrapper">
           <div class="swiper-slide book-card" th:each="book : ${realtimeBooks}">
-            <a th:href="@{/book/detail/{id}(id=${book.bo_code})}" class="thumb-wrapper">
+            <a th:href="@{/books/{id}(id=${book.bo_code})}" class="thumb-wrapper">
               <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
             </a>
             <p class="book-title">
-              <a th:href="@{/book/detail/{id}(id=${book.bo_code})}" th:text="${book.bo_title}">책 제목</a>
+              <a th:href="@{/books/{id}(id=${book.bo_code})}" th:text="${book.bo_title}">책 제목</a>
             </p>
             <p class="book-author">
               <a th:href="@{/author/{id}(id=${book.bo_au_num})}" th:text="${book.bo_author}">작가명</a>

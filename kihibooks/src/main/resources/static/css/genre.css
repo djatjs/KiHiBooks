@@ -4,6 +4,9 @@
   margin: 0 auto;
   padding: 0 20px;
 }
+p {
+  margin-bottom: 0;
+}
 
 /* ======================== 섹션 제목 & 헤더 ======================== */
 .section-title {
@@ -91,9 +94,9 @@
   position: relative;
 }
 
-#mainBannerSwiper.swiper {
+#mainBannerSwiper {
   width: 100%;
-  height: auto;
+  height: 520px;
   position: relative;
   overflow: hidden;
 }
@@ -103,17 +106,24 @@
 }
 
 #mainBannerSwiper .swiper-slide {
-  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  height: auto;
+  height: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
-#mainBannerSwiper img {
+#mainBannerSwiper .swiper-slide img {
   width: 100%;
-  height: auto;
+  height: 520px;
   object-fit: cover;
+  object-position: center center;
   border-radius: 8px;
+  max-height: 100%;
 }
+
 
 /* ===== 스와이퍼 버튼 위치 및 스타일 ===== */
 #mainBannerSwiper .swiper-button-next,
