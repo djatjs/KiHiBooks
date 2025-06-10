@@ -208,21 +208,21 @@
     <div class="search-box">
       <form th:action="@{/book/wait_for_free}" method="get">
         <input type="hidden" name="sort" th:value="${sort}" />
-        <input type="text" name="keyword" placeholder="제목 검색" th:value="${keyword != null} ? ${keyword} : ''" />
+        <input type="text" name="keyword" placeholder="제목 및 작가 검색" th:value="${keyword != null} ? ${keyword} : ''" />
         <button type="submit">검색</button>
       </form>
     </div>
   </div>
 
   <!-- 결과 없음 -->
-  <div th:if="${#lists.isEmpty(books)}" class="no-result">
+  <div th:if="${#lists.isEmpty(pageInfo.content)}" class="no-result">
     <p th:text="'\'' + ${keyword} + '\' 에 대한 결과가 없습니다.'"></p>
     <a th:href="@{/book/wait_for_free}" class="back-btn">돌아가기</a>
   </div>
 
   <!-- 도서 리스트 -->
-  <div class="book-grid" th:if="${!#lists.isEmpty(books)}">
-    <div class="book-card" th:each="book : ${books}">
+  <div class="book-grid" th:if="${!#lists.isEmpty(pageInfo.content)}">
+    <div class="book-card" th:each="book : ${pageInfo.content}">
       <a class="thumb-wrapper">
         <img th:src="@{'/resources/static/covers/cover' + ${bookStat.index + 1} + '.png'}" />
         <span class="badge left">기다무</span>

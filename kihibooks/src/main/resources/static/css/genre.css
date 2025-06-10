@@ -25,7 +25,154 @@
   text-decoration: none;
 }
 
-/* ===== 상단 버튼 5개 영역 ===== */
+.more-link:hover {
+  text-decoration: none;
+}
+
+
+/* ======================== 도서 카드 공통 ======================== */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+}
+
+.book-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.book-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.book-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.book-title a {
+  color: #333;
+  text-decoration: none;
+}
+
+.book-author {
+  font-size: 13px;
+  color: #777;
+  text-align: center;
+}
+
+.book-author a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.book-meta {
+  font-size: 13px;
+  color: #999;
+  text-align: center;
+}
+
+.highlight-rating {
+  color: crimson;
+}
+
+
+/* ======================== 메인 배너 ======================== */
+.main-banner-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+#mainBannerSwiper.swiper {
+  width: 100%;
+  height: auto;
+  position: relative;
+  overflow: hidden;
+}
+
+#mainBannerSwiper .swiper-wrapper {
+  display: flex;
+}
+
+#mainBannerSwiper .swiper-slide {
+  flex-shrink: 0;
+  width: 100%;
+  height: auto;
+}
+
+#mainBannerSwiper img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* ===== 스와이퍼 버튼 위치 및 스타일 ===== */
+#mainBannerSwiper .swiper-button-next,
+#mainBannerSwiper .swiper-button-prev {
+  width: 48px;
+  height: 48px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  cursor: pointer;
+}
+
+#mainBannerSwiper .swiper-button-prev {
+  left: 12px;
+}
+
+#mainBannerSwiper .swiper-button-next {
+  right: 12px;
+}
+
+#mainBannerSwiper .swiper-button-prev::before,
+#mainBannerSwiper .swiper-button-next::before {
+  content: "";
+  display: block;
+  width: 24px;
+  height: 24px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#mainBannerSwiper .swiper-button-prev::before {
+  background-image: url('/img/back.png');
+}
+
+#mainBannerSwiper .swiper-button-next::before {
+  background-image: url('/img/next.png');
+}
+
+/* ===== 페이지네이션 위치 및 스타일 ===== */
+#mainBannerSwiper .swiper-pagination {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  z-index: 10;
+}
+
+
+/* ======================== 상단 버튼 5개 ======================== */
 .button-row {
   display: flex;
   justify-content: center;
@@ -70,112 +217,21 @@
 }
 
 
-/* ======================== 메인 배너 Swiper ======================== */
-.main-banner-container {
-  position: relative;
-  margin-bottom: 30px;
-  height: 500px;
-  overflow: hidden;
-}
-
-#mainBannerSwiper {
-  width: 100%;
-  height: 100%;
-}
-
-#mainBannerSwiper .swiper-wrapper {
-  display: flex;
-}
-
-#mainBannerSwiper .swiper-slide {
-  width: 100%;
-  flex-shrink: 0;
-}
-
-.swiper-wrapper,
-.swiper-slide {
-  height: 100%;
-}
-
-.swiper-slide {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.swiper-slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-/* 메인배너 좌우 화살표 */
-.swiper-button-prev,
-.swiper-button-next {
-  width: 40px;
-  height: 40px;
-  background-color: transparent;
-  background-size: 50% 50%;
-  background-repeat: no-repeat;
-  background-position: center center;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: white;
-  border-radius: 50%;
-  z-index: 10;
-  cursor: pointer;
-}
-
-.swiper-button-prev {
-  left: 10px;
-  background-image: url('/img/back.png');
-}
-
-.swiper-button-next {
-  right: 10px;
-  background-image: url('/img/next.png');
-}
-
-/* 메인배너 페이징 */
-.swiper-pagination {
-  bottom: 10px !important;
-}
-
-#mainBannerSwiper .swiper-pagination {
-  position: absolute;
-  bottom: 10px;
-  right: 16px;
-  left: auto;
-  transform: none;
-  z-index: 10;
-  color: white;
-  font-weight: bold;
-  text-align: center;
-}
-
-#mainBannerSwiper .swiper-pagination-bullet {
-  width: 8px;
-  height: 8px;
-  background: #fff;
-  opacity: 0.7;
-  border-radius: 50%;
-  margin: 0 4px;
-  display: inline-block;
-}
-
-#mainBannerSwiper .swiper-pagination-bullet-active {
-  background: #ff7f50;
-  opacity: 1;
-}
-
-/* ======================== 실시간 랭킹 Swiper ======================== */
+/* ======================== 실시간 랭킹 ======================== */
 .realtime-swiper {
   padding: 10px 0;
 }
 
+.realtime-swiper .swiper-wrapper {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 16px;
+  justify-items: center;
+}
+
 .realtime-swiper .swiper-slide {
+  width: 180px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -183,7 +239,8 @@
 
 .realtime-swiper .swiper-slide img {
   width: 100%;
-  height: auto;
+  height: 240px;
+  object-fit: cover;
   border-radius: 4px;
 }
 
@@ -194,45 +251,23 @@
   text-align: center;
 }
 
-/* ======================== 도서 카드 공통 ======================== */
-.book-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 16px;
+.realtime-swiper .book-title a {
+  color: #333;
+  text-decoration: none;
 }
 
-.book-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.book-card img {
-  width: 100%;
-  height: auto;
-  border-radius: 4px;
-}
-
-.book-title {
-  font-size: 14px;
-  font-weight: bold;
-  margin-top: 8px;
+.realtime-swiper .book-author {
+  font-size: 13px;
+  color: #777;
   text-align: center;
 }
 
-.book-author {
-  font-size: 13px;
-  color: #777;
-}
-
-.book-meta {
+.realtime-swiper .book-meta {
   font-size: 13px;
   color: #999;
+  text-align: center;
 }
 
-.highlight-rating {
-  color: crimson;
-}
 
 /* ======================== 키워드 추천 영역 ======================== */
 .keyword-section {
@@ -248,20 +283,42 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin: 0;
 }
 
-.keyword-list li {
+.keyword-link {
+  display: inline-block;
   padding: 6px 12px;
   border: 1px solid #ddd;
   border-radius: 16px;
   background-color: #f9f9f9;
+  color: #333;
   font-size: 13px;
-  cursor: default;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
 }
+
+.keyword-link:hover {
+  background-color: #ff7f50;
+  color: #fff;
+  border-color: #ff7f50;
+  text-decoration: none;
+}
+
 
 /* ======================== 반응형 처리 ======================== */
 @media (max-width: 800px) {
   .book-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .realtime-swiper .swiper-wrapper {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, auto);
+  }
+
+  .realtime-swiper .swiper-slide {
+    width: 100%;
   }
 }

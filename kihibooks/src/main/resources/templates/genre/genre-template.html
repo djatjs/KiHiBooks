@@ -8,7 +8,6 @@
   <link rel="stylesheet" th:href="@{/css/genre.css}">
   <title>장르 웹소설</title>
 </head>
-
 <body>
 <section class="container" layout:fragment="content">
 
@@ -18,23 +17,33 @@
   <!-- 버튼 5개 영역 -->
   <div class="button-row">
     <div class="nav-button-wrapper">
-      <a href="#" class="nav-button-icon">🎉</a>
+      <a class="nav-button-icon" th:href="@{/book/new-released(mcCode=${mcCode})}">
+        🎉
+      </a>
       <div class="nav-button-text">신작</div>
     </div>
     <div class="nav-button-wrapper">
-      <a href="#" class="nav-button-icon">🔥</a>
+      <a class="nav-button-icon" th:href="@{/book/best(mcCode=${mcCode})}">
+        🔥
+      </a>
       <div class="nav-button-text">베스트</div>
     </div>
     <div class="nav-button-wrapper">
-      <a href="#" class="nav-button-icon">🎁</a>
+      <a class="nav-button-icon" th:href="@{/event/board}">
+        🎲
+      </a>
       <div class="nav-button-text">매일랜덤</div>
     </div>
     <div class="nav-button-wrapper">
-      <a href="#" class="nav-button-icon">⏰</a>
+      <a class="nav-button-icon" th:href="@{/book/waitfree(mcCode=${mcCode})}">
+        ⏳
+      </a>
       <div class="nav-button-text">키다무</div>
     </div>
     <div class="nav-button-wrapper">
-      <a href="#" class="nav-button-icon">✅</a>
+      <a class="nav-button-icon" th:href="@{/attendance}">
+        ✅
+      </a>
       <div class="nav-button-text">출석체크</div>
     </div>
   </div>
@@ -50,15 +59,19 @@
   <div>
     <div class="section-header">
       <h2 class="section-title">기다리면 무료</h2>
-      <a th:href="@{/waitfree}" class="more-link">더보기</a>
+      <a th:href="@{/book/wait_for_free}" class="more-link">더보기</a>
     </div>
     <div class="book-grid">
       <div class="book-card" th:each="book : ${waitFreeBooks}">
         <a th:href="@{/book/detail/{id}(id=${book.bo_code})}" class="thumb-wrapper">
           <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
         </a>
-        <p class="book-title" th:text="${book.bo_title}">책 제목</p>
-        <p class="book-author" th:text="${book.bo_author}">작가명</p>
+        <p class="book-title">
+          <a th:href="@{/book/detail/{id}(id=${book.bo_code})}" th:text="${book.bo_title}">책 제목</a>
+        </p>
+        <p class="book-author">
+          <a th:href="@{/author/{id}(id=${book.bo_au_num})}" th:text="${book.bo_author}">작가명</a>
+        </p>
         <p class="book-meta">
           <span class="highlight-rating"
                 th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal(book.bo_total_rating / book.bo_review_count, 1, 1)} : '0.0')">평점</span>
@@ -73,15 +86,19 @@
   <div>
     <div class="section-header">
       <h2 class="section-title">베스트</h2>
-      <a th:href="@{/best}" class="more-link">더보기</a>
+      <a th:href="@{/book/best}" class="more-link">더보기</a>
     </div>
     <div class="book-grid">
       <div class="book-card" th:each="book : ${bestBooks}">
         <a th:href="@{/book/detail/{id}(id=${book.bo_code})}" class="thumb-wrapper">
           <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
         </a>
-        <p class="book-title" th:text="${book.bo_title}">책 제목</p>
-        <p class="book-author" th:text="${book.bo_author}">작가명</p>
+        <p class="book-title">
+          <a th:href="@{/book/detail/{id}(id=${book.bo_code})}" th:text="${book.bo_title}">책 제목</a>
+        </p>
+        <p class="book-author">
+          <a th:href="@{/author/{id}(id=${book.bo_au_num})}" th:text="${book.bo_author}">작가명</a>
+        </p>
         <p class="book-meta">
           <span class="highlight-rating"
                 th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal(book.bo_total_rating / book.bo_review_count, 1, 1)} : '0.0')">평점</span>
@@ -112,8 +129,12 @@
         <a th:href="@{/book/detail/{id}(id=${book.bo_code})}" class="thumb-wrapper">
           <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
         </a>
-        <p class="book-title" th:text="${book.bo_title}">책 제목</p>
-        <p class="book-author" th:text="${book.bo_author}">작가명</p>
+        <p class="book-title">
+          <a th:href="@{/book/detail/{id}(id=${book.bo_code})}" th:text="${book.bo_title}">책 제목</a>
+        </p>
+        <p class="book-author">
+          <a th:href="@{/author/{id}(id=${book.bo_au_num})}" th:text="${book.bo_author}">작가명</a>
+        </p>
         <p class="book-meta">
           <span class="highlight-rating"
                 th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal(book.bo_total_rating / book.bo_review_count, 1, 1)} : '0.0')">평점</span>
@@ -147,14 +168,9 @@
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev'
       },
-      effect: 'slide',
-      breakpoints: {
-        768: { slidesPerView: 1 },
-        1024: { slidesPerView: 1 }
-      }
+      effect: 'slide'
     });
   });
 </script>
-
 </body>
 </html>
