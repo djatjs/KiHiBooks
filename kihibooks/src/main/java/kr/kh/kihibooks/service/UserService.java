@@ -23,7 +23,6 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.mail.internet.MimeMessage;
 import kr.kh.kihibooks.dao.UserDAO;
-import kr.kh.kihibooks.model.dto.PaymentDTO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EmailVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
@@ -183,7 +182,7 @@ public class UserService {
 		// 비번 암호화
 		String encPw = passwordEncoder.encode(user.getUr_pw());
 		user.setUr_pw(encPw);
-		if(userDAO.updatePw(user)){
+		if (userDAO.updatePw(user)) {
 			return true;
 		}
 		return false;
@@ -236,13 +235,13 @@ public class UserService {
 		return epList;
 	}
 
-    public boolean changeNickname(int ur_num, String ur_nickname) {
+	public boolean changeNickname(int ur_num, String ur_nickname) {
 		return userDAO.updateNickname(ur_num, ur_nickname);
-    }
+	}
 
-    public Integer getUrItNum(int ur_num) {
-        return userDAO.getUrItNum(ur_num);
-    }
+	public Integer getUrItNum(int ur_num) {
+		return userDAO.getUrItNum(ur_num);
+	}
 
 	public Integer getUrNsNum(int ur_num) {
 		return userDAO.getUrNsNum(ur_num);
@@ -264,26 +263,6 @@ public class UserService {
 		return userDAO.deleteNotiSet(ur_num, bo_code);
 	}
 
-	public String saveTempOrder(PaymentDTO payment, int ur_num) {
-		
-		String od_id = generateOdId();
-
-		OrderVO order = new OrderVO();
-		order.setOd_id(od_id);
-		order.setOd_ur_num(payment.getUserNum());
-		order.setOd_total_amount(payment.getTotalAmount());
-		order.setOd_use_point(payment.getUsePoint());
-		order.setOd_final_amount(Math.max(payment.getTotalAmount() - payment.getUsePoint(), 0));
-		order.setOd_method(payment.getMethod());
-		order.setOd_created_at(LocalDateTime.now());
-		order.setOd_ur_num(ur_num);
-
-		System.out.println(order);
-		userDAO.insertOrder(order);
-
-		return od_id;
-	}
-
 	private String generateOdId() {
 		String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		long count = userDAO.countTodayOrders() + 1;
@@ -292,7 +271,7 @@ public class UserService {
 	}
 
 	public String insertFreeOrder(List<String> epCodes, int ur_num) {
-		
+
 		String od_id = generateOdId();
 
 		OrderVO order = new OrderVO();
@@ -303,10 +282,10 @@ public class UserService {
 		order.setOd_created_at(LocalDateTime.now());
 		order.setOd_isFree(true);
 		order.setOd_method("FREE");
-
+		System.out.println("order 확인 : " + order);
 		userDAO.insertFreeOrder(order);
 
-		for(String epCode : epCodes) {
+		for (String epCode : epCodes) {
 			BuyListVO buy = new BuyListVO();
 			buy.setBl_id(od_id);
 			buy.setBl_ep_code(epCode);
@@ -318,34 +297,32 @@ public class UserService {
 		return od_id;
 	}
 
-    public boolean deleteUser(String ur_email) {
+	public boolean deleteUser(String ur_email) {
 		return userDAO.updateUserDeleted(ur_email);
-    }
+	}
 
-		public boolean saveOrderList(List<String> epCodes, int urNum) {
-			if(epCodes == null || epCodes.isEmpty()) {
-				return false;
-			}
-
-			for(String epCode : epCodes) {
-				OrderListVO order = new OrderListVO();
-				order.setOl_ep_code(epCode);
-				order.setOl_ur_num(urNum);
-
-				userDAO.insertOrderList(order);
-			}
-
-			return true;
+	public boolean saveOrderList(List<String> epCodes, int urNum) {
+		if (epCodes == null || epCodes.isEmpty()) {
+			return false;
 		}
 
-		public void deleteOrderList(int urNum) {
-			userDAO.deleteOrderList(urNum);
+		for (String epCode : epCodes) {
+			OrderListVO order = new OrderListVO();
+			order.setOl_ep_code(epCode);
+			order.setOl_ur_num(urNum);
+
+			userDAO.insertOrderList(order);
 		}
 
-		public List<String> selectOrderList(int urNum) {
-			return userDAO.selectOrderList(urNum);
-		}
+		return true;
+	}
 
-		
+	public void deleteOrderList(int urNum) {
+		userDAO.deleteOrderList(urNum);
+	}
+
+	public List<String> selectOrderList(int urNum) {
+		return userDAO.selectOrderList(urNum);
+	}
 
 }

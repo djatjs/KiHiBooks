@@ -127,7 +127,7 @@
         value(#{od_id}, #{od_total_amount}, #{od_use_point}, #{od_final_amount}, #{od_method}, #{od_created_at}, #{od_ur_num})
     </insert>
     <insert id="insertFreeOrder">
-        insert into `order`(od_id, od_total_amount, od_use_point, od_final_amount, od_mehtod, od_created_at, od_ur_num, od_status)
+        insert into `order`(od_id, od_total_amount, od_use_point, od_final_amount, od_method, od_created_at, od_ur_num, od_status)
         value(#{od_id}, #{od_total_amount}, #{od_use_point}, #{od_final_amount}, #{od_method}, #{od_created_at}, #{od_ur_num}, 'PAID')
     </insert>
     <update id="updateUserDeleted">

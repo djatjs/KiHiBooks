@@ -878,21 +878,21 @@
 			border-radius: 50%;
 		}
 
-		.kihipay-charge-detail-wrapper{
+		.kihipay-charge-detail-wrapper {
 			display: flex;
 			flex-direction: column;
 			margin-top: 10px;
 			border: 1px solid rgb(204, 204, 204);
 		}
 
-		.kihipay-cdetail-order{
+		.kihipay-cdetail-order {
 			display: flex;
 			align-items: center;
 			flex-direction: column;
 			padding: 13px 14px;
 		}
 
-		.kihipay-cdetail-text{
+		.kihipay-cdetail-text {
 			margin: 0;
 			padding: 0;
 			display: flex;
@@ -903,15 +903,15 @@
 			line-height: normal;
 		}
 
-		.kihipay-cdetail-text>span:first-of-type{
+		.kihipay-cdetail-text>span:first-of-type {
 			font-weight: 600;
 		}
 
-		.kihipay-cdetail-text>span:last-of-type{
+		.kihipay-cdetail-text>span:last-of-type {
 			font-weight: 700;
 		}
 
-		.kihipay-cdetail-point{
+		.kihipay-cdetail-point {
 			display: flex;
 			align-self: flex-end;
 			align-items: center;
@@ -922,14 +922,14 @@
 			margin-top: 8px;
 		}
 
-		.kihipay-charge-after{
+		.kihipay-charge-after {
 			display: flex;
 			flex-direction: column;
 			padding: 14px 14px 13px;
 			border-top: 1px solid rgb(230, 230, 230);
 		}
 
-		.kihipay-after-text{
+		.kihipay-after-text {
 			display: flex;
 			justify-content: space-between;
 			width: 100%;
@@ -938,15 +938,15 @@
 			line-height: normal;
 		}
 
-		.kihipay-after-text>span:first-of-type{
+		.kihipay-after-text>span:first-of-type {
 			font-weight: 600;
 		}
 
-		.kihipay-after-text>span:last-of-type{
+		.kihipay-after-text>span:last-of-type {
 			font-weight: 700;
 		}
 
-		.kihipay-after-point{
+		.kihipay-after-point {
 			position: relative;
 			display: flex;
 			flex-direction: column;
@@ -954,7 +954,7 @@
 			margin-top: 8px;
 		}
 
-		.kihipay-after-point::before{
+		.kihipay-after-point::before {
 			content: "";
 			position: absolute;
 			width: 2px;
@@ -964,7 +964,7 @@
 			background: rgb(204, 204, 204);
 		}
 
-		.kihipay-after-point>li{
+		.kihipay-after-point>li {
 			display: flex;
 			justify-content: space-between;
 			padding-left: 12px;
@@ -1054,7 +1054,8 @@
 												<div class="asset-wrapper" th:if="${point != 0}">
 													<div class="asset-input-wrapper">
 														<div class="asset-input-out-liner">
-															<label for="use_point" class="indent-hidden">사용할 키히포인트</label>
+															<label for="use_point" class="indent-hidden">사용할
+																키히포인트</label>
 															<input type="text" class="asset-input" id="use_point" name="use_point"
 																title="사용할 키히포인트 금액 입력">
 															<span class="currency">원</span>
@@ -1085,7 +1086,7 @@
 									<div id="kihipay">
 										<div class="kihipay-wrapper">
 											<div class="kihipay-wrap">
-												<section class="kihipay-method-section">
+												<section class="kihipay-method-section" id="kihipay_method_section">
 													<h2 class="kihipay-method-title">결제 수단</h2>
 													<ul class="kihipay-method-ul">
 														<li class="kihipay-method-li">
@@ -1314,7 +1315,8 @@
 																<span>2,000원</span>
 															</h3>
 															<div class="kihipay-cdetail-point">
-																<img src="/resources/static/img/charge_point.png" alt="충전 포인트" style="width: 18px; margin: 0 1px 2px 0" class="yellow">60원 키히포인트 적립
+																<img src="/resources/static/img/charge_point.png" alt="충전 포인트"
+																	style="width: 18px; margin: 0 1px 2px 0" class="yellow">60원 키히포인트 적립
 															</div>
 														</div>
 														<div class="kihipay-charge-after">
@@ -1371,11 +1373,13 @@
 				const pointEl = document.querySelector("span[data-amount]");
 				const userPoint = parseInt(pointEl.getAttribute("data-amount"));
 				const lackPriceEl = document.querySelector(".price-num");
+				const paymentSection = document.getElementById("kihipay_method_section");
 
 				const updatePointUsage = (usedPoint) => {
 					pointInput.value = usedPoint.toLocaleString();
 					const lack = totalAmount - usedPoint;
 					lackPriceEl.textContent = lack > 0 ? lack.toLocaleString() : "0";
+					paymentSection.style.display = usedPoint === totalAmount ? "none" : "block";
 				};
 
 				// 초기 설정
@@ -1392,6 +1396,29 @@
 					} else {
 						updatePointUsage(userPoint);
 					}
+				});
+
+				// 포인트 입력 시 실시간 업데이트
+				pointInput.addEventListener("input", () => {
+					let value = pointInput.value.replace(/[^0-9]/g, "");
+					let usedPoint = parseInt(value, 10);
+
+					if (!value || isNaN(usedPoint) || usedPoint < 0) {
+						updatePointUsage(0);
+						return;
+					}
+
+					if (usedPoint > userPoint) {
+						alert("사용 가능한 포인트를 초과했습니다.");
+						usedPoint = userPoint;
+					}
+
+					if (usedPoint > totalAmount) {
+						alert("결제 금액을 초과하여 포인트를 사용할 수 없습니다.");
+						usedPoint = Math.min(userPoint, totalAmount);
+					}
+
+					updatePointUsage(usedPoint);
 				});
 			});
 
@@ -1535,6 +1562,7 @@
 				const chargeAfterCheckbox = document.querySelector('.kihipay-charge-checkbox');
 				const justPayCheckbox = document.querySelector('.kihipay-pay-checkbox');
 				const chargeWrapper = document.querySelector('.kihipay-charge-wrapper');
+				const paymentSection = document.getElementById('kihipay_method_section');
 
 				// ✅ 결제 수단 확인 함수
 				function getSelectedPayMethod(containerSelector) {
@@ -1588,14 +1616,24 @@
 					const finalAmount = Math.max(totalAmount - usePoint, 0);
 
 					// 5. 결제 방식
-					const isChargeAfter = chargeAfterCheckbox.checked;
-					const isJustPay = justPayCheckbox.checked;
+					let selectedMethod;
+					let isChargeAfter;
+					let chargeAmount;
 
-					// 6. 결제 수단
-					const methodContainerSelector = isChargeAfter ? '.kihipay-charge' : '.kihipay-pay';
-					const selectedMethod = getSelectedPayMethod(methodContainerSelector);
+					if (paymentSection.style.display === 'none' || usePoint === totalAmount) {
+						// 결제 섹션이 숨겨진 경우 (포인트로 전액 결제)
+						selectedMethod = 'POINT';
+						isChargeAfter = false;
+						chargeAmount = 0;
+					} else {
+						// 결제 섹션이 보이는 경우
+						isChargeAfter = chargeAfterCheckbox.checked;
+						const methodContainerSelector = isChargeAfter ? '.kihipay-charge' : '.kihipay-pay';
+						selectedMethod = getSelectedPayMethod(methodContainerSelector);
+						chargeAmount = isChargeAfter ? parseInt(chargeOptionSelect.value || '0', 10) : 0;
+					}
 
-					// 7. 콘솔 확인
+					// 6. 콘솔 확인
 					console.log('--- 결제 요청 정보 ---');
 					console.log('총 주문 금액:', totalAmount);
 					console.log('사용 포인트:', usePoint);
@@ -1604,17 +1642,17 @@
 					console.log('결제 수단:', selectedMethod);
 					console.log('충전 금액:', isChargeAfter ? chargeOptionSelect.value : '사용 안 함');
 
-					// 8. 서버로 전송할 데이터 구성
+					// 7. 서버로 전송할 데이터 구성
 					const payload = {
 						totalAmount,
 						usePoint,
 						finalAmount,
-						paymentType: isChargeAfter ? 'charge' : 'just',
+						paymentType: selectedMethod === 'POINT' ? 'point' : (isChargeAfter ? 'charge' : 'just'),
 						method: selectedMethod,
-						chargeAmount: isChargeAfter ? chargeOptionSelect.value : 0,
+						chargeAmount,
 					};
 
-					// 9. AJAX 전송
+					// 8. AJAX 전송
 					$.ajax({
 						url: '/payment/process',
 						method: 'POST',
@@ -1623,20 +1661,25 @@
 						dataType: 'json',
 						success: function (response) {
 							if (response.success) {
-								// 5. 결제 수단 분기 처리
-								switch (selectedMethod) {
-									case 'naver':
-										window.location.href = '/payment/naver/start?orderId=' + response.orderId;
-										break;
-									case 'kakao':
-										window.location.href = '/payment/kakao/start?orderId=' + response.orderId;
-										break;
-									case 'toss':
-										window.location.href = '/payment/toss/start?orderId=' + response.orderId;
-										break;
-									default:
-										alert('알 수 없는 결제 수단입니다.');
-										break;
+								if (selectedMethod === 'POINT') {
+									// 포인트 결제 완료 처리
+									window.location.href = '/order/checkout/finished?contents_id=' + response.orderId;
+								} else {
+									// 결제 수단 분기 처리
+									switch (selectedMethod) {
+										case 'naver':
+											window.location.href = '/payment/naver/start?orderId=' + response.orderId;
+											break;
+										case 'kakao':
+											window.location.href = '/payment/kakao/start?orderId=' + response.orderId;
+											break;
+										case 'toss':
+											window.location.href = '/payment/toss/start?orderId=' + response.orderId;
+											break;
+										default:
+											alert('알 수 없는 결제 수단입니다.');
+											break;
+									}
 								}
 							} else {
 								alert(response.message || '결제 요청에 실패했습니다.');
