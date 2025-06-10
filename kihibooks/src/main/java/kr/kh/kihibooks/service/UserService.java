@@ -27,6 +27,7 @@ import kr.kh.kihibooks.model.dto.PaymentDTO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EmailVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
+import kr.kh.kihibooks.model.vo.OrderListVO;
 import kr.kh.kihibooks.model.vo.OrderVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 import kr.kh.kihibooks.model.vo.WaitForFreeVO;
@@ -320,5 +321,31 @@ public class UserService {
     public boolean deleteUser(String ur_email) {
 		return userDAO.updateUserDeleted(ur_email);
     }
+
+		public boolean saveOrderList(List<String> epCodes, int urNum) {
+			if(epCodes == null || epCodes.isEmpty()) {
+				return false;
+			}
+
+			for(String epCode : epCodes) {
+				OrderListVO order = new OrderListVO();
+				order.setOl_ep_code(epCode);
+				order.setOl_ur_num(urNum);
+
+				userDAO.insertOrderList(order);
+			}
+
+			return true;
+		}
+
+		public void deleteOrderList(int urNum) {
+			userDAO.deleteOrderList(urNum);
+		}
+
+		public List<String> selectOrderList(int urNum) {
+			return userDAO.selectOrderList(urNum);
+		}
+
+		
 
 }

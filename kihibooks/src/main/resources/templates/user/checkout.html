@@ -16,6 +16,10 @@
 			filter: brightness(0) saturate(100%) invert(75%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
 		}
 
+		.yellow {
+			filter: brightness(0) saturate(100%) invert(55%) sepia(95%) saturate(750%) hue-rotate(-5deg) brightness(115%) contrast(110%);
+		}
+
 		.books-content {
 			width: 100%;
 			position: relative;
@@ -873,6 +877,101 @@
 			background-color: rgb(204, 204, 204);
 			border-radius: 50%;
 		}
+
+		.kihipay-charge-detail-wrapper{
+			display: flex;
+			flex-direction: column;
+			margin-top: 10px;
+			border: 1px solid rgb(204, 204, 204);
+		}
+
+		.kihipay-cdetail-order{
+			display: flex;
+			align-items: center;
+			flex-direction: column;
+			padding: 13px 14px;
+		}
+
+		.kihipay-cdetail-text{
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+			color: rgb(20, 20, 20);
+			font-size: 14px;
+			line-height: normal;
+		}
+
+		.kihipay-cdetail-text>span:first-of-type{
+			font-weight: 600;
+		}
+
+		.kihipay-cdetail-text>span:last-of-type{
+			font-weight: 700;
+		}
+
+		.kihipay-cdetail-point{
+			display: flex;
+			align-self: flex-end;
+			align-items: center;
+			color: rgb(120, 120, 120);
+			font-size: 12px;
+			font-weight: 400;
+			line-height: 17px;
+			margin-top: 8px;
+		}
+
+		.kihipay-charge-after{
+			display: flex;
+			flex-direction: column;
+			padding: 14px 14px 13px;
+			border-top: 1px solid rgb(230, 230, 230);
+		}
+
+		.kihipay-after-text{
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+			color: rgb(20, 20, 20);
+			font-size: 14px;
+			line-height: normal;
+		}
+
+		.kihipay-after-text>span:first-of-type{
+			font-weight: 600;
+		}
+
+		.kihipay-after-text>span:last-of-type{
+			font-weight: 700;
+		}
+
+		.kihipay-after-point{
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			list-style: none;
+			margin-top: 8px;
+		}
+
+		.kihipay-after-point::before{
+			content: "";
+			position: absolute;
+			width: 2px;
+			height: calc(100% - 4px);
+			top: 2px;
+			left: 3px;
+			background: rgb(204, 204, 204);
+		}
+
+		.kihipay-after-point>li{
+			display: flex;
+			justify-content: space-between;
+			padding-left: 12px;
+			color: rgb(120, 120, 120);
+			font-size: 13px;
+			line-height: normal;
+		}
 	</style>
 </head>
 
@@ -955,8 +1054,7 @@
 												<div class="asset-wrapper" th:if="${point != 0}">
 													<div class="asset-input-wrapper">
 														<div class="asset-input-out-liner">
-															<label for="use_point" class="indent-hidden">사용할
-																키히포인트</label>
+															<label for="use_point" class="indent-hidden">사용할 키히포인트</label>
 															<input type="text" class="asset-input" id="use_point" name="use_point"
 																title="사용할 키히포인트 금액 입력">
 															<span class="currency">원</span>
@@ -977,7 +1075,7 @@
 												<p class="current-price-wrapper">
 													<strong class="current-price">
 														<span class="total-payment-price-text">부족한 금액</span>
-														<span class="price-num">0</span>
+														<span class="price-num" th:text="${formattedTotal}"></span>
 														<span class="won-text">원</span>
 													</strong>
 												</p>
@@ -1210,11 +1308,26 @@
 														</div>
 													</div>
 													<div class="kihipay-charge-detail-wrapper">
-														<div class="kihipay-detail-order">
-															<h3 class="kihipay-detail-text">
+														<div class="kihipay-cdetail-order">
+															<h3 class="kihipay-cdetail-text">
 																<span>키히포인트 충전</span>
 																<span>2,000원</span>
 															</h3>
+															<div class="kihipay-cdetail-point">
+																<img src="/resources/static/img/charge_point.png" alt="충전 포인트" style="width: 18px; margin: 0 1px 2px 0" class="yellow">60원 키히포인트 적립
+															</div>
+														</div>
+														<div class="kihipay-charge-after">
+															<h4 class="kihipay-after-text">
+																<span>충전 후 포인트 사용</span>
+																<span>-200원</span>
+															</h4>
+															<ul class="kihipay-after-point">
+																<li>
+																	<span>키히포인트 사용</span>
+																	<span>200원</span>
+																</li>
+															</ul>
 														</div>
 													</div>
 												</section>

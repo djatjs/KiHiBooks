@@ -1,8 +1,6 @@
 package kr.kh.kihibooks.controller;
 
-import java.security.Principal;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -295,41 +292,44 @@ public class UserController {
 
     @PostMapping("/order/checkout")
     @ResponseBody
-    public boolean checkout(@RequestParam List<String> epCodes, @AuthenticationPrincipal CustomUser customUser,
-            HttpSession session) {
-        if (epCodes == null) {
+    public boolean checkout(@RequestParam List<String> epCodes, @AuthenticationPrincipal CustomUser customUser) {
+        if (epCodes == null || epCodes.isEmpty()) {
             return false;
         }
 
-        List<EpisodeVO> epList = userService.getEpisodeByCodes(epCodes);
-        if (epList == null) {
-            return false;
-        }
+        int urNum = customUser.getUser().getUr_num();
 
-        session.setAttribute("checkoutEpList", epList);
+        userService.deleteOrderList(urNum);
 
-        return true;
+        boolean saved = userService.saveOrderList(epCodes, urNum);
+
+        return saved;
     }
 
     @GetMapping("/order/checkout")
-    public String checkout(Model model, @AuthenticationPrincipal CustomUser customUser, HttpSession session) {
-        List<EpisodeVO> epList = (List<EpisodeVO>) session.getAttribute("checkoutEpList");
+    public String checkout(Model model, @AuthenticationPrincipal CustomUser customUser) {
+        int urNum = customUser.getUser().getUr_num();
+        List<String> epCodes = userService.selectOrderList(urNum);
+        List<EpisodeVO> epList = userService.getEpisodeByCodes(epCodes);
+
         int total = 0;
-        if (epList != null) {
-            for (EpisodeVO episode : epList) {
+        if(epList != null) {
+            for(EpisodeVO episode : epList) {
                 total += episode.getEp_price();
             }
         }
+
         int point = customUser.getUser().getUr_point();
+        
         NumberFormat formatter = NumberFormat.getInstance();
         String formattedPoint = formatter.format(point);
         String formattedTotal = formatter.format(total);
 
         model.addAttribute("epList", epList);
         model.addAttribute("total", total);
-        model.addAttribute("formattedTotal", formattedTotal);
         model.addAttribute("point", point);
         model.addAttribute("formattedPoint", formattedPoint);
+        model.addAttribute("formattedTotal", formattedTotal);
 
         return "user/checkout";
     }

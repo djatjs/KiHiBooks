@@ -134,4 +134,16 @@
         update user set ur_del = 'Y', ur_nickname = '탈퇴한 사용자'
         where ur_email = #{ur_email}
     </update>
+    <delete id="deleteOrderList">
+        delete from order_list
+        where ol_ur_num = #{ur_num}
+    </delete>
+    <insert id="insertOrderList">
+        insert into order_list(ol_ep_code, ol_ur_num)
+        value(#{ol_ep_code}, #{ol_ur_num})
+    </insert>
+    <select id="selectOrderList" resultType="String">
+        select ol_ep_code from order_list
+        where ol_ur_num = #{ur_num}
+    </select>
 </mapper>

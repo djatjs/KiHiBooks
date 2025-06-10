@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EmailVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
+import kr.kh.kihibooks.model.vo.OrderListVO;
 import kr.kh.kihibooks.model.vo.OrderVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 import kr.kh.kihibooks.model.vo.WaitForFreeVO;
@@ -20,7 +21,7 @@ public interface UserDAO {
 
     int selectCode(@Param("email") String email, @Param("userCode") String userCode);
 
-    UserVO selectEmail(@Param("email") String email);
+
     
     UserVO selectEmailIncludeDel(@Param("email") String email);
 
@@ -73,5 +74,11 @@ public interface UserDAO {
     void insertFreeOrder(OrderVO order);
 
     boolean updateUserDeleted(String ur_email);
+
+	void insertOrderList(OrderListVO order);
+
+	void deleteOrderList(int ur_num);
+
+	List<String> selectOrderList(int ur_num);
 
 }
