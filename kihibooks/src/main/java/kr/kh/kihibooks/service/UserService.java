@@ -1,5 +1,8 @@
 package kr.kh.kihibooks.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.Authentication;
@@ -19,9 +23,11 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.mail.internet.MimeMessage;
 import kr.kh.kihibooks.dao.UserDAO;
+import kr.kh.kihibooks.model.dto.PaymentDTO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EmailVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
+import kr.kh.kihibooks.model.vo.OrderVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 import kr.kh.kihibooks.model.vo.WaitForFreeVO;
 import kr.kh.kihibooks.utils.CustomUser;
@@ -218,35 +224,6 @@ public class UserService {
 		return userDAO.getWff(ur_num, bo_code);
 	}
 
-	public int getBlNum(List<String> epCodes, int ur_num) {
-		List<String> existEpCodes = userDAO.getBlEpCodesByUser(ur_num);
-
-		List<String> newEpCodes = epCodes.stream().filter(epCode -> !existEpCodes.contains(epCode))
-				.collect(Collectors.toList());
-
-		boolean add = false;
-
-		for (String ep_code : newEpCodes) {
-			BuyListVO buyList = new BuyListVO();
-			buyList.setBl_ep_code(ep_code);
-			buyList.setBl_ur_num(ur_num);
-
-			int res = userDAO.insertBuyList(buyList);
-
-			if (res > 0) {
-				add = true;
-			}
-		}
-
-		int blNum = 0;
-
-		if (add) {
-			blNum = userDAO.selectLastBlNum(ur_num);
-		}
-
-		return blNum;
-	}
-
 	public List<EpisodeVO> getEpisodeByCodes(List<String> epCodes) {
 		List<EpisodeVO> epList = new ArrayList<>();
 		for (String ep_code : epCodes) {
@@ -261,6 +238,84 @@ public class UserService {
     public boolean changeNickname(int ur_num, String ur_nickname) {
 		return userDAO.updateNickname(ur_num, ur_nickname);
     }
+
+    public Integer getUrItNum(int ur_num) {
+        return userDAO.getUrItNum(ur_num);
+    }
+
+	public Integer getUrNsNum(int ur_num) {
+		return userDAO.getUrNsNum(ur_num);
+	}
+
+	public boolean insertInterest(int ur_num, String bo_code) {
+		return userDAO.insertInterest(ur_num, bo_code);
+	}
+
+	public boolean deleteInterest(int ur_num, String bo_code) {
+		return userDAO.deleteInterest(ur_num, bo_code);
+	}
+
+	public boolean insertNotiSet(int ur_num, String bo_code) {
+		return userDAO.insertNotiSet(ur_num, bo_code);
+	}
+
+	public boolean deleteNotiSet(int ur_num, String bo_code) {
+		return userDAO.deleteNotiSet(ur_num, bo_code);
+	}
+
+	public String saveTempOrder(PaymentDTO payment, int ur_num) {
+		
+		String od_id = generateOdId();
+
+		OrderVO order = new OrderVO();
+		order.setOd_id(od_id);
+		order.setOd_ur_num(payment.getUserNum());
+		order.setOd_total_amount(payment.getTotalAmount());
+		order.setOd_use_point(payment.getUsePoint());
+		order.setOd_final_amount(Math.max(payment.getTotalAmount() - payment.getUsePoint(), 0));
+		order.setOd_method(payment.getMethod());
+		order.setOd_created_at(LocalDateTime.now());
+		order.setOd_ur_num(ur_num);
+
+		System.out.println(order);
+		userDAO.insertOrder(order);
+
+		return od_id;
+	}
+
+	private String generateOdId() {
+		String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+		long count = userDAO.countTodayOrders() + 1;
+
+		return date + String.format("%05d", count);
+	}
+
+	public String insertFreeOrder(List<String> epCodes, int ur_num) {
+		
+		String od_id = generateOdId();
+
+		OrderVO order = new OrderVO();
+
+		order.setOd_id(od_id);
+		order.setOd_ur_num(ur_num);
+		order.setOd_total_amount(0);
+		order.setOd_created_at(LocalDateTime.now());
+		order.setOd_isFree(true);
+		order.setOd_method("FREE");
+
+		userDAO.insertFreeOrder(order);
+
+		for(String epCode : epCodes) {
+			BuyListVO buy = new BuyListVO();
+			buy.setBl_id(od_id);
+			buy.setBl_ep_code(epCode);
+			buy.setBl_ur_num(ur_num);
+
+			userDAO.insertBuyList(buy);
+		}
+
+		return od_id;
+	}
 
     public boolean deleteUser(String ur_email) {
 		return userDAO.updateUserDeleted(ur_email);
