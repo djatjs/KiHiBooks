@@ -27,7 +27,7 @@ public class EventController {
         }
         model.addAttribute("eventList", eventList);
         model.addAttribute("tab", tab);
-        return "event/event";
+        return "events/event";
     }
 }
 
