@@ -471,7 +471,8 @@ public class UserController {
         response.put("email", customUser.getUser().getUr_email());
         response.put("nickname", customUser.getUser().getUr_nickname());
         
-
+        userService.chargeBeforePay(orderId, userNum, epCodes, charge, payment.getFinalAmount());
+        System.out.println(response);
         return response;
     }
 }

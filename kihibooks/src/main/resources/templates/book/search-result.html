@@ -12,7 +12,7 @@
 <div layout:fragment="content" class="container">
     <h2 th:text="'검색 결과: ' + ${query}">검색 결과</h2>
 
-    <p th:if="${pageInfo.totalCount == 0}">검색 결과가 없습니다.</p>
+    <p class="no-result" th:if="${pageInfo.totalCount == 0}">검색 결과가 없습니다.</p>
 
     <div class="book-grid" th:if="${pageInfo.totalCount > 0}">
         <div class="book-card" th:each="book : ${pageInfo.content}">

@@ -351,11 +351,11 @@ public class UserService {
 	}
 
 	public String updatePointOrder(List<String> epCodes, int ur_num, String orderId, int usePoint) {
-		
-		if(userDAO.updatePointOrder(orderId)) {
+
+		if (userDAO.updatePointOrder(orderId)) {
 			userDAO.updateUsePoint(ur_num, usePoint);
 		}
-		
+
 		for (String epCode : epCodes) {
 			BuyListVO buy = new BuyListVO();
 			buy.setBl_id(orderId);
@@ -370,13 +370,9 @@ public class UserService {
 		return orderId;
 	}
 
-	public void chargeBeforePay(String orderId, int userNum, List<String> epCodes, Integer chargeAmount, Integer finalAmount) {
-		
-		if(userDAO.updateChargeOrder(orderId)) {
-			userDAO.updateChargePoint(userNum, chargeAmount);
-		}
-
-		for(String epCode : epCodes) {
+	public void chargeBeforePay(String orderId, int userNum, List<String> epCodes, Integer chargeAmount,
+			Integer finalAmount) {
+		for (String epCode : epCodes) {
 			BuyListVO buy = new BuyListVO();
 			buy.setBl_id(orderId);
 			buy.setBl_ep_code(epCode);
@@ -384,9 +380,11 @@ public class UserService {
 
 			userDAO.insertBuyList(buy);
 		}
-
+		System.out.println("final" + finalAmount);
+		System.out.println("charge" + chargeAmount);
+		userDAO.updateChargeOrder(orderId);
+		userDAO.updateChargePoint(userNum, chargeAmount);
 		userDAO.updateUsePoint(userNum, finalAmount);
 	}
 
-	
 }
