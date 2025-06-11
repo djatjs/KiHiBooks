@@ -301,6 +301,18 @@ CREATE TABLE `ORDER_LIST` (
 	`OL_UR_NUM`	INT	NOT NULL
 );
 
+DROP TABLE IF EXISTS `EVENT`;
+
+CREATE TABLE `EVENT` (
+    `EV_ID` INT AUTO_INCREMENT PRIMARY KEY,           -- 이벤트 ID
+    `EV_TITLE` VARCHAR(100) NOT NULL,                 -- 이벤트 제목
+    `EV_DESC` TEXT,                                   -- 이벤트 설명
+    `EV_THUMBNAIL` VARCHAR(255),                      -- 썸네일 이미지 경로 (null 가능)
+    `EV_START_DATE` DATETIME NOT NULL,                -- 이벤트 시작일
+    `EV_END_DATE` DATETIME NOT NULL,                  -- 이벤트 종료일
+    `EV_LINK` VARCHAR(255)                            -- 이벤트 상세 링크
+);
+
 ALTER TABLE `ORDER_LIST` ADD CONSTRAINT `FK_USER_TO_ORDER_LIST_1` FOREIGN KEY (
 	`OL_UR_NUM`
 )
