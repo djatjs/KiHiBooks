@@ -577,5 +577,25 @@ public class BookService {
         return bookDAO.getAuthorsAnotherBookList(au_num);
     }
 
-    
+    public String getMainCategoryUrlKeyword(String bo_main_cate) {
+        String urlPath;
+        switch (bo_main_cate) {
+            case "판타지":
+                urlPath = "fantasy";
+                break;
+            case "로판":
+                urlPath = "rofan";
+                break;
+            case "로맨스":
+                urlPath = "romance";
+                break;
+            case "무협":
+                urlPath = "martial";
+                break;
+            default:
+                urlPath = "other";
+                break;
+        }
+        return urlPath;
+    }
 }

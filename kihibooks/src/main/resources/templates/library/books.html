@@ -655,7 +655,7 @@
                                     <div class="category">
                                         <span class="blank"></span>
                                         <div class="cate-title">
-                                            <span  class="main-cate-title" th:text="${book.bo_main_cate}"></span>
+                                            <a th:href="@{/genre/{mainCategory}(mainCategory=${mainCategory},tab=new)}" class="main-cate-title" th:text="${book.bo_main_cate}"></a>
                                             <img src="/resources/static/img/next.png" alt="next" style="height: 10px;" class="mb-1">
                                             <span th:href="@{/}" class="sub-cate-title" th:text="${book.bo_sub_cate}"></span>
                                         </div>
@@ -664,11 +664,16 @@
                                     <div class="info-content">
 										<div class="infomation">
 											<div class="author">
-												<span class="author-name" th:text="${book.bo_author}"></span>
+												<a th:href="@{/search?query={bo_author}(bo_author=${book.bo_author})}">
+													<span class="author-name" th:text="${book.bo_author}"></span>
+												</a>
 												<span class="ml-1"> 저</span>
 											</div>
 											<div class="publisher mt-1">
-												<span class="publisher-link" th:text="${book.bo_publisher}"></span> 출판
+												<!-- <a th:href="@{/search?query={bo_publisher}(bo_publisher=${book.bo_publisher})}"> -->
+													<span class="publisher-link" th:text="${book.bo_publisher}"></span>
+												<!-- </a> -->
+												출판
 											</div>
 											<div class="total-episode mt-1 mb-3" th:text="'총 ' + ${epiList.size()} + '화'"></div>
 										</div>
@@ -831,10 +836,10 @@
 																		<span class="bo-author">
 																			<a th:href="@{/}" class="b-author" th:text="${anotherBook.bo_author}"></a>
 																		</span>
-																		<span class="bo-rating">
+																		<!-- <span class="bo-rating">
 																			<img class="red mb-1" src="/resources/static/img/star.png" alt="별" style="height: 12px; margin-right: 2px;" th:text="${anotherBook.bo_total_rating / anotherBook.bo_review_count / 2.0}">
 																			<span class="b-rating-cnt" th:text="'(' + ${anotherBook.bo_review_count} + ')'"></span>
-																		</span>
+																		</span> -->
 																	</div>
 																</div>
 																<!-- bo-img 와 동일한 링크 -->

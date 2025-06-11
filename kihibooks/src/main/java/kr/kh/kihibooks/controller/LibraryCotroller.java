@@ -81,22 +81,25 @@ public class LibraryCotroller {
     @GetMapping("/library/books/{bo_code}")
     public String getMethodName(@PathVariable String bo_code, Model model,@AuthenticationPrincipal CustomUser customUser) {
         BookVO book = bookService.getBook(bo_code);
-        
         List<EpisodeVO> epiList = libraryService.getPurchasedEpisodeList(bo_code, customUser.getUser().getUr_num());
         Optional<Timestamp> latestDateOpt = epiList.stream()
-                .map(EpisodeVO::getEp_date)
-                .max(Comparator.naturalOrder());
+        .map(EpisodeVO::getEp_date)
+        .max(Comparator.naturalOrder());
         List<BookKeywordVO> kwList = bookService.getKeywordList(bo_code);
         List<BookVO> abList = bookService.getAuthorsAnotherBook(bo_code);
         String latestDate = latestDateOpt
-                .map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
-                .orElse("날짜 없음");
+        .map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
+        .orElse("날짜 없음");
+        String mainCategory = bookService.getMainCategoryUrlKeyword(book.getBo_main_cate());
+        System.out.println(mainCategory+"씨ㅣㅣㅣ이이이이이이");
+
         model.addAttribute("latestEpDate", latestDate);
         model.addAttribute("bo_code", bo_code);
         model.addAttribute("book", book);
         model.addAttribute("epiList", epiList);
         model.addAttribute("kwList", kwList);
         model.addAttribute("abList", abList);
+        model.addAttribute("mainCategory", mainCategory);
         return "/library/books";
     }
     
