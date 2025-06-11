@@ -470,8 +470,7 @@ public class UserController {
         response.put("redirectUrl", redirectUrl);
         response.put("email", customUser.getUser().getUr_email());
         response.put("nickname", customUser.getUser().getUr_nickname());
-
-        userService.chargeBeforePay(orderId, userNum, epCodes, payment.getChargeAmount(), payment.getFinalAmount());
+        
 
         return response;
     }

@@ -1679,7 +1679,7 @@
 											window.location.href = '/payment/naver/start?orderId=' + response.orderId;
 											break;
 										case 'kakao':
-											requestPay(response.orderId, response.nickname, response.email, response.totalAmount);
+											requestPay(response.orderId, response.nickname, response.email);
 											break;
 										case 'toss':
 											window.location.href = '/payment/toss/start?orderId=' + response.orderId;
@@ -1700,8 +1700,7 @@
 					});
 
 					IMP.init("imp33538244");
-					function requestPay(orderId, nickname, email, totalAmount) {
-						console.log(epCodes);
+					function requestPay(orderId, nickname, email) {
 						IMP.request_pay(
 							{
 								channelKey: "channel-key-3cfa1ce1-28fb-4421-ace6-a9575591474d",
