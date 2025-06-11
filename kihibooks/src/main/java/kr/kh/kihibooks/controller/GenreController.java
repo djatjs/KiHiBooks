@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import kr.kh.kihibooks.model.vo.BookVO;
+import kr.kh.kihibooks.model.vo.KeywordVO;
+import kr.kh.kihibooks.pagination.PageInfo;
+import kr.kh.kihibooks.service.BookService;
 import kr.kh.kihibooks.service.GenreService;
 import kr.kh.kihibooks.service.KeywordService;
 
@@ -19,69 +21,80 @@ public class GenreController {
     GenreService genreService;
 
     @Autowired
+    BookService bookService;
+
+    @Autowired
     KeywordService keywordService;
 
-    @GetMapping("/test")
-    public String testPage(Model model) {
-        return "genre/genre-template"; // 또는 "genre/rofan"
-    }
-    @GetMapping("/genre/{genreKeyword}")
-    public String genreMain(@PathVariable String genreKeyword, Model model) {
-        int genreCode = mapGenreKeywordToCode(genreKeyword);
+    @GetMapping("/genre/{genreName}")
+    public String genrePage(@PathVariable("genreName") String genreName,
+                            @RequestParam(value = "tab", defaultValue = "main") String tab,
+                            @RequestParam(value = "page", defaultValue = "1") int page,
+                            @RequestParam(value = "range", defaultValue = "day") String range,
+                            @RequestParam(value = "sort", defaultValue = "recent") String sort,
+                            @RequestParam(value = "adultYN", required = false) String adultYN,
+                            @RequestParam(value = "finished", required = false) String finished,
+                            @RequestParam(value = "keyword", required = false) String keyword,
+                            Model model) {
 
-        System.out.println("✅ [GenreController] genreKeyword = " + genreKeyword + ", genreCode = " + genreCode);
+        int mcCode = mapGenreNameToCode(genreName);
+        model.addAttribute("mcCode", mcCode);
+        model.addAttribute("genreKeyword", genreName);
+        model.addAttribute("tab", tab);
 
-        try {
-            List<BookVO> newBooks = genreService.getNewBooksByGenre(genreCode);
-            System.out.println("📘 newBooks: " + (newBooks != null ? newBooks.size() : "null"));
+        String extraParams = "";
+        if (adultYN != null) extraParams += "&adultYN=" + adultYN;
+        if (finished != null) extraParams += "&finished=" + finished;
+        model.addAttribute("extraParams", extraParams);
 
-            List<BookVO> bestBooks = genreService.getBestBooksByGenre(genreCode);
-            System.out.println("🔥 bestBooks: " + (bestBooks != null ? bestBooks.size() : "null"));
+        if (tab.equals("new")) {
+            PageInfo<BookVO> pageInfo = bookService.getNewBooksByGenre(mcCode, page, sort, adultYN, finished);
+            model.addAttribute("pageInfo", pageInfo);
+            model.addAttribute("sort", sort);
+            model.addAttribute("adultYN", adultYN);
+            model.addAttribute("finished", finished);
 
-            List<BookVO> waitFreeBooks = genreService.getWaitFreeBooksByGenre(genreCode);
-            System.out.println("🕒 waitFreeBooks: " + (waitFreeBooks != null ? waitFreeBooks.size() : "null"));
+            System.out.println("finished = " + finished);
 
-            List<BookVO> realtimeBooks = genreService.getRealtimeRankingByGenre(genreCode);
-            System.out.println("📊 realtimeBooks: " + (realtimeBooks != null ? realtimeBooks.size() : "null"));
-
-            List<?> keywordList = keywordService.getRandomKeywordsByGenre(genreCode);
-            System.out.println("🔑 keywordList: " + (keywordList != null ? keywordList.size() : "null"));
-
-            model.addAttribute("genreCode", genreCode);
-            model.addAttribute("mcCode", genreCode);
-            model.addAttribute("genreName", getGenreName(genreCode));
-            model.addAttribute("newBooks", newBooks);
-            model.addAttribute("bestBooks", bestBooks);
-            model.addAttribute("waitFreeBooks", waitFreeBooks);
-            model.addAttribute("realtimeBooks", realtimeBooks);
-            model.addAttribute("keywordList", keywordList);
-        } catch (Exception e) {
-            System.out.println("❌ 예외 발생");
-            e.printStackTrace();
-            model.addAttribute("error", "장르 데이터를 불러오는 중 오류가 발생했습니다.");
+            return "genre/genre-template-new";
         }
+
+        if (tab.equals("best")) {
+            PageInfo<BookVO> pageInfo = bookService.getBestBooksByGenre(mcCode, range, page, adultYN, finished);
+            model.addAttribute("pageInfo", pageInfo);
+            model.addAttribute("range", range);
+            model.addAttribute("adultYN", adultYN);
+            model.addAttribute("finished", finished);
+            return "genre/genre-template-best";
+        }
+
+        if (tab.equals("wait")) {
+            PageInfo<BookVO> pageInfo = bookService.getWaitFreeBooksByGenre(mcCode, page, sort, keyword);
+            model.addAttribute("pageInfo", pageInfo);
+            model.addAttribute("sort", sort);
+            model.addAttribute("keyword", keyword);
+            return "genre/genre-template-wait";
+        }
+
+        // 기본 탭
+        model.addAttribute("realtimeBooks", bookService.getRealtimeRankingBooks(mcCode));
+        model.addAttribute("waitFreeBooks", bookService.getWaitFreeBooks(mcCode));
+        model.addAttribute("bestBooks", bookService.getBestBooks(mcCode));
+        model.addAttribute("newBooks", bookService.getNewBooks(mcCode));
+        model.addAttribute("keywordList", genreService.getRandomKeywords());
 
         return "genre/genre-template";
     }
 
-    private int mapGenreKeywordToCode(String keyword) {
-        return switch (keyword.toLowerCase()) {
+
+
+    private int mapGenreNameToCode(String genreName) {
+        return switch (genreName.toLowerCase()) {
             case "romance" -> 1;
             case "rofan" -> 2;
             case "fantasy" -> 3;
             case "martial" -> 4;
-            default -> throw new IllegalArgumentException("❌ Unknown genre keyword: " + keyword);
+            default -> 0;
         };
     }
-
-    private String getGenreName(int genreCode) {
-        return switch (genreCode) {
-            case 1 -> "로맨스";
-            case 2 -> "로판";
-            case 3 -> "판타지";
-            case 4 -> "무협";
-            default -> "기타";
-        };
-    }
-
 }

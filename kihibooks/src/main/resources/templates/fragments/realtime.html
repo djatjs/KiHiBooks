@@ -16,7 +16,7 @@
             </p>
             <p class="book-meta">
               <span class="highlight-rating"
-                    th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal(book.bo_total_rating / book.bo_review_count, 1, 1)} : '0.0')">평점</span>
+                    th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal((book.bo_total_rating / book.bo_review_count) / 2, 1, 1)} : '0.0')">평점</span>
               <span>|</span>
               <span th:text="'(' + ${book.bo_review_count} + ')'">리뷰 수</span>
             </p>

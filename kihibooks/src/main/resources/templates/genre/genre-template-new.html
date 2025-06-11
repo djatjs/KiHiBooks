@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>신작 - 장르별</title>
+  <link rel="stylesheet" th:href="@{/css/book-tab-new.css}">
+</head>
+
+<body>
+<section class="container" layout:fragment="content">
+
+  <!-- 🔵 필터 영역 -->
+  <div class="filter-header">
+    <div class="sort-options">
+      <a th:href="@{'?tab=new&sort=recent' + ${extraParams}}"
+         class="sort-option"
+         th:classappend="${sort} == 'recent' ? ' active'">
+        최신순
+      </a>
+      <a th:href="@{'?tab=new&sort=popular' + ${extraParams}}"
+         class="sort-option"
+         th:classappend="${sort} == 'popular' ? ' active'">
+        인기순
+      </a>
+    </div>
+
+    <div class="filter-options">
+      <label>
+        <input type="checkbox" id="adultY" th:checked="${adultYN} == 'Y'"> 성인작품만
+      </label>
+      <label>
+        <input type="checkbox" id="adultN" th:checked="${adultYN} == 'N'"> 성인작품 제외
+      </label>
+      <label>
+        <input type="checkbox" id="finished" th:checked="${finished} == 'Y'"> 완결작품만
+      </label>
+    </div>
+  </div>
+
+  <!-- 📚 도서 리스트 -->
+  <div class="book-grid">
+    <div class="book-card" th:each="book : ${pageInfo.content}">
+      <a th:href="@{/books/{id}(id=${book.bo_code})}" class="thumb-wrapper">
+        <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일" width="120" height="173">
+        <span class="badge adult-badge" th:if="${book.bo_adult == 'Y'}">19</span>
+      </a>
+      <p class="book-title">
+        <a th:href="@{/books/{id}(id=${book.bo_code})}" th:text="${book.bo_title}">책 제목</a>
+      </p>
+      <p class="book-author">
+        <a th:href="@{/author/{id}(id=${book.bo_au_num})}" th:text="${book.bo_author}">작가명</a>
+      </p>
+      <p class="book-meta">
+        <span th:text="'총 ' + ${book.bo_total_episode} + '화'">총 50화</span>
+        <span class="badge fin-badge" th:if="${book.bo_fin == 'Y'}">완결</span>
+      </p>
+      <p class="book-meta">
+        <span class="highlight-rating"
+              th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal((book.bo_total_rating / book.bo_review_count) / 2, 1, 1)} : '0.0')">
+          평점
+        </span>
+        <span>|</span>
+        <span th:text="'(' + ${book.bo_review_count} + ')'">리뷰 수</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ⏩ 페이지네이션 -->
+  <div class="pagination">
+    <a th:if="${pageInfo.currentPage > 1}"
+       th:href="@{'?tab=new&sort=' + ${sort} + '&page=' + (${pageInfo.currentPage - 1}) + ${extraParams}}">
+      이전
+    </a>
+
+    <a th:each="p : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}"
+       th:href="@{'?tab=new&sort=' + ${sort} + '&page=' + ${p} + ${extraParams}}"
+       th:text="${p}"
+       th:classappend="${p} == ${pageInfo.currentPage} ? 'active'">1</a>
+
+    <a th:if="${pageInfo.currentPage < pageInfo.totalPages}"
+       th:href="@{'?tab=new&sort=' + ${sort} + '&page=' + (${pageInfo.currentPage + 1}) + ${extraParams}}">
+      다음
+    </a>
+  </div>
+
+</section>
+
+<!-- ✅ 스크립트는 반드시 fragment="script" 안에 직접 삽입 -->
+<div layout:fragment="script">
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const params = new URLSearchParams(window.location.search);
+      const sort = params.get('sort') || 'recent';
+      const tab = 'new';
+
+      document.getElementById('adultY')?.addEventListener('change', function () {
+        if (this.checked) {
+          params.set('adultYN', 'Y');
+          document.getElementById('adultN').checked = false;
+        } else {
+          params.delete('adultYN');
+        }
+        redirect();
+      });
+
+      document.getElementById('adultN')?.addEventListener('change', function () {
+        if (this.checked) {
+          params.set('adultYN', 'N');
+          document.getElementById('adultY').checked = false;
+        } else {
+          params.delete('adultYN');
+        }
+        redirect();
+      });
+
+      document.getElementById('finished')?.addEventListener('change', function () {
+        if (this.checked) {
+          params.set('finished', 'Y');
+        } else {
+          params.delete('finished');
+        }
+        redirect();
+      });
+
+      function redirect() {
+        params.set('tab', tab);
+        params.set('sort', sort);
+        params.set('page', 1);
+        location.href = '?' + params.toString();
+      }
+    });
+  </script>
+</div>
+
+</body>
+</html>

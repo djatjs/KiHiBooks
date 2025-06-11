@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>기다리면 무료 - 장르별</title>
+  <link rel="stylesheet" th:href="@{/css/book-tab-wait.css}">
+</head>
+
+<body>
+<section class="container" layout:fragment="content">
+  <!-- 🔵 필터 + 검색창 -->
+  <div class="filter-header">
+    <div class="sort-options">
+      <a th:href="@{'?tab=wait&sort=recent' + ${extraParams}}"
+         class="sort-option"
+         th:classappend="${sort} == 'recent' ? ' active'">최신순</a>
+      <a th:href="@{'?tab=wait&sort=popular' + ${extraParams}}"
+         class="sort-option"
+         th:classappend="${sort} == 'popular' ? ' active'">인기순</a>
+      <a th:href="@{'?tab=wait&sort=rating' + ${extraParams}}"
+         class="sort-option"
+         th:classappend="${sort} == 'rating' ? ' active'">평점순</a>
+      <a th:href="@{'?tab=wait&sort=review' + ${extraParams}}"
+         class="sort-option"
+         th:classappend="${sort} == 'review' ? ' active'">리뷰순</a>
+    </div>
+    <form method="get" th:action="@{/genre/{genre}(genre=${genreName})}" class="search-box">
+      <input type="hidden" name="tab" value="wait">
+      <input type="text" name="keyword" th:value="${keyword}" placeholder="책 제목 검색">
+      <button type="submit">검색</button>
+    </form>
+  </div>
+
+  <!-- 📚 도서 리스트 -->
+  <div class="book-grid" th:if="${pageInfo.content.size > 0}">
+    <div class="book-card" th:each="book : ${pageInfo.content}">
+      <a th:href="@{/books/{id}(id=${book.bo_code})}" class="thumb-wrapper">
+        <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
+        <span class="badge adult-badge" th:if="${book.bo_adult == 'Y'}">19</span>
+      </a>
+      <p class="book-title">
+        <a th:href="@{/books/{id}(id=${book.bo_code})}" th:text="${book.bo_title}">책 제목</a>
+      </p>
+      <p class="book-author">
+        <a th:href="@{/author/{id}(id=${book.bo_au_num})}" th:text="${book.bo_author}">작가명</a>
+      </p>
+      <p class="book-meta">
+        <span th:text="'총 ' + ${book.bo_total_episode} + '화'"></span>
+        <span class="badge fin-badge" th:if="${book.bo_fin == 'Y'}">완결</span>
+      </p>
+      <p class="book-meta">
+        <span class="highlight-rating"
+              th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal((book.bo_total_rating / book.bo_review_count) / 2, 1, 1)} : '0.0')"></span>
+        <span>|</span>
+        <span th:text="'(' + ${book.bo_review_count} + ')'"></span>
+      </p>
+    </div>
+  </div>
+  <!-- 🔴 검색 결과 없음 -->
+  <div class="no-result" th:if="${pageInfo.content.size() == 0}">
+    <p th:text="'‘' + ${keyword} + '’에 대한 결과가 없습니다.'">검색결과 없음</p>
+    <a th:href="@{'/genre/' + ${genreName} + '?tab=wait'}" class="btn-back">돌아가기</a>
+  </div>
+
+  <!-- ⏩ 페이지네이션 -->
+  <div class="pagination">
+    <a th:if="${pageInfo.currentPage > 1}"
+       th:href="@{'?tab=wait&sort=' + ${sort} + '&page=' + (${pageInfo.currentPage - 1}) + ${extraParams}}">이전</a>
+
+    <a th:each="p : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}"
+       th:href="@{'?tab=wait&sort=' + ${sort} + '&page=' + ${p} + ${extraParams}}"
+       th:text="${p}"
+       th:classappend="${p} == ${pageInfo.currentPage} ? 'active'"></a>
+
+    <a th:if="${pageInfo.currentPage < pageInfo.totalPages}"
+       th:href="@{'?tab=wait&sort=' + ${sort} + '&page=' + (${pageInfo.currentPage + 1}) + ${extraParams}}">다음</a>
+  </div>
+</section>
+
+<!-- JS는 필요 시 따로 삽입 -->
+</body>
+</html>
