@@ -3064,7 +3064,7 @@
 								</form>
 							</div>
 							<div>
-								<div id="UpperPanelList">
+								<div id="UpperPanelList" th:if="${isFree}">
 									<div class="upper-wrapper">
 										<div class="upper-wrap">
 											<div class="upper">
@@ -3182,7 +3182,7 @@
 																						</div>
 																					</div>
 																					<!-- bo-img 와 동일한 링크 -->
-																					<a th:href="@{/}" class="book-click"></a>
+																					<a th:href="@{'/books/' + ${anotherBook.bo_code}}" class="book-click"></a>
 																				</div>
 																			</li>
 																		</ul>
@@ -4176,7 +4176,7 @@
 							}
 						}
 					} else {
-						if (ur_point >= episode.ep_price) {
+						if (urPoint >= epPrice) {
 							openPopup('#serial_checkout_point_popup');
 						} else {
 							openPopup('#serial_checkout_by_others_popup');

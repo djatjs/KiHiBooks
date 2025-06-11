@@ -127,11 +127,43 @@
         value(#{od_id}, #{od_total_amount}, #{od_use_point}, #{od_final_amount}, #{od_method}, #{od_created_at}, #{od_ur_num})
     </insert>
     <insert id="insertFreeOrder">
-        insert into `order`(od_id, od_total_amount, od_use_point, od_final_amount, od_mehtod, od_created_at, od_ur_num, od_status)
+        insert into `order`(od_id, od_total_amount, od_use_point, od_final_amount, od_method, od_created_at, od_ur_num, od_status)
         value(#{od_id}, #{od_total_amount}, #{od_use_point}, #{od_final_amount}, #{od_method}, #{od_created_at}, #{od_ur_num}, 'PAID')
     </insert>
     <update id="updateUserDeleted">
         update user set ur_del = 'Y', ur_nickname = '탈퇴한 사용자'
         where ur_email = #{ur_email}
+    </update>
+    <delete id="deleteOrderList">
+        delete from order_list
+        where ol_ur_num = #{ur_num}
+    </delete>
+    <insert id="insertOrderList">
+        insert into order_list(ol_ep_code, ol_ur_num)
+        value(#{ol_ep_code}, #{ol_ur_num})
+    </insert>
+    <select id="selectOrderList" resultType="String">
+        select ol_ep_code from order_list
+        where ol_ur_num = #{ur_num}
+    </select>
+    <select id="selectByOdId" resultType="OrderVO">
+        select * from `order`
+        where od_id = #{od_id}
+    </select>
+    <update id="updatePointOrder">
+        update `order` set od_status = "PAID"
+        where od_id = #{od_id}
+    </update>
+    <update id="updateUsePoint">
+        update `user` set ur_point = ur_point - #{usePoint}
+        where ur_num = #{ur_num}
+    </update>
+    <update id="updateChargePoint">
+        update `user` set ur_point = ur_point + #{chargeAmount}
+        where ur_num = #{ur_num}
+    </update>
+    <update id="updateChargeOrder">
+        update `order` set od_status = "PAID"
+        where od_id = #{od_id}
     </update>
 </mapper>

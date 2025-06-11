@@ -5,6 +5,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>주문/결제 - 키히</title>
+	<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 	<style>
 		ul {
 			list-style-type: none;
@@ -14,6 +15,10 @@
 
 		.gray {
 			filter: brightness(0) saturate(100%) invert(75%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+		}
+
+		.yellow {
+			filter: brightness(0) saturate(100%) invert(55%) sepia(95%) saturate(750%) hue-rotate(-5deg) brightness(115%) contrast(110%);
 		}
 
 		.books-content {
@@ -873,6 +878,101 @@
 			background-color: rgb(204, 204, 204);
 			border-radius: 50%;
 		}
+
+		.kihipay-charge-detail-wrapper {
+			display: flex;
+			flex-direction: column;
+			margin-top: 10px;
+			border: 1px solid rgb(204, 204, 204);
+		}
+
+		.kihipay-cdetail-order {
+			display: flex;
+			align-items: center;
+			flex-direction: column;
+			padding: 13px 14px;
+		}
+
+		.kihipay-cdetail-text {
+			margin: 0;
+			padding: 0;
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+			color: rgb(20, 20, 20);
+			font-size: 14px;
+			line-height: normal;
+		}
+
+		.kihipay-cdetail-text>span:first-of-type {
+			font-weight: 600;
+		}
+
+		.kihipay-cdetail-text>span:last-of-type {
+			font-weight: 700;
+		}
+
+		.kihipay-cdetail-point {
+			display: flex;
+			align-self: flex-end;
+			align-items: center;
+			color: rgb(120, 120, 120);
+			font-size: 12px;
+			font-weight: 400;
+			line-height: 17px;
+			margin-top: 8px;
+		}
+
+		.kihipay-charge-after {
+			display: flex;
+			flex-direction: column;
+			padding: 14px 14px 13px;
+			border-top: 1px solid rgb(230, 230, 230);
+		}
+
+		.kihipay-after-text {
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+			color: rgb(20, 20, 20);
+			font-size: 14px;
+			line-height: normal;
+		}
+
+		.kihipay-after-text>span:first-of-type {
+			font-weight: 600;
+		}
+
+		.kihipay-after-text>span:last-of-type {
+			font-weight: 700;
+		}
+
+		.kihipay-after-point {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			list-style: none;
+			margin-top: 8px;
+		}
+
+		.kihipay-after-point::before {
+			content: "";
+			position: absolute;
+			width: 2px;
+			height: calc(100% - 4px);
+			top: 2px;
+			left: 3px;
+			background: rgb(204, 204, 204);
+		}
+
+		.kihipay-after-point>li {
+			display: flex;
+			justify-content: space-between;
+			padding-left: 12px;
+			color: rgb(120, 120, 120);
+			font-size: 13px;
+			line-height: normal;
+		}
 	</style>
 </head>
 
@@ -977,7 +1077,7 @@
 												<p class="current-price-wrapper">
 													<strong class="current-price">
 														<span class="total-payment-price-text">부족한 금액</span>
-														<span class="price-num">0</span>
+														<span class="price-num" th:text="${formattedTotal}"></span>
 														<span class="won-text">원</span>
 													</strong>
 												</p>
@@ -987,7 +1087,7 @@
 									<div id="kihipay">
 										<div class="kihipay-wrapper">
 											<div class="kihipay-wrap">
-												<section class="kihipay-method-section">
+												<section class="kihipay-method-section" id="kihipay_method_section">
 													<h2 class="kihipay-method-title">결제 수단</h2>
 													<ul class="kihipay-method-ul">
 														<li class="kihipay-method-li">
@@ -1209,12 +1309,28 @@
 															</ul>
 														</div>
 													</div>
-													<div class="kihipay-charge-detail-wrapper">
-														<div class="kihipay-detail-order">
-															<h3 class="kihipay-detail-text">
+													<div class="kihipay-charge-detail-wrapper" id="kihipay_charge_detail_wrapper">
+														<div class="kihipay-cdetail-order">
+															<h3 class="kihipay-cdetail-text">
 																<span>키히포인트 충전</span>
 																<span>2,000원</span>
 															</h3>
+															<div class="kihipay-cdetail-point">
+																<img src="/resources/static/img/charge_point.png" alt="충전 포인트"
+																	style="width: 18px; margin: 0 1px 2px 0" class="yellow">60원 키히포인트 적립
+															</div>
+														</div>
+														<div class="kihipay-charge-after">
+															<h4 class="kihipay-after-text">
+																<span>충전 후 포인트 사용</span>
+																<span>-200원</span>
+															</h4>
+															<ul class="kihipay-after-point">
+																<li>
+																	<span>키히포인트 사용</span>
+																	<span>200원</span>
+																</li>
+															</ul>
 														</div>
 													</div>
 												</section>
@@ -1231,7 +1347,7 @@
 															</span>
 														</label>
 													</div>
-													<button type="submit" class="kihipay-checkout-submit">결제</button>
+													<button type="button" class="kihipay-checkout-submit" onclick="requestPay()">결제</button>
 													<h4 class="kihipay-checkout-title">결제 유의사항</h4>
 													<ul class="kihipay-checkout-note-ul">
 														<li>키히포인트는 먼저 충전한 순서대로 사용됩니다.</li>
@@ -1258,11 +1374,15 @@
 				const pointEl = document.querySelector("span[data-amount]");
 				const userPoint = parseInt(pointEl.getAttribute("data-amount"));
 				const lackPriceEl = document.querySelector(".price-num");
+				const paymentSection = document.getElementById("kihipay_method_section");
+				const chargeDetail = document.getElementById("kihipay_charge_detail_wrapper");
 
 				const updatePointUsage = (usedPoint) => {
 					pointInput.value = usedPoint.toLocaleString();
 					const lack = totalAmount - usedPoint;
 					lackPriceEl.textContent = lack > 0 ? lack.toLocaleString() : "0";
+					paymentSection.style.display = usedPoint === totalAmount ? "none" : "block";
+					chargeDetail.style.display = usedPoint === totalAmount ? "none" : "block";
 				};
 
 				// 초기 설정
@@ -1279,6 +1399,29 @@
 					} else {
 						updatePointUsage(userPoint);
 					}
+				});
+
+				// 포인트 입력 시 실시간 업데이트
+				pointInput.addEventListener("input", () => {
+					let value = pointInput.value.replace(/[^0-9]/g, "");
+					let usedPoint = parseInt(value, 10);
+
+					if (!value || isNaN(usedPoint) || usedPoint < 0) {
+						updatePointUsage(0);
+						return;
+					}
+
+					if (usedPoint > userPoint) {
+						alert("사용 가능한 포인트를 초과했습니다.");
+						usedPoint = userPoint;
+					}
+
+					if (usedPoint > totalAmount) {
+						alert("결제 금액을 초과하여 포인트를 사용할 수 없습니다.");
+						usedPoint = Math.min(userPoint, totalAmount);
+					}
+
+					updatePointUsage(usedPoint);
 				});
 			});
 
@@ -1422,6 +1565,7 @@
 				const chargeAfterCheckbox = document.querySelector('.kihipay-charge-checkbox');
 				const justPayCheckbox = document.querySelector('.kihipay-pay-checkbox');
 				const chargeWrapper = document.querySelector('.kihipay-charge-wrapper');
+				const paymentSection = document.getElementById('kihipay_method_section');
 
 				// ✅ 결제 수단 확인 함수
 				function getSelectedPayMethod(containerSelector) {
@@ -1475,14 +1619,24 @@
 					const finalAmount = Math.max(totalAmount - usePoint, 0);
 
 					// 5. 결제 방식
-					const isChargeAfter = chargeAfterCheckbox.checked;
-					const isJustPay = justPayCheckbox.checked;
+					let selectedMethod;
+					let isChargeAfter;
+					let chargeAmount;
 
-					// 6. 결제 수단
-					const methodContainerSelector = isChargeAfter ? '.kihipay-charge' : '.kihipay-pay';
-					const selectedMethod = getSelectedPayMethod(methodContainerSelector);
+					if (paymentSection.style.display === 'none' || usePoint === totalAmount) {
+						// 결제 섹션이 숨겨진 경우 (포인트로 전액 결제)
+						selectedMethod = 'POINT';
+						isChargeAfter = false;
+						chargeAmount = 0;
+					} else {
+						// 결제 섹션이 보이는 경우
+						isChargeAfter = chargeAfterCheckbox.checked;
+						const methodContainerSelector = isChargeAfter ? '.kihipay-charge' : '.kihipay-pay';
+						selectedMethod = getSelectedPayMethod(methodContainerSelector);
+						chargeAmount = isChargeAfter ? parseInt(chargeOptionSelect.value || '0', 10) : 0;
+					}
 
-					// 7. 콘솔 확인
+					// 6. 콘솔 확인
 					console.log('--- 결제 요청 정보 ---');
 					console.log('총 주문 금액:', totalAmount);
 					console.log('사용 포인트:', usePoint);
@@ -1491,17 +1645,22 @@
 					console.log('결제 수단:', selectedMethod);
 					console.log('충전 금액:', isChargeAfter ? chargeOptionSelect.value : '사용 안 함');
 
-					// 8. 서버로 전송할 데이터 구성
+					const episodeList = document.querySelectorAll(".book-order-list");
+					const epCodes = Array.from(episodeList).map(item => item.getAttribute('data-ep-code'));
+
+					// 7. 서버로 전송할 데이터 구성
 					const payload = {
 						totalAmount,
 						usePoint,
 						finalAmount,
-						paymentType: isChargeAfter ? 'charge' : 'just',
+						paymentType: selectedMethod === 'POINT' ? 'point' : (isChargeAfter ? 'charge' : 'just'),
 						method: selectedMethod,
-						chargeAmount: isChargeAfter ? chargeOptionSelect.value : 0,
+						chargeAmount,
+						isChargeAfter,
+						epCodes : epCodes,
 					};
 
-					// 9. AJAX 전송
+					// 8. AJAX 전송
 					$.ajax({
 						url: '/payment/process',
 						method: 'POST',
@@ -1510,20 +1669,25 @@
 						dataType: 'json',
 						success: function (response) {
 							if (response.success) {
-								// 5. 결제 수단 분기 처리
-								switch (selectedMethod) {
-									case 'naver':
-										window.location.href = '/payment/naver/start?orderId=' + response.orderId;
-										break;
-									case 'kakao':
-										window.location.href = '/payment/kakao/start?orderId=' + response.orderId;
-										break;
-									case 'toss':
-										window.location.href = '/payment/toss/start?orderId=' + response.orderId;
-										break;
-									default:
-										alert('알 수 없는 결제 수단입니다.');
-										break;
+								if (selectedMethod === 'POINT') {
+									// 포인트 결제 완료 처리
+									pointAll(response.orderId);
+								} else {
+									// 결제 수단 분기 처리
+									switch (selectedMethod) {
+										case 'naver':
+											window.location.href = '/payment/naver/start?orderId=' + response.orderId;
+											break;
+										case 'kakao':
+											requestPay(response.orderId, response.nickname, response.email);
+											break;
+										case 'toss':
+											window.location.href = '/payment/toss/start?orderId=' + response.orderId;
+											break;
+										default:
+											alert('알 수 없는 결제 수단입니다.');
+											break;
+									}
 								}
 							} else {
 								alert(response.message || '결제 요청에 실패했습니다.');
@@ -1534,11 +1698,48 @@
 							alert('서버 오류가 발생했습니다.');
 						}
 					});
+
+					IMP.init("imp33538244");
+					function requestPay(orderId, nickname, email) {
+						IMP.request_pay(
+							{
+								channelKey: "channel-key-3cfa1ce1-28fb-4421-ace6-a9575591474d",
+								pay_method: "kakaopay",
+								merchant_uid: orderId, // 주문 고유 번호
+								name: "키히북스(주)",
+								amount: chargeAmount != 0 ? chargeAmount : finalAmount,
+								buyer_email: email,
+								buyer_name: nickname,
+							},
+							function(response) {
+								if(response.success) {
+									window.location.href="/order/checkout/finished?merchant_uid=" + orderId;
+								}
+							}
+						);
+					}
+
+					function pointAll(orderId) {
+						$.ajax({
+							url: "/order/point",
+							type: "post",
+							contentType: "application/json",
+							data: JSON.stringify({ epCodes: epCodes, orderId: orderId, usePoint: usePoint }),
+							traditional: true,
+							success: function (res) {
+								if (res.success) {
+									window.location.href = "/order/checkout/finished?merchant_uid=" + orderId;
+								} else {
+									alert("포인트 구매 처리 실패: " + response.error);
+								}
+							},
+							error: function () {
+								alert("포인트 구매 처리 중 오류 발생")
+							}
+						});
+					}
 				});
 			});
-
-
-
 		</script>
 
 	</main>

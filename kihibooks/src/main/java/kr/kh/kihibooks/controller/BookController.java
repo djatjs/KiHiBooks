@@ -144,6 +144,12 @@ public class BookController {
 			@AuthenticationPrincipal CustomUser customUser) {
 		BookVO book = bookService.getBook(bo_code);
 		List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
+		boolean isFree = false;
+		for(EpisodeVO ep : epiList) {
+			if(ep.getEp_price() == 0) {
+				isFree = true;
+			}
+		}
 		List<ReviewVO> rvList = bookService.getReviewList(bo_code);
 		Map<Integer, Double> rating = bookService.calcRating(rvList);
 		Map<Integer, Integer> replyCountMap = new HashMap<>();
@@ -211,6 +217,7 @@ public class BookController {
 		model.addAttribute("kwList", kwList);
 		model.addAttribute("wff", wff);
 		model.addAttribute("user", user);
+		model.addAttribute("isFree", isFree);
 
 		return "book/detail";
 	}
