@@ -17,12 +17,10 @@
                     </a>
                 </div>
                 <div class="p-2 ">
-                    <form class="form-inline" action="/action_page.php">
-                        <div class="mt-1" style="border:2px solid; border-radius: 15px;">
-                            <img class="ml-1 mb-1" src="/resources/static/img/magnifier.png" alt="돋보기"
-                                style="height: 20px;">
-                            <input type="text" style="border:none; outline: none; background: transparent;"
-                                placeholder="Search">
+                    <form class="form-inline" th:action="@{/search}" method="get">
+                        <div class="search-box-wrapper">
+                            <img src="/resources/static/img/magnifier.png" alt="검색" class="search-box-icon">
+                            <input type="text" name="query" placeholder="작품명을 입력하세요" class="search-box-input">
                         </div>
                     </form>
                 </div>
