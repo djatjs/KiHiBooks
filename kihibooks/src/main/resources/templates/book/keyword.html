@@ -258,10 +258,17 @@
   </div>
   <div layout:fragment="script">
     <script>
+      const keywordNameMap = {};
       // 공통 초기화 함수
       function initKeywordPage() {
         document.querySelectorAll(".keyword-scroll").forEach(div => {
           updateArrows(div, div.id);
+        });
+
+        document.querySelectorAll(".keyword-tag").forEach(tag => {
+          const id = tag.dataset.id;
+          const name = tag.dataset.name;
+          keywordNameMap[id] = name;
         });
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -311,7 +318,7 @@
             // 응답 전체 HTML에서 #bookResultContainer DOM 자체를 추출해서 통째로 교체
             const newContainer = $("<div>").html(html).find("#bookResultContainer");
             $("#bookResultContainer").replaceWith(newContainer);
-            renderSelectedKeywords(keywordIds);
+            
             document.querySelectorAll(".keyword-tag").forEach(tag => {
               const id = tag.dataset.id;
               if (keywordIds.includes(id)) {
@@ -320,6 +327,7 @@
                 tag.classList.remove("selected");
               }
             });
+            renderSelectedKeywords(keywordIds);
             // 주소창 갱신
             history.replaceState(null, "", `/book/keyword?${query.toString()}`);
           },
@@ -342,7 +350,8 @@
           const span = document.createElement("span");
           span.className = "selected-keyword";
           span.dataset.id = id;
-          span.textContent = keywordName;
+          
+          span.appendChild(document.createTextNode(keywordName));
 
           const removeBtn = document.createElement("button");
           removeBtn.className = "remove-btn";
@@ -419,11 +428,7 @@
         paginationContainer.innerHTML = paginationHtml;
     }
     function getKeywordNameById(id) {
-      const allTags = document.querySelectorAll(".keyword-tag");
-      for (const tag of allTags) {
-        if (tag.dataset.id === id) return tag.dataset.name;
-      }
-      return id;
+      return keywordNameMap[id] || id;
     }
     </script>
   </div>
