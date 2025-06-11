@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/layout.html}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>검색 결과</title>
+    <link rel="stylesheet" th:href="@{/css/search-result.css}">
+</head>
+
+<body>
+<div layout:fragment="content" class="container">
+    <h2 th:text="'검색 결과: ' + ${query}">검색 결과</h2>
+
+    <p class="no-result" th:if="${pageInfo.totalCount == 0}">검색 결과가 없습니다.</p>
+
+    <div class="book-grid" th:if="${pageInfo.totalCount > 0}">
+        <div class="book-card" th:each="book : ${pageInfo.content}">
+            <div class="thumb-wrapper">
+                <a th:href="@{'/books/' + ${book.bo_code}}">
+                    <img th:src="${#strings.isEmpty(book.bo_thumbnail)} 
+                                  ? @{/img/default_thumb.png} 
+                                  : @{${book.bo_thumbnail}}" 
+                         alt="썸네일">
+                </a>
+            </div>
+            <div class="book-title">
+                <a th:href="@{'/books/' + ${book.bo_code}}" 
+                   th:text="${book.bo_title}">도서 제목</a>
+            </div>
+            <div class="book-author">
+                <span th:text="${book.bo_author}">작가명</span>
+            </div>
+            <div class="book-info">
+                <span th:text="'⭐ ' + ${book.bo_total_rating} + ' / 리뷰 ' + ${book.bo_review_count}">
+                    평점/리뷰
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 페이지네이션 -->
+    <div class="pagination" th:if="${pageInfo.totalCount > 0}">
+        <ul>
+            <!-- 이전 블럭 -->
+            <li th:if="${pageInfo.startPage > 1}">
+                <a th:href="@{'/search?query=' + ${query} + '&page=' + (${pageInfo.startPage - 1})}">&laquo;</a>
+            </li>
+
+            <!-- 페이지 번호 -->
+            <li th:each="i : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}"
+                th:classappend="${i == pageInfo.currentPage} ? 'active'">
+                <a th:href="@{'/search?query=' + ${query} + '&page=' + ${i}}" 
+                   th:text="${i}">1</a>
+            </li>
+
+            <!-- 다음 블럭 -->
+            <li th:if="${pageInfo.endPage < pageInfo.totalPages}">
+                <a th:href="@{'/search?query=' + ${query} + '&page=' + (${pageInfo.endPage + 1})}">&raquo;</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

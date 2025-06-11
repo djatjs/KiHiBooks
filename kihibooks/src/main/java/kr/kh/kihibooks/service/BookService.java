@@ -56,6 +56,17 @@ public class BookService {
 
     private final String NAMESPACE = "kr.kh.kihibooks.dao.BookDAO.";
 
+    public PageInfo<BookVO> searchBooksByTitle(String query, int page) {
+        int pageSize = PageConstants.PAGE_SIZE;
+        int blockSize = PageConstants.BLOCK_SIZE;
+        int offset = (page - 1) * pageSize;
+
+        List<BookVO> bookList = bookDAO.searchBooksByTitle(query, offset, pageSize);
+        int totalCount = bookDAO.countBooksByTitle(query);
+
+        return PaginationUtils.paginate(bookList, totalCount, page, pageSize, blockSize);
+    }
+
      // 1. 실시간 랭킹 (장르 메인에서 사용)
     public List<BookVO> getRealtimeRankingBooks(int mcCode) {
         return bookDAO.selectRealtimeRankingBooks(mcCode);
@@ -306,6 +317,9 @@ public class BookService {
             ep_file_name = UploadFileUtils.uploadFile(uploadPath, newFilerName, epubFile.getBytes(),
                     bo_code + "/epubs");
             ep.setEp_file_name(ep_file_name);
+            if(!bookDAO.updateTotalEpisode(bo_code)){
+                return false;
+            }
             return bookDAO.updateEpisode(ep);
         } catch (Exception e) {
             e.printStackTrace();
@@ -555,6 +569,12 @@ public class BookService {
 
     public boolean deleteNotice(int nt_num) {
         return bookDAO.deleteNotice(nt_num);
+    }
+
+    public List<BookVO> getAuthorsAnotherBook(String bo_code) {
+        int au_num = bookDAO.getAuthorNumByBocode(bo_code);
+
+        return bookDAO.getAuthorsAnotherBookList(au_num);
     }
 
     

@@ -58,12 +58,38 @@
                 select="selectKeywordListByBookCode" />
     </resultMap>
 
+    <!-- 제목 또는 작가명으로 검색된 도서 리스트 -->
+    <select id="searchBooksByTitle" resultType="BookVO">
+        SELECT b.*, a.AU_NAME AS bo_author
+        FROM book b
+        JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        WHERE (
+            b.BO_TITLE LIKE CONCAT('%', #{query}, '%')
+            OR a.AU_NAME LIKE CONCAT('%', #{query}, '%')
+        )
+        AND b.BO_TOTAL_EPISODE > 0
+        ORDER BY b.BO_PUBLISH_DATE DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countBooksByTitle" resultType="int">
+        SELECT COUNT(*)
+        FROM book b
+        JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        WHERE (
+            b.BO_TITLE LIKE CONCAT('%', #{query}, '%')
+            OR a.AU_NAME LIKE CONCAT('%', #{query}, '%')   
+        )
+        AND b.BO_TOTAL_EPISODE > 0
+    </select>
+    
     <!-- ===== 1. 장르 메인 요약 리스트 ===== -->
     <select id="selectNewBooks" resultType="BookVO">
         SELECT b.*, a.AU_NAME AS bo_author
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        AND b.BO_TOTAL_EPISODE > 0
         ORDER BY b.BO_PUBLISH_DATE DESC
         LIMIT 10
     </select>
@@ -73,6 +99,7 @@
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        AND b.BO_TOTAL_EPISODE > 0
         ORDER BY b.BO_REVIEW_COUNT DESC, b.BO_TOTAL_RATING DESC
         LIMIT 10
     </select>
@@ -83,6 +110,7 @@
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
         AND b.BO_WAIT_FOR_FREE = 'Y'
+        AND b.BO_TOTAL_EPISODE > 0
         ORDER BY b.BO_PUBLISH_DATE DESC
         LIMIT 10
     </select>
@@ -92,6 +120,7 @@
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        AND b.BO_TOTAL_EPISODE > 0
         ORDER BY b.BO_TOTAL_RATING DESC, b.BO_REVIEW_COUNT DESC
         LIMIT 10
     </select>
@@ -102,6 +131,7 @@
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        AND b.BO_TOTAL_EPISODE > 0
         <if test="adultYN != null and adultYN != ''">
             AND b.BO_ADULT = #{adultYN}
         </if>
@@ -124,6 +154,7 @@
         SELECT COUNT(*)
         FROM book
         WHERE BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        AND b.BO_TOTAL_EPISODE > 0
         <if test="adultYN != null">
             AND BO_ADULT = #{adultYN}
         </if>
@@ -139,6 +170,7 @@
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        AND b.BO_TOTAL_EPISODE > 0
         <if test="adultYN != null">
             AND b.BO_ADULT = #{adultYN}
         </if>
@@ -158,6 +190,7 @@
         SELECT COUNT(*)
         FROM book
         WHERE BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        AND b.BO_TOTAL_EPISODE > 0
         <if test="adultYN != null">
             AND BO_ADULT = #{adultYN}
         </if>
@@ -174,6 +207,7 @@
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
         AND b.BO_WAIT_FOR_FREE = 'Y'
+        AND b.BO_TOTAL_EPISODE > 0
         <if test="keyword != null and keyword != ''">
             AND b.BO_TITLE LIKE CONCAT('%', #{keyword}, '%')
         </if>
@@ -191,6 +225,7 @@
         SELECT COUNT(*)
         FROM book
         WHERE BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        AND b.BO_TOTAL_EPISODE > 0
         AND BO_WAIT_FOR_FREE = 'Y'
         <if test="keyword != null and keyword != ''">
             AND BO_TITLE LIKE CONCAT('%', #{keyword}, '%')
@@ -201,12 +236,14 @@
         select book.* from book
         join recent_view on bo_code = rc_bo_code
         where rc_ur_num = #{ur_num}
+        AND b.BO_TOTAL_EPISODE > 0
     </select>
     <select id="selectTopBooks" resultMap="bookSimpleMap">
         SELECT
             BO_CODE, BO_TITLE, BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_PUBLISH_DATE
         FROM
             book
+        WHERE b.BO_TOTAL_EPISODE > 0
         ORDER BY
             BO_TOTAL_RATING DESC, BO_REVIEW_COUNT DESC
         LIMIT 18;
@@ -222,8 +259,8 @@
             bk_kw_code = kw_code
         WHERE 
             bk_bo_code = #{bo_code}
+            AND b.BO_TOTAL_EPISODE > 0
     </select>
-
     <!-- 키워드 검색 도서 리스트 -->
     <select id="selectBooksByKeywords" resultMap="bookWithKeywords">
         SELECT
@@ -235,6 +272,7 @@
             book
         JOIN
             author ON BO_AU_NUM = AU_NUM
+        WHERE b.BO_TOTAL_EPISODE > 0
         LEFT JOIN
             book_keyword ON BK_BO_CODE = BO_CODE
         LEFT JOIN
@@ -273,6 +311,7 @@
         FROM (
             SELECT BO_CODE
             FROM book
+            WHERE b.BO_TOTAL_EPISODE > 0
             <if test="keywordIds != null and keywordIds.size() > 0">
                 JOIN (
                     SELECT BK_BO_CODE
@@ -489,12 +528,29 @@
         select bo_au_num from book
         where bo_code = #{bo_code}
     </select>
-
     <select id="getAuthorAnotherBookList" resultType="BookVO">
         select *, author.au_name AS bo_author from book
         join author on au_num = bo_au_num
+        join episode on EP_BO_CODE = BO_CODE
         where bo_au_num = #{au_num}
         order by substring((bo_total_rating / bo_review_count / 2.0), 1, 3) desc, bo_review_count desc
+    </select>
+
+    <select id="getAuthorsAnotherBookList" resultType="BookVO">
+        SELECT
+            b.*, -- book 테이블의 모든 컬럼
+            a.au_name AS bo_author,
+            (SELECT e.EP_COVER_IMG
+            FROM episode e
+            WHERE e.EP_BO_CODE = b.BO_CODE
+            ORDER BY e.EP_DATE DESC
+            LIMIT 1) AS bo_thumbnail
+        FROM book b
+        JOIN author a ON a.au_num = b.bo_au_num
+        WHERE b.bo_au_num = #{au_num}
+        ORDER BY
+            substring((b.bo_total_rating / b.bo_review_count / 2.0), 1, 3) desc,
+            b.bo_review_count desc
     </select>
 
     <select id="getNoticeList" resultType="NoticeVO">
@@ -622,4 +678,8 @@
     <delete id="deleteNotice">
         delete from notice where nt_num = #{nt_num}
     </delete>
+    <update id="updateTotalEpisode">
+        update book set BO_TOTAL_EPISODE = BO_TOTAL_EPISODE + 1
+        where bo_code = #{bo_code}
+    </update>
 </mapper>

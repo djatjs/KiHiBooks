@@ -17,6 +17,10 @@ import kr.kh.kihibooks.model.vo.SubCategoryVO;
 
 public interface BookDAO {
 
+	List<BookVO> searchBooksByTitle(String query, int offset, int pageSize);
+
+  int countBooksByTitle(String query);
+
 	// ===== 장르 메인 요약 리스트 =====
 	List<BookVO> selectNewBooks(@Param("mcCode") int mcCode);
 	List<BookVO> selectBestBooks(@Param("mcCode") int mcCode);
@@ -195,5 +199,9 @@ public interface BookDAO {
 	boolean updateNotice(NoticeVO nt);
 
 	boolean deleteNotice(int nt_num);
+
+	List<BookVO> getAuthorsAnotherBookList(int au_num);
+	
+	boolean updateTotalEpisode(String bo_code);
 
 }
