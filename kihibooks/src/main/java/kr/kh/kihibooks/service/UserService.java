@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.mail.internet.MimeMessage;
 import kr.kh.kihibooks.dao.UserDAO;
+import kr.kh.kihibooks.model.dto.PaymentDTO;
 import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EmailVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
@@ -325,4 +326,67 @@ public class UserService {
 		return userDAO.selectOrderList(urNum);
 	}
 
+	public String saveTempOrder(PaymentDTO payment, int userNum) {
+		String od_id = generateOdId();
+
+		OrderVO order = new OrderVO();
+		order.setOd_id(od_id);
+		order.setOd_ur_num(userNum);
+		order.setOd_total_amount(payment.getTotalAmount());
+		order.setOd_use_point(payment.getUsePoint());
+		order.setOd_final_amount(Math.max(payment.getTotalAmount() - payment.getUsePoint(), 0));
+		order.setOd_method(payment.getMethod());
+		order.setOd_created_at(LocalDateTime.now());
+
+		System.out.println(order);
+		System.out.println(userNum);
+
+		userDAO.insertOrder(order);
+
+		return od_id;
+	}
+
+	public OrderVO findById(String od_id) {
+		return userDAO.selectByOdId(od_id);
+	}
+
+	public String updatePointOrder(List<String> epCodes, int ur_num, String orderId, int usePoint) {
+		
+		if(userDAO.updatePointOrder(orderId)) {
+			userDAO.updateUsePoint(ur_num, usePoint);
+		}
+		
+		for (String epCode : epCodes) {
+			BuyListVO buy = new BuyListVO();
+			buy.setBl_id(orderId);
+			buy.setBl_ep_code(epCode);
+			buy.setBl_ur_num(ur_num);
+
+			userDAO.insertBuyList(buy);
+		}
+
+		userDAO.deleteOrderList(ur_num);
+
+		return orderId;
+	}
+
+	public void chargeBeforePay(String orderId, int userNum, List<String> epCodes, Integer chargeAmount, Integer finalAmount) {
+		
+		if(userDAO.updateChargeOrder(orderId)) {
+			userDAO.updateChargePoint(userNum, chargeAmount);
+		}
+
+		for(String epCode : epCodes) {
+			BuyListVO buy = new BuyListVO();
+			buy.setBl_id(orderId);
+			buy.setBl_ep_code(epCode);
+			buy.setBl_ur_num(userNum);
+
+			userDAO.insertBuyList(buy);
+		}
+
+		userDAO.updateUsePoint(userNum, finalAmount);
+	}
+
+	
 }

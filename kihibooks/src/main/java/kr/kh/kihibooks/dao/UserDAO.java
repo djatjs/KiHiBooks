@@ -21,8 +21,6 @@ public interface UserDAO {
 
     int selectCode(@Param("email") String email, @Param("userCode") String userCode);
 
-
-    
     UserVO selectEmailIncludeDel(@Param("email") String email);
 
     int selectNickName(@Param("nickName") String nickName);
@@ -75,10 +73,20 @@ public interface UserDAO {
 
     boolean updateUserDeleted(String ur_email);
 
-	void insertOrderList(OrderListVO order);
+    void insertOrderList(OrderListVO order);
 
-	void deleteOrderList(int ur_num);
+    void deleteOrderList(int ur_num);
 
-	List<String> selectOrderList(int ur_num);
+    List<String> selectOrderList(int ur_num);
+
+    OrderVO selectByOdId(String od_id);
+
+    boolean updatePointOrder(String od_id);
+
+    void updateUsePoint(int ur_num, int usePoint);
+
+    void updateChargePoint(int chargeAmount, int ur_num);
+
+    boolean updateChargeOrder(String od_id);
 
 }

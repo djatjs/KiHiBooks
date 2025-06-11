@@ -146,4 +146,24 @@
         select ol_ep_code from order_list
         where ol_ur_num = #{ur_num}
     </select>
+    <select id="selectByOdId" resultType="OrderVO">
+        select * from `order`
+        where od_id = #{od_id}
+    </select>
+    <update id="updatePointOrder">
+        update `order` set od_status = "PAID"
+        where od_id = #{od_id}
+    </update>
+    <update id="updateUsePoint">
+        update `user` set ur_point = ur_point - #{usePoint}
+        where ur_num = #{ur_num}
+    </update>
+    <update id="updateChargePoint">
+        update `user` set ur_point = ur_point + #{chargeAmount}
+        where ur_num = #{ur_num}
+    </update>
+    <update id="updateChargeOrder">
+        update `order` set od_status = "PAID"
+        where od_id = #{od_id}
+    </update>
 </mapper>

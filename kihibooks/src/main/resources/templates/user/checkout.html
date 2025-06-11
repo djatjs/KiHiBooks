@@ -5,6 +5,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>주문/결제 - 키히</title>
+	<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 	<style>
 		ul {
 			list-style-type: none;
@@ -1308,7 +1309,7 @@
 															</ul>
 														</div>
 													</div>
-													<div class="kihipay-charge-detail-wrapper">
+													<div class="kihipay-charge-detail-wrapper" id="kihipay_charge_detail_wrapper">
 														<div class="kihipay-cdetail-order">
 															<h3 class="kihipay-cdetail-text">
 																<span>키히포인트 충전</span>
@@ -1346,7 +1347,7 @@
 															</span>
 														</label>
 													</div>
-													<button type="submit" class="kihipay-checkout-submit">결제</button>
+													<button type="button" class="kihipay-checkout-submit" onclick="requestPay()">결제</button>
 													<h4 class="kihipay-checkout-title">결제 유의사항</h4>
 													<ul class="kihipay-checkout-note-ul">
 														<li>키히포인트는 먼저 충전한 순서대로 사용됩니다.</li>
@@ -1374,12 +1375,14 @@
 				const userPoint = parseInt(pointEl.getAttribute("data-amount"));
 				const lackPriceEl = document.querySelector(".price-num");
 				const paymentSection = document.getElementById("kihipay_method_section");
+				const chargeDetail = document.getElementById("kihipay_charge_detail_wrapper");
 
 				const updatePointUsage = (usedPoint) => {
 					pointInput.value = usedPoint.toLocaleString();
 					const lack = totalAmount - usedPoint;
 					lackPriceEl.textContent = lack > 0 ? lack.toLocaleString() : "0";
 					paymentSection.style.display = usedPoint === totalAmount ? "none" : "block";
+					chargeDetail.style.display = usedPoint === totalAmount ? "none" : "block";
 				};
 
 				// 초기 설정
@@ -1642,6 +1645,9 @@
 					console.log('결제 수단:', selectedMethod);
 					console.log('충전 금액:', isChargeAfter ? chargeOptionSelect.value : '사용 안 함');
 
+					const episodeList = document.querySelectorAll(".book-order-list");
+					const epCodes = Array.from(episodeList).map(item => item.getAttribute('data-ep-code'));
+
 					// 7. 서버로 전송할 데이터 구성
 					const payload = {
 						totalAmount,
@@ -1650,6 +1656,8 @@
 						paymentType: selectedMethod === 'POINT' ? 'point' : (isChargeAfter ? 'charge' : 'just'),
 						method: selectedMethod,
 						chargeAmount,
+						isChargeAfter,
+						epCodes : epCodes,
 					};
 
 					// 8. AJAX 전송
@@ -1663,7 +1671,7 @@
 							if (response.success) {
 								if (selectedMethod === 'POINT') {
 									// 포인트 결제 완료 처리
-									window.location.href = '/order/checkout/finished?contents_id=' + response.orderId;
+									pointAll(response.orderId);
 								} else {
 									// 결제 수단 분기 처리
 									switch (selectedMethod) {
@@ -1671,7 +1679,7 @@
 											window.location.href = '/payment/naver/start?orderId=' + response.orderId;
 											break;
 										case 'kakao':
-											window.location.href = '/payment/kakao/start?orderId=' + response.orderId;
+											requestPay(response.orderId, response.nickname, response.email, response.totalAmount);
 											break;
 										case 'toss':
 											window.location.href = '/payment/toss/start?orderId=' + response.orderId;
@@ -1690,11 +1698,49 @@
 							alert('서버 오류가 발생했습니다.');
 						}
 					});
+
+					IMP.init("imp33538244");
+					function requestPay(orderId, nickname, email, totalAmount) {
+						console.log(epCodes);
+						IMP.request_pay(
+							{
+								channelKey: "channel-key-3cfa1ce1-28fb-4421-ace6-a9575591474d",
+								pay_method: "kakaopay",
+								merchant_uid: orderId, // 주문 고유 번호
+								name: "키히북스(주)",
+								amount: chargeAmount != 0 ? chargeAmount : finalAmount,
+								buyer_email: email,
+								buyer_name: nickname,
+							},
+							function(response) {
+								if(response.success) {
+									window.location.href="/order/checkout/finished?merchant_uid=" + orderId;
+								}
+							}
+						);
+					}
+
+					function pointAll(orderId) {
+						$.ajax({
+							url: "/order/point",
+							type: "post",
+							contentType: "application/json",
+							data: JSON.stringify({ epCodes: epCodes, orderId: orderId, usePoint: usePoint }),
+							traditional: true,
+							success: function (res) {
+								if (res.success) {
+									window.location.href = "/order/checkout/finished?merchant_uid=" + orderId;
+								} else {
+									alert("포인트 구매 처리 실패: " + response.error);
+								}
+							},
+							error: function () {
+								alert("포인트 구매 처리 중 오류 발생")
+							}
+						});
+					}
 				});
 			});
-
-
-
 		</script>
 
 	</main>
