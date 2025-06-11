@@ -799,48 +799,49 @@
 									<div class="au-other-book-title">
 										작가의 대표 작품
 										<a th:href="@{/}" class="au-other-more">더보기</a>
-										<span th:text="${abList}"></span>
 									</div>
 									<div class="other-book-list">
 										<div class="book-list">
 											<div class="books">
 												<ul class="books-ul" th:each="anotherBook : ${abList}">
-													<li class="book-li">
-														<div class="book">
-															<div class="book-img">
-																<!-- <p th:text="${anotherBook}"></p> -->
-																<!-- <th:block th:if="${anotherBook.it_ep_cover_img != null}"> -->
-																	<a th:href="@{/}" class="bo-img">
-																		<img src="/resources/static/covers/cover1.png" alt="도서 이미지">
-																		<span class="bo-image"></span>
-																	</a>
-																<!-- </th:block> -->
-																<!-- <th:block th:if="${anotherBook.it_ep_cover_img == null}"> -->
-																	<!-- <a th:href="@{/}" class="bo-img">
-																		<img src="/resources/static/covers/cover1.png" alt="도서 이미지">
-																		<span class="bo-image"></span>
-																	</a> -->
-																<!-- </th:block> -->
-															</div>
-															<div class="book-info">
-																<div class="bo-title">
-																	<!-- bo-img와 동일한 링크 -->
-																	<a th:href="@{/}" class="b-title" th:text="${anotherBook.bo_title}"></a>
+													<th:block th:if="${anotherBook.bo_thumbnail != null}">
+														<li class="book-li">
+															<div class="book">
+																<div class="book-img">
+																	<!-- <th:block th:if="${anotherBook.bo_thumbnail != null}"> -->
+																		<a th:href="@{/books/{bo_code}(bo_code = ${anotherBook.bo_code})}" class="bo-img">
+																			<img th:src="@{/file/{path}(path=${anotherBook.bo_thumbnail})}" alt="도서 이미지">
+																			
+																			<span class="bo-image"></span>
+																		</a>
+																	<!-- </th:block> -->
+																	<!-- <th:block th:if="${anotherBook.bo_thumbnail == null}">
+																		<a th:href="@{/}" class="bo-img">
+																			<img src="/resources/static/covers/cover1.png" alt="도서 이미지">
+																			<span class="bo-image"></span>
+																		</a>
+																	</th:block> -->
 																</div>
-																<div class="book-author">
-																	<span class="bo-author">
-																		<a th:href="@{/}" class="b-author" th:text="${anotherBook.bo_author}"></a>
-																	</span>
-																	<!-- <span class="bo-rating">
-																		<img class="red mb-1" src="/resources/static/img/star.png" alt="별" style="height: 12px; margin-right: 2px;" th:text="${anotherBook.bo_total_rating / anotherBook.bo_review_count / 2.0}">
-																		<span class="b-rating-cnt" th:text="'(' + ${anotherBook.bo_review_count} + ')'"></span>
-																	</span> -->
+																<div class="book-info">
+																	<div class="bo-title">
+																		<!-- bo-img와 동일한 링크 -->
+																		<a th:href="@{/}" class="b-title" th:text="${anotherBook.bo_title}"></a>
+																	</div>
+																	<div class="book-author">
+																		<span class="bo-author">
+																			<a th:href="@{/}" class="b-author" th:text="${anotherBook.bo_author}"></a>
+																		</span>
+																		<span class="bo-rating">
+																			<img class="red mb-1" src="/resources/static/img/star.png" alt="별" style="height: 12px; margin-right: 2px;" th:text="${anotherBook.bo_total_rating / anotherBook.bo_review_count / 2.0}">
+																			<span class="b-rating-cnt" th:text="'(' + ${anotherBook.bo_review_count} + ')'"></span>
+																		</span>
+																	</div>
 																</div>
+																<!-- bo-img 와 동일한 링크 -->
+																<a th:href="@{/}" class="book-click"></a>
 															</div>
-															<!-- bo-img 와 동일한 링크 -->
-															<a th:href="@{/}" class="book-click"></a>
-														</div>
-													</li>
+														</li>
+													</th:block>
 												</ul>
 											</div>
 										</div>

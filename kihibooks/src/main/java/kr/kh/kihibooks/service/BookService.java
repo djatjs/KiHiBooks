@@ -306,6 +306,9 @@ public class BookService {
             ep_file_name = UploadFileUtils.uploadFile(uploadPath, newFilerName, epubFile.getBytes(),
                     bo_code + "/epubs");
             ep.setEp_file_name(ep_file_name);
+            if(!bookDAO.updateTotalEpisode(bo_code)){
+                return false;
+            }
             return bookDAO.updateEpisode(ep);
         } catch (Exception e) {
             e.printStackTrace();
@@ -555,6 +558,12 @@ public class BookService {
 
     public boolean deleteNotice(int nt_num) {
         return bookDAO.deleteNotice(nt_num);
+    }
+
+    public List<BookVO> getAuthorsAnotherBook(String bo_code) {
+        int au_num = bookDAO.getAuthorNumByBocode(bo_code);
+
+        return bookDAO.getAuthorsAnotherBookList(au_num);
     }
 
     

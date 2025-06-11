@@ -196,4 +196,8 @@ public interface BookDAO {
 
 	boolean deleteNotice(int nt_num);
 
+	List<BookVO> getAuthorsAnotherBookList(int au_num);
+	
+	boolean updateTotalEpisode(String bo_code);
+
 }
