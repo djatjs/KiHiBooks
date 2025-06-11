@@ -933,49 +933,53 @@
 			})
 		</script>
 		
-		<script>
+		<script th:inline="javascript">
 			// 대댓글 달기
-			document.addEventListener("DOMContentLoaded", function () {
-				const co_ep_code = $("#epCode").val();
-				const replyForms = document.querySelectorAll('.review-insert-form');
-				replyForms.forEach(form => {
-					form.addEventListener('submit', function(event) {
-						event.preventDefault();
-						const currentForm = event.target;
-						const textarea = currentForm.querySelector('.review-insert-textarea');
-						const co_content = textarea.value.trim();
-						const co_ori_num = currentForm.dataset.rvnum;
-						if (co_content === '') {
-							alert('답글 내용을 입력해주세요!');
-							return; // 내용이 없으면 여기서 함수 끝내기
-						}
-						console.log(co_ori_num);
-						const comment = {
-							co_ori_num : co_ori_num,
-							co_content : co_content,
-							co_ep_code : co_ep_code
-						};
+			$(document.body).on("submit", ".review-insert-form", function(event){
+				event.preventDefault();
 
-						$.ajax({
-							url: "/comment/insertRecomment",
-							method: "post",
-							data: JSON.stringify(comment),
-							contentType: "application/json",
-							success: function (data) {
-								if (data) {
-									alert("대댓글 등록 완료");
-									$(".rv-textarea").val('');
-									$(".spoiler-check").prop("checked", false);
-									location.reload();
-								} else {
-									alert("대댓글 등록 실패");
-								}
-							}
-						})
-					});
+				const currentForm = $(this);
+				const textarea = currentForm.find('.review-insert-textarea');
+				const co_content = textarea.val().trim();
+				const co_ori_num = currentForm.data('rvnum');
+				const co_ep_code = $("#epCode").val();
+
+				if (co_content === '') {
+					alert('답글 내용을 입력해주세요!');
+					return;
+				}
+
+				console.log(co_ori_num);
+				const comment = {
+					co_ori_num : co_ori_num,
+					co_content : co_content,
+					co_ep_code : co_ep_code
+				};
+				console.log(comment.co_ori_num);
+				console.log(comment.co_content);
+				console.log(comment.co_ep_code);
+
+				$.ajax({
+					url: "/comment/insertRecomment",
+					method: "post",
+					data: JSON.stringify(comment),
+					contentType: "application/json",
+					success: function (data) {
+						if (data) {
+							alert("대댓글 등록 완료");
+							location.reload();
+						} else {
+							alert("대댓글 등록 실패");
+						}
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						console.error("AJAX 오류:", textStatus, errorThrown);
+						alert("대댓글 등록 중 오류가 발생했습니다.");
+					}
 				});
 			});
 		</script>
+
         
 		<script th:inline="javascript">
             const epCode = $("#epCode").val();
