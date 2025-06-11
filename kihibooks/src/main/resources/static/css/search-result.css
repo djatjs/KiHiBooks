@@ -75,3 +75,10 @@
   color: white;
   border-color: #ff7f50;
 }
+
+.no-result {
+  text-align: center;
+  margin: 60px 0;
+  font-size: 18px;
+  color: #999;
+}
