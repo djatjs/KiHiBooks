@@ -108,4 +108,11 @@
         insert into comment(co_ur_num, co_content, co_spoiler, co_ep_code)
         value(#{co_ur_num}, #{co_content}, #{co_spoiler}, #{co_ep_code})
     </insert>
+    <update id="deleteComment">
+        update comment set co_del = 'Y' where co_num = #{co_num}
+    </update>
+    <insert id="insertRecomment">
+        insert into comment(co_ur_num, co_content, co_ori_num, co_ep_code)
+        value(#{co_ur_num}, #{co_content}, #{co_ori_num}, #{co_ep_code})
+    </insert>
 </mapper>

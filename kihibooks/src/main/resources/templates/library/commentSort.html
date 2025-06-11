@@ -31,7 +31,12 @@
 				</div>
 				<div class="rv-right-btn">
 					<th:block th:if="${#authorization.expression('isAuthenticated()')}">
-						<button type="button" class="rv-delete"
+						<button type="button" class="rv-delete updateComment"
+							th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
+							th:attr="data-rvNum=${comment.co_num}">
+							수정
+						</button>
+						<button type="button" class="rv-delete deleteComment"
 							th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
 							th:attr="data-rvNum=${comment.co_num}">
 							삭제
@@ -49,15 +54,31 @@
 				</div>
 			</div>
 			<!-- 답글 -->
-			<ul class="rv-review" th:id="'replies-' + ${comment.co_num}" >
+			<ul class="rv-review" th:id="'replies-' + ${comment.co_num}" style="display: none;">
 				<li class="rv-review-li" th:each="reply : ${comment.replies}">
 					<img src="/resources/static/img/re_review.png" alt="ㄴ" style="height: 15px;" class="dark-gray">
 					<!-- 답글 정보는 reply 변수에서 가져와서 표시! -->
 					<p class="rv-review-content" th:text="${reply.co_content}"></p>
 					<div class="rv-review-bottom">
-						<div class="rv-review-user" th:text="${reply.co_user}"></div>
-						<div class="rv-review-blank"></div>
-						<div class="rv-reivew-date" th:text="${#strings.substring(reply.co_date, 0, 19)}"></div>
+						<div class="d-flex justify-content-between">
+							<div class="rv-review-user" th:text="${reply.co_user}"></div>
+							<div class="rv-review-blank"></div>
+							<div class="rv-reivew-date" th:text="${#strings.substring(reply.co_date, 0, 19)}"></div>
+						</div>
+						<div>
+							<th:block th:if="${#authorization.expression('isAuthenticated()')}">
+								<button type="button" class="noStyleBtn updateComment"
+									th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
+									th:attr="data-rvNum=${reply.co_num}">
+									수정
+								</button>
+								<button type="button" class="noStyleBtn deleteComment"
+									th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
+									th:attr="data-rvNum=${reply.co_num}">
+									삭제
+								</button>
+							</th:block>
+						</div>
 					</div>
 				</li>
 				<li class="rv-review-insert">

@@ -87,13 +87,27 @@ public class LibraryService {
 
     public boolean insertComment(CommentVO comment, CustomUser customUser) {
         if (comment == null || customUser == null || comment.getCo_content().isBlank()) {
-            System.out.println(comment);
-            System.out.println(customUser);
             return false;
         }
         comment.setCo_ur_num(customUser.getUser().getUr_num());
 
         return libraryDAO.insertComment(comment);
+    }
+
+    public boolean deleteComment(int co_num, CustomUser customUser) {
+        if (co_num == 0 || customUser == null) {
+            return false;
+        }
+        //나중에 작성자 본인이 진짜로 맞는지 확인하는거 넣어볼까싶음.
+        return libraryDAO.deleteComment(co_num);
+    }
+
+    public boolean insertRecomment(CommentVO comment, CustomUser customUser) {
+        if (comment == null || customUser == null || comment.getCo_content().isBlank()) {
+            return false;
+        }
+        comment.setCo_ur_num(customUser.getUser().getUr_num());
+        return libraryDAO.insertRecomment(comment);
     }
 
 }

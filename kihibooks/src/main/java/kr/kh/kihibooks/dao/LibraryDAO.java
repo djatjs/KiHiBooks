@@ -31,5 +31,9 @@ public interface LibraryDAO {
     List<CommentVO> selectCommentBySort(String sort, String ep_code);
 
     boolean insertComment(CommentVO comment);
+
+    boolean deleteComment(int co_num);
+
+    boolean insertRecomment(CommentVO comment);
     
 }

@@ -164,9 +164,22 @@ public class LibraryCotroller {
         return "library/commentSort :: commentListFlag";
     }
 
-    @PostMapping("/comment/insert")
     @ResponseBody
-    public boolean insert(@RequestBody CommentVO comment, @AuthenticationPrincipal CustomUser customUser) {
+    @PostMapping("/comment/insert")
+    public boolean insertComment(@RequestBody CommentVO comment, @AuthenticationPrincipal CustomUser customUser) {
         return libraryService.insertComment(comment, customUser);
+    }
+
+    @ResponseBody
+    @PostMapping("/comment/delete")
+    public boolean deleteComment(@RequestParam int co_num, @AuthenticationPrincipal CustomUser customUser) {
+        return libraryService.deleteComment(co_num, customUser);
+    }
+
+    
+    @ResponseBody
+    @PostMapping("/comment/insertRecomment")
+    public boolean insertRecomment(@RequestBody CommentVO comment, @AuthenticationPrincipal CustomUser customUser) {
+        return libraryService.insertRecomment(comment, customUser);
     }
 }
