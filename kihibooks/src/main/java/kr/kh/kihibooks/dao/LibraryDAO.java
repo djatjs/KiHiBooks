@@ -27,5 +27,9 @@ public interface LibraryDAO {
     int selectLikeCount(int coNum);
 
     Set<Integer> selectLikedComment(int ur_num);
+
+    List<CommentVO> selectCommentBySort(String sort, String ep_code);
+
+    boolean insertComment(CommentVO comment);
     
 }

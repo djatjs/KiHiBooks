@@ -2,6 +2,7 @@ package kr.kh.kihibooks.model.vo;
 
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -20,4 +21,5 @@ public class CommentVO {
 	private int co_ur_num;
 	private String co_user;
 	private int co_li_count;
+	private List<CommentVO> replies;
 }

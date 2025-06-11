@@ -75,7 +75,7 @@
     <select id="selectComments" resultType="CommentVO">
         select *, user.ur_nickname AS co_user from comment
         join user on co_ur_num = ur_num
-        where co_ep_code = #{ep_code}
+        where co_ep_code = #{ep_code} and co_del = 'N'
         order by co_num desc
     </select>
     <select id="selectLikeCount" resultType="int">
@@ -86,5 +86,26 @@
         select li_co_num from `like`
         where li_ur_num = #{ur_num}
     </select>
-    
+    <select id="selectCommentBySort" resultType="CommentVO">
+        SELECT c.*,  u.ur_nickname AS co_user,
+            COALESCE((
+                SELECT COUNT(*) FROM `like` l
+                WHERE l.li_co_num = c.co_num
+            ), 0) AS co_li_count
+        FROM comment c
+        JOIN user u ON c.co_ur_num = u.ur_num
+        WHERE c.co_ep_code = #{ep_code} AND c.co_del = 'N'
+        <choose>
+            <when test="sort == 'likes'">
+                ORDER BY co_li_count DESC, c.CO_DATE DESC
+            </when>
+            <otherwise>
+                ORDER BY c.CO_DATE DESC
+            </otherwise>
+        </choose>
+    </select>
+    <insert id="insertComment">
+        insert into comment(co_ur_num, co_content, co_spoiler, co_ep_code)
+        value(#{co_ur_num}, #{co_content}, #{co_spoiler}, #{co_ep_code})
+    </insert>
 </mapper>
