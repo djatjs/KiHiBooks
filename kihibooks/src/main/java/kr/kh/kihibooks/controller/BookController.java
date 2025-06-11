@@ -145,8 +145,8 @@ public class BookController {
 		BookVO book = bookService.getBook(bo_code);
 		List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
 		boolean isFree = false;
-		for(EpisodeVO ep : epiList) {
-			if(ep.getEp_price() == 0) {
+		for (EpisodeVO ep : epiList) {
+			if (ep.getEp_price() == 0) {
 				isFree = true;
 			}
 		}
@@ -220,6 +220,20 @@ public class BookController {
 		model.addAttribute("isFree", isFree);
 
 		return "book/detail";
+	}
+
+	@PostMapping("/review/insert")
+	@ResponseBody
+	public boolean insert(@RequestBody ReviewVO review, @AuthenticationPrincipal CustomUser customUser) {
+
+		int reviewCnt = bookService.countReview(review.getRv_bo_code(), customUser.getUser().getUr_num());
+		System.out.println(reviewCnt);
+
+		if (reviewCnt == 0) {
+			return bookService.insertReview(review, customUser);
+		}
+
+		return false;
 	}
 
 	@PostMapping("/rereview/insert")
