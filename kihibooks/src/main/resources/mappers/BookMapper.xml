@@ -58,6 +58,25 @@
                 select="selectKeywordListByBookCode" />
     </resultMap>
 
+    <!-- 제목 또는 작가명으로 검색된 도서 리스트 -->
+    <select id="searchBooksByTitle" resultType="BookVO">
+        SELECT b.*, a.AU_NAME AS bo_author
+        FROM book b
+        JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        WHERE b.BO_TITLE LIKE CONCAT('%', #{query}, '%')
+        OR a.AU_NAME LIKE CONCAT('%', #{query}, '%')
+        ORDER BY b.BO_PUBLISH_DATE DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countBooksByTitle" resultType="int">
+        SELECT COUNT(*)
+        FROM book b
+        JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        WHERE b.BO_TITLE LIKE CONCAT('%', #{query}, '%')
+        OR a.AU_NAME LIKE CONCAT('%', #{query}, '%')
+    </select>
+    
     <!-- ===== 1. 장르 메인 요약 리스트 ===== -->
     <select id="selectNewBooks" resultType="BookVO">
         SELECT b.*, a.AU_NAME AS bo_author

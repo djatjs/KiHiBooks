@@ -56,6 +56,17 @@ public class BookService {
 
     private final String NAMESPACE = "kr.kh.kihibooks.dao.BookDAO.";
 
+    public PageInfo<BookVO> searchBooksByTitle(String query, int page) {
+        int pageSize = PageConstants.PAGE_SIZE;
+        int blockSize = PageConstants.BLOCK_SIZE;
+        int offset = (page - 1) * pageSize;
+
+        List<BookVO> bookList = bookDAO.searchBooksByTitle(query, offset, pageSize);
+        int totalCount = bookDAO.countBooksByTitle(query);
+
+        return PaginationUtils.paginate(bookList, totalCount, page, pageSize, blockSize);
+    }
+
      // 1. 실시간 랭킹 (장르 메인에서 사용)
     public List<BookVO> getRealtimeRankingBooks(int mcCode) {
         return bookDAO.selectRealtimeRankingBooks(mcCode);
