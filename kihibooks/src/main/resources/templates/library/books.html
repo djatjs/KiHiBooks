@@ -799,11 +799,13 @@
 									<div class="au-other-book-title">
 										작가의 대표 작품
 										<a th:href="@{/}" class="au-other-more">더보기</a>
+										<!-- <span th:text="${abList}"></span> -->
 									</div>
 									<div class="other-book-list">
 										<div class="book-list">
 											<div class="books">
 												<ul class="books-ul" th:each="anotherBook : ${abList}">
+													<span th:text="${anotherBook}"></span>
 													<li class="book-li">
 														<div class="book">
 															<div class="book-img">
