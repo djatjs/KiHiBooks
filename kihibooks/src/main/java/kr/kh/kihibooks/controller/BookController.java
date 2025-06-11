@@ -248,22 +248,6 @@ public class BookController {
 		return null;
 	}
 
-	@GetMapping("/book/wait_for_free")
-	public String waitfreePage(@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "recent") String sort,
-			@RequestParam(required = false) String keyword,
-			Model model) {
-
-		PageInfo<BookVO> pageInfo = bookService.getWaitFreeBooks(page, sort, keyword);
-
-		model.addAttribute("books", pageInfo.getContent());
-		model.addAttribute("pageInfo", pageInfo);
-		model.addAttribute("sort", sort);
-		model.addAttribute("keyword", keyword);
-
-		return "book/wait_for_free";
-	}
-
 	@GetMapping("/review/sort")
 	public String getSortedReview(@RequestParam String sort, @RequestParam("bo_code") String bo_code, Model model) {
 		List<ReviewVO> rvList = bookService.getRvList(sort, bo_code);

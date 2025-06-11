@@ -2,149 +2,125 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout.html}">
+
 <head>
   <meta charset="UTF-8">
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <title>장르 메인</title>
   <link rel="stylesheet" th:href="@{/css/genre.css}">
-  <title>장르 웹소설</title>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 </head>
+
 <body>
-<section class="container" layout:fragment="content">
-
-  <!-- 메인 배너 -->
-  <div th:replace="~{fragments/banner :: mainBanner}"></div>
-
-  <!-- 버튼 5개 영역 -->
-  <div class="button-row">
-    <div class="nav-button-wrapper">
-      <a class="nav-button-icon" th:href="@{/book/new-released(mcCode=${mcCode})}">
-        🎉
-      </a>
-      <div class="nav-button-text">신작</div>
-    </div>
-    <div class="nav-button-wrapper">
-      <a class="nav-button-icon" th:href="@{/book/best(mcCode=${mcCode})}">
-        🔥
-      </a>
-      <div class="nav-button-text">베스트</div>
-    </div>
-    <div class="nav-button-wrapper">
-      <a class="nav-button-icon" th:href="@{/event/board}">
-        🎲
-      </a>
-      <div class="nav-button-text">매일랜덤</div>
-    </div>
-    <div class="nav-button-wrapper">
-      <a class="nav-button-icon" th:href="@{/book/waitfree(mcCode=${mcCode})}">
-        ⏳
-      </a>
-      <div class="nav-button-text">키다무</div>
-    </div>
-    <div class="nav-button-wrapper">
-      <a class="nav-button-icon" th:href="@{/attendance}">
-        ✅
-      </a>
-      <div class="nav-button-text">출석체크</div>
-    </div>
-  </div>
-
-
-  <!-- 실시간 랭킹 -->
-  <div>
-    <h2 class="section-title">실시간 랭킹</h2>
-    <div th:replace="~{fragments/realtime :: rankingSection}"></div>
-  </div>
-
-  <!-- 기다리면 무료 -->
-  <div>
-    <div class="section-header">
-      <h2 class="section-title">기다리면 무료</h2>
-      <a th:href="@{/book/wait_for_free}" class="more-link">더보기</a>
-    </div>
-    <div class="book-grid">
-      <div class="book-card" th:each="book : ${waitFreeBooks}">
-        <a th:href="@{/books/{id}(id=${book.bo_code})}" class="thumb-wrapper">
-          <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
-        </a>
-        <p class="book-title">
-          <a th:href="@{/books/{id}(id=${book.bo_code})}" th:text="${book.bo_title}">책 제목</a>
-        </p>
-        <p class="book-author">
-          <a th:href="@{/author/{id}(id=${book.bo_au_num})}" th:text="${book.bo_author}">작가명</a>
-        </p>
-        <p class="book-meta">
-          <span class="highlight-rating"
-                th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal(book.bo_total_rating / book.bo_review_count, 1, 1)} : '0.0')">평점</span>
-          <span>|</span>
-          <span th:text="'(' + ${book.bo_review_count} + ')'">리뷰 수</span>
-        </p>
+  <section class="container" layout:fragment="content">
+    <!-- 메인 배너 -->
+    <div th:replace="~{fragments/banner :: mainBanner}"></div>
+    
+    <!-- 탭 이동 버튼 -->
+    <div class="button-row">
+      <div class="nav-button-wrapper">
+        <a class="nav-button-icon" th:href="@{'/genre/' + ${genreKeyword} + '?tab=new'}">🎉</a>
+        <div class="nav-button-text">신작</div>
+      </div>
+      <div class="nav-button-wrapper">
+        <a class="nav-button-icon" th:href="@{'/genre/' + ${genreKeyword} + '?tab=best'}">🔥</a>
+        <div class="nav-button-text">베스트</div>
+      </div>
+      <div class="nav-button-wrapper">
+        <a class="nav-button-icon" th:href="@{/event/board}">🎲</a>
+        <div class="nav-button-text">매일랜덤</div>
+      </div>
+      <div class="nav-button-wrapper">
+        <a class="nav-button-icon" th:href="@{'/genre/' + ${genreKeyword} + '?tab=wait'}">⏳</a>
+        <div class="nav-button-text">키다무</div>
+      </div>
+      <div class="nav-button-wrapper">
+        <a class="nav-button-icon" th:href="@{/attendance}">✅</a>
+        <div class="nav-button-text">출석체크</div>
       </div>
     </div>
-  </div>
-
-  <!-- 베스트 -->
-  <div>
-    <div class="section-header">
-      <h2 class="section-title">베스트</h2>
-      <a th:href="@{/book/best}" class="more-link">더보기</a>
+    <!-- 실시간 랭킹 -->
+    <div>
+      <h2 class="section-title">실시간 랭킹</h2>
+      <div th:replace="~{fragments/realtime :: rankingSection}"></div>
     </div>
-    <div class="book-grid">
-      <div class="book-card" th:each="book : ${bestBooks}">
-        <a th:href="@{/books/{id}(id=${book.bo_code})}" class="thumb-wrapper">
-          <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
-        </a>
-        <p class="book-title">
-          <a th:href="@{/books/{id}(id=${book.bo_code})}" th:text="${book.bo_title}">책 제목</a>
-        </p>
-        <p class="book-author">
-          <a th:href="@{/author/{id}(id=${book.bo_au_num})}" th:text="${book.bo_author}">작가명</a>
-        </p>
-        <p class="book-meta">
-          <span class="highlight-rating"
-                th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal(book.bo_total_rating / book.bo_review_count, 1, 1)} : '0.0')">평점</span>
-          <span>|</span>
-          <span th:text="'(' + ${book.bo_review_count} + ')'">리뷰 수</span>
-        </p>
+
+    <!-- 기다리면 무료 -->
+    <div>
+      <div class="section-header">
+        <h2 class="section-title">기다리면 무료</h2>
+        <a th:href="@{'/genre/' + ${genreKeyword} + '?tab=wait'}" class="more-link">더보기</a>
+      </div>
+      <div class="book-grid">
+        <div class="book-card" th:each="book : ${waitFreeBooks}">
+          <a th:href="@{/books/{id}(id=${book.bo_code})}" class="thumb-wrapper">
+            <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
+          </a>
+          <p class="book-title" th:text="${book.bo_title}">책 제목</p>
+          <p class="book-author" th:text="${book.bo_author}">작가명</p>
+          <p class="book-meta">
+            <span class="highlight-rating"
+                  th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal((book.bo_total_rating / book.bo_review_count)/2, 1, 1)} : '0.0')">평점</span>
+            <span>|</span>
+            <span th:text="'(' + ${book.bo_review_count} + ')'">리뷰 수</span>
+          </p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- 키워드 추천 -->
-  <div>
-    <div class="section-header">
-      <h2 class="section-title">키워드 추천</h2>
-      <a th:href="@{/book/keyword}" class="more-link">더보기</a>
-    </div>
-    <div th:replace="~{fragments/fragment :: keywordRecommend}"></div>
-  </div>
-
-  <!-- 신작 -->
-  <div>
-    <div class="section-header">
-      <h2 class="section-title">신작 웹소설</h2>
-      <a th:href="@{/book/new-released}" class="more-link">더보기</a>
-    </div>
-    <div class="book-grid">
-      <div class="book-card" th:each="book : ${newBooks}">
-        <a th:href="@{/books/{id}(id=${book.bo_code})}" class="thumb-wrapper">
-          <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
-        </a>
-        <p class="book-title">
-          <a th:href="@{/books/{id}(id=${book.bo_code})}" th:text="${book.bo_title}">책 제목</a>
-        </p>
-        <p class="book-author">
-          <a th:href="@{/author/{id}(id=${book.bo_au_num})}" th:text="${book.bo_author}">작가명</a>
-        </p>
-        <p class="book-meta">
-          <span class="highlight-rating"
-                th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal(book.bo_total_rating / book.bo_review_count, 1, 1)} : '0.0')">평점</span>
-          <span>|</span>
-          <span th:text="'(' + ${book.bo_review_count} + ')'">리뷰 수</span>
-        </p>
+    <!-- 베스트 -->
+    <div>
+      <div class="section-header">
+        <h2 class="section-title">베스트</h2>
+        <a th:href="@{'/genre/' + ${genreKeyword} + '?tab=best'}" class="more-link">더보기</a>
+      </div>
+      <div class="book-grid">
+        <div class="book-card" th:each="book : ${bestBooks}">
+          <a th:href="@{/books/{id}(id=${book.bo_code})}" class="thumb-wrapper">
+            <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
+          </a>
+          <p class="book-title" th:text="${book.bo_title}">책 제목</p>
+          <p class="book-author" th:text="${book.bo_author}">작가명</p>
+          <p class="book-meta">
+            <span class="highlight-rating"
+                  th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal((book.bo_total_rating / book.bo_review_count)/2, 1, 1)} : '0.0')">평점</span>
+            <span>|</span>
+            <span th:text="'(' + ${book.bo_review_count} + ')'">리뷰 수</span>
+          </p>
+        </div>
       </div>
     </div>
-  </div>
 
+    <!-- 신작 -->
+    <div>
+      <div class="section-header">
+        <h2 class="section-title">신작 웹소설</h2>
+        <a th:href="@{'/genre/' + ${genreKeyword} + '?tab=new'}" class="more-link">더보기</a>
+      </div>
+      <div class="book-grid">
+        <div class="book-card" th:each="book : ${newBooks}">
+          <a th:href="@{/books/{id}(id=${book.bo_code})}" class="thumb-wrapper">
+            <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
+          </a>
+          <p class="book-title" th:text="${book.bo_title}">책 제목</p>
+          <p class="book-author" th:text="${book.bo_author}">작가명</p>
+          <p class="book-meta">
+            <span class="highlight-rating"
+                  th:text="'★ ' + (${book.bo_review_count} > 0 ? ${#numbers.formatDecimal((book.bo_total_rating / book.bo_review_count)/2, 1, 1)} : '0.0')">평점</span>
+            <span>|</span>
+            <span th:text="'(' + ${book.bo_review_count} + ')'">리뷰 수</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 키워드 추천 -->
+    <div>
+      <div class="section-header">
+        <h2 class="section-title">키워드 추천</h2>
+        <a th:href="@{/book/keyword}" class="more-link">더보기</a>
+      </div>
+      <div th:replace="~{fragments/fragment :: keywordRecommend}"></div>
+    </div>
 </section>
 
 <script layout:fragment="script">
@@ -160,7 +136,7 @@
         el: '.swiper-pagination',
         type: 'fraction',
         clickable: true,
-        renderFraction: function(currentClass, totalClass){
+        renderFraction: function (currentClass, totalClass) {
           return `<span class="${currentClass}"></span> / <span class="${totalClass}"></span>`;
         }
       },

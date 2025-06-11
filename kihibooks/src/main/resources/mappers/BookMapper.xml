@@ -58,6 +58,145 @@
                 select="selectKeywordListByBookCode" />
     </resultMap>
 
+    <!-- ===== 1. 장르 메인 요약 리스트 ===== -->
+    <select id="selectNewBooks" resultType="BookVO">
+        SELECT b.*, a.AU_NAME AS bo_author
+        FROM book b
+        JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        ORDER BY b.BO_PUBLISH_DATE DESC
+        LIMIT 10
+    </select>
+
+    <select id="selectBestBooks" resultType="BookVO">
+        SELECT b.*, a.AU_NAME AS bo_author
+        FROM book b
+        JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        ORDER BY b.BO_REVIEW_COUNT DESC, b.BO_TOTAL_RATING DESC
+        LIMIT 10
+    </select>
+
+    <select id="selectWaitFreeBooks" resultType="BookVO">
+        SELECT b.*, a.AU_NAME AS bo_author
+        FROM book b
+        JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        AND b.BO_WAIT_FOR_FREE = 'Y'
+        ORDER BY b.BO_PUBLISH_DATE DESC
+        LIMIT 10
+    </select>
+
+    <select id="selectRealtimeRankingBooks" resultType="BookVO">
+        SELECT b.*, a.AU_NAME AS bo_author
+        FROM book b
+        JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        ORDER BY b.BO_TOTAL_RATING DESC, b.BO_REVIEW_COUNT DESC
+        LIMIT 10
+    </select>
+
+    <!-- ===== 2. 신작 탭 리스트 ===== -->
+    <select id="selectNewBooksByGenre" resultType="BookVO" parameterType="map">
+        SELECT b.*, a.AU_NAME AS bo_author
+        FROM book b
+        JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        <if test="adultYN != null and adultYN != ''">
+            AND b.BO_ADULT = #{adultYN}
+        </if>
+        <if test="finished != null and finished == ('' + 'Y')">
+            AND b.BO_FIN = #{finished}
+        </if>
+        ORDER BY
+        <choose>
+            <when test="sort != null and 'popular'.equals(sort)"> 
+                b.BO_REVIEW_COUNT DESC /* 인기순 */
+            </when>
+            <otherwise> 
+                b.BO_PUBLISH_DATE DESC /* 최신순 */
+            </otherwise>
+        </choose>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countNewBooksByGenre" resultType="int" parameterType="map">
+        SELECT COUNT(*)
+        FROM book
+        WHERE BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        <if test="adultYN != null">
+            AND BO_ADULT = #{adultYN}
+        </if>
+        <if test="finished != null and finished == ('' + 'Y')">
+            AND BO_FIN = #{finished}
+        </if>
+    </select>
+
+
+    <!-- ===== 3. 베스트 탭 리스트 ===== -->
+    <select id="selectBestBooksByGenre" resultType="BookVO" parameterType="map">
+        SELECT b.*, a.AU_NAME AS bo_author
+        FROM book b
+        JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        <if test="adultYN != null">
+            AND b.BO_ADULT = #{adultYN}
+        </if>
+        <if test="finished != null and finished == ('' + 'Y')">
+            AND b.BO_FIN = #{finished}
+        </if>
+        ORDER BY
+        <choose>
+            <when test="'week'.equals(range)"> b.BO_REVIEW_COUNT DESC </when>
+            <when test="'month'.equals(range)"> b.BO_TOTAL_RATING DESC </when>
+            <otherwise> b.BO_PUBLISH_DATE DESC </otherwise>
+        </choose>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countBestBooksByGenre" resultType="int" parameterType="map">
+        SELECT COUNT(*)
+        FROM book
+        WHERE BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        <if test="adultYN != null">
+            AND BO_ADULT = #{adultYN}
+        </if>
+        <if test="finished != null and finished == ('' + 'Y')">
+            AND BO_FIN = #{finished}
+        </if>
+    </select>
+
+
+    <!-- ===== 4. 기다무 탭 리스트 ===== -->
+    <select id="selectWaitFreeBooksByGenre" resultType="BookVO">
+        SELECT b.*, a.AU_NAME AS bo_author
+        FROM book b
+        JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        AND b.BO_WAIT_FOR_FREE = 'Y'
+        <if test="keyword != null and keyword != ''">
+            AND b.BO_TITLE LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        ORDER BY
+        <choose>
+            <when test="sort == 'popular'"> b.BO_REVIEW_COUNT DESC </when>
+            <when test="sort == 'rating'"> b.BO_TOTAL_RATING DESC </when>
+            <when test="sort == 'review'"> b.BO_REVIEW_COUNT DESC </when>
+            <otherwise> b.BO_PUBLISH_DATE DESC </otherwise>
+        </choose>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <select id="countWaitFreeBooksByGenre" resultType="int">
+        SELECT COUNT(*)
+        FROM book
+        WHERE BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
+        AND BO_WAIT_FOR_FREE = 'Y'
+        <if test="keyword != null and keyword != ''">
+            AND BO_TITLE LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+    </select>
+
     <select id="selectBookList" resultType="BookVO">
         select book.* from book
         join recent_view on bo_code = rc_bo_code

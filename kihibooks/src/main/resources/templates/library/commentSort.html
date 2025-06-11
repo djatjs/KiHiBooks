@@ -1,0 +1,94 @@
+<div th:fragment="commentListFlag">
+	<ul class="rv-ul" id="rvListFrag" th:each="comment : ${commentList}">
+		<li class="rv-li">
+
+			<div class="rv-content" th:attr="hidden=${comment.co_spoiler == 'Y'}">
+				<p class="content-text" th:text="${comment.co_content}"></p>
+			</div>
+			<div class="rv-content-spoiler" th:attr="hidden=${comment.co_spoiler != 'Y'}">
+				<div class="rv-content" hidden>
+					<p class="content-text" th:text="${comment.co_content}">
+					</p>
+				</div>
+				<div class="content-spoiler">
+					<img src="/resources/static/img/exclamation.png" alt="i 아이콘" style="height: 23px;" class="dark-gray" />
+					<span class="spoiler-text">스포일러가 있는 리뷰입니다.</span>
+				</div>
+				<button type="button" class="spoiler-view-btn">
+					<span class="sv-btn-text">리뷰 보기</span>
+					<img src="/resources/static/img/next.png" alt=">" style="height: 12px; margin-bottom: 2px;"
+						class="dark-gray ml-1" />
+				</button>
+			</div>
+			<div class="rv-bottom">
+				<div class="rv-writer-date d-flex">
+					<div class="rv-writer">
+						<div class="rv-nick" th:text="${comment.co_user}"></div>
+						<div class="rv-date">
+							<div class="rv-date-text" th:text="${#strings.substring(comment.co_date, 0, 10)}"></div>
+						</div>
+					</div>
+				</div>
+				<div class="rv-right-btn">
+					<th:block th:if="${#authorization.expression('isAuthenticated()')}">
+						<button type="button" class="rv-delete updateComment"
+							th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
+							th:attr="data-rvNum=${comment.co_num}">
+							수정
+						</button>
+						<button type="button" class="rv-delete deleteComment"
+							th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
+							th:attr="data-rvNum=${comment.co_num}">
+							삭제
+						</button>
+					</th:block>
+					<button type="button" class="rv-comment toggle-replies-btn" th:attr="data-rvnum=${comment.co_num}">
+						댓글 <span class="ml-1" th:text="${comment.replies.size}"></span>
+					</button>
+					<button type="button" class="rv-like" th:attr="data-rv-num=${comment.co_num}"
+						th:classappend="${likedReviewIds.contains(comment.co_num)}? 'liked' : ''">
+						<img src="/resources/static/img/thumb_up.png" alt="공감 버튼" style="height: 18px;"
+							th:classappend="${likedReviewIds.contains(comment.co_num)}? 'orange' : ''">
+						<span class="rv-like-cnt" th:text="${likeCountMap[comment.co_num]}"></span>
+					</button>
+				</div>
+			</div>
+			<!-- 답글 -->
+			<ul class="rv-review" th:id="'replies-' + ${comment.co_num}" style="display: none;">
+				<li class="rv-review-li" th:each="reply : ${comment.replies}">
+					<img src="/resources/static/img/re_review.png" alt="ㄴ" style="height: 15px;" class="dark-gray">
+					<!-- 답글 정보는 reply 변수에서 가져와서 표시! -->
+					<p class="rv-review-content" th:text="${reply.co_content}"></p>
+					<div class="rv-review-bottom">
+						<div class="d-flex justify-content-between">
+							<div class="rv-review-user" th:text="${reply.co_user}"></div>
+							<div class="rv-review-blank"></div>
+							<div class="rv-reivew-date" th:text="${#strings.substring(reply.co_date, 0, 19)}"></div>
+						</div>
+						<div>
+							<th:block th:if="${#authorization.expression('isAuthenticated()')}">
+								<button type="button" class="noStyleBtn updateComment"
+									th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
+									th:attr="data-rvNum=${reply.co_num}">
+									수정
+								</button>
+								<button type="button" class="noStyleBtn deleteComment"
+									th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
+									th:attr="data-rvNum=${reply.co_num}">
+									삭제
+								</button>
+							</th:block>
+						</div>
+					</div>
+				</li>
+				<li class="rv-review-insert">
+					<form class="review-insert-form" th:attr="data-rvNum=${comment.co_num}">
+						<textarea placeholder="답글을 입력해 주세요." class="review-insert-textarea"
+							style="height: 28px !important;"></textarea>
+						<button type="submit" class="review-submit-btn">등록</button>
+					</form>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</div>
