@@ -21,6 +21,8 @@ public interface UserDAO {
 
     int selectCode(@Param("email") String email, @Param("userCode") String userCode);
 
+    UserVO selectEmail(@Param("email") String email);
+
     UserVO selectEmailIncludeDel(@Param("email") String email);
 
     int selectNickName(@Param("nickName") String nickName);
