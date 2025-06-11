@@ -76,9 +76,11 @@
         SELECT COUNT(*)
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
-        WHERE b.BO_TITLE LIKE CONCAT('%', #{query}, '%')
+        WHERE (
+            b.BO_TITLE LIKE CONCAT('%', #{query}, '%')
+            OR a.AU_NAME LIKE CONCAT('%', #{query}, '%')   
+        )
         AND b.BO_TOTAL_EPISODE > 0
-        OR a.AU_NAME LIKE CONCAT('%', #{query}, '%')
     </select>
     
     <!-- ===== 1. 장르 메인 요약 리스트 ===== -->
