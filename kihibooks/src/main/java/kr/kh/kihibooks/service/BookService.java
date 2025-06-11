@@ -56,6 +56,62 @@ public class BookService {
 
     private final String NAMESPACE = "kr.kh.kihibooks.dao.BookDAO.";
 
+     // 1. 실시간 랭킹 (장르 메인에서 사용)
+    public List<BookVO> getRealtimeRankingBooks(int mcCode) {
+        return bookDAO.selectRealtimeRankingBooks(mcCode);
+    }
+
+    // 2. 메인용 신작 리스트 (장르 메인에서 사용)
+    public List<BookVO> getNewBooks(int mcCode) {
+        return bookDAO.selectNewBooks(mcCode);
+    }
+
+    // 3. 메인용 베스트 리스트 (장르 메인에서 사용)
+    public List<BookVO> getBestBooks(int mcCode) {
+        return bookDAO.selectBestBooks(mcCode);
+    }
+
+    // 4. 메인용 기다무 리스트 (장르 메인에서 사용)
+    public List<BookVO> getWaitFreeBooks(int mcCode) {
+        return bookDAO.selectWaitFreeBooks(mcCode);
+    }
+
+    // 5. 신작 탭 상세 리스트
+    public PageInfo<BookVO> getNewBooksByGenre(int mcCode, int page, String sort, String adultYN, String finished) {
+        int pageSize = PageConstants.PAGE_SIZE;
+        int blockSize = PageConstants.BLOCK_SIZE;
+        int offset = (page - 1) * pageSize;
+
+        List<BookVO> list = bookDAO.selectNewBooksByGenre(mcCode, offset, pageSize, sort, adultYN, finished);
+        int totalCount = bookDAO.countNewBooksByGenre(mcCode, sort, adultYN, finished);
+
+        return PaginationUtils.paginate(list, totalCount, page, pageSize, blockSize);
+    }
+
+    // 6. 베스트 탭 상세 리스트
+    public PageInfo<BookVO> getBestBooksByGenre(int mcCode, String range, int page, String adultYN, String finished) {
+        int pageSize = PageConstants.PAGE_SIZE;
+        int blockSize = PageConstants.BLOCK_SIZE;
+        int offset = (page - 1) * pageSize;
+
+        List<BookVO> list = bookDAO.selectBestBooksByGenre(mcCode, range, offset, pageSize, adultYN, finished);
+        int totalCount = bookDAO.countBestBooksByGenre(mcCode, range, adultYN, finished);
+
+        return PaginationUtils.paginate(list, totalCount, page, pageSize, blockSize);
+    }
+
+    // 7. 기다무 탭 상세 리스트
+    public PageInfo<BookVO> getWaitFreeBooksByGenre(int mcCode, int page, String sort, String keyword) {
+        int pageSize = PageConstants.PAGE_SIZE;
+        int blockSize = PageConstants.BLOCK_SIZE;
+        int offset = (page - 1) * pageSize;
+
+        List<BookVO> list = bookDAO.selectWaitFreeBooksByGenre(mcCode, offset, pageSize, sort, keyword);
+        int totalCount = bookDAO.countWaitFreeBooksByGenre(mcCode, sort, keyword);
+
+        return PaginationUtils.paginate(list, totalCount, page, pageSize, blockSize);
+    }
+
 
     public PageInfo<BookVO> getBooksByKeywords(List<String> keywordIds, String sort, int page) {
         if (keywordIds == null) {
