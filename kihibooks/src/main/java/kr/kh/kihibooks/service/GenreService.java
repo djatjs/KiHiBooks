@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.kh.kihibooks.dao.GenreDAO;
-import kr.kh.kihibooks.model.vo.BookVO;
+import kr.kh.kihibooks.model.vo.KeywordVO;
 
 @Service
 public class GenreService {
@@ -14,21 +14,8 @@ public class GenreService {
     @Autowired
     private GenreDAO genreDAO;
 
-    public List<BookVO> getNewBooksByGenre(int genreCode) {
-        return genreDAO.getNewBooksByGenre(genreCode);
+    public List<KeywordVO> getRandomKeywords() {
+        return genreDAO.selectRandomKeywords(25);
     }
-
-    public List<BookVO> getBestBooksByGenre(int genreCode) {
-        return genreDAO.getBestBooksByGenre(genreCode);
-    }
-
-    public List<BookVO> getWaitFreeBooksByGenre(int genreCode) {
-        return genreDAO.getWaitFreeBooksByGenre(genreCode);
-    }
-
-    public List<BookVO> getRealtimeRankingByGenre(int genreCode) {
-        return genreDAO.getRealtimeRankingByGenre(genreCode);
-    }
-
     
 }

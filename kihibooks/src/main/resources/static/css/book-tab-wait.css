@@ -1,0 +1,52 @@
+@import url("book-tab-new.css");
+
+/* 🔍 검색창 스타일 */
+.filter-header {
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-box input[type="text"] {
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 200px;
+}
+
+.search-box button {
+  padding: 6px 12px;
+  background-color: #ff7f50;
+  border: none;
+  color: white;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.search-box button:hover {
+  background-color: #ff5722;
+}
+
+.no-result {
+  text-align: center;
+  margin-top: 80px;
+  color: #777;
+  font-size: 18px;
+}
+
+.no-result .btn-back {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 18px;
+  background-color: #ff7f50;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+}

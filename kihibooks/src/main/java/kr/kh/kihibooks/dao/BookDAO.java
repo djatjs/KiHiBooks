@@ -1,11 +1,9 @@
 package kr.kh.kihibooks.dao;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.SqlSession;
 
 import kr.kh.kihibooks.model.vo.BookKeywordVO;
 import kr.kh.kihibooks.model.vo.BookVO;
@@ -18,6 +16,61 @@ import kr.kh.kihibooks.model.vo.ReviewVO;
 import kr.kh.kihibooks.model.vo.SubCategoryVO;
 
 public interface BookDAO {
+
+	// ===== 장르 메인 요약 리스트 =====
+	List<BookVO> selectNewBooks(@Param("mcCode") int mcCode);
+	List<BookVO> selectBestBooks(@Param("mcCode") int mcCode);
+	List<BookVO> selectWaitFreeBooks(@Param("mcCode") int mcCode);
+	List<BookVO> selectRealtimeRankingBooks(@Param("mcCode") int mcCode);
+
+	// ===== 탭 상세 리스트 - 신작 =====
+	List<BookVO> selectNewBooksByGenre(
+			@Param("mcCode") int mcCode,
+			@Param("offset") int offset,
+			@Param("pageSize") int pageSize,
+			@Param("sort") String sort,
+			@Param("adultYN") String adultYN,
+			@Param("finished") String finished
+	);
+
+	int countNewBooksByGenre(
+			@Param("mcCode") int mcCode,
+			@Param("sort") String sort,
+			@Param("adultYN") String adultYN,
+			@Param("finished") String finished
+	);
+
+	// ===== 탭 상세 리스트 - 베스트 =====
+	List<BookVO> selectBestBooksByGenre(
+			@Param("mcCode") int mcCode,
+			@Param("range") String range, // day/week/month
+			@Param("offset") int offset,
+			@Param("pageSize") int pageSize,
+			@Param("adultYN") String adultYN,
+			@Param("finished") String finished
+	);
+
+	int countBestBooksByGenre(
+			@Param("mcCode") int mcCode,
+			@Param("range") String range,
+			@Param("adultYN") String adultYN,
+			@Param("finished") String finished
+	);
+
+	// ===== 탭 상세 리스트 - 기다무 =====
+	List<BookVO> selectWaitFreeBooksByGenre(
+			@Param("mcCode") int mcCode,
+			@Param("offset") int offset,
+			@Param("pageSize") int pageSize,
+			@Param("sort") String sort,
+			@Param("keyword") String keyword
+	);
+
+	int countWaitFreeBooksByGenre(
+			@Param("mcCode") int mcCode,
+			@Param("sort") String sort,
+			@Param("keyword") String keyword
+	);
 
 	List<BookVO> selectBookList(int ur_num);
 

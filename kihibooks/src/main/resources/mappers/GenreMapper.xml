@@ -5,57 +5,11 @@
 
 <mapper namespace="kr.kh.kihibooks.dao.GenreDAO">
 
-  <!-- 신작 -->
-  <select id="getNewBooksByGenre" resultType="BookVO">
-    SELECT b.*, a.AU_NAME AS BO_AUTHOR
-    FROM book b
-    JOIN sub_cate sc ON b.BO_SC_CODE = sc.SC_CODE
-    JOIN author a ON b.BO_AU_NUM = a.AU_NUM
-    WHERE sc.SC_MC_CODE = #{genreCode}
-    ORDER BY b.BO_PUBLISH_DATE DESC
-    LIMIT 12
-  </select>
-
-  <!-- 베스트 -->
-  <select id="getBestBooksByGenre" resultType="BookVO">
-    SELECT b.*, a.AU_NAME AS BO_AUTHOR
-    FROM book b
-    JOIN sub_cate sc ON b.BO_SC_CODE = sc.SC_CODE
-    JOIN author a ON b.BO_AU_NUM = a.AU_NUM
-    WHERE sc.SC_MC_CODE = #{genreCode}
-    ORDER BY 
-      CASE WHEN b.BO_REVIEW_COUNT > 0 
-           THEN b.BO_TOTAL_RATING / b.BO_REVIEW_COUNT 
-           ELSE 0 END DESC,
-      b.BO_REVIEW_COUNT DESC
-    LIMIT 12
-  </select>
-
-  <!-- 기다리면 무료 -->
-  <select id="getWaitFreeBooksByGenre" resultType="BookVO">
-    SELECT b.*, a.AU_NAME AS BO_AUTHOR
-    FROM book b
-    JOIN sub_cate sc ON b.BO_SC_CODE = sc.SC_CODE
-    JOIN author a ON b.BO_AU_NUM = a.AU_NUM
-    WHERE sc.SC_MC_CODE = #{genreCode}
-      AND b.BO_WAIT_FOR_FREE = 'Y'
-    ORDER BY b.BO_PUBLISH_DATE DESC
-    LIMIT 12
-  </select>
-
-  <!-- 실시간 랭킹 -->
-  <select id="getRealtimeRankingByGenre" resultType="BookVO">
-    SELECT b.*, a.AU_NAME AS BO_AUTHOR
-    FROM book b
-    JOIN sub_cate sc ON b.BO_SC_CODE = sc.SC_CODE
-    JOIN author a ON b.BO_AU_NUM = a.AU_NUM
-    WHERE sc.SC_MC_CODE = #{genreCode}
-    ORDER BY 
-      CASE WHEN b.BO_REVIEW_COUNT > 0 
-           THEN b.BO_TOTAL_RATING / b.BO_REVIEW_COUNT 
-           ELSE 0 END DESC,
-      b.BO_PUBLISH_DATE DESC
-    LIMIT 12
-  </select>
+  <select id="selectRandomKeywords" resultType="KeywordVO">
+    SELECT *
+    FROM keyword
+    ORDER BY RAND()
+    LIMIT #{limit}
+</select>
 
 </mapper>
