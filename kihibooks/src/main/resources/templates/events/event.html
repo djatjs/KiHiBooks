@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/layout.html}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>이벤트</title>
+  <link rel="stylesheet" th:href="@{/css/event.css}">
+</head>
+
+<body>
+<div layout:fragment="content" class="container">
+
+  <h2>이벤트</h2>
+
+  <!-- 탭 버튼 -->
+  <div class="tab-buttons">
+    <a th:href="@{/event(tab='ongoing')}" th:class="${tab}=='ongoing' ? 'active' : ''">진행중 이벤트</a>
+    <a th:href="@{/event(tab='ago')}" th:class="${tab}=='ago' ? 'active' : ''">지난 이벤트</a>
+  </div>
+
+  <!-- 이벤트 카드 영역 -->
+  <div class="event-grid">
+
+    <!-- ✅ 하드코딩: 진행중 이벤트 (5개) -->
+    <div class="event-card" th:if="${tab} == 'ongoing'">
+      <div class="event-thumb">
+        <img src="/img/default_thumb.png" alt="썸네일">
+        <div class="event-badge">진행중</div>
+      </div>
+      <div class="event-info">
+        <h3 class="event-title">1. 웹소설 런칭 기념 이벤트</h3>
+        <p class="event-date">2025.06.01 ~ 2025.06.15</p>
+      </div>
+    </div>
+    <div class="event-card" th:if="${tab} == 'ongoing'">
+      <div class="event-thumb">
+        <img src="/img/default_thumb.png" alt="썸네일">
+        <div class="event-badge">진행중</div>
+      </div>
+      <div class="event-info">
+        <h3 class="event-title">2. 매일 1화 무료 보상</h3>
+        <p class="event-date">2025.06.02 ~ 2025.06.20</p>
+      </div>
+    </div>
+    <div class="event-card" th:if="${tab} == 'ongoing'">
+      <div class="event-thumb">
+        <img src="/img/default_thumb.png" alt="썸네일">
+        <div class="event-badge">진행중</div>
+      </div>
+      <div class="event-info">
+        <h3 class="event-title">3. 출석체크 런칭 이벤트</h3>
+        <p class="event-date">2025.06.05 ~ 2025.06.25</p>
+      </div>
+    </div>
+    <div class="event-card" th:if="${tab} == 'ongoing'">
+      <div class="event-thumb">
+        <img src="/img/default_thumb.png" alt="썸네일">
+        <div class="event-badge">진행중</div>
+      </div>
+      <div class="event-info">
+        <h3 class="event-title">4. 신규회원 가입 이벤트</h3>
+        <p class="event-date">2025.06.03 ~ 2025.06.30</p>
+      </div>
+    </div>
+    <div class="event-card" th:if="${tab} == 'ongoing'">
+      <div class="event-thumb">
+        <img src="/img/default_thumb.png" alt="썸네일">
+        <div class="event-badge">진행중</div>
+      </div>
+      <div class="event-info">
+        <h3 class="event-title">5. 베스트 작품 응원 댓글</h3>
+        <p class="event-date">2025.06.10 ~ 2025.06.30</p>
+      </div>
+    </div>
+
+    <!-- ✅ 하드코딩: 지난 이벤트 (3개) -->
+    <div class="event-card" th:if="${tab} == 'ago'">
+      <div class="event-thumb">
+        <img src="/img/default_thumb.png" alt="썸네일">
+        <div class="event-badge">종료</div>
+      </div>
+      <div class="event-info">
+        <h3 class="event-title">1. 5월 추천작 감상 이벤트</h3>
+        <p class="event-date">2025.05.01 ~ 2025.05.15</p>
+      </div>
+    </div>
+    <div class="event-card" th:if="${tab} == 'ago'">
+      <div class="event-thumb">
+        <img src="/img/default_thumb.png" alt="썸네일">
+        <div class="event-badge">종료</div>
+      </div>
+      <div class="event-info">
+        <h3 class="event-title">2. 리뷰왕 선정 이벤트</h3>
+        <p class="event-date">2025.05.10 ~ 2025.05.25</p>
+      </div>
+    </div>
+    <div class="event-card" th:if="${tab} == 'ago'">
+      <div class="event-thumb">
+        <img src="/img/default_thumb.png" alt="썸네일">
+        <div class="event-badge">종료</div>
+      </div>
+      <div class="event-info">
+        <h3 class="event-title">3. 봄 웹소설 럭키드로우</h3>
+        <p class="event-date">2025.04.20 ~ 2025.05.05</p>
+      </div>
+    </div>
+
+    <!-- ✅ 동적 렌더링: 서버에서 온 이벤트 리스트 -->
+    <div class="event-card" th:each="event : ${eventList}">
+      <div class="event-thumb">
+        <img th:src="${event.ev_img} == null or #strings.isEmpty(event.ev_img) ? '/img/default_thumb.png' : event.ev_img"
+             alt="이벤트 썸네일">
+        <div class="event-badge" th:text="${tab == 'ago' ? '종료' : '진행중'}">진행중</div>
+      </div>
+      <div class="event-info">
+        <h3 class="event-title" th:text="${event.ev_title}">이벤트 제목</h3>
+        <p class="event-date"
+           th:text="${#dates.format(event.ev_start_date, 'yyyy.MM.dd')} + ' ~ ' + ${#dates.format(event.ev_end_date, 'yyyy.MM.dd')}">
+          날짜
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

@@ -127,7 +127,7 @@
 
     <!-- ===== 2. 신작 탭 리스트 ===== -->
     <select id="selectNewBooksByGenre" resultType="BookVO" parameterType="map">
-        SELECT b.*, a.AU_NAME AS bo_author
+        SELECT *, a.AU_NAME AS bo_author
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
@@ -152,7 +152,7 @@
 
     <select id="countNewBooksByGenre" resultType="int" parameterType="map">
         SELECT COUNT(*)
-        FROM book
+        FROM book b
         WHERE BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
         AND b.BO_TOTAL_EPISODE > 0
         <if test="adultYN != null">
@@ -188,7 +188,7 @@
 
     <select id="countBestBooksByGenre" resultType="int" parameterType="map">
         SELECT COUNT(*)
-        FROM book
+        FROM book b
         WHERE BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
         AND b.BO_TOTAL_EPISODE > 0
         <if test="adultYN != null">
@@ -223,7 +223,7 @@
 
     <select id="countWaitFreeBooksByGenre" resultType="int">
         SELECT COUNT(*)
-        FROM book
+        FROM book b
         WHERE BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
         AND b.BO_TOTAL_EPISODE > 0
         AND BO_WAIT_FOR_FREE = 'Y'

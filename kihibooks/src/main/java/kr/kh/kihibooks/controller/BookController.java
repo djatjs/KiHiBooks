@@ -111,7 +111,7 @@ public class BookController {
 		return "book/keyword :: bookResultFragment";
 	}
 
-	// 준호 영역 끝
+	////////////////////////////////////////// 준호 영역 끝 //////////////////////////////////////////
 
 	@GetMapping("/library/recents")
 	public String recentList(Model model, Integer ur_num) {

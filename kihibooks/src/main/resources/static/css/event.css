@@ -1,0 +1,96 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.tab-buttons {
+  display: inline-flex;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.tab-buttons a {
+  padding: 8px 20px;
+  background-color: #f8f8f8;
+  color: #333;
+  text-decoration: none;
+  font-size: 15px;
+  border-right: 1px solid #ccc;
+}
+
+.tab-buttons a:last-child {
+  border-right: none;
+}
+
+.tab-buttons a.active {
+  background-color: #ff7f50;
+  color: #fff;
+  font-weight: bold;
+}
+
+
+.event-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.event-card {
+  display: flex;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: white;
+  transition: box-shadow 0.3s;
+}
+
+.event-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.event-thumb {
+  width: 180px;
+  height: 120px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.event-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.event-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: #ff7f50;
+  color: white;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.event-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.event-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #111;
+}
+
+.event-date {
+  font-size: 14px;
+  color: #666;
+}
