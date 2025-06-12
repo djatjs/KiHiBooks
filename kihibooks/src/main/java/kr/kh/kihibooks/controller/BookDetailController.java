@@ -96,10 +96,10 @@ public class BookDetailController {
             buyCodeSet = buyList.stream().map(BuyListVO::getBl_ep_code).collect(Collectors.toSet());
             wff = userService.getWff(ur_num, bo_code);
             user = customUser.getUser();
-            Integer urItNum = userService.getUrItNum(ur_num);
+            Integer urItNum = userService.getUrItNum(ur_num, bo_code);
             int itNum = urItNum != null ? urItNum : 0;
             user.setUr_it_num(itNum);
-            Integer urNsNum = userService.getUrNsNum(ur_num);
+            Integer urNsNum = userService.getUrNsNum(ur_num, bo_code);
             int nsNum = urNsNum != null ? urNsNum : 0;
             user.setUr_ns_num(nsNum);
         }
