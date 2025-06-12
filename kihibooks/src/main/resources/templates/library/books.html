@@ -92,12 +92,12 @@
 			grid-area: right;
 			box-sizing: border-box;
 		}
-        .cate-title span {
+        .cate-title a, .cate-title span {
 			color: #555;
 			font-size: 14px;
 			font-weight: 600;
 		}
-		.cate-title span:hover {
+		.cate-title a:hover {
 			text-decoration: none;
 		}
         .category{
@@ -127,6 +127,7 @@
 			color: #555;
 		}
 		.author-name:hover {
+			color: #555;
 			text-decoration: none;
 		}
 		.publisher-link {
@@ -242,6 +243,11 @@
 			font-size: 15px;
 			font-weight: 600;
 			line-height: 18px;
+			color: #000;
+		}
+		.keyword-name:hover{
+			color: #000;
+			text-decoration: none;
 		}
         .episode-area {
 			display: block;
@@ -657,22 +663,20 @@
                                         <div class="cate-title">
                                             <a th:href="@{/genre/{mainCategory}(mainCategory=${mainCategory},tab=new)}" class="main-cate-title" th:text="${book.bo_main_cate}"></a>
                                             <img src="/resources/static/img/next.png" alt="next" style="height: 10px;" class="mb-1">
-                                            <span th:href="@{/}" class="sub-cate-title" th:text="${book.bo_sub_cate}"></span>
+											<a th:href="@{/genre/{mainCategory}(mainCategory=${mainCategory},tab=new)}" class="main-cate-title" th:text="${book.bo_sub_cate}"></a>
                                         </div>
                                     </div>
                                     <h3 class="book-title" th:text="${book.bo_title}"></h3>
                                     <div class="info-content">
 										<div class="infomation">
 											<div class="author">
-												<a th:href="@{/search?query={bo_author}(bo_author=${book.bo_author})}">
-													<span class="author-name" th:text="${book.bo_author}"></span>
+												<a class="author-name" th:href="@{/search?query={bo_author}(bo_author=${book.bo_author})}">
+													<span  th:text="${book.bo_author}"></span>
 												</a>
 												<span class="ml-1"> 저</span>
 											</div>
 											<div class="publisher mt-1">
-												<!-- <a th:href="@{/search?query={bo_publisher}(bo_publisher=${book.bo_publisher})}"> -->
-													<span class="publisher-link" th:text="${book.bo_publisher}"></span>
-												<!-- </a> -->
+												<span class="publisher-link" th:text="${book.bo_publisher}"></span>
 												출판
 											</div>
 											<div class="total-episode mt-1 mb-3" th:text="'총 ' + ${epiList.size()} + '화'"></div>
@@ -779,17 +783,14 @@
 										</th:block>
 									</div>
 								</div>
-								<!-- <div class="epi-line"></div> -->
 								<h2 class="keyword-title">이 작품의 키워드</h2>
 								<div class="keyword-list">
 									<ul class="keyword" th:each="keyword : ${kwList}">
-										<span>
-											<button class="keyword-btn">
-												<span class="keyword-name">
-													<span th:text="'#'+${keyword.bk_name}"></span>
-												</span>
-											</button>
-										</span>
+										<button class="keyword-btn">
+											<a class="keyword-name" th:href="@{/book/keyword?keywordIds={bk_kw_code}(bk_kw_code=${keyword.bk_kw_code})}">
+												<span th:text="'#'+${keyword.bk_name}"></span>
+											</a>
+										</button>
 									</ul>
 								</div>
 								<h2 class="wrapper-title">작품 소개</h2>
@@ -803,7 +804,7 @@
 								<div class="au-other-book">
 									<div class="au-other-book-title">
 										작가의 대표 작품
-										<a th:href="@{/}" class="au-other-more">더보기</a>
+										<a th:href="@{/search?query={bo_author}(bo_author=${book.bo_author})}" class="au-other-more">더보기</a>
 									</div>
 									<div class="other-book-list">
 										<div class="book-list">
@@ -829,21 +830,14 @@
 																</div>
 																<div class="book-info">
 																	<div class="bo-title">
-																		<!-- bo-img와 동일한 링크 -->
 																		<a th:href="@{/}" class="b-title" th:text="${anotherBook.bo_title}"></a>
 																	</div>
 																	<div class="book-author">
 																		<span class="bo-author">
 																			<a th:href="@{/}" class="b-author" th:text="${anotherBook.bo_author}"></a>
 																		</span>
-																		<!-- <span class="bo-rating">
-																			<img class="red mb-1" src="/resources/static/img/star.png" alt="별" style="height: 12px; margin-right: 2px;" th:text="${anotherBook.bo_total_rating / anotherBook.bo_review_count / 2.0}">
-																			<span class="b-rating-cnt" th:text="'(' + ${anotherBook.bo_review_count} + ')'"></span>
-																		</span> -->
 																	</div>
 																</div>
-																<!-- bo-img 와 동일한 링크 -->
-																<a th:href="@{/}" class="book-click"></a>
 															</div>
 														</li>
 													</th:block>

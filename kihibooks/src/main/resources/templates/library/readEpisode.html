@@ -995,13 +995,13 @@
                 console.log("Epub 객체 생성됨:", book);
                 book.ready.then(function() {
                     console.log("책 로드 및 파싱 완료!");
-                    const rendition = book.renderTo("epub-area", {
-                        width: "800px",
-                        height: "600px",
-                        flow: "scrolled-doc",
-                        manager: "default"
-                    });
-                    rendition.display();
+                    // const rendition = book.renderTo("epub-area", {
+                    //     width: "800px",
+                    //     height: "600px",
+                    //     flow: "scrolled-doc",
+                    //     manager: "default"
+                    // });
+                    // rendition.display();
 
                     const spineItems = book.spine.items;
                     console.log("책에 있는 섹션/챕터 수:", spineItems.length);

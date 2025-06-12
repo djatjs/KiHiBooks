@@ -11,18 +11,20 @@
 INSERT INTO `USER` (
   UR_EMAIL, UR_PW, UR_NICKNAME, UR_AUTHORITY,
   UR_GENDER, UR_YEAR
-) VALUES
-('pub1@example.com', 'pw1', '출판사1', 'PUBLISHER', 'M', '1985'),
-('pub2@example.com', 'pw2', '출판사2', 'PUBLISHER', 'F', '1988'),
-('pub3@example.com', 'pw3', '출판사3', 'PUBLISHER', 'M', '1990'),
-('pub4@example.com', 'pw4', '출판사4', 'PUBLISHER', 'F', '1992'),
-('pub5@example.com', 'pw5', '출판사5', 'PUBLISHER', 'M', '1987'),
-('user1@example.com', '123', 'user1', 'USER', 'F', '1995'),
-('user2@example.com', '123', 'user2', 'USER', 'M', '1998'),
-('user3@example.com', '123', 'user3', 'USER', 'F', '1999'),
-('user4@example.com', '123', 'user4', 'USER', 'M', '2007'),
-('user5@example.com', '123', 'user5', 'USER', 'F', '2010'),
-('user6@example.com', '123', 'user6', 'USER', 'M', '2001');
+) VALUES -- 비밀번호 '1111'
+('pub1@example.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', '출판사1', 'PUBLISHER', 'M', '1985'), -- 1
+('pub2@example.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', '출판사2', 'PUBLISHER', 'F', '1988'), -- 2
+('pub3@example.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', '출판사3', 'PUBLISHER', 'M', '1990'), -- 3
+('pub4@example.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', '출판사4', 'PUBLISHER', 'F', '1992'), -- 4
+('pub5@example.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', '출판사5', 'PUBLISHER', 'M', '1987'), -- 5
+('user1@example.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', 'user1', 'USER', 'F', '1995'), -- 6
+('user2@example.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', 'user2', 'USER', 'M', '1998'), -- 7
+('user3@example.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', 'user3', 'USER', 'F', '1999'), -- 8
+('user4@example.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', 'user4', 'USER', 'M', '2007'), -- 9
+('user5@example.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', 'user5', 'USER', 'F', '2010'), -- 10
+('user6@example.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', 'user6', 'USER', 'M', '2001'), -- 11
+('admin@admin.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', '관리자', 'PUBLISHER', 'M', '1985'); -- 12 (관리자)
+
 
 -- INSERT PUBLISHERS
 INSERT INTO PUBLISHER (PU_CODE, PU_NAME) VALUES ('P001', '은하출판사');
@@ -38,16 +40,18 @@ INSERT INTO PUBLISHER_ID (PI_NUM, PI_AUTHORITY, PI_PU_CODE, PI_UR_NUM) VALUES (4
 INSERT INTO PUBLISHER_ID (PI_NUM, PI_AUTHORITY, PI_PU_CODE, PI_UR_NUM) VALUES (5, 'SUPER', 'P005', 5);
 
 -- INSERT AUTHORS
-INSERT INTO AUTHOR (AU_NUM, AU_NAME, AU_PROFILE) VALUES (1, '작가1', 'profile1.png');
-INSERT INTO AUTHOR (AU_NUM, AU_NAME, AU_PROFILE) VALUES (2, '작가2', 'profile2.png');
-INSERT INTO AUTHOR (AU_NUM, AU_NAME, AU_PROFILE) VALUES (3, '작가3', 'profile3.png');
-INSERT INTO AUTHOR (AU_NUM, AU_NAME, AU_PROFILE) VALUES (4, '작가4', 'profile4.png');
-INSERT INTO AUTHOR (AU_NUM, AU_NAME, AU_PROFILE) VALUES (5, '작가5', 'profile5.png');
-INSERT INTO AUTHOR (AU_NUM, AU_NAME, AU_PROFILE) VALUES (6, '작가6', 'profile6.png');
-INSERT INTO AUTHOR (AU_NUM, AU_NAME, AU_PROFILE) VALUES (7, '작가7', 'profile7.png');
-INSERT INTO AUTHOR (AU_NUM, AU_NAME, AU_PROFILE) VALUES (8, '작가8', 'profile8.png');
-INSERT INTO AUTHOR (AU_NUM, AU_NAME, AU_PROFILE) VALUES (9, '작가9', 'profile9.png');
-INSERT INTO AUTHOR (AU_NUM, AU_NAME, AU_PROFILE) VALUES (10, '작가10', 'profile10.png');
+INSERT INTO AUTHOR (AU_NUM, AU_NAME, AU_PROFILE) VALUES 
+(1, '작가1', 'profile1.png'),
+(2, '작가2', 'profile2.png'),
+(3, '작가3', 'profile3.png'),
+(4, '작가4', 'profile4.png'),
+(5, '작가5', 'profile5.png'),
+(6, '작가6', 'profile6.png'),
+(7, '작가7', 'profile7.png'),
+(8, '작가8', 'profile8.png'),
+(9, '작가9', 'profile9.png'),
+(10, '작가10', 'profile10.png');
+
 
 -- INSERT CATE
 INSERT INTO MAIN_CATE(MC_CODE, MC_NAME)
@@ -70,62 +74,26 @@ INSERT INTO SUB_CATE VALUES
 
 -- INSERT BOOKS
 INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-VALUES ('B0001', '도시의 연인', '현대물 장르의 도시의 연인는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'N', '11', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P001' LIMIT 1), 10);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0002', '사무실 로맨스', '현대물 장르의 사무실 로맨스는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '11', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P004' LIMIT 1), 9);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0003', '왕의 연인', '역사/시대물 장르의 왕의 연인는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'N', '12', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P004' LIMIT 1), 10);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0004', '왕의 연인', '역사/시대물 장르의 왕의 연인는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '12', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P004' LIMIT 1), 6);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0005', '화산의 검', '동양풍 장르의 화산의 검는 흥미진진한 스토리를 담고 있습니다.', 'N', 'N', '21', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P002' LIMIT 1), 3);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0006', '드래곤 마스터', '서양풍 장르의 드래곤 마스터는 흥미진진한 스토리를 담고 있습니다.', 'N', 'N', '22', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P004' LIMIT 1), 7);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0007', '이세계 셰프', '가상 세계 장르의 이세계 셰프는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'N', '23', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P001' LIMIT 1), 6);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0008', '가상도시', '가상 세계 장르의 가상도시는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '23', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P002' LIMIT 1), 6);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0009', '왕국의 후계자', '정통 장르의 왕국의 후계자는 흥미진진한 스토리를 담고 있습니다.', 'N', 'Y', '31', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P001' LIMIT 1), 1);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0010', '마법전쟁 연대기', '정통 장르의 마법전쟁 연대기는 흥미진진한 스토리를 담고 있습니다.', 'N', 'N', '31', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P002' LIMIT 1), 6);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0011', '헌터의 제국', '퓨전 장르의 헌터의 제국는 흥미진진한 스토리를 담고 있습니다.', 'N', 'Y', '32', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P002' LIMIT 1), 4);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0012', '강남마법사', '퓨전 장르의 강남마법사는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '32', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P001' LIMIT 1), 6);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0013', '리셋 라이프', '현대 장르의 리셋 라이프는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '33', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P001' LIMIT 1), 1);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0014', '공략불가 NPC', '게임 장르의 공략불가 NPC는 흥미진진한 스토리를 담고 있습니다.', 'N', 'Y', '34', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P005' LIMIT 1), 5);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0015', '변경된 연대기', '대체 역사 장르의 변경된 연대기는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'N', '35', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P004' LIMIT 1), 2);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0016', '변경된 연대기', '대체 역사 장르의 변경된 연대기는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'N', '35', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P001' LIMIT 1), 9);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0017', '리바운드', '스포츠 장르의 리바운드는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '36', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P003' LIMIT 1), 9);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM)  
-    VALUES ('B0018', '혈검강호', '정통무협 장르의 혈검강호는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '41', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P005' LIMIT 1), 8);
-INSERT INTO BOOK (BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_ADULT, BO_FIN, BO_SC_CODE, BO_PI_NUM, BO_AU_NUM) 
-    VALUES ('B0019', '무림 리스타트', '신무협 장르의 무림 리스타트는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '42', 
-    (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P001' LIMIT 1), 2);
+VALUES 
+('B0001', '도시의 연인', '현대물 장르의 도시의 연인는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'N', '11', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P001' LIMIT 1), 10),
+('B0002', '사무실 로맨스', '현대물 장르의 사무실 로맨스는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '11', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P004' LIMIT 1), 9),
+('B0003', '왕의 연인', '역사/시대물 장르의 왕의 연인는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'N', '12', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P004' LIMIT 1), 10),
+('B0004', '왕의 연인', '역사/시대물 장르의 왕의 연인는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '12', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P004' LIMIT 1), 6),
+('B0005', '화산의 검', '동양풍 장르의 화산의 검는 흥미진진한 스토리를 담고 있습니다.', 'N', 'N', '21', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P002' LIMIT 1), 3),
+('B0006', '드래곤 마스터', '서양풍 장르의 드래곤 마스터는 흥미진진한 스토리를 담고 있습니다.', 'N', 'N', '22', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P004' LIMIT 1), 7),
+('B0007', '이세계 셰프', '가상 세계 장르의 이세계 셰프는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'N', '23', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P001' LIMIT 1), 6),
+('B0008', '가상도시', '가상 세계 장르의 가상도시는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '23', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P002' LIMIT 1), 6),
+('B0009', '왕국의 후계자', '정통 장르의 왕국의 후계자는 흥미진진한 스토리를 담고 있습니다.', 'N', 'Y', '31', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P001' LIMIT 1), 1),
+('B0010', '마법전쟁 연대기', '정통 장르의 마법전쟁 연대기는 흥미진진한 스토리를 담고 있습니다.', 'N', 'N', '31', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P002' LIMIT 1), 6),
+('B0011', '헌터의 제국', '퓨전 장르의 헌터의 제국는 흥미진진한 스토리를 담고 있습니다.', 'N', 'Y', '32', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P002' LIMIT 1), 4),
+('B0012', '강남마법사', '퓨전 장르의 강남마법사는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '32', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P001' LIMIT 1), 6),
+('B0013', '리셋 라이프', '현대 장르의 리셋 라이프는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '33', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P001' LIMIT 1), 1),
+('B0014', '공략불가 NPC', '게임 장르의 공략불가 NPC는 흥미진진한 스토리를 담고 있습니다.', 'N', 'Y', '34', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P005' LIMIT 1), 5),
+('B0015', '변경된 연대기', '대체 역사 장르의 변경된 연대기는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'N', '35', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P004' LIMIT 1), 2),
+('B0016', '변경된 연대기', '대체 역사 장르의 변경된 연대기는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'N', '35', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P001' LIMIT 1), 9),
+('B0017', '리바운드', '스포츠 장르의 리바운드는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '36', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P003' LIMIT 1), 9),
+('B0018', '혈검강호', '정통무협 장르의 혈검강호는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '41', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P005' LIMIT 1), 8),
+('B0019', '무림 리스타트', '신무협 장르의 무림 리스타트는 흥미진진한 스토리를 담고 있습니다.', 'Y', 'Y', '42', (SELECT PI_NUM FROM PUBLISHER_ID WHERE PI_PU_CODE = 'P001' LIMIT 1), 2);
 
 
 -- INSERT EPISODE
