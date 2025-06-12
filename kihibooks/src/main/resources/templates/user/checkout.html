@@ -1014,7 +1014,7 @@
 										<div class="book-thumbnail-wrapper" th:attr="data-bo-code=${episode.ep_bo_code}">
 											<div class="book-thumbnail">
 												<div class="thumbnail-img">
-													<img class="thumbnail" src="/resources/static/covers/cover1.png" alt="썸네일 이미지"
+													<img class="thumbnail" th:src="${'/file/' + {episode.ep_cover_img}}" alt="썸네일 이미지"
 														th:attr="data-src=${episode.ep_cover_img}">
 													<span class="border"></span>
 												</div>

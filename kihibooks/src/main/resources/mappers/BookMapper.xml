@@ -642,7 +642,7 @@
         where bo_code = #{bo_code}
     </select>
     <select id="getAuthorAnotherBookList" resultType="BookVO">
-        select *, author.au_name AS bo_author from book
+        select *, author.au_name AS bo_author, episode.ep_cover_img as bo_thumbnail from book
         join author on au_num = bo_au_num
         join episode on EP_BO_CODE = BO_CODE
         where bo_au_num = #{au_num}
@@ -695,12 +695,14 @@
         where bl_ur_num = #{ur_num} and ep_bo_code = #{bo_code} and (bl_end_date is null or (bl_end_date is not null and bl_end_date <![CDATA[ > ]]> now()))
     </select>
 
-    <select id="getBestList5" resultType="BookVO">
-        select *, author.au_name AS bo_author from book
+    <select id="getBestList6" resultType="BookVO">
+        select *, author.au_name AS bo_author, episode.ep_cover_img as bo_thumbnail from book
         join author on bo_au_num = au_num
+        join episode on ep_bo_code = bo_code
         where bo_sc_code = #{sc_code}
+        group by bo_code
         order by substring((bo_total_rating / bo_review_count / 2.0), 1, 3) desc, bo_review_count desc
-        limit 5
+        limit 6
     </select>
 
     <select id="getKeywordList" resultType="BookKeywordVO">
@@ -799,4 +801,24 @@
         update book set BO_TOTAL_EPISODE = BO_TOTAL_EPISODE + 1
         where bo_code = #{bo_code}
     </update>
+    <insert id="insertBuyList">
+        insert into `buy_list`(bl_id, bl_ep_code, bl_ur_num)
+        value(#{bl_id}, #{ep_code}, #{ur_num})
+    </insert>
+    <select id="countTodayOrders" resultType="int">
+        select count(*) from `order`
+        where date(od_created_at) = curdate()
+    </select>
+    <select id="selectBlList" resultType="Integer">
+        select count(*) from buy_list
+        where bl_ur_num = #{ur_num} and bl_ep_code = #{ep_code}
+    </select>
+    <insert id="insertLibrary">
+        insert into `library`(lb_ep_code, lb_ur_num)
+        value(#{ep_code}, #{ur_num})
+    </insert>
+    <select id="countLibrary" resultType="Integer">
+        select count(*) from `library`
+        where lb_ep_code = #{ep_code} and lb_ur_num = #{ur_num}
+    </select>
 </mapper>
