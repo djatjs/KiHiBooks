@@ -93,7 +93,7 @@
             a.AU_NAME,
             b.BO_TOTAL_RATING,
             b.BO_REVIEW_COUNT,
-            ep.EP_COVER_IMG
+            ep.EP_COVER_IMG as bo_thumbnail
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         LEFT JOIN (
@@ -108,7 +108,7 @@
         LIMIT 10
     </select>
     <select id="selectBestBooks" resultType="BookVO">
-        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG
+        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG as bo_thumbnail
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         LEFT JOIN (
@@ -126,7 +126,7 @@
         LIMIT 10
     </select>
     <select id="selectWaitFreeBooks" resultType="BookVO">
-        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG
+        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG as bo_thumbnail
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         LEFT JOIN (
@@ -151,7 +151,7 @@
             a.AU_NAME AS bo_author,
             b.BO_TOTAL_RATING,
             b.BO_REVIEW_COUNT,
-            ep.EP_COVER_IMG
+            ep.EP_COVER_IMG as bo_thumbnail
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         LEFT JOIN (
@@ -433,7 +433,10 @@
     </select>
 
     <select id="selectDetailBook" resultType="BookVO">
-        select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher, sub_cate.sc_name AS bo_sub_cate, main_cate.mc_name AS bo_main_cate, (select count(*) from `interest` where it_bo_code = #{bo_code}) AS bo_like_count, e.EP_COVER_IMG AS bo_thumbnail from book
+        select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher,
+                sub_cate.sc_name AS bo_sub_cate, main_cate.mc_name AS bo_main_cate,
+                (select count(*) from `interest` where it_bo_code = #{bo_code}) AS bo_like_count,
+                e.EP_COVER_IMG AS bo_thumbnail from book
         join `author` on bo_au_num = au_num
         join `publisher_id` on bo_pi_num = pi_num
         join `publisher` on pi_pu_code = pu_code
