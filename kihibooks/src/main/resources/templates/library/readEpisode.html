@@ -710,13 +710,10 @@
         <div class="container content-management-page">
             <div class="content-header d-flex justify-content-between">
 				<h2>📖 작품 감상</h2>
-				<!-- 뒤로가기 -->
 				<a th:href="@{/library/books/{boCode}(boCode = ${boCode})}" class="goBack-btn">목록으로</a>
 			</div>
-				
             <input type="hidden" th:value="${epCode}" id="epCode">
             <input type="hidden" th:value="${boCode}" id="boCode">
-
             <div class="series-container">
                 <div id="extracted-text-area"></div>
                 <!-- 댓글 -->
@@ -801,11 +798,11 @@
 												</div>
 												<div class="rv-right-btn">
 													<th:block th:if="${#authorization.expression('isAuthenticated()')}">
-														<button type="button" class="rv-delete updateComment"
+														<!-- <button type="button" class="rv-delete updateComment"
 															th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
 															th:attr="data-rvNum=${comment.co_num}">
 															수정
-														</button>
+														</button> -->
 														<button type="button" class="rv-delete deleteComment"
 															th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
 															th:attr="data-rvNum=${comment.co_num}">
@@ -827,7 +824,6 @@
 											<ul class="rv-review" th:id="'replies-' + ${comment.co_num}" style="display: none;">
 												<li class="rv-review-li" th:each="reply : ${comment.replies}">
 													<img src="/resources/static/img/re_review.png" alt="ㄴ" style="height: 15px;" class="dark-gray">
-													<!-- 답글 정보는 reply 변수에서 가져와서 표시! -->
 													<p class="rv-review-content" th:text="${reply.co_content}"></p>
 													<div class="rv-review-bottom">
 														<div class="d-flex justify-content-between">
@@ -837,11 +833,11 @@
 														</div>
 														<div>
 															<th:block th:if="${#authorization.expression('isAuthenticated()')}">
-																<button type="button" class="noStyleBtn updateComment"
+																<!-- <button type="button" class="noStyleBtn updateComment"
 																	th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
 																	th:attr="data-rvNum=${reply.co_num}">
 																	수정
-																</button>
+																</button> -->
 																<button type="button" class="noStyleBtn deleteComment"
 																	th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
 																	th:attr="data-rvNum=${reply.co_num}">
@@ -861,11 +857,6 @@
 											</ul>
 										</li>
 									</ul>
-									<div class="review-more-btn">
-										<button type="button" class="rv-more-btn">
-											<span class="rmb-text">더보기<img src="/resources/static/img/expand.png" alt="더보기 버튼" style="height: 23px;"></span>
-										</button>
-									</div>
 								</div>
 							</div>
 						</div>
@@ -877,7 +868,20 @@
         <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
         <script src="https://unpkg.com/xmldom@0.6.0/dom-parser.js"></script>
         <script src="/resources/static/js/epub.min.js"></script>
-
+		<script>
+    		// 스포일러 댓글 -> 리뷰 보기 클릭 시
+			document.body.addEventListener('click', function(event) {
+				const clickedButton = event.target.closest('.spoiler-view-btn');
+				if (clickedButton) {
+					const rvSpoiler = clickedButton.closest('.rv-content-spoiler');
+					const rvContent = rvSpoiler ? rvSpoiler.previousElementSibling : null;
+					if (rvContent && rvSpoiler) {
+						rvContent.removeAttribute('hidden');
+						rvSpoiler.setAttribute('hidden', 'true');
+					}
+				}
+			});
+		</script>
         <script>
 			$(".rv-regist-form").submit(function (e) {
 				e.preventDefault();
@@ -932,23 +936,19 @@
 				})
 			})
 		</script>
-		
 		<script th:inline="javascript">
 			// 대댓글 달기
 			$(document.body).on("submit", ".review-insert-form", function(event){
 				event.preventDefault();
-
 				const currentForm = $(this);
 				const textarea = currentForm.find('.review-insert-textarea');
 				const co_content = textarea.val().trim();
 				const co_ori_num = currentForm.data('rvnum');
 				const co_ep_code = $("#epCode").val();
-
 				if (co_content === '') {
 					alert('답글 내용을 입력해주세요!');
 					return;
 				}
-
 				console.log(co_ori_num);
 				const comment = {
 					co_ori_num : co_ori_num,
@@ -979,8 +979,6 @@
 				});
 			});
 		</script>
-
-        
 		<script th:inline="javascript">
             const epCode = $("#epCode").val();
             const boCode = $("#boCode").val();
@@ -995,14 +993,6 @@
                 console.log("Epub 객체 생성됨:", book);
                 book.ready.then(function() {
                     console.log("책 로드 및 파싱 완료!");
-                    // const rendition = book.renderTo("epub-area", {
-                    //     width: "800px",
-                    //     height: "600px",
-                    //     flow: "scrolled-doc",
-                    //     manager: "default"
-                    // });
-                    // rendition.display();
-
                     const spineItems = book.spine.items;
                     console.log("책에 있는 섹션/챕터 수:", spineItems.length);
                     const htmlExtractionPromises = spineItems.map(function(item) {
@@ -1142,6 +1132,33 @@
 				});
             });
         </script>
+		<script th:inline="javascript">
+			$(document).on("click", ".rv-like", function () {
+				const $btn = $(this);
+				const $img = $(this).find("img");
+				const co_num = $btn.data("rvNum");
+
+				$.ajax({
+					url : "/comment/like",
+					method : "post",
+					data : {co_num : co_num},
+					success : function(data){
+						const $countSpan = $btn.find(".rv-like-cnt");
+						$countSpan.text(data.likeCount);
+						if (!data.liked){
+							$btn.addClass("liked");
+							$img.addClass("orange");
+						}
+						else{
+							$btn.removeClass("liked");
+							$img.removeClass("orange");
+						}
+					},error : function () {
+						alert("오류 발생");
+					}
+				})
+			});
+		</script>
     </main>
 </body>
 </html>

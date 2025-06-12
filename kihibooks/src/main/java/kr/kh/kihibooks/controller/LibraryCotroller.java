@@ -91,7 +91,6 @@ public class LibraryCotroller {
         .map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
         .orElse("날짜 없음");
         String mainCategory = bookService.getMainCategoryUrlKeyword(book.getBo_main_cate());
-        System.out.println(mainCategory+"씨ㅣㅣㅣ이이이이이이");
 
         model.addAttribute("latestEpDate", latestDate);
         model.addAttribute("bo_code", bo_code);
@@ -141,8 +140,6 @@ public class LibraryCotroller {
     @GetMapping("/comment/sort")
     public String getSortedReview(@RequestParam String sort, @RequestParam String ep_code, Model model, @AuthenticationPrincipal CustomUser customUser) {
         List<CommentVO> commentList = libraryService.getCommentSorted(sort, ep_code);
-        System.out.println(commentList);
-
         Map<Integer, Integer> commentCountMap = new HashMap<>();
         for (CommentVO c : commentList) {
             int oriNum = c.getCo_ori_num();
@@ -179,10 +176,24 @@ public class LibraryCotroller {
         return libraryService.deleteComment(co_num, customUser);
     }
 
-    
     @ResponseBody
     @PostMapping("/comment/insertRecomment")
     public boolean insertRecomment(@RequestBody CommentVO comment, @AuthenticationPrincipal CustomUser customUser) {
         return libraryService.insertRecomment(comment, customUser);
+    }
+
+    @ResponseBody
+    @PostMapping("/comment/like")
+    public Map<String, Object> toggleReviewLike(@RequestParam int co_num, @AuthenticationPrincipal CustomUser customUser) {
+        int urNum = customUser.getUser().getUr_num();
+        boolean liked = libraryService.toggleLike(co_num, urNum);
+
+        Integer likeCount = libraryService.getLikeCount(co_num);
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("liked", liked);
+        result.put("likeCount", likeCount);
+
+        return result;
     }
 }

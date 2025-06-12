@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.InterestVO;
 import kr.kh.kihibooks.model.vo.LibraryVO;
+import kr.kh.kihibooks.model.vo.ReviewLikeVO;
 import kr.kh.kihibooks.utils.CustomUser;
+import kr.kh.kihibooks.model.vo.CommentLikeVO;
 import kr.kh.kihibooks.model.vo.CommentVO;
 import kr.kh.kihibooks.dao.BookDAO;
 import kr.kh.kihibooks.dao.LibraryDAO;
@@ -108,6 +110,17 @@ public class LibraryService {
         }
         comment.setCo_ur_num(customUser.getUser().getUr_num());
         return libraryDAO.insertRecomment(comment);
+    }
+
+    public boolean toggleLike(int co_num, int urNum) {
+        int like = libraryDAO.getLike(co_num, urNum);
+        if (like != 0) {
+            return libraryDAO.deleteLike(co_num, urNum);
+        }
+        else {
+            libraryDAO.insertLike(co_num, urNum);
+            return false;
+        }
     }
 
 }

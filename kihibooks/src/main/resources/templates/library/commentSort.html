@@ -31,11 +31,11 @@
 				</div>
 				<div class="rv-right-btn">
 					<th:block th:if="${#authorization.expression('isAuthenticated()')}">
-						<button type="button" class="rv-delete updateComment"
+						<!-- <button type="button" class="rv-delete updateComment"
 							th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
 							th:attr="data-rvNum=${comment.co_num}">
 							수정
-						</button>
+						</button> -->
 						<button type="button" class="rv-delete deleteComment"
 							th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
 							th:attr="data-rvNum=${comment.co_num}">
@@ -67,11 +67,11 @@
 						</div>
 						<div>
 							<th:block th:if="${#authorization.expression('isAuthenticated()')}">
-								<button type="button" class="noStyleBtn updateComment"
+								<!-- <button type="button" class="noStyleBtn updateComment"
 									th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
 									th:attr="data-rvNum=${reply.co_num}">
 									수정
-								</button>
+								</button> -->
 								<button type="button" class="noStyleBtn deleteComment"
 									th:if="${#authentication.principal.user.ur_num == comment.co_ur_num}"
 									th:attr="data-rvNum=${reply.co_num}">

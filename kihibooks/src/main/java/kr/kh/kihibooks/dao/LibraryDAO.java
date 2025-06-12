@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Param;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.InterestVO;
 import kr.kh.kihibooks.model.vo.LibraryVO;
+import kr.kh.kihibooks.model.vo.ReviewLikeVO;
+import kr.kh.kihibooks.model.vo.CommentLikeVO;
 import kr.kh.kihibooks.model.vo.CommentVO;
 
 public interface LibraryDAO {
@@ -35,5 +37,11 @@ public interface LibraryDAO {
     boolean deleteComment(int co_num);
 
     boolean insertRecomment(CommentVO comment);
+
+    int getLike(@Param("co_num") int co_num, @Param("ur_num") int urNum);
+
+    boolean insertLike(@Param("co_num")int co_num, @Param("ur_num") int urNum);
+
+    boolean deleteLike(@Param("co_num")int co_num, @Param("ur_num") int urNum);
     
 }

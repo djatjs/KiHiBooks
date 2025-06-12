@@ -205,17 +205,14 @@ layout:decorate="~{layout/layout.html}">
 	}
 
     @media (max-width: 800px) {
-        /* 작은 화면에서 컨테이너 패딩 */
         .editor-management.container {
             padding: 10px;
         }
-        /* 작은 화면에서 테이블 셀 패딩 및 폰트 크기 */
         .editor-management .table thead th,
         .editor-management .table tbody td {
             padding: 8px 10px;
             font-size: 0.9em;
         }
-        /* 작은 화면에서 '출판사 추가하기' 버튼 패딩 및 폰트 크기 */
         .editor-management .btn-primary {
             padding: 8px 15px;
             font-size: 1em;
@@ -287,7 +284,7 @@ layout:decorate="~{layout/layout.html}">
             <div class="search-results" id="search-results-area">
                 <p id="search-initial-message">검색어를 입력하고 '사용자 검색' 버튼을 눌러주세요.</p>
             </div>
-            <button type="button" class="btn btn-secondary mt-3" onclick="history.back()">뒤로가기</button>
+            <a th:href="@{/publisher/dashboard}" class="btn btn-secondary mt-3">목록으로</a>
             <script>
                 //유저 검색 버튼 클릭 시
                 $("#search-user-button").on('click', function(){
@@ -315,7 +312,6 @@ layout:decorate="~{layout/layout.html}">
             </script>
             <script>
                 function displaySearchResults(user){
-                    alert(user.ur_num);
                     const $resultsArea = $("#search-results-area");
                     $resultsArea.empty();
 

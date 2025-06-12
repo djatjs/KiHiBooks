@@ -121,4 +121,15 @@
         insert into comment(co_ur_num, co_content, co_ori_num, co_ep_code)
         value(#{co_ur_num}, #{co_content}, #{co_ori_num}, #{co_ep_code})
     </insert>
+    <select id="getLike" resultType="int">
+        select count(*) from `like`
+        where li_co_num = #{co_num} and li_ur_num = #{ur_num}
+    </select>
+    <insert id="insertLike">
+        insert into `like`(li_co_num, li_ur_num)
+        value(#{co_num}, #{ur_num})
+    </insert>
+    <delete id="deleteLike">
+        delete from `like` where li_ur_num = #{ur_num} and li_co_num = #{co_num}
+    </delete>
 </mapper>
