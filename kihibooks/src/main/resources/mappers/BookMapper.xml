@@ -163,12 +163,12 @@
         </if>
     </select>
 
-
     <!-- ===== 3. 베스트 탭 리스트 ===== -->
     <select id="selectBestBooksByGenre" resultType="BookVO" parameterType="map">
         SELECT b.*, a.AU_NAME AS bo_author
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        JOIN review r ON b.BO_CODE = r.RV_BO_CODE
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
         AND b.BO_TOTAL_EPISODE > 0
         <if test="adultYN != null">
@@ -177,18 +177,25 @@
         <if test="finished != null and finished == ('' + 'Y')">
             AND b.BO_FIN = #{finished}
         </if>
-        ORDER BY
         <choose>
-            <when test="'week'.equals(range)"> b.BO_REVIEW_COUNT DESC </when>
-            <when test="'month'.equals(range)"> b.BO_TOTAL_RATING DESC </when>
-            <otherwise> b.BO_PUBLISH_DATE DESC </otherwise>
+            <when test="range == 'day'">
+            AND r.RV_DATE >= NOW() - INTERVAL 10 DAY
+            </when>
+            <when test="range == 'week'">
+            AND r.RV_DATE >= NOW() - INTERVAL 20 DAY
+            </when>
+            <when test="range == 'month'">
+            AND r.RV_DATE >= NOW() - INTERVAL 40 DAY
+            </when>
         </choose>
+        GROUP BY b.BO_CODE
+        ORDER BY COUNT(r.RV_NUM) DESC
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
-
     <select id="countBestBooksByGenre" resultType="int" parameterType="map">
-        SELECT COUNT(*)
+        SELECT COUNT(DISTINCT b.BO_CODE)
         FROM book b
+        JOIN review r ON b.BO_CODE = r.RV_BO_CODE
         WHERE BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
         AND b.BO_TOTAL_EPISODE > 0
         <if test="adultYN != null">
@@ -197,7 +204,19 @@
         <if test="finished != null and finished == ('' + 'Y')">
             AND BO_FIN = #{finished}
         </if>
+        <choose>
+            <when test="range == 'day'">
+            AND r.RV_DATE >= NOW() - INTERVAL 10 DAY
+            </when>
+            <when test="range == 'week'">
+            AND r.RV_DATE >= NOW() - INTERVAL 20 DAY
+            </when>
+            <when test="range == 'month'">
+            AND r.RV_DATE >= NOW() - INTERVAL 40 DAY
+            </when>
+        </choose>
     </select>
+
 
 
     <!-- ===== 4. 기다무 탭 리스트 ===== -->
