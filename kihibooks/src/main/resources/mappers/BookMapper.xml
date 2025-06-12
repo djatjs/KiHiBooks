@@ -90,7 +90,7 @@
         SELECT
             b.BO_CODE,
             b.BO_TITLE,
-            a.AU_NAME,
+            a.AU_NAME AS bo_author,
             b.BO_TOTAL_RATING,
             b.BO_REVIEW_COUNT,
             ep.EP_COVER_IMG AS BO_THUMBNAIL
