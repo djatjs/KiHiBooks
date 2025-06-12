@@ -108,7 +108,7 @@
         LIMIT 10
     </select>
     <select id="selectBestBooks" resultType="BookVO">
-        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG
+        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG AS BO_THUMBNAIL
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         LEFT JOIN (
@@ -126,7 +126,7 @@
         LIMIT 10
     </select>
     <select id="selectWaitFreeBooks" resultType="BookVO">
-        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG
+        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG AS BO_THUMBNAIL
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         LEFT JOIN (
@@ -151,7 +151,7 @@
             a.AU_NAME AS bo_author,
             b.BO_TOTAL_RATING,
             b.BO_REVIEW_COUNT,
-            ep.EP_COVER_IMG
+            ep.EP_COVER_IMG AS BO_THUMBNAIL
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         LEFT JOIN (
