@@ -2,20 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.kh.kihibooks.dao.BookDAO">
     <resultMap id="bookWithKeywords" type="BookVO">
-        <!-- BookVO 기본 필드 매핑 -->
-        <id property="bo_code" column="bo_code" />
-        <result property="bo_title" column="bo_title" />
-        <result property="bo_author" column="bo_author" />
-        <result property="bo_total_episode" column="bo_total_episode" />
-        <result property="bo_total_rating" column="bo_total_rating" />
-        <result property="bo_review_count" column="bo_review_count" />
-        <result property="bo_description" column="bo_description" />
-        <result property="bo_adult" column="bo_adult" />
+        <id property="bo_code" column="BO_CODE" />
+        <result property="bo_title" column="BO_TITLE" />
+        <result property="bo_author" column="BO_AUTHOR" />
+        <result property="bo_total_episode" column="BO_TOTAL_EPISODE" />
+        <result property="bo_total_rating" column="BO_TOTAL_RATING" />
+        <result property="bo_review_count" column="BO_REVIEW_COUNT" />
+        <result property="bo_description" column="BO_DESCRIPTION" />
+        <result property="bo_adult" column="BO_ADULT" />
+        <result property="bo_fin" column="BO_FIN" />
+        <result property="bo_publish_date" column="BO_PUBLISH_DATE" />
 
-        <!-- KeywordVO 리스트 매핑 -->
         <collection property="keywordList" ofType="KeywordVO">
-            <result property="kw_code" column="kw_code"/>
-            <result property="kw_name" column="kw_name"/>
+            <result property="kw_code" column="KW_CODE"/>
+            <result property="kw_name" column="KW_NAME"/>
         </collection>
     </resultMap>
     <resultMap id="bookSimpleMap" type="BookVO">
@@ -31,6 +31,7 @@
         <result property="bo_total_rating" column="BO_TOTAL_RATING" />
         <result property="bo_review_count" column="BO_REVIEW_COUNT" />
         <result property="bo_author" column="AU_NAME" />
+        <result property="ep_cover_img" column="EP_COVER_IMG" />
     </resultMap>
     <resultMap id="bookFilteredMap" type="BookVO">
         <id property="bo_code" column="BO_CODE" />
@@ -42,6 +43,7 @@
         <result property="bo_adult" column="BO_ADULT" />
         <result property="bo_fin" column="BO_FIN" />
         <result property="bo_publish_date" column="BO_PUBLISH_DATE" />
+        <result property="ep_cover_img" column="EP_COVER_IMG" />
     </resultMap>
     <resultMap id="bookBestMap" type="BookVO">
         <id property="bo_code" column="BO_CODE" />
@@ -53,12 +55,13 @@
         <result property="bo_publish_date" column="BO_PUBLISH_DATE" />
         <result property="bo_total_episode" column="BO_TOTAL_EPISODE" />
         <result property="au_name" column="AU_NAME"/>
+        <result property="ep_cover_img" column="EP_COVER_IMG" />
         <collection property="keywordList" ofType="KeywordVO"
                 column="BO_CODE"
                 select="selectKeywordListByBookCode" />
     </resultMap>
 
-    <!-- 제목 또는 작가명으로 검색된 도서 리스트 -->
+    <!-- 헤더 검색창에서 제목 또는 작가명으로 검색된 도서 리스트 -->
     <select id="searchBooksByTitle" resultType="BookVO">
         SELECT b.*, a.AU_NAME AS bo_author
         FROM book b
@@ -71,7 +74,6 @@
         ORDER BY b.BO_PUBLISH_DATE DESC
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
-
     <select id="countBooksByTitle" resultType="int">
         SELECT COUNT(*)
         FROM book b
@@ -85,51 +87,103 @@
     
     <!-- ===== 1. 장르 메인 요약 리스트 ===== -->
     <select id="selectNewBooks" resultType="BookVO">
-        SELECT b.*, a.AU_NAME AS bo_author
+        SELECT
+            b.BO_CODE,
+            b.BO_TITLE,
+            a.AU_NAME,
+            b.BO_TOTAL_RATING,
+            b.BO_REVIEW_COUNT,
+            ep.EP_COVER_IMG AS BO_THUMBNAIL
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        LEFT JOIN (
+            SELECT EP_BO_CODE, MAX(EP_CODE) AS LATEST_EP_CODE
+            FROM episode GROUP BY EP_BO_CODE
+        ) latest_ep ON b.BO_CODE = latest_ep.EP_BO_CODE
+        LEFT JOIN episode ep
+            ON ep.EP_CODE = latest_ep.LATEST_EP_CODE
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
-        AND b.BO_TOTAL_EPISODE > 0
+            AND b.BO_TOTAL_EPISODE > 0
         ORDER BY b.BO_PUBLISH_DATE DESC
         LIMIT 10
     </select>
-
     <select id="selectBestBooks" resultType="BookVO">
-        SELECT b.*, a.AU_NAME AS bo_author
+        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        LEFT JOIN (
+            SELECT ep1.*
+            FROM episode ep1
+            JOIN (
+            SELECT EP_BO_CODE, MAX(EP_CODE) AS max_code
+            FROM episode
+            GROUP BY EP_BO_CODE
+            ) latest ON ep1.EP_BO_CODE = latest.EP_BO_CODE AND ep1.EP_CODE = latest.max_code
+        ) ep ON b.BO_CODE = ep.EP_BO_CODE
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
-        AND b.BO_TOTAL_EPISODE > 0
+            AND b.BO_TOTAL_EPISODE > 0
         ORDER BY b.BO_REVIEW_COUNT DESC, b.BO_TOTAL_RATING DESC
         LIMIT 10
     </select>
-
     <select id="selectWaitFreeBooks" resultType="BookVO">
-        SELECT b.*, a.AU_NAME AS bo_author
+        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        LEFT JOIN (
+            SELECT ep1.*
+            FROM episode ep1
+            JOIN (
+            SELECT EP_BO_CODE, MAX(EP_CODE) AS max_code
+            FROM episode
+            GROUP BY EP_BO_CODE
+            ) latest ON ep1.EP_BO_CODE = latest.EP_BO_CODE AND ep1.EP_CODE = latest.max_code
+        ) ep ON b.BO_CODE = ep.EP_BO_CODE
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
-        AND b.BO_WAIT_FOR_FREE = 'Y'
-        AND b.BO_TOTAL_EPISODE > 0
+            AND b.BO_WAIT_FOR_FREE = 'Y'
+            AND b.BO_TOTAL_EPISODE > 0
         ORDER BY b.BO_PUBLISH_DATE DESC
         LIMIT 10
     </select>
-
     <select id="selectRealtimeRankingBooks" resultType="BookVO">
-        SELECT b.*, a.AU_NAME AS bo_author
+        SELECT
+            b.BO_CODE,
+            b.BO_TITLE,
+            a.AU_NAME AS bo_author,
+            b.BO_TOTAL_RATING,
+            b.BO_REVIEW_COUNT,
+            ep.EP_COVER_IMG
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        LEFT JOIN (
+            SELECT ep1.*
+            FROM episode ep1
+            JOIN (
+                SELECT EP_BO_CODE, MAX(EP_CODE) AS max_code
+                FROM episode
+                GROUP BY EP_BO_CODE
+            ) latest ON ep1.EP_BO_CODE = latest.EP_BO_CODE AND ep1.EP_CODE = latest.max_code
+        ) ep ON b.BO_CODE = ep.EP_BO_CODE
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
-        AND b.BO_TOTAL_EPISODE > 0
+            AND b.BO_TOTAL_EPISODE > 0
         ORDER BY b.BO_TOTAL_RATING DESC, b.BO_REVIEW_COUNT DESC
         LIMIT 10
     </select>
 
+
     <!-- ===== 2. 신작 탭 리스트 ===== -->
-    <select id="selectNewBooksByGenre" resultType="BookVO" parameterType="map">
-        SELECT *, a.AU_NAME AS bo_author
+    <select id="selectNewBooksByGenre" resultMap="bookFilteredMap">
+        SELECT *, a.AU_NAME AS bo_author, ep.EP_COVER_IMG AS bo_thumbnail
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        LEFT JOIN (
+            SELECT EP_BO_CODE, EP_COVER_IMG
+            FROM episode e1
+            WHERE EP_CODE = (
+                SELECT MAX(EP_CODE) 
+                FROM episode e2 
+                WHERE e1.EP_BO_CODE = e2.EP_BO_CODE
+            )
+        ) ep ON b.BO_CODE = ep.EP_BO_CODE
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
         AND b.BO_TOTAL_EPISODE > 0
         <if test="adultYN != null and adultYN != ''">
@@ -141,16 +195,16 @@
         ORDER BY
         <choose>
             <when test="sort != null and 'popular'.equals(sort)"> 
-                b.BO_REVIEW_COUNT DESC /* 인기순 */
+                b.BO_REVIEW_COUNT DESC
             </when>
             <otherwise> 
-                b.BO_PUBLISH_DATE DESC /* 최신순 */
+                b.BO_PUBLISH_DATE DESC
             </otherwise>
         </choose>
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
-    <select id="countNewBooksByGenre" resultType="int" parameterType="map">
+    <select id="countNewBooksByGenre"  resultType="int">
         SELECT COUNT(*)
         FROM book b
         WHERE BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
@@ -163,12 +217,21 @@
         </if>
     </select>
 
-
     <!-- ===== 3. 베스트 탭 리스트 ===== -->
-    <select id="selectBestBooksByGenre" resultType="BookVO" parameterType="map">
-        SELECT b.*, a.AU_NAME AS bo_author
+    <select id="selectBestBooksByGenre" resultMap="bookFilteredMap">
+        SELECT b.*, a.AU_NAME AS bo_author, ANY_VALUE(ep.EP_COVER_IMG) AS bo_thumbnail
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        JOIN review r ON b.BO_CODE = r.RV_BO_CODE
+        LEFT JOIN (
+            SELECT EP_BO_CODE, EP_COVER_IMG
+            FROM episode e1
+            WHERE EP_CODE = (
+                SELECT MAX(EP_CODE)
+                FROM episode e2
+                WHERE e1.EP_BO_CODE = e2.EP_BO_CODE
+            )
+        ) ep ON b.BO_CODE = ep.EP_BO_CODE
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
         AND b.BO_TOTAL_EPISODE > 0
         <if test="adultYN != null">
@@ -177,18 +240,26 @@
         <if test="finished != null and finished == ('' + 'Y')">
             AND b.BO_FIN = #{finished}
         </if>
-        ORDER BY
         <choose>
-            <when test="'week'.equals(range)"> b.BO_REVIEW_COUNT DESC </when>
-            <when test="'month'.equals(range)"> b.BO_TOTAL_RATING DESC </when>
-            <otherwise> b.BO_PUBLISH_DATE DESC </otherwise>
+            <when test="range == 'day'">
+                AND r.RV_DATE >= NOW() - INTERVAL 10 DAY
+            </when>
+            <when test="range == 'week'">
+                AND r.RV_DATE >= NOW() - INTERVAL 20 DAY
+            </when>
+            <when test="range == 'month'">
+                AND r.RV_DATE >= NOW() - INTERVAL 40 DAY
+            </when>
         </choose>
+        GROUP BY b.BO_CODE
+        ORDER BY COUNT(r.RV_NUM) DESC
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
-    <select id="countBestBooksByGenre" resultType="int" parameterType="map">
-        SELECT COUNT(*)
+    <select id="countBestBooksByGenre"  resultType="int">
+        SELECT COUNT(DISTINCT b.BO_CODE)
         FROM book b
+        JOIN review r ON b.BO_CODE = r.RV_BO_CODE
         WHERE BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
         AND b.BO_TOTAL_EPISODE > 0
         <if test="adultYN != null">
@@ -197,14 +268,33 @@
         <if test="finished != null and finished == ('' + 'Y')">
             AND BO_FIN = #{finished}
         </if>
+        <choose>
+            <when test="range == 'day'">
+                AND r.RV_DATE >= NOW() - INTERVAL 10 DAY
+            </when>
+            <when test="range == 'week'">
+                AND r.RV_DATE >= NOW() - INTERVAL 20 DAY
+            </when>
+            <when test="range == 'month'">
+                AND r.RV_DATE >= NOW() - INTERVAL 40 DAY
+            </when>
+        </choose>
     </select>
 
-
     <!-- ===== 4. 기다무 탭 리스트 ===== -->
-    <select id="selectWaitFreeBooksByGenre" resultType="BookVO">
-        SELECT b.*, a.AU_NAME AS bo_author
+    <select id="selectWaitFreeBooksByGenre" resultMap="bookFilteredMap">
+        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG as bo_thumbnail
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
+        LEFT JOIN (
+            SELECT EP_BO_CODE, EP_COVER_IMG
+            FROM episode e1
+            WHERE EP_CODE = (
+                SELECT MAX(EP_CODE)
+                FROM episode e2
+                WHERE e1.EP_BO_CODE = e2.EP_BO_CODE
+            )
+        ) ep ON b.BO_CODE = ep.EP_BO_CODE
         WHERE b.BO_SC_CODE LIKE CONCAT(#{mcCode}, '%')
         AND b.BO_WAIT_FOR_FREE = 'Y'
         AND b.BO_TOTAL_EPISODE > 0
@@ -231,6 +321,7 @@
             AND BO_TITLE LIKE CONCAT('%', #{keyword}, '%')
         </if>
     </select>
+
 
     <select id="selectBookList" resultType="BookVO">
         select book.* from book
@@ -263,51 +354,42 @@
     </select>
     <!-- 키워드 검색 도서 리스트 -->
     <select id="selectBooksByKeywords" resultMap="bookWithKeywords">
-        SELECT
+        SELECT 
             b.BO_CODE, b.BO_TITLE, b.BO_DESCRIPTION, b.BO_TOTAL_EPISODE,
             b.BO_TOTAL_RATING, b.BO_REVIEW_COUNT, b.BO_ADULT, b.BO_FIN, b.BO_PUBLISH_DATE,
             a.AU_NAME AS bo_author,
-            k.KW_CODE AS KW_CODE, k.KW_NAME AS kw_name
-        FROM
-            book b
-        JOIN
-            author a ON b.BO_AU_NUM = a.AU_NUM
+            k.KW_CODE AS kw_code, k.KW_NAME AS kw_name
+        FROM (
+            SELECT b.BO_CODE
+            FROM book b
+            JOIN book_keyword bk ON b.BO_CODE = bk.BK_BO_CODE
 
-        <!-- ✅ 조건부 JOIN은 여기 -->
-        <if test="keywordIds != null and keywordIds.size() > 0">
-            JOIN (
-                SELECT DISTINCT BK_BO_CODE
-                FROM book_keyword
-                WHERE BK_KW_CODE IN
-                <foreach item="id" collection="keywordIds" open="(" close=")" separator=",">
+            <if test="keywordIds != null and keywordIds.size() > 0">
+                WHERE bk.BK_KW_CODE IN
+                <foreach collection="keywordIds" item="id" open="(" close=")" separator=",">
                     #{id}
                 </foreach>
-                GROUP BY BK_BO_CODE
-                HAVING COUNT(DISTINCT BK_KW_CODE) = #{keywordCount}
-            ) filtered ON b.BO_CODE = filtered.BK_BO_CODE
-        </if>
+            </if>
 
+            GROUP BY b.BO_CODE
+
+            <if test="keywordCount != null and keywordCount > 0">
+                HAVING COUNT(DISTINCT bk.BK_KW_CODE) = #{keywordCount}
+            </if>
+
+            <choose>
+                <when test="sort == 'popular'">ORDER BY MAX(b.BO_TOTAL_RATING / b.BO_REVIEW_COUNT) DESC</when>
+                <when test="sort == 'rating'">ORDER BY MAX(b.BO_TOTAL_RATING / b.BO_REVIEW_COUNT) DESC</when>
+                <when test="sort == 'review'">ORDER BY MAX(b.BO_REVIEW_COUNT) DESC</when>
+                <otherwise>ORDER BY MAX(b.BO_PUBLISH_DATE) DESC</otherwise>
+            </choose>
+
+            LIMIT #{limit} OFFSET #{offset}
+        ) base
+        JOIN book b ON b.BO_CODE = base.BO_CODE
+        JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         LEFT JOIN book_keyword bk ON bk.BK_BO_CODE = b.BO_CODE
         LEFT JOIN keyword k ON k.KW_CODE = bk.BK_KW_CODE
-
-        WHERE b.BO_TOTAL_EPISODE > 0
-
-        <choose>
-            <when test="sort == 'popular'">
-                ORDER BY b.BO_REVIEW_COUNT DESC
-            </when>
-            <when test="sort == 'rating'">
-                ORDER BY b.BO_TOTAL_RATING DESC
-            </when>
-            <when test="sort == 'review'">
-                ORDER BY b.BO_REVIEW_COUNT DESC
-            </when>
-            <otherwise>
-                ORDER BY b.BO_PUBLISH_DATE DESC
-            </otherwise>
-        </choose>
-
-        LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <!-- 키워드 검색 도서 개수 -->
@@ -316,24 +398,22 @@
         FROM (
             SELECT b.BO_CODE
             FROM book b
+            JOIN book_keyword bk ON b.BO_CODE = bk.BK_BO_CODE
 
             <if test="keywordIds != null and keywordIds.size() > 0">
-                JOIN (
-                    SELECT BK_BO_CODE
-                    FROM book_keyword
-                    WHERE BK_KW_CODE IN
-                    <foreach item="id" collection="keywordIds" open="(" close=")" separator=",">
-                        #{id}
-                    </foreach>
-                    GROUP BY BK_BO_CODE
-                    HAVING COUNT(DISTINCT BK_KW_CODE) = #{keywordCount}
-                ) filtered ON b.BO_CODE = filtered.BK_BO_CODE
+                WHERE bk.BK_KW_CODE IN
+                <foreach item="id" collection="keywordIds" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
             </if>
 
-            WHERE b.BO_TOTAL_EPISODE > 0
+            GROUP BY b.BO_CODE
+
+            <if test="keywordCount != null">
+                HAVING COUNT(DISTINCT bk.BK_KW_CODE) = #{keywordCount}
+            </if>
         ) AS result
     </select>
-
 
     <select id="selectBook" resultType="BookVO">
         select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher, sub_cate.sc_name AS bo_sub_cate, main_cate.mc_name AS bo_main_cate, (select count(*) from `interest` where it_bo_code = #{bo_code}) AS bo_like_count from book

@@ -55,7 +55,7 @@
     <div class="book-grid">
       <div class="book-card" th:each="book : ${waitFreeBooks}">
         <a th:href="@{/books/{id}(id=${book.bo_code})}" class="thumb-wrapper">
-          <img th:if="${book.bo_thumbnail != null}" th:src="@{${book.bo_thumbnail}}" alt="썸네일">
+          <img th:if="${book.bo_thumbnail != null}" th:src="@{'/file/' + ${book.bo_thumbnail}}" alt="썸네일">
           <img th:unless="${book.bo_thumbnail != null}" th:src="@{/resources/static/img/default_thumb.png}" alt="기본썸네일">
         </a>
         <p class="book-title">
@@ -81,7 +81,7 @@
     <div class="book-grid">
       <div class="book-card" th:each="book : ${bestBooks}">
         <a th:href="@{/books/{id}(id=${book.bo_code})}" class="thumb-wrapper">
-          <img th:if="${book.bo_thumbnail != null}" th:src="@{${book.bo_thumbnail}}" alt="썸네일">
+          <img th:if="${book.bo_thumbnail != null}" th:src="@{'/file/' + ${book.bo_thumbnail}}" alt="썸네일">
           <img th:unless="${book.bo_thumbnail != null}" th:src="@{/resources/static/img/default_thumb.png}" alt="기본썸네일">
         </a>
         <p class="book-title">
@@ -107,7 +107,7 @@
     <div class="book-grid">
       <div class="book-card" th:each="book : ${newBooks}">
         <a th:href="@{/books/{id}(id=${book.bo_code})}" class="thumb-wrapper">
-          <img th:if="${book.bo_thumbnail != null}" th:src="@{${book.bo_thumbnail}}" alt="썸네일">
+          <img th:if="${book.bo_thumbnail != null}" th:src="@{'/file/' + ${book.bo_thumbnail}}" alt="썸네일">
           <img th:unless="${book.bo_thumbnail != null}" th:src="@{/resources/static/img/default_thumb.png}" alt="기본썸네일">
         </a>
         <p class="book-title">

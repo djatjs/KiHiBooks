@@ -1,0 +1,14 @@
+a {
+  text-decoration: none;
+  color: black;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+a.active-genre {
+  font-weight: bold !important;
+  color: #ff7f50 !important; /* 메인 컬러 */
+  border-bottom: 2px solid #ff7f50 !important;
+}

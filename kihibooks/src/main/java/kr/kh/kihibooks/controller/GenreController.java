@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.KeywordVO;
 import kr.kh.kihibooks.pagination.PageInfo;
@@ -35,12 +36,14 @@ public class GenreController {
                             @RequestParam(value = "adultYN", required = false) String adultYN,
                             @RequestParam(value = "finished", required = false) String finished,
                             @RequestParam(value = "keyword", required = false) String keyword,
+                            HttpServletRequest request,
                             Model model) {
 
         int mcCode = mapGenreNameToCode(genreName);
         model.addAttribute("mcCode", mcCode);
         model.addAttribute("genreKeyword", genreName);
         model.addAttribute("tab", tab);
+        model.addAttribute("currentUri", request.getRequestURI());
 
         String extraParams = "";
         if (adultYN != null) extraParams += "&adultYN=" + adultYN;
@@ -80,6 +83,10 @@ public class GenreController {
         model.addAttribute("realtimeBooks", bookService.getRealtimeRankingBooks(mcCode));
         model.addAttribute("waitFreeBooks", bookService.getWaitFreeBooks(mcCode));
         model.addAttribute("bestBooks", bookService.getBestBooks(mcCode));
+        List<BookVO> newBooks = bookService.getNewBooks(mcCode);
+        for (BookVO book : newBooks) {
+            System.out.println("[NEW] " + book.getBo_code() + " → 썸네일: " + book.getBo_thumbnail());
+        }
         model.addAttribute("newBooks", bookService.getNewBooks(mcCode));
         model.addAttribute("keywordList", genreService.getRandomKeywords());
 

@@ -14,15 +14,15 @@
   <!-- 🔵 필터 영역 -->
   <div class="filter-header">
     <div class="sort-options">
-      <a th:href="@{'?tab=best&sort=day' + ${extraParams}}"
+      <a th:href="@{'?tab=best&range=day' + ${extraParams}}"
          class="sort-option"
-         th:classappend="${sort} == 'day' ? ' active'">오늘의 베스트</a>
-      <a th:href="@{'?tab=best&sort=week' + ${extraParams}}"
+         th:classappend="${range} == 'day' ? ' active'">오늘의 베스트</a>
+      <a th:href="@{'?tab=best&range=week' + ${extraParams}}"
          class="sort-option"
-         th:classappend="${sort} == 'week' ? ' active'">주간 베스트</a>
-      <a th:href="@{'?tab=best&sort=month' + ${extraParams}}"
+         th:classappend="${range} == 'week' ? ' active'">주간 베스트</a>
+      <a th:href="@{'?tab=best&range=month' + ${extraParams}}"
          class="sort-option"
-         th:classappend="${sort} == 'month' ? ' active'">월간 베스트</a>
+         th:classappend="${range} == 'month' ? ' active'">월간 베스트</a>
     </div>
     <div class="filter-options">
       <label><input type="checkbox" id="adultY" th:checked="${adultYN} == 'Y'"> 성인작품만</label>
@@ -35,7 +35,8 @@
   <div class="book-grid">
     <div class="book-card" th:each="book : ${pageInfo.content}">
       <a th:href="@{/books/{id}(id=${book.bo_code})}" class="thumb-wrapper">
-        <img th:src="@{/resources/static/img/default_thumb.png}" alt="썸네일">
+        <img th:if="${book.bo_thumbnail != null}" th:src="@{'/file/' + ${book.bo_thumbnail}}" alt="썸네일">
+        <img th:unless="${book.bo_thumbnail != null}" th:src="@{/resources/static/img/default_thumb.png}" alt="기본썸네일">
         <span class="badge adult-badge" th:if="${book.bo_adult == 'Y'}">19</span>
       </a>
       <p class="book-title">

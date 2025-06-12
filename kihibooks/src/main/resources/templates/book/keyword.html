@@ -196,16 +196,16 @@
       </div>
 
       <!-- 케이스 2: 키워드는 있으나 도서 없음 -->
-      <div th:if="${selectedKeywordIds != null and not #lists.isEmpty(selectedKeywordIds) and #lists.isEmpty(bookList)}" class="no-result-box">
+      <div th:if="${selectedKeywordIds != null and not #lists.isEmpty(selectedKeywordIds) and #lists.isEmpty(pageInfo.content)}" class="no-result-box">
         <div class="no-result-msg">선택한 키워드에 해당하는 작품이 없습니다.</div>
         <div class="no-result-msg">원하는 키워드를 다시 검색해보세요.</div>
       </div>
 
       <!-- 케이스 3: 도서 결과 있음 -->
-      <div th:if="${selectedKeywordIds != null and not #lists.isEmpty(selectedKeywordIds) and not #lists.isEmpty(bookList)}">
+      <div th:if="${selectedKeywordIds != null and not #lists.isEmpty(selectedKeywordIds) and not #lists.isEmpty(pageInfo.content)}">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px;">
           <div th:text="${pageInfo.totalCount} + '개의 작품'"></div>
-          <select onchange="changeSort(this.value)">
+          <select onchange="changeSort(this)">
             <option value="recent" th:selected="${sort == 'recent'}">최신순</option>
             <option value="popular" th:selected="${sort == 'popular'}">인기순</option>
             <option value="rating" th:selected="${sort == 'rating'}">평점순</option>
@@ -214,7 +214,7 @@
         </div>
 
         <!-- 도서 리스트 -->
-        <div th:each="book : ${bookList}" style="display: flex; padding: 20px 0; border-bottom: 1px solid #eee; gap: 16px;">
+        <div th:each="book : ${pageInfo.content}" style="display: flex; padding: 20px 0; border-bottom: 1px solid #eee; gap: 16px;">
           <div style="width: 100px; height: 140px; flex-shrink: 0; position: relative;">
             <img th:src="@{'/resources/static/img/default_thumb.png'}" alt="썸네일" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
             <div th:if="${book.bo_adult == 1}" style="position: absolute; top: 4px; right: 4px; background: red; color: white; font-size: 11px; padding: 2px 6px; border-radius: 10px;">19</div>
@@ -261,6 +261,7 @@
       const keywordNameMap = {};
 
       document.addEventListener("DOMContentLoaded", function () {
+        // 키워드 이름 맵 초기화
         document.querySelectorAll(".keyword-tag").forEach(tag => {
           const id = tag.dataset.id;
           const name = tag.dataset.name;
@@ -270,6 +271,7 @@
         updateKeywordResult();
         renderSelectedKeywords(keywordIds);
 
+        // 키워드 태그 클릭 이벤트
         document.querySelectorAll(".keyword-tag").forEach(tag => {
           tag.addEventListener("click", function () {
             const id = this.dataset.id;
@@ -280,12 +282,18 @@
           });
         });
 
-        // 전체 해제 버튼 이벤트 연결
-        document.getElementById("resetBtn").addEventListener("click", resetKeywords);
+        // 전체 해제 버튼 이벤트
+        const resetBtn = document.getElementById("resetBtn");
+        if (resetBtn) {
+          resetBtn.addEventListener("click", resetKeywords);
+        }
 
-        // 키워드 스크롤 감지
-        updateArrowVisibility();
-        document.getElementById("keywordRow").addEventListener("scroll", updateArrowVisibility);
+        // 스크롤 이벤트 각 행에 연결
+        document.querySelectorAll(".keyword-scroll").forEach(el => {
+          el.addEventListener("scroll", updateArrowVisibility);
+        });
+
+        updateArrowVisibility(); // 초기 표시
       });
 
       function resetKeywords() {
@@ -347,7 +355,13 @@
             });
 
             renderSelectedKeywords(keywordIds);
+
+            // 스크롤 이벤트 재연결
+            document.querySelectorAll(".keyword-scroll").forEach(el => {
+              el.addEventListener("scroll", updateArrowVisibility);
+            });
             updateArrowVisibility();
+
             history.replaceState(null, "", `/book/keyword?${query.toString()}`);
           },
           error: function () {
@@ -356,7 +370,33 @@
         });
       }
 
-      // 좌우 스크롤 화살표 처리
+      // 화살표 가시성 처리
+      function updateArrowVisibility() {
+        document.querySelectorAll(".keyword-scroll-wrapper").forEach(wrapper => {
+          const scrollEl = wrapper.querySelector(".keyword-scroll");
+          const leftBtn = wrapper.querySelector(".arrow-btn.left");
+          const rightBtn = wrapper.querySelector(".arrow-btn.right");
+
+          if (!scrollEl || !leftBtn || !rightBtn) return;
+
+          const maxScrollLeft = scrollEl.scrollWidth - scrollEl.clientWidth;
+
+          if (scrollEl.scrollLeft <= 0) leftBtn.classList.add("hidden");
+          else leftBtn.classList.remove("hidden");
+
+          if (scrollEl.scrollLeft >= maxScrollLeft - 1) rightBtn.classList.add("hidden");
+          else rightBtn.classList.remove("hidden");
+        });
+      }
+
+      // 정렬 옵션 변경
+      function changeSort(selectElement) {
+        const selectedSort = selectElement;
+        query.set("sort", selectedSort);
+        updateKeywordResult();
+      }
+
+      // 버튼 클릭 시 스크롤 이동
       function scrollKeywordRow(button, direction) {
         const targetId = button.getAttribute('data-target');
         const scrollContainer = document.getElementById(targetId);
@@ -367,21 +407,7 @@
           });
         }
       }
-
-      function updateArrowVisibility() {
-        const row = document.getElementById("keywordRow");
-        const leftBtn = document.getElementById("scrollLeftBtn");
-        const rightBtn = document.getElementById("scrollRightBtn");
-
-        const maxScrollLeft = row.scrollWidth - row.clientWidth;
-        if (row.scrollLeft <= 0) leftBtn.classList.add("hidden");
-        else leftBtn.classList.remove("hidden");
-
-        if (row.scrollLeft >= maxScrollLeft - 1) rightBtn.classList.add("hidden");
-        else rightBtn.classList.remove("hidden");
-      }
     </script>
-
   </div>
 </body>
 </html>
