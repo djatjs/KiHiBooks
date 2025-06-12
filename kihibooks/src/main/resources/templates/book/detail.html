@@ -2828,12 +2828,6 @@
 														</div>
 													</div>
 												</div>
-												<div class="continue-btn" th:if="${not #lists.isEmpty(buyList)}">
-													<a th:href="@{/}" class="continueBtn">이어보기</a>
-												</div>
-												<div class="continue-btn" th:if="${#lists.isEmpty(buyList)}">
-													<a th:href="@{/}" class="firstViewBtn">첫화보기</a>
-												</div>
 											</div>
 										</div>
 									</div>
@@ -2960,7 +2954,7 @@
 															<div class="direct-view-wrapper"
 																th:if="${episode.ep_price == 0 or buyCodeSet.contains(episode.ep_code)}">
 																<!-- 무료/소장 회차 : 보기 | 유료 회차 : 소장 -->
-																<a th:href="@{/}" th:attr="data-episode-code=${episode.ep_code}"
+																<a th:href="@{'/mylibrary/readEpisode/' + ${episode.ep_code}}" th:attr="data-episode-code=${episode.ep_code}"
 																	class="direct-view-btn">보기</a>
 															</div>
 															<div class="direct-view-wrapper"
