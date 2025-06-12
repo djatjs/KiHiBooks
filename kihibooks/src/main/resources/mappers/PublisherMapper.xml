@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.kh.kihibooks.dao.PublisherDAO">
     <select id="selectPublisher" resultType="PublisherVO">
-        select * from publisher where pu_name = #{pu_name} and pi_del = 'N'
+        select * from publisher where pu_name = #{pu_name}
     </select>
     <insert id="insertPublisher">
         insert into publisher(pu_name, pu_code)
