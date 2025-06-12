@@ -23,7 +23,7 @@ INSERT INTO `USER` (
 ('user4@example.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', 'user4', 'USER', 'M', '2007'), -- 9
 ('user5@example.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', 'user5', 'USER', 'F', '2010'), -- 10
 ('user6@example.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', 'user6', 'USER', 'M', '2001'), -- 11
-('admin@admin.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', '관리자', 'PUBLISHER', 'M', '1985'); -- 12 (관리자)
+('admin@admin.com', '$2a$10$wlSsruxN/AGAH9cy1WXBk.6Lf30SjfWL7NISbMujL.H9W7DnNUgHK', '관리자', 'ADMIN', 'M', '1985'); -- 12 (관리자)
 
 
 -- INSERT PUBLISHERS
