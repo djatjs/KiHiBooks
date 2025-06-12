@@ -264,19 +264,16 @@
     <!-- 키워드 검색 도서 리스트 -->
     <select id="selectBooksByKeywords" resultMap="bookWithKeywords">
         SELECT
-            BO_CODE, BO_TITLE, BO_DESCRIPTION, BO_TOTAL_EPISODE,
-            BO_TOTAL_RATING, BO_REVIEW_COUNT, BO_ADULT, BO_FIN, BO_PUBLISH_DATE,
-            AU_NAME AS bo_author,
-            KW_CODE AS KW_CODE, KW_NAME AS kw_name
+            b.BO_CODE, b.BO_TITLE, b.BO_DESCRIPTION, b.BO_TOTAL_EPISODE,
+            b.BO_TOTAL_RATING, b.BO_REVIEW_COUNT, b.BO_ADULT, b.BO_FIN, b.BO_PUBLISH_DATE,
+            a.AU_NAME AS bo_author,
+            k.KW_CODE AS KW_CODE, k.KW_NAME AS kw_name
         FROM
-            book
+            book b
         JOIN
-            author ON BO_AU_NUM = AU_NUM
-        WHERE b.BO_TOTAL_EPISODE > 0
-        LEFT JOIN
-            book_keyword ON BK_BO_CODE = BO_CODE
-        LEFT JOIN
-            keyword ON KW_CODE = BK_KW_CODE
+            author a ON b.BO_AU_NUM = a.AU_NUM
+
+        <!-- ✅ 조건부 JOIN은 여기 -->
         <if test="keywordIds != null and keywordIds.size() > 0">
             JOIN (
                 SELECT DISTINCT BK_BO_CODE
@@ -287,31 +284,39 @@
                 </foreach>
                 GROUP BY BK_BO_CODE
                 HAVING COUNT(DISTINCT BK_KW_CODE) = #{keywordCount}
-            ) filtered ON BO_CODE = filtered.BK_BO_CODE
+            ) filtered ON b.BO_CODE = filtered.BK_BO_CODE
         </if>
+
+        LEFT JOIN book_keyword bk ON bk.BK_BO_CODE = b.BO_CODE
+        LEFT JOIN keyword k ON k.KW_CODE = bk.BK_KW_CODE
+
+        WHERE b.BO_TOTAL_EPISODE > 0
+
         <choose>
             <when test="sort == 'popular'">
-                ORDER BY BO_REVIEW_COUNT DESC
+                ORDER BY b.BO_REVIEW_COUNT DESC
             </when>
             <when test="sort == 'rating'">
-                ORDER BY BO_TOTAL_RATING DESC
+                ORDER BY b.BO_TOTAL_RATING DESC
             </when>
             <when test="sort == 'review'">
-                ORDER BY BO_REVIEW_COUNT DESC
+                ORDER BY b.BO_REVIEW_COUNT DESC
             </when>
             <otherwise>
-                ORDER BY BO_PUBLISH_DATE DESC
+                ORDER BY b.BO_PUBLISH_DATE DESC
             </otherwise>
         </choose>
+
         LIMIT #{limit} OFFSET #{offset}
     </select>
+
     <!-- 키워드 검색 도서 개수 -->
     <select id="countBooksByKeywords" resultType="int">
         SELECT COUNT(*)
         FROM (
-            SELECT BO_CODE
-            FROM book
-            WHERE b.BO_TOTAL_EPISODE > 0
+            SELECT b.BO_CODE
+            FROM book b
+
             <if test="keywordIds != null and keywordIds.size() > 0">
                 JOIN (
                     SELECT BK_BO_CODE
@@ -322,10 +327,13 @@
                     </foreach>
                     GROUP BY BK_BO_CODE
                     HAVING COUNT(DISTINCT BK_KW_CODE) = #{keywordCount}
-                ) filtered ON BO_CODE = filtered.BK_BO_CODE
+                ) filtered ON b.BO_CODE = filtered.BK_BO_CODE
             </if>
+
+            WHERE b.BO_TOTAL_EPISODE > 0
         ) AS result
     </select>
+
 
     <select id="selectBook" resultType="BookVO">
         select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher, sub_cate.sc_name AS bo_sub_cate, main_cate.mc_name AS bo_main_cate, (select count(*) from `interest` where it_bo_code = #{bo_code}) AS bo_like_count from book
