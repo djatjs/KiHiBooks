@@ -47,7 +47,7 @@ public class BookDetailController {
     @GetMapping("/books/{bo_code}")
     public String bookDetail(Model model, @PathVariable String bo_code,
             @AuthenticationPrincipal CustomUser customUser) {
-        BookVO book = bookService.getBook(bo_code);
+        BookVO book = bookService.selectDetailBook(bo_code);
         List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
         boolean isFree = false;
         for (EpisodeVO ep : epiList) {
@@ -243,13 +243,13 @@ public class BookDetailController {
         return res;
     }
 
-    @PostMapping("/view/free")
-    public boolean viewFree(@RequestBody String epCode, @AuthenticationPrincipal CustomUser customUser) {
+    // @PostMapping("/view/free")
+    // public boolean viewFree(@RequestBody String epCode, @AuthenticationPrincipal CustomUser customUser) {
         
-        int urNum = customUser.getUser().getUr_num();
+    //     int urNum = customUser.getUser().getUr_num();
 
-        // if(bookService.insertBuyList(epCode, urNum)) {
+    //     // if(bookService.insertBuyList(epCode, urNum)) {
             
-        // }
-    }
+    //     // }
+    // }
 }
