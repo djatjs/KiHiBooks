@@ -166,4 +166,47 @@
         update `order` set od_status = "PAID"
         where od_id = #{od_id}
     </update>
+    <select id="selectEpCodesByBlId" resultType="String">
+        select distinct bl_ep_code from buy_list
+        where bl_id = #{bl_id}
+        order by bl_ep_code desc
+    </select>
+    <select id="getBlIds" resultType="String">
+        select bl_id from buy_list
+        where bl_ur_num = #{ur_num}
+        group by bl_id
+    </select>
+    <select id="selectBList" resultType="BuyListVO">
+        select * from buy_list
+        where bl_ur_num = #{ur_num}
+        order by bl_num desc
+    </select>
+    <select id="selectTotalByOdId" resultType="Integer">
+        select od_total_amount from `order`
+        where od_id = #{od_id}
+    </select>
+    <select id="selectBuyListUrNum" resultType="BuyListVO">
+        select *, episode.ep_title AS bl_ep_title, `order`.od_total_amount AS bl_total from buy_list
+        join episode on bl_ep_code = ep_code
+        join `order` on od_id = bl_id
+        where bl_ur_num = #{ur_num} and bl_id = #{bl_id}
+        group by bl_id
+        order by bl_id desc
+    </select>
+    <select id="selectUrNumByEmail" resultType="int">
+        select ur_num from user
+        where ur_email = #{ur_email}
+    </select>
+    <select id="countCart" resultType="Integer">
+        select count(*) from cart
+        where ca_ur_num = #{ur_num}
+    </select>
+    <select id="countLib" resultType="Integer">
+        select count(*) from buy_list
+        where bl_ur_num = #{ur_num}
+    </select>
+    <update id="updatePoint">
+        update `user` set ur_point = ur_point + #{totalCredit}
+        where ur_num = #{ur_num}
+    </update>
 </mapper>

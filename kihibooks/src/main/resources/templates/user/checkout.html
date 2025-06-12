@@ -730,7 +730,8 @@
 			padding: 13px 14px;
 		}
 
-		.kihipay-detail-text {
+		.kihipay-detail-text,
+		.kihipay-detail-point {
 			display: flex;
 			justify-content: space-between;
 			width: 100%;
@@ -739,11 +740,31 @@
 			line-height: normal;
 		}
 
-		.kihipay-detail-text>span:first-of-type {
+		.kihipay-detail-text>span:first-of-type,
+		.kihipay-detail-point>span:first-of-type {
 			font-weight: 600;
 		}
 
-		.kihipay-detail-text>span:last-of-type {
+		.kihipay-detail-text>span:last-of-type,
+		.kihipay-detail-point>span:last-of-type {
+			font-weight: 700;
+		}
+
+		.kihipay-detail-shortage {
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+			color: #ff7f50;
+			font-size: 14px;
+			line-height: normal;
+			margin-top: 12px;
+		}
+
+		.kihipay-detail-shortage>span:first-of-type {
+			font-weight: 600;
+		}
+
+		.kihipay-detail-shortage>span:last-of-type {
 			font-weight: 700;
 		}
 
@@ -1143,7 +1164,7 @@
 																						5% 적립)</option>
 																					<option value="300000">300,000원 (포인트
 																						5% 적립)</option>
-																					<option value="500000">500,000원 (포인트
+																					<option value="525000">500,000원 (포인트
 																						5% 적립)</option>
 																					<option value="1000000">1,000,000원
 																						(포인트 5% 적립)</option>
@@ -1167,21 +1188,6 @@
 																			<h5 class="kihipay-pay-method-title">결제 방법
 																			</h5>
 																			<ul class="kihipay-pay-ul">
-																				<li>
-																					<label class="kihipay-pay-label" data-method-type="naver">
-																						<input type="checkbox" class="kihipay-pay-method-checkbox" readonly checked>
-																						<span class="kihipay-pay-method-check-img">
-																							<img src="/resources/static/check/radio.png" alt="체크박스"
-																								style="width: 24px;">
-																						</span>
-																						<span class="kihipay-pay-title">
-																							<span class="kihipay-pay-logo">
-																								<img src="/resources/static/logo/naver_pay.svg" alt="네이버 페이"
-																									style="width: 53px;">
-																							</span>
-																						</span>
-																					</label>
-																				</li>
 																				<li>
 																					<label class="kihipay-pay-label" data-method-type="kakao">
 																						<input type="checkbox" class="kihipay-pay-method-checkbox" readonly>
@@ -1235,21 +1241,6 @@
 																			</h5>
 																			<ul class="kihipay-pay-ul">
 																				<li>
-																					<label class="kihipay-pay-label" data-method-type="naver">
-																						<input type="checkbox" class="kihipay-pay-method-checkbox" readonly checked>
-																						<span class="kihipay-pay-method-check-img">
-																							<img src="/resources/static/check/radio.png" alt="체크박스"
-																								style="width: 24px;">
-																						</span>
-																						<span class="kihipay-pay-title">
-																							<span class="kihipay-pay-logo">
-																								<img src="/resources/static/logo/naver_pay.svg" alt="네이버 페이"
-																									style="width: 53px;">
-																							</span>
-																						</span>
-																					</label>
-																				</li>
-																				<li>
 																					<label class="kihipay-pay-label" data-method-type="kakao">
 																						<input type="checkbox" class="kihipay-pay-method-checkbox" readonly>
 																						<span class="kihipay-pay-method-check-img">
@@ -1297,16 +1288,14 @@
 															</h3>
 														</div>
 														<div class="kihipay-detail-use">
-															<h4 class="kihipay-detail-text">
+															<h4 class="kihipay-detail-point">
 																<span>포인트 사용</span>
-																<span></span>
+																<span th:text="${formattedTotal} + '원'"></span>
 															</h4>
-															<ul class="kihipay-detail-left">
-																<li>
-																	<span>결제 후 잔여 포인트</span>
-																	<span th:text="${formattedPoint} + '원'"></span>
-																</li>
-															</ul>
+															<h4 class="kihipay-detail-shortage">
+																<span>부족한 금액</span>
+																<span>0원</span>
+															</h4>
 														</div>
 													</div>
 													<div class="kihipay-charge-detail-wrapper" id="kihipay_charge_detail_wrapper">
@@ -1323,12 +1312,12 @@
 														<div class="kihipay-charge-after">
 															<h4 class="kihipay-after-text">
 																<span>충전 후 포인트 사용</span>
-																<span>-200원</span>
+																<span th:text="'-'+${formattedTotal} + '원'"></span>
 															</h4>
 															<ul class="kihipay-after-point">
 																<li>
 																	<span>키히포인트 사용</span>
-																	<span>200원</span>
+																	<span th:text="${formattedTotal} + '원'"></span>
 																</li>
 															</ul>
 														</div>
@@ -1657,7 +1646,7 @@
 						method: selectedMethod,
 						chargeAmount,
 						isChargeAfter,
-						epCodes : epCodes,
+						epCodes: epCodes,
 					};
 
 					IMP.init("imp33538244");
@@ -1678,10 +1667,6 @@
 									let method;
 									let channelKey;
 									switch (selectedMethod) {
-										case 'naver':
-											method = "naverpay";
-											window.location.href = '/payment/naver/start?orderId=' + response.orderId;
-											break;
 										case 'kakao':
 											method = "kakaopay";
 											channelKey = "channel-key-3cfa1ce1-28fb-4421-ace6-a9575591474d";
@@ -1707,7 +1692,7 @@
 						}
 					});
 
-					
+
 					function requestPay(method, channelKey, orderId, nickname, email) {
 						IMP.request_pay(
 							{
@@ -1719,9 +1704,9 @@
 								buyer_email: email,
 								buyer_name: nickname,
 							},
-							function(response) {
-								if(response.success) {
-									window.location.href="/order/checkout/finished?merchant_uid=" + orderId;
+							function (response) {
+								if (response.success) {
+									window.location.href = "/order/checkout/finished?merchant_uid=" + orderId;
 								}
 							}
 						);
@@ -1747,6 +1732,87 @@
 						});
 					}
 				});
+			});
+
+			document.addEventListener('DOMContentLoaded', () => {
+				// 요소 선택
+				const select = document.querySelector('.kihipay-charge-sel');
+				const selectedText = document.querySelector('.kihipay-charge-selected p');
+				const cdetailText = document.querySelector('.kihipay-cdetail-text span:nth-child(2)');
+				const cdetailPoint = document.querySelector('.kihipay-cdetail-point');
+				const assetInput = document.querySelector('.asset-input');
+				const detailPoint = document.querySelector('.kihipay-detail-point span:nth-child(2)');
+				const detailShortage = document.querySelector('.kihipay-detail-shortage span:nth-child(2)');
+				const useAllBtn = document.querySelector('.asset-use-all-btn');
+				const totalAmount = parseInt(document.querySelector('.kihipay-detail-order span:nth-child(2)').textContent.replace(/[^0-9]/g, '')); // 주문 금액 (Thymeleaf ${formattedTotal})
+				const userPoint = parseInt(document.querySelector('.asset-description strong span').getAttribute('data-amount')); // 사용자 포인트 (Thymeleaf ${point})
+
+				// 포인트 적립 비율 정의
+				const pointRates = {
+					2000: 0.03,
+					5000: 0.03,
+					10000: 0.03,
+					20000: 0.03,
+					30000: 0.04,
+					50000: 0.04,
+					100000: 0.05,
+					200000: 0.05,
+					300000: 0.05,
+					500000: 0.05,
+					1000000: 0.05,
+					2000000: 0.05
+				};
+
+				// 천 단위 쉼표 포맷팅 함수
+				const formatNumber = (num) => {
+					return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+				};
+
+				// 포인트 적립 계산 및 표시
+				const updatePointDisplay = (amount) => {
+					const rate = pointRates[amount] || 0.05; // 기본값 5%
+					const points = Math.floor(amount * rate);
+					cdetailPoint.innerHTML = `<img src="/resources/static/img/charge_point.png" alt="충전 포인트" style="width: 18px; margin: 0 1px 2px 0" class="yellow">${formatNumber(points)}원 키히포인트 적립`;
+				};
+
+				// 드롭다운 변경 처리
+				select.addEventListener('change', () => {
+					const selectedOption = select.options[select.selectedIndex];
+					const amount = parseInt(selectedOption.value);
+					selectedText.textContent = selectedOption.text;
+					cdetailText.textContent = `${formatNumber(amount)}원`;
+					updatePointDisplay(amount);
+				});
+
+				// asset-input 입력 처리
+				assetInput.addEventListener('input', () => {
+					let inputValue = parseInt(assetInput.value.replace(/[^0-9]/g, '')) || 0;
+
+					// 입력값이 사용자 포인트를 초과하지 않도록 제한
+					if (inputValue > userPoint) {
+						inputValue = userPoint;
+						assetInput.value = formatNumber(inputValue);
+					}
+
+					// 포인트 사용 및 부족 금액 업데이트
+					detailPoint.textContent = `${formatNumber(inputValue)}원`;
+					const shortage = totalAmount - inputValue;
+					detailShortage.textContent = `${formatNumber(shortage >= 0 ? shortage : 0)}원`;
+				});
+
+				// 전액 사용 버튼 처리
+				useAllBtn.addEventListener('click', () => {
+					assetInput.value = formatNumber(userPoint);
+					detailPoint.textContent = `${formatNumber(userPoint)}원`;
+					const shortage = totalAmount - userPoint;
+					detailShortage.textContent = `${formatNumber(shortage >= 0 ? shortage : 0)}원`;
+				});
+
+				// 초기화: 드롭다운 기본값 설정
+				const initialAmount = parseInt(select.value);
+				selectedText.textContent = select.options[select.selectedIndex].text;
+				cdetailText.textContent = `${formatNumber(initialAmount)}원`;
+				updatePointDisplay(initialAmount);
 			});
 		</script>
 

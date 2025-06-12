@@ -50,7 +50,12 @@ public class UserController {
     public String mypage(Model model) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserVO user = userService.selectUser(userDetails.getUsername());
+        Integer cartCount = userService.countCart(userDetails.getUsername());
+        Integer libCount = userService.countLib(userDetails.getUsername());
+        System.out.println(libCount);
         model.addAttribute("user", user);
+        model.addAttribute("cartCount", cartCount);
+        model.addAttribute("libCount", libCount);
         return "user/mypage";
     }
 

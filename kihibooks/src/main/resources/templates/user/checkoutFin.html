@@ -228,17 +228,17 @@
 					<tr>
 						<th>결제 내역</th>
 						<td>
-						<a th:href="@{/}" class="checkout-episode-text">이세계 착각 헌터 4화</a>
+						<a th:href="@{'/books/' + ${episode.ep_bo_code}}" class="checkout-episode-text" th:text="${epiTitle}"></a>
 					</td>
 					</tr>
 					<tr>
 						<th>결제 금액</th>
-						<td>0원</td>
+						<td th:text="${formattedTotal} + '원'">0원</td>
 					</tr>
 				</tbody>
 			</table>
 			<div class="history-btn">
-				<a th:href="@{/order/history_point}" class="history-text">결제 내역</a>
+				<a th:href="@{/order/history}" class="history-text">결제 내역</a>
 			</div>
 		</div>
 	</main>

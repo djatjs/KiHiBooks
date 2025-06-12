@@ -87,8 +87,28 @@ public interface UserDAO {
 
     void updateUsePoint(int ur_num, int usePoint);
 
-    void updateChargePoint(int chargeAmount, int ur_num);
+    void updateChargePoint(int ur_num, int chargeAmount);
 
     boolean updateChargeOrder(String od_id);
+
+    List<String> selectEpCodesByBlId(String bl_id);
+
+    List<BuyListVO> selectBuyList(int ur_num);
+
+    List<BuyListVO> selectBList(int ur_num);
+
+    Integer selectTotalByOdId(String bl_id);
+
+    List<String> getBlIds(int ur_num);
+
+    BuyListVO selectBuyListUrNum(int ur_num, String bl_id);
+
+    int selectUrNumByEmail(String ur_email);
+
+    Integer countCart(int ur_num);
+
+    Integer countLib(int ur_num);
+
+    void updatePoint(int ur_num, int totalCredit);
 
 }

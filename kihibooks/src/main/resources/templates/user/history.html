@@ -260,11 +260,11 @@
 								</tr>
 							</thead>
 							<tbody>
-								<tr class="detail-link">
-									<td class="default">2025.05.13. 14:13</td>
-									<td class="body_title">이세계 착각 헌터 29화 외 1권</td>
+								<tr class="detail-link" th:each="buy : ${buyListMap}">
+									<td class="default" th:text="${#strings.substring(buy.key.bl_date, 0, 16)}"></td>
+									<td class="body_title" th:text="${buy.key.bl_ep_title}">회차 제목</td>
 									<td class="body_val">
-										<span class="body_amount">200원</span>
+										<span class="body_amount" th:text="${buy.key.bl_total} + '원'">0원</span>
 									</td>
 									<td class="detail-icon">
 										<a th:href="@{/order/history_point/${po_num}}">
@@ -274,7 +274,7 @@
 								</tr>
 							</tbody>
 						</table>
-						<div class="paging-wrapper">
+						<div class="paging-wrapper" th:if="${buyListMap.size() > 10}">
 							<div class="module-paging">
 								<ul class="pagination d-flex" style="justify-content: center;">
 									<li class="page-item">
