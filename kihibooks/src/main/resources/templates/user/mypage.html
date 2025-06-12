@@ -275,7 +275,7 @@
 								<div class="info-libarary mt-5">
 									<img src="/resources/static/img/library.png" alt="서재" style="height: 25px">
 									<div class="bold mt-1">내 서재</div>
-									<div class="val bold">0개</div>
+									<div class="val bold" th:text="${libCount} + '개'">0개</div>
 								</div>
 							</a>
 						</div>
@@ -284,7 +284,7 @@
 								<div class="info-cart mt-5">
 									<img src="/resources/static/img/cart.png" alt="카트" style="height: 25px">
 									<div class="bold mt-1">카트</div>
-									<div class="val bold">0개</div>
+									<div class="val bold" th:text="${cartCount} + '개'">0개</div>
 								</div>
 							</a>
 						</div>

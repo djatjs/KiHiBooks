@@ -1,9 +1,15 @@
 package kr.kh.kihibooks.controller;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -21,27 +27,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import kr.kh.kihibooks.model.dto.ChargeDTO;
 import kr.kh.kihibooks.model.dto.PaymentDTO;
-import kr.kh.kihibooks.model.dto.PaymentRequest;
 import kr.kh.kihibooks.model.dto.PointOrderRequest;
-import kr.kh.kihibooks.model.dto.TokenRequest;
+import kr.kh.kihibooks.model.vo.BuyListVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
-import kr.kh.kihibooks.model.vo.OrderVO;
 import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.utils.CustomUser;
 
 @Controller
 public class PayController {
-    
+
     @Autowired
     UserService userService;
 
     @Autowired
     RestTemplate restTemplate;
-    
+
     @Autowired
     ObjectMapper objectMapper;
 
@@ -56,7 +60,26 @@ public class PayController {
     }
 
     @GetMapping("/order/history")
-    public String history() {
+    public String history(Model model, @AuthenticationPrincipal CustomUser customUser) {
+        List<BuyListVO> bList = userService.getBList(customUser.getUser().getUr_num());
+        List<BuyListVO> buyList = userService.getBuyList(customUser.getUser().getUr_num());
+
+        Map<String, Integer> bCountMap = new HashMap<>();
+        for (BuyListVO buy : bList) {
+            String bl_id = buy.getBl_id();
+            bCountMap.put(bl_id, bCountMap.getOrDefault(bl_id, 0) + 1);
+        }
+
+        Map<BuyListVO, Integer> buyListMap = new LinkedHashMap<>();
+        for (BuyListVO buy : buyList) {
+            String blId = buy.getBl_id();
+            Integer count = bCountMap.get(blId);
+            if (count != null) {
+                buyListMap.put(buy, count);
+            }
+        }
+
+        model.addAttribute("buyListMap", buyListMap);
         return "/user/history";
     }
 
@@ -96,75 +119,25 @@ public class PayController {
     }
 
     @GetMapping("/order/checkout/finished")
-    public String checkoutFin(@RequestParam("merchant_uid") String contentsId, Model model) {
-        model.addAttribute("contentsId", contentsId);
-        return "/user/checkoutFin";
-    }
+    public String checkoutFin(@RequestParam("merchant_uid") String contentsId,
+            @AuthenticationPrincipal CustomUser customUser, Model model) {
 
-    @PostMapping("/order/chargeBeforePay")
-    public ResponseEntity<?> completePayment(@RequestBody PaymentRequest request) {
-        try {
-            // 1. 포트원 API 엑세스 토큰 발급
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            String tokenRequestBody = objectMapper.writeValueAsString(
-                    new TokenRequest("imp_apikey", "ekKoeW8RyKuT0zgaZsUtXXTLQ4AhPFW"));
-
-            HttpEntity<String> tokenEntity = new HttpEntity<>(tokenRequestBody, headers);
-            ResponseEntity<JsonNode> tokenResponse = restTemplate.exchange(
-                    "https://api.iamport.kr/users/getToken",
-                    HttpMethod.POST,
-                    tokenEntity,
-                    JsonNode.class);
-
-            if (!tokenResponse.getStatusCode().is2xxSuccessful()) {
-                throw new RuntimeException("Failed to get token: " + tokenResponse.getBody());
-            }
-
-            String accessToken = tokenResponse.getBody().get("response")
-                    .get("access_token").asText();
-
-            // 2. 포트원 결제내역 단건조회 API 호출
-            HttpHeaders paymentHeaders = new HttpHeaders();
-            paymentHeaders.set("Authorization", accessToken);
-
-            HttpEntity<?> paymentEntity = new HttpEntity<>(paymentHeaders);
-            ResponseEntity<JsonNode> paymentResponse = restTemplate.exchange(
-                    "https://api.iamport.kr/payments/" + request.getImpUid(),
-                    HttpMethod.GET,
-                    paymentEntity,
-                    JsonNode.class);
-
-            if (!paymentResponse.getStatusCode().is2xxSuccessful()) {
-                throw new RuntimeException("Failed to get payment: " + paymentResponse.getBody());
-            }
-
-            JsonNode payment = paymentResponse.getBody();
-
-            // 3. 고객사 내부 주문 데이터의 가격과 실제 지불된 금액을 비교
-            OrderVO order = userService.findById(request.getMerchantUid());
-            int paymentAmount = payment.get("amount").asInt();
-
-            if (order.getOd_final_amount() == paymentAmount) {
-                String status = payment.get("status").asText();
-                switch (status) {
-                    case "ready":
-                        // 가상 계좌가 발급된 상태
-                        // 계좌 정보를 이용한 로직 구현
-                        break;
-                    case "paid":
-                        return ResponseEntity.ok().body("Payment completed successfully");
-                }
-                return ResponseEntity.ok().build();
-            } else {
-                // 결제 금액 불일치
-                return ResponseEntity.badRequest().body("Payment amount mismatch");
-            }
-        } catch (Exception e) {
-            // 결제 검증 실패
-            return ResponseEntity.badRequest().body(e.getMessage());
+        List<String> epCodes = userService.getEpCodesByBlId(contentsId);
+        List<EpisodeVO> epList = userService.getEpisodeByCodes(epCodes);
+        EpisodeVO episode = epList.get(0);
+        String epiTitle = episode.getEp_title() + (epList.size() < 2 ? "" : " 외 " + ((epList.size() - 1) + "권"));
+        int total = 0;
+        for (EpisodeVO epi : epList) {
+            total += epi.getEp_price();
         }
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        String formattedTotal = formatter.format(total);
+
+        model.addAttribute("contentsId", contentsId);
+        model.addAttribute("episode", episode);
+        model.addAttribute("formattedTotal", formattedTotal);
+        model.addAttribute("epiTitle", epiTitle);
+        return "/user/checkoutFin";
     }
 
     @PostMapping("/order/free")
@@ -248,35 +221,141 @@ public class PayController {
     public Map<String, Object> processPayment(@RequestBody PaymentDTO payment,
             @AuthenticationPrincipal CustomUser customUser) {
         Map<String, Object> response = new HashMap<>();
-        System.out.println(payment);
+        System.out.println("payment: " + payment);
+
+        // 1. 유효성 검사: 사용 포인트가 총 주문 금액을 초과하는지 확인
         if (payment.getUsePoint() > payment.getTotalAmount()) {
             response.put("success", false);
             response.put("error", "사용 포인트가 결제 금액을 초과합니다.");
             return response;
         }
-        
+
+        // 2. 사용자 정보 및 주문 정보 추출
         List<String> epCodes = payment.getEpCodes();
         int userNum = customUser.getUser().getUr_num();
         String orderId = userService.saveTempOrder(payment, userNum);
 
+        // 3. 결제 금액 및 적립 포인트 처리
+        int charge = 0; // 결제 API로 전송되는 금액 (기본 금액)
+        int totalCredit = 0; // 사용자 계정에 적립되는 금액 (기본 금액 + 적립 포인트)
+
+        if ("true".equals(payment.getIsChargeAfter())) {
+            // 클라이언트에서 받은 chargeAmount는 기본 금액
+            charge = payment.getChargeAmount();
+
+            // 유효한 금액인지 검증
+            if (!POINT_RATES.containsKey(charge)) {
+                response.put("success", false);
+                response.put("error", "유효하지 않은 충전 금액입니다.");
+                return response;
+            }
+
+            // 적립 포인트 계산
+            int bonusPoints = (int) Math.floor(charge * POINT_RATES.get(charge));
+            totalCredit = charge + bonusPoints; // 실제 들어오는 금액
+        }
+
+        // 4. 결제 처리
+        if ("true".equals(payment.getIsChargeAfter())) {
+            // 충전 후 결제
+            userService.chargeBeforePay(orderId, userNum, epCodes, totalCredit, payment.getFinalAmount());
+        } else {
+            // 일반 결제
+            userService.justPay(orderId, userNum, epCodes);
+        }
+
+        // 5. 응답 구성
         String method = payment.getMethod();
         String redirectUrl = "/payment/" + method.toLowerCase() + "/start?orderId=" + orderId;
-        int charge = 0;
-        
-        if(payment.getIsChargeAfter().equals("true")) {
-            charge = payment.getChargeAmount();
-        }
 
         response.put("success", true);
         response.put("orderId", orderId);
-        response.put("amount", payment.getTotalAmount());
+        response.put("amount", charge != 0 ? charge : payment.getFinalAmount()); // 결제 API에 사용할 금액
         response.put("method", method);
         response.put("redirectUrl", redirectUrl);
         response.put("email", customUser.getUser().getUr_email());
         response.put("nickname", customUser.getUser().getUr_nickname());
-        
-        userService.chargeBeforePay(orderId, userNum, epCodes, charge, payment.getFinalAmount());
-        System.out.println(response);
+        response.put("totalCredit", totalCredit); // 디버깅용: 실제 적립 금액
+
         return response;
+    }
+
+    @GetMapping("/order/checkout/point/finished")
+    public String chargePoint(@RequestParam("merchant_uid") String contentsId,
+            @AuthenticationPrincipal CustomUser customUser, Model model) {
+
+        return "user/chargePoint";
+    }
+
+    @PostMapping("/payment/pay")
+    @ResponseBody
+    public Map<String, Object> processPay(@RequestBody ChargeDTO chargeDTO,
+            @AuthenticationPrincipal CustomUser customUser) {
+        Map<String, Object> response = new HashMap<>();
+        System.out.println("chargeDTO: " + chargeDTO);
+
+        // 사용자 정보 검증
+        if (customUser == null || customUser.getUser() == null) {
+            response.put("success", false);
+            response.put("error", "로그인이 필요합니다.");
+            return response;
+        }
+
+        int userNum = customUser.getUser().getUr_num();
+        String paymentMethod = chargeDTO.getMethod();
+        int chargeAmount = chargeDTO.getChargeAmount();
+
+        // 결제 수단 검증
+        if (!Arrays.asList("kakaopay", "tosspay").contains(paymentMethod)) {
+            response.put("success", false);
+            response.put("error", "유효하지 않은 결제 수단입니다.");
+            return response;
+        }
+        
+        // 유효한 금액인지 검증
+        if (!POINT_RATES.containsKey(chargeAmount)) {
+            response.put("success", false);
+            response.put("error", "유효하지 않은 충전 금액입니다.");
+            return response;
+        }
+
+        // 적립 포인트 계산
+        double rate = POINT_RATES.getOrDefault(chargeAmount, 0.0);
+        int bonusPoints = (int) Math.floor(chargeAmount * rate);
+        int totalCredit = chargeAmount + bonusPoints;
+
+        userService.charge(userNum, totalCredit);
+
+        String chargeUid = UUID.randomUUID().toString();
+
+        String redirectUrl = "/payment/" + paymentMethod.toLowerCase() + "/start?chargeUid=" + chargeUid;
+
+        response.put("success", true);
+        response.put("orderId", chargeUid);
+        response.put("amount", chargeAmount); // 결제 API에 사용할 금액
+        response.put("method", paymentMethod);
+        response.put("redirectUrl", redirectUrl);
+        response.put("email", customUser.getUser().getUr_email());
+        response.put("nickname", customUser.getUser().getUr_nickname());
+        response.put("totalCredit", totalCredit); // 디버깅용: 실제 적립 금액
+
+        return response;
+    }
+
+    // 적립 비율 정의
+    private static final Map<Integer, Double> POINT_RATES = new HashMap<>();
+    static {
+        POINT_RATES.put(2000, 0.03);
+        POINT_RATES.put(5000, 0.03);
+        POINT_RATES.put(10000, 0.03);
+        POINT_RATES.put(20000, 0.03);
+        POINT_RATES.put(30000, 0.04);
+        POINT_RATES.put(50000, 0.04);
+        POINT_RATES.put(100000, 0.05);
+        POINT_RATES.put(200000, 0.05);
+        POINT_RATES.put(300000, 0.05);
+        POINT_RATES.put(500000, 0.05);
+        POINT_RATES.put(1000000, 0.05);
+        POINT_RATES.put(2000000, 0.05);
     }
 }

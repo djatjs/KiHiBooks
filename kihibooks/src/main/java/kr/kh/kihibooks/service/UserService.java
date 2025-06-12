@@ -356,15 +356,6 @@ public class UserService {
 			userDAO.updateUsePoint(ur_num, usePoint);
 		}
 
-		for (String epCode : epCodes) {
-			BuyListVO buy = new BuyListVO();
-			buy.setBl_id(orderId);
-			buy.setBl_ep_code(epCode);
-			buy.setBl_ur_num(ur_num);
-
-			userDAO.insertBuyList(buy);
-		}
-
 		userDAO.deleteOrderList(ur_num);
 
 		return orderId;
@@ -380,11 +371,60 @@ public class UserService {
 
 			userDAO.insertBuyList(buy);
 		}
-		System.out.println("final" + finalAmount);
-		System.out.println("charge" + chargeAmount);
 		userDAO.updateChargeOrder(orderId);
 		userDAO.updateChargePoint(userNum, chargeAmount);
 		userDAO.updateUsePoint(userNum, finalAmount);
+	}
+
+	public void justPay(String orderId, int userNum, List<String> epCodes) {
+		for (String epCode : epCodes) {
+			BuyListVO buy = new BuyListVO();
+			buy.setBl_id(orderId);
+			buy.setBl_ep_code(epCode);
+			buy.setBl_ur_num(userNum);
+
+			userDAO.insertBuyList(buy);
+		}
+
+		userDAO.updateChargeOrder(orderId);
+	}
+
+	public List<String> getEpCodesByBlId(String contentsId) {
+		return userDAO.selectEpCodesByBlId(contentsId);
+	}
+
+	public List<BuyListVO> getBuyList(int ur_num) {
+		List<String> blIds = userDAO.getBlIds(ur_num);
+		List<BuyListVO> buyList = new ArrayList<>();
+		for(String bl_id : blIds) {
+			BuyListVO buy = userDAO.selectBuyListUrNum(ur_num, bl_id);
+			buyList.add(buy);
+		}
+		
+		return buyList;
+	}
+
+	public List<BuyListVO> getBList(int ur_num) {
+		return userDAO.selectBList(ur_num);
+	}
+
+	public Integer selectTotalByOdId(String blId) {
+		return userDAO.selectTotalByOdId(blId);
+	}
+
+	public Integer countCart(String ur_email) {
+		int ur_num = userDAO.selectUrNumByEmail(ur_email);
+
+		return userDAO.countCart(ur_num);
+	}
+
+	public Integer countLib(String ur_email) {
+		int ur_num = userDAO.selectUrNumByEmail(ur_email);
+		return userDAO.countLib(ur_num);
+	}
+
+	public void charge(int userNum, int totalCredit) {
+		userDAO.updatePoint(userNum, totalCredit);
 	}
 
 }
