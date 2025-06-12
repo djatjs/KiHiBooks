@@ -248,8 +248,8 @@ public class BookDetailController {
         
         int urNum = customUser.getUser().getUr_num();
 
-        if(bookService.insertBuyList(epCode, urNum)) {
+        // if(bookService.insertBuyList(epCode, urNum)) {
             
-        }
+        // }
     }
 }
