@@ -55,9 +55,9 @@ public interface UserDAO {
 
     boolean updateNickname(int ur_num, String ur_nickname);
 
-    Integer getUrItNum(int ur_num);
+    Integer getUrItNum(int ur_num, String bo_code);
 
-    Integer getUrNsNum(int ur_num);
+    Integer getUrNsNum(int ur_num, String bo_code);
 
     boolean insertInterest(int ur_num, String bo_code);
 

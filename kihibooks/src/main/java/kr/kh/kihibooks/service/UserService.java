@@ -240,12 +240,12 @@ public class UserService {
 		return userDAO.updateNickname(ur_num, ur_nickname);
 	}
 
-	public Integer getUrItNum(int ur_num) {
-		return userDAO.getUrItNum(ur_num);
+	public Integer getUrItNum(int ur_num, String bo_code) {
+		return userDAO.getUrItNum(ur_num, bo_code);
 	}
 
-	public Integer getUrNsNum(int ur_num) {
-		return userDAO.getUrNsNum(ur_num);
+	public Integer getUrNsNum(int ur_num, String bo_code) {
+		return userDAO.getUrNsNum(ur_num, bo_code);
 	}
 
 	public boolean insertInterest(int ur_num, String bo_code) {

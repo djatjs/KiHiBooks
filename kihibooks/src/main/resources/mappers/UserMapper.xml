@@ -94,12 +94,12 @@
 
     <select id="getUrItNum" resultType="Integer">
         select it_num from interest
-        where it_ur_num = #{ur_num}
+        where it_ur_num = #{ur_num} and it_bo_code = #{bo_code}
     </select>
 
     <select id="getUrNsNum" resultType="Integer">
         select ns_num from noti_set
-        where ns_ur_num = #{ur_num}
+        where ns_ur_num = #{ur_num} and ns_bo_code = #{bo_code}
     </select>
 
     <insert id="insertInterest">
