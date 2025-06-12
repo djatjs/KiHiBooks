@@ -69,13 +69,13 @@
                 <div class="d-flex justify-content-between bg-white mb-3">
                     <div class="d-flex">
                         <a class="p-2 ml-3" th:href="@{/}" 
-                        th:classappend="${#strings.contains(currentUri, '/genre/romance')} ? 'active-genre' : ''">로맨스</a>
+                        th:classappend="${currentUri != null and #strings.contains(currentUri, '/genre/romance')} ? 'active-genre' : ''">로맨스</a>
                         <a class="p-2 ml-3" th:href="@{/genre/rofan}" 
-                        th:classappend="${#strings.contains(currentUri, '/genre/rofan')} ? 'active-genre' : ''">로판</a>
+                        th:classappend="${currentUri != null and #strings.contains(currentUri, '/genre/rofan')} ? 'active-genre' : ''">로판</a>
                         <a class="p-2 ml-3" th:href="@{/genre/fantasy}" 
-                        th:classappend="${#strings.contains(currentUri, '/genre/fantasy')} ? 'active-genre' : ''">판타지</a>
+                        th:classappend="${currentUri != null and #strings.contains(currentUri, '/genre/fantasy')} ? 'active-genre' : ''">판타지</a>
                         <a class="p-2 ml-3" th:href="@{/genre/martial}" 
-                        th:classappend="${#strings.contains(currentUri, '/genre/martial')} ? 'active-genre' : ''">무협</a>
+                        th:classappend="${currentUri != null and #strings.contains(currentUri, '/genre/martial')} ? 'active-genre' : ''">무협</a>
                     </div>
                     <div class="d-flex justify-content-center">
                         <div class="category-wrapper">
