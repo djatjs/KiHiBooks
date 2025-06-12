@@ -2954,8 +2954,9 @@
 															<div class="direct-view-wrapper"
 																th:if="${episode.ep_price == 0 or buyCodeSet.contains(episode.ep_code)}">
 																<!-- 무료/소장 회차 : 보기 | 유료 회차 : 소장 -->
-																<a th:href="@{'/mylibrary/readEpisode/' + ${episode.ep_code}}" th:attr="data-episode-code=${episode.ep_code}"
-																	class="direct-view-btn">보기</a>
+																<a th:href="@{'/mylibrary/readEpisode/' + ${episode.ep_code}}"
+																	th:attr="data-episode-code=${episode.ep_code}, data-bo-code=${book.bo_code}"
+																	class="direct-view-btn" onclick="handleViewClick(event, this)">보기</a>
 															</div>
 															<div class="direct-view-wrapper"
 																th:unless="${episode.ep_price == 0 or buyCodeSet.contains(episode.ep_code)}">
@@ -3001,11 +3002,11 @@
 												cartBtn.addEventListener('click', function () {
 													const checkedBoxes = document.querySelectorAll('.episode-check:checked');
 
-													if(!isLoggedIn) {
+													if (!isLoggedIn) {
 														alert("로그인 후 이용해주세요.");
 														return;
 													}
-													
+
 													if (checkedBoxes.length === 0) {
 														alert('카트에 담을 작품을 선택해주세요');
 														return;
@@ -4139,7 +4140,7 @@
 				const wff = [[${ wff }]];
 				const urPoint = [[${ user.ur_point }]];
 				const isLoggedIn = [[${ #authorization.expression('isAuthenticated()') }]];
-				
+
 				function openPopup(popupId) {
 					$(popupId).addClass('active');
 					$('#full_page_spinner').addClass('active');
@@ -4181,7 +4182,7 @@
 				$("#select_buy_btn").on("click", function () {
 					const checked = $('.episode-check:checked');
 
-					if(!isLoggedIn) {
+					if (!isLoggedIn) {
 						alert("로그인 후 이용해주세요.");
 						return;
 					}
@@ -4253,6 +4254,31 @@
 					const epCode = $(this).data('ep-code');
 					location.href = `/order/checkout?ep_code=${epCode}`;
 				});
+
+				function handleViewClick(event, element) {
+					event.preventDefault(); // 기본 링크 동작 방지
+					var boCode = $(element).data('bo-code');
+					var epCode = $(element).data('episode-code');
+
+					// AJAX 요청으로 무료 책 여부 확인 및 buy_list 추가
+					$.ajax({
+						url: 'view/free',
+						type: 'POST',
+						contentType: 'application/json',
+						data: JSON.stringify({epCode : epCode}),
+						success: function(data) {
+							if(data.success) {
+								window.location.href = `/mylibrary/readEpisode/${epCode}`;
+							} else {
+								alert("추가 실패: " + data.message);
+							}
+						},
+						error: function(xhr, status, error) {
+							console.error("에러:" + error);
+							alert("요청 중 오류가 발생했습니다.");
+						}
+					})
+				}
 			})
 		</script>
 	</main>

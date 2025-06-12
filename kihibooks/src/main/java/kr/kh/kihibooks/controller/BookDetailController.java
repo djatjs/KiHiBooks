@@ -242,4 +242,14 @@ public class BookDetailController {
 
         return res;
     }
+
+    @PostMapping("/view/free")
+    public boolean viewFree(@RequestBody String epCode, @AuthenticationPrincipal CustomUser customUser) {
+        
+        int urNum = customUser.getUser().getUr_num();
+
+        if(bookService.insertBuyList(epCode, urNum)) {
+            
+        }
+    }
 }
