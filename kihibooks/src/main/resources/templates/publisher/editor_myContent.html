@@ -187,7 +187,8 @@
                     <div class="series-item" th:each="work : ${pageInfo.content}" th:data-title="${work.bo_title}" th:data-author="${work.bo_author}" th:data-code="${work.bo_code}" th:data-fin="${work.bo_fin}" th:data-description="${work.bo_description}">
                         <div data-toggle="modal" data-target="#workModal">
                             <h5 th:text="${work.bo_title}">작품 제목</h5>
-                            <img class="mt-1" src="/resources/static/img/default_thumb.png" alt="썸네일" style="height: 150px;">
+                            <img class="thumb-img" th:if="${work.bo_thumbnail != null and work.bo_thumbnail != ''}" th:src="@{/file/{path}(path=${work.bo_thumbnail})}" alt="책 썸네일"  style="width: 150px; height: 200px;">
+                            <img class="mt-1" th:unless="${work.bo_thumbnail != null and work.bo_thumbnail != ''}" src="/resources/static/img/default_thumb.png" alt="기본 썸네일" style="width: 150px; height: 200px;">
                             <p class="mt-2" th:text="${work.bo_author}">저자명</p>
                             <p><span class="status" th:classappend="${work.bo_fin == 'Y' ? 'finished' : ''}" th:text="${work.bo_fin == 'Y' ? '완결' : '연재 중'}">연재 중</span></p>
                         </div>
