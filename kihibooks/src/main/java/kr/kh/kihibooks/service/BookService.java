@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
+import kr.kh.kihibooks.controller.BookDetailController;
 import kr.kh.kihibooks.dao.BookDAO;
 import kr.kh.kihibooks.dao.KeywordDAO;
 import kr.kh.kihibooks.dao.PublisherDAO;
@@ -146,6 +146,14 @@ public class BookService {
     public BookVO getBook(String bo_code) {
         BookVO book = bookDAO.selectBook(bo_code);
         if (bookDAO.updateRating(bo_code)) {
+            return book;
+        }
+        return null;
+    }
+
+    public BookVO selectDetailBook(String bo_code) {
+        BookVO book = bookDAO.selectDetailBook(bo_code);
+        if(bookDAO.updateRating(bo_code)) {
             return book;
         }
         return null;

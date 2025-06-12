@@ -204,4 +204,6 @@ public interface BookDAO {
 	
 	boolean updateTotalEpisode(String bo_code);
 
+	BookVO selectDetailBook(String bo_code);
+
 }
