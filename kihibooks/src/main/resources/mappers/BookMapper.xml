@@ -93,7 +93,7 @@
             a.AU_NAME,
             b.BO_TOTAL_RATING,
             b.BO_REVIEW_COUNT,
-            ep.EP_COVER_IMG AS BO_THUMBNAIL
+            ep.EP_COVER_IMG
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         LEFT JOIN (
@@ -358,7 +358,8 @@
             b.BO_CODE, b.BO_TITLE, b.BO_DESCRIPTION, b.BO_TOTAL_EPISODE,
             b.BO_TOTAL_RATING, b.BO_REVIEW_COUNT, b.BO_ADULT, b.BO_FIN, b.BO_PUBLISH_DATE,
             a.AU_NAME AS BO_AUTHOR,
-            k.KW_CODE AS KW_CODE, k.KW_NAME AS KW_NAME,
+            ANY_VALUE(k.KW_CODE) AS KW_CODE, 
+            ANY_VALUE(k.KW_NAME) AS KW_NAME,
             ANY_VALUE(ep.EP_COVER_IMG) AS EP_COVER_IMG
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
@@ -392,6 +393,7 @@
 
         LIMIT #{limit} OFFSET #{offset}
     </select>
+
 
     <!-- 키워드 검색 도서 개수 -->
     <select id="countBooksByKeywords" resultType="int">
