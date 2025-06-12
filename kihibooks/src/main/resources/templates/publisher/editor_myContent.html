@@ -235,7 +235,7 @@
                     <!-- Modal body -->
                     <div class="modal-body">
                         <p><strong>작품 제목 : </strong> <span id="modalBoTitle"></span></p>
-                        <img id="modalBoThumbnail" class="mt-1 mb-3 center-img" src="/resources/static/img/default_thumb.png" alt="썸네일" style="height: 150px;">
+                        <img id="modalBoThumbnail" class="mt-1 mb-3 center-img" src="/resources/static/img/default_thumb.png" alt="썸네일" style="width: 180px; height: 240px;">
                         <p><strong>저자:</strong> <span id="modalBoAuthor"></span></p>
                         <p><strong>상태:</strong> <span id="modalBoFin"></span></p>
                         <p>
@@ -264,13 +264,18 @@
                     const boFin = $(this).data('fin') === 'Y' ? '완결' : '연재 중';
                     const boDescription = $(this).data('description');
                     const boCode = $(this).data('code');
-                    const bo_thumbnail = $(this).data('bo_thumbnail');
+                    const bo_thumbnail = $(this).data('img');
 
                     $('#modalBoTitle').text(boTitle);
                     $('#modalBoAuthor').text(boAuthor);
                     $('#modalBoFin').text(boFin);
                     $('#modalBoCode').val(boCode);
-                    $('#modalBoThumbnail').val(bo_thumbnail);
+                    const $modalImage = $('#modalBoThumbnail');
+                    if (bo_thumbnail && bo_thumbnail !== '') {
+                        $modalImage.attr('src', '/file/' + bo_thumbnail);
+                    } else {
+                        $modalImage.attr('src', '/resources/static/img/default_thumb.png');
+                    }
 
                     // 더보기 기능 적용
                     if (boDescription.length > maxLength) {
