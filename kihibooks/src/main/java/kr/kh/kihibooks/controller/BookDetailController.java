@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -82,7 +83,7 @@ public class BookDetailController {
         List<BookVO> abList = bookService.getAuthorAnotherBook(bo_code);
         List<NoticeVO> notiList = bookService.getNoticeList(bo_code);
         List<BookVO> bestList10 = bookService.getBestList(bo_code);
-        List<BookVO> bestList5 = bookService.getBestList5(bo_code);
+        List<BookVO> bestList6 = bookService.getBestList6(bo_code);
         List<BuyListVO> buyList = new ArrayList<>();
         Set<String> buyCodeSet = new HashSet<>();
         List<BookKeywordVO> kwList = bookService.getKeywordList(bo_code);
@@ -116,7 +117,7 @@ public class BookDetailController {
         model.addAttribute("abList", abList);
         model.addAttribute("notiList", notiList);
         model.addAttribute("bestList10", bestList10);
-        model.addAttribute("bestList5", bestList5);
+        model.addAttribute("bestList6", bestList6);
         model.addAttribute("buyList", buyList);
         model.addAttribute("buyCodeSet", buyCodeSet);
         model.addAttribute("kwList", kwList);
@@ -243,13 +244,22 @@ public class BookDetailController {
         return res;
     }
 
-    // @PostMapping("/view/free")
-    // public boolean viewFree(@RequestBody String epCode, @AuthenticationPrincipal CustomUser customUser) {
+    @PostMapping("/view/free")
+    public ResponseEntity<Boolean> viewFree(@RequestBody String epCode, @AuthenticationPrincipal CustomUser customUser) {
         
-    //     int urNum = customUser.getUser().getUr_num();
+        int urNum = customUser.getUser().getUr_num();
+        String ep_code = epCode.replaceAll("\"", "");
 
-    //     // if(bookService.insertBuyList(epCode, urNum)) {
-            
-    //     // }
-    // }
+        if(bookService.selectBlList(ep_code, urNum)) {
+            System.out.println("controller: false");
+            return ResponseEntity.ok(false);
+        }
+
+        boolean res = false;
+        if(bookService.insertBuyList(ep_code, urNum)) {
+            res = bookService.insertLibrary(ep_code, urNum);
+        }
+
+        return ResponseEntity.ok(res);
+    }
 }

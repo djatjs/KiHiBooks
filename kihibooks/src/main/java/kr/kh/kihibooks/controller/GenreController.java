@@ -68,6 +68,8 @@ public class GenreController {
             model.addAttribute("range", range);
             model.addAttribute("adultYN", adultYN);
             model.addAttribute("finished", finished);
+            
+            System.out.println(pageInfo);
             return "genre/genre-template-best";
         }
 

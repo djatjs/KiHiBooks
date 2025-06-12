@@ -1,5 +1,7 @@
 package kr.kh.kihibooks.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -447,10 +449,10 @@ public class BookService {
         return bookDAO.getBuyList(ur_num, bo_code);
     }
 
-    public List<BookVO> getBestList5(String bo_code) {
+    public List<BookVO> getBestList6(String bo_code) {
         String sc_code = bookDAO.getScCodeByBoCode(bo_code);
 
-        return bookDAO.getBestList5(sc_code);
+        return bookDAO.getBestList6(sc_code);
     }
 
     public List<BookKeywordVO> getKeywordList(String bo_code) {
@@ -605,5 +607,40 @@ public class BookService {
                 break;
         }
         return urlPath;
+    }
+
+    public boolean insertBuyList(String epCode, int urNum) {
+        String bl_id = generateBlId();
+        System.out.println("epCode: " + epCode);
+        System.out.println("bl_id : " + bl_id);
+        boolean res = false;
+
+        if(bookDAO.insertBuyList(bl_id, urNum, epCode)) {
+            res = true;
+        }
+        System.out.println(res);
+        return res;
+    }
+
+    private String generateBlId() {
+		String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+		long count = bookDAO.countTodayOrders() + 1;
+
+		return date + String.format("%05d", count);
+	}
+
+    public boolean selectBlList(String ep_code, int urNum) {
+        Integer count = bookDAO.selectBlList(ep_code, urNum);
+        System.out.println(count);
+        if(count < 1 || count == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean insertLibrary(String ep_code, int urNum) {
+       
+        return bookDAO.insertLibrary(ep_code, urNum);
     }
 }

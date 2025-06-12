@@ -160,7 +160,7 @@ public interface BookDAO {
 
 	List<BuyListVO> getBuyList(int ur_num, String bo_code);
 
-	List<BookVO> getBestList5(String sc_code);
+	List<BookVO> getBestList6(String sc_code);
 
 	List<BookKeywordVO> getKeywordList(String bo_code);
 
@@ -205,5 +205,13 @@ public interface BookDAO {
 	boolean updateTotalEpisode(String bo_code);
 
 	BookVO selectDetailBook(String bo_code);
+
+	boolean insertBuyList(String bl_id, int ur_num, String ep_code);
+
+	int countTodayOrders();
+
+	Integer selectBlList(String ep_code, int ur_num);
+
+	boolean insertLibrary(String ep_code, int ur_num);
 
 }

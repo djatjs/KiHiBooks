@@ -202,8 +202,8 @@
         where ca_ur_num = #{ur_num}
     </select>
     <select id="countLib" resultType="Integer">
-        select count(*) from buy_list
-        where bl_ur_num = #{ur_num}
+        select count(*) from `library`
+        where lb_ur_num = #{ur_num}
     </select>
     <update id="updatePoint">
         update `user` set ur_point = ur_point + #{totalCredit}

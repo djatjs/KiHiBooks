@@ -5,6 +5,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>KiHiBooks</title>
+	<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 	<style>
 		.page-detail {
 			width: 1170px;
@@ -2663,7 +2664,7 @@
 										<div class="grid-left-top4">
 											<div class="thumb-grid">
 												<button type="button" class="thumb">
-													<img class="thumb-img" th:src="${'/file/' + {book.bo_thumbnail}}"></img>
+													<img class="thumb-img" th:src="${'/file/' + {book.bo_thumbnail}}">
 												</button>
 											</div>
 											<div class="info-grid">
@@ -2954,9 +2955,8 @@
 															<div class="direct-view-wrapper"
 																th:if="${episode.ep_price == 0 or buyCodeSet.contains(episode.ep_code)}">
 																<!-- 무료/소장 회차 : 보기 | 유료 회차 : 소장 -->
-																<a th:href="@{'/mylibrary/readEpisode/' + ${episode.ep_code}}"
-																	th:attr="data-episode-code=${episode.ep_code}, data-bo-code=${book.bo_code}"
-																	class="direct-view-btn" onclick="handleViewClick(event, this)">보기</a>
+																<a th:attr="data-episode-code=${episode.ep_code}" class="direct-view-btn"
+																	id="direct_view_btn">보기</a>
 															</div>
 															<div class="direct-view-wrapper"
 																th:unless="${episode.ep_price == 0 or buyCodeSet.contains(episode.ep_code)}">
@@ -2969,6 +2969,12 @@
 												</li>
 											</ul>
 										</div>
+										<!-- <div class="list-more-button" >
+											<button type="button" class="more-button">
+												<span class="more-button-text">더보기</span>
+												<img src="/resources/static/img/expand.png" alt="더보기" style="height: 20px;">
+											</button>
+										</div> -->
 										<script th:inline="javascript">
 											document.addEventListener('DOMContentLoaded', function () {
 												const checkboxes = document.querySelectorAll('.episode-check');
@@ -3049,12 +3055,7 @@
 											});
 											/*]]>*/
 										</script>
-										<div class="list-more-button">
-											<button type="button" class="more-button">
-												<span class="more-button-text">더보기</span>
-												<img src="/resources/static/img/expand.png" alt="더보기" style="height: 20px;">
-											</button>
-										</div>
+
 									</div>
 								</form>
 							</div>
@@ -3152,7 +3153,7 @@
 																				<div class="book">
 																					<div class="book-img">
 																						<a th:href="@{'/books/' + ${anotherBook.bo_code}}" class="bo-img">
-																							<img src="/resources/static/covers/cover1.png" alt="도서 이미지">
+																							<img th:src="${'/file/' + {anotherBook.bo_thumbnail}}" alt="도서 이미지">
 																							<span class="bo-image"></span>
 																						</a>
 																					</div>
@@ -3668,14 +3669,15 @@
 														})
 													})
 												</script>
-												<div class="review-more-btn">
+
+												<!-- <div class="review-more-btn">
 													<button type="button" class="rv-more-btn">
 														<span class="rmb-text">
 															더보기
 															<img src="/resources/static/img/expand.png" alt="더보기 버튼" style="height: 23px;">
 														</span>
 													</button>
-												</div>
+												</div> -->
 											</div>
 										</div>
 									</div>
@@ -3692,30 +3694,30 @@
 													<div class="best-list-wrap">
 														<div class="best-list">
 															<div class="bst-list">
-																<ul class="bst-ul" th:each="best5 : ${bestList5}">
+																<ul class="bst-ul" th:each="best6 : ${bestList6}">
 																	<li class="bst-li">
 																		<div class="bst-book">
 																			<div class="b-book-img-wrap">
-																				<a th:href="@{'/books/' + ${best5.bo_code}}" class="b-book-img">
-																					<img src="/resources/static/covers/cover1.png" alt="책 표지">
+																				<a th:href="@{'/books/' + ${best6.bo_code}}" class="b-book-img">
+																					<img th:src="${'/file/' + {best6.bo_thumbnail}}" alt="책 표지">
 																				</a>
 																			</div>
 																			<div class="b-book-info-wrap">
 																				<div class="b-book-title">
-																					<a th:href="@{'/books/' + ${best5.bo_code}}" class="bb-title"
-																						th:text="${best5.bo_title}"></a>
+																					<a th:href="@{'/books/' + ${best6.bo_code}}" class="bb-title"
+																						th:text="${best6.bo_title}"></a>
 																				</div>
 																				<div class="b-book-info">
 																					<span class="b-book-author">
 																						<a th:href="@{/}" class="b-book-author-name"
-																							th:text="${best5.bo_author}"></a>
+																							th:text="${best6.bo_author}"></a>
 																					</span>
 																					<span class="b-book-rating">
 																						<img class="b-rating-img red" src="/resources/static/img/star.png" alt="별점"
 																							style="height: 13px; margin-right: 2px; margin-bottom: 2px;"
-																							th:text="${best5.bo_total_rating / best5.bo_review_count / 2.0}">
+																							th:text="${best6.bo_total_rating / best6.bo_review_count / 2.0}">
 																						<span class="b-rating-cnt" style="margin-left: 1px; color: #787878;"
-																							th:text="'('+${best5.bo_review_count}+')'"></span>
+																							th:text="'('+${best6.bo_review_count}+')'"></span>
 																					</span>
 																				</div>
 																			</div>
@@ -3792,7 +3794,7 @@
 					</div>
 					<div class="popup-body serial-checkout-wrapper">
 						<div class="checkout-description">
-							<p class="main-description checkout-book-title">이세계 착각 헌터 1화</p>
+							<p class="main-description checkout-book-title">에피소드 제목목</p>
 							<p class="rental-period">
 								대여 기간 :
 								<span class="rental-period-text">3</span>일
@@ -3855,7 +3857,7 @@
 					</div>
 					<div class="popup-body">
 						<div class="checkout-description">
-							<p class="main-description">이세계 착각 헌터 3화</p>
+							<p class="main-description">에피소드 제목</p>
 							<p class="checkout-price">결제 금액 :
 								<span class="total-price">0</span>원
 							</p>
@@ -3864,7 +3866,7 @@
 									<strong>
 										<span class="usable-point">0</span>원
 									</strong>
-									(<span class="user-kihi-point">0</span>원 보유)
+									(<span class="user-kihi-point" th:text="${user.ur_point}">0</span>원 보유)
 								</li>
 							</ul>
 						</div>
@@ -4152,13 +4154,23 @@
 				}
 
 				$('.checkout-btn').on('click', function (e) {
-
-					const epPrice = $('.checkout-btn').data('episode-price');
+					e.preventDefault();
 
 					if (!isLoggedIn) {
 						alert('로그인 후 이용해주세요.');
 						return;
 					}
+
+					const $this = $(this);
+					const epCode = $this.data('episode-code');
+					const epPrice = $this.data('episode-price');
+					const epTitle = $this.closest('.epi-list').find('.epi-title').text();
+
+					// #serial_checkout_point_popup 정보 업데이트
+					$('#serial_checkout_point_popup .main-description').text(epTitle);
+					$('#serial_checkout_point_popup .total-price').text(epPrice);
+					$('#serial_checkout_point_popup .usable-point').text(epPrice);
+					$('#serial_checkout_point_popup .user-kihi-point').text(urPoint);
 
 					if (boWff === 'Y') {
 						if (!wff || new Date(wff.wf_can_date) < now) {
@@ -4176,7 +4188,14 @@
 						} else {
 							openPopup('#serial_checkout_by_others_popup');
 						}
+						// 버튼에 epCode 저장
+						$('#serial_checkout_point_popup .payment-book-point-immediate-view, #serial_checkout_point_popup .payment-book-point')
+							.data('ep-code', epCode);
+						$('#serial_checkout_by_others_popup .payment-charge-cash-and-payment-book, #serial_checkout_by_others_popup .payment-book')
+							.data('ep-code', epCode);
 					}
+
+
 				});
 
 				$("#select_buy_btn").on("click", function () {
@@ -4246,40 +4265,133 @@
 					openPopup('#serial_checkout_by_others_popup');
 				});
 
-				$('#btn-charge-and-pay').on('click', function () {
+				// 충전하고 결제 버튼
+				$('.payment-charge-cash-and-payment-book').on('click', function () {
 					location.href = '/order/checkout/point';
 				});
 
-				$('#btn-regular-pay').on('click', function () {
+				// 일반 결제 버튼
+				$('.payment-book').on('click', function () {
 					const epCode = $(this).data('ep-code');
-					location.href = `/order/checkout?ep_code=${epCode}`;
+					$.ajax({
+						url: '/order/checkout',
+						type: 'post',
+						data: { epCodes: [epCode] },
+						traditional: true,
+						success: function () {
+							location.href = '/order/checkout';
+						},
+						error: function () {
+							alert('결제 페이지 이동 실패');
+						}
+					});
 				});
 
-				function handleViewClick(event, element) {
-					event.preventDefault(); // 기본 링크 동작 방지
-					var boCode = $(element).data('bo-code');
-					var epCode = $(element).data('episode-code');
+				// 결제하고 바로보기 버튼
+				$('.payment-book-point-immediate-view').on('click', function () {
+					const epCode = $(this).data('ep-code');
+					const epPrice = $('#serial_checkout_point_popup .total-price').text();
+					const payload = {
+						totalAmount: epPrice,
+						usePoint: epPrice,
+						finalAmount: 0,
+						paymentType: 'point',
+						method: 'point',
+						chargeAmount: 0,
+						isChargeAfter: false,
+						epCodes: [epCode]
+					};
+
+					IMP.init("imp33538244");
+					$.ajax({
+						url: '/payment/process',
+						method: 'POST',
+						contentType: 'application/json; charset=utf-8',
+						data: JSON.stringify(payload),
+						dataType: 'json',
+						success: function (response) {
+							if (response.success) {
+								pointAll(response.orderId);
+							} else {
+								alert(response.message || '결제 요청에 실패했습니다.');
+							}
+						},
+						error: function (xhr, status, error) {
+							console.error('결제 실패:', error);
+							alert('서버 오류가 발생했습니다.');
+						}
+					});
+
+					function pointAll(orderId) {
+					$.ajax({
+						url: "/order/point",
+						type: "post",
+						contentType: "application/json",
+						data: JSON.stringify({ epCodes: [epCode], orderId: orderId, usePoint: epPrice }),
+						traditional: true,
+						success: function (res) {
+							if (res.success) {
+								window.location.href = `/mylibrary/readEpisode/${epCode}`;
+							} else {
+								alert("포인트 구매 처리 실패: " + response.error);
+							}
+						},
+						error: function () {
+							alert("포인트 구매 처리 중 오류 발생")
+						}
+					});
+				}
+				});
+
+				
+
+				// 결제하고 나중에 보기 버튼
+				$('.payment-book-point').on('click', function () {
+					const epCode = $(this).data('ep-code');
+					const epPrice = $('#serial_checkout_point_popup .total-price').text();
+					const payload = {
+						epCodes: [epCode],
+						orderId: `ORDER_${epCode}_${new Date().getTime()}`, // 임시 orderId 생성 (서버에서 실제로 생성해야 함)
+						usePoint: epPrice
+					};
+
+					$.ajax({
+						url: '/order/point',
+						type: 'post',
+						contentType: 'application/json',
+						data: JSON.stringify(payload),
+						traditional: true,
+						success: function (res) {
+							if (res.success) {
+								window.location.href = `/order/checkout/finished?merchant_uid=${res.orderId}`;
+							} else {
+								alert('포인트 구매 처리 실패: ' + res.error);
+							}
+						},
+						error: function () {
+							alert('포인트 구매 처리 중 오류 발생');
+						}
+					});
+				});
+
+				$("#direct_view_btn").on("click", function () {
+					var epCode = $(this).data('episode-code');
 
 					// AJAX 요청으로 무료 책 여부 확인 및 buy_list 추가
 					$.ajax({
-						url: 'view/free',
+						url: '/view/free',
 						type: 'POST',
 						contentType: 'application/json',
-						data: JSON.stringify({epCode : epCode}),
-						success: function(data) {
-							if(data.success) {
-								window.location.href = `/mylibrary/readEpisode/${epCode}`;
-							} else {
-								alert("추가 실패: " + data.message);
-							}
+						data: JSON.stringify(epCode),
+						success: function () {
+							location.href = `/mylibrary/readEpisode/${epCode}`;
 						},
-						error: function(xhr, status, error) {
-							console.error("에러:" + error);
+						error: function (xhr, status) {
 							alert("요청 중 오류가 발생했습니다.");
 						}
-					})
-				}
-			})
+					});
+				});
+			});
 		</script>
 	</main>
 </body>
