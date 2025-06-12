@@ -416,16 +416,13 @@
     </select>
 
     <select id="selectBook" resultType="BookVO">
-        select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher, sub_cate.sc_name AS bo_sub_cate, main_cate.mc_name AS bo_main_cate, (select count(*) from `interest` where it_bo_code = #{bo_code}) AS bo_like_count, e.EP_COVER_IMG as bo_thumbnail from book
+        select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher, sub_cate.sc_name AS bo_sub_cate, main_cate.mc_name AS bo_main_cate, (select count(*) from `interest` where it_bo_code = #{bo_code}) AS bo_like_count from book
         join `author` on bo_au_num = au_num
         join `publisher_id` on bo_pi_num = pi_num
         join `publisher` on pi_pu_code = pu_code
         join `sub_cate` on bo_sc_code = sc_code
         join `main_cate` on sc_mc_code = mc_code
-        JOIN
-            (SELECT EP_BO_CODE, MAX(EP_CODE) AS 최신_EP_CODE FROM episode GROUP BY EP_BO_CODE)
-            latest_ep ON b.BO_CODE = latest_ep.EP_BO_CODE
-        JOIN episode e ON latest_ep.EP_BO_CODE = e.EP_BO_CODE AND latest_ep.최신_EP_CODE = e.EP_CODE
+        
         where bo_code = #{bo_code}
     </select>
     
