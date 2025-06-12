@@ -12,7 +12,7 @@
         <result property="bo_adult" column="BO_ADULT" />
         <result property="bo_fin" column="BO_FIN" />
         <result property="bo_publish_date" column="BO_PUBLISH_DATE" />
-
+        <result property="ep_cover_img" column="EP_COVER_IMG" />
         <collection property="keywordList" ofType="KeywordVO">
             <result property="kw_code" column="KW_CODE"/>
             <result property="kw_name" column="KW_NAME"/>
@@ -90,7 +90,7 @@
         SELECT
             b.BO_CODE,
             b.BO_TITLE,
-            a.AU_NAME AS bo_author,
+            a.AU_NAME,
             b.BO_TOTAL_RATING,
             b.BO_REVIEW_COUNT,
             ep.EP_COVER_IMG AS BO_THUMBNAIL
@@ -108,7 +108,7 @@
         LIMIT 10
     </select>
     <select id="selectBestBooks" resultType="BookVO">
-        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG AS BO_THUMBNAIL
+        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         LEFT JOIN (
@@ -126,7 +126,7 @@
         LIMIT 10
     </select>
     <select id="selectWaitFreeBooks" resultType="BookVO">
-        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG AS BO_THUMBNAIL
+        SELECT b.*, a.AU_NAME AS bo_author, ep.EP_COVER_IMG
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         LEFT JOIN (
@@ -151,7 +151,7 @@
             a.AU_NAME AS bo_author,
             b.BO_TOTAL_RATING,
             b.BO_REVIEW_COUNT,
-            ep.EP_COVER_IMG AS BO_THUMBNAIL
+            ep.EP_COVER_IMG
         FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
         LEFT JOIN (
@@ -357,39 +357,40 @@
         SELECT 
             b.BO_CODE, b.BO_TITLE, b.BO_DESCRIPTION, b.BO_TOTAL_EPISODE,
             b.BO_TOTAL_RATING, b.BO_REVIEW_COUNT, b.BO_ADULT, b.BO_FIN, b.BO_PUBLISH_DATE,
-            a.AU_NAME AS bo_author,
-            k.KW_CODE AS kw_code, k.KW_NAME AS kw_name
-        FROM (
-            SELECT b.BO_CODE
-            FROM book b
-            JOIN book_keyword bk ON b.BO_CODE = bk.BK_BO_CODE
-
-            <if test="keywordIds != null and keywordIds.size() > 0">
-                WHERE bk.BK_KW_CODE IN
-                <foreach collection="keywordIds" item="id" open="(" close=")" separator=",">
-                    #{id}
-                </foreach>
-            </if>
-
-            GROUP BY b.BO_CODE
-
-            <if test="keywordCount != null and keywordCount > 0">
-                HAVING COUNT(DISTINCT bk.BK_KW_CODE) = #{keywordCount}
-            </if>
-
-            <choose>
-                <when test="sort == 'popular'">ORDER BY MAX(b.BO_TOTAL_RATING / b.BO_REVIEW_COUNT) DESC</when>
-                <when test="sort == 'rating'">ORDER BY MAX(b.BO_TOTAL_RATING / b.BO_REVIEW_COUNT) DESC</when>
-                <when test="sort == 'review'">ORDER BY MAX(b.BO_REVIEW_COUNT) DESC</when>
-                <otherwise>ORDER BY MAX(b.BO_PUBLISH_DATE) DESC</otherwise>
-            </choose>
-
-            LIMIT #{limit} OFFSET #{offset}
-        ) base
-        JOIN book b ON b.BO_CODE = base.BO_CODE
+            a.AU_NAME AS BO_AUTHOR,
+            k.KW_CODE AS KW_CODE, k.KW_NAME AS KW_NAME,
+            ANY_VALUE(ep.EP_COVER_IMG) AS EP_COVER_IMG
+        FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
-        LEFT JOIN book_keyword bk ON bk.BK_BO_CODE = b.BO_CODE
-        LEFT JOIN keyword k ON k.KW_CODE = bk.BK_KW_CODE
+        LEFT JOIN episode ep ON ep.EP_CODE = (
+            SELECT MAX(e2.EP_CODE)
+            FROM episode e2
+            WHERE e2.EP_BO_CODE = b.BO_CODE
+        )
+        LEFT JOIN book_keyword bk ON b.BO_CODE = bk.BK_BO_CODE
+        LEFT JOIN keyword k ON bk.BK_KW_CODE = k.KW_CODE
+
+        <if test="keywordIds != null and keywordIds.size() > 0">
+            WHERE bk.BK_KW_CODE IN
+            <foreach collection="keywordIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+
+        GROUP BY b.BO_CODE
+
+        <if test="keywordCount != null and keywordCount > 0">
+            HAVING COUNT(DISTINCT bk.BK_KW_CODE) = #{keywordCount}
+        </if>
+
+        <choose>
+            <when test="sort == 'popular'">ORDER BY MAX(b.BO_TOTAL_RATING / b.BO_REVIEW_COUNT) DESC</when>
+            <when test="sort == 'rating'">ORDER BY MAX(b.BO_TOTAL_RATING / b.BO_REVIEW_COUNT) DESC</when>
+            <when test="sort == 'review'">ORDER BY MAX(b.BO_REVIEW_COUNT) DESC</when>
+            <otherwise>ORDER BY MAX(b.BO_PUBLISH_DATE) DESC</otherwise>
+        </choose>
+
+        LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <!-- 키워드 검색 도서 개수 -->
@@ -416,12 +417,16 @@
     </select>
 
     <select id="selectBook" resultType="BookVO">
-        select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher, sub_cate.sc_name AS bo_sub_cate, main_cate.mc_name AS bo_main_cate, (select count(*) from `interest` where it_bo_code = #{bo_code}) AS bo_like_count from book
+        select *, author.au_name AS bo_author, publisher.pu_name AS bo_publisher, sub_cate.sc_name AS bo_sub_cate, main_cate.mc_name AS bo_main_cate, (select count(*) from `interest` where it_bo_code = #{bo_code}) AS bo_like_count, e.EP_COVER_IMG AS bo_thumbnail from book
         join `author` on bo_au_num = au_num
         join `publisher_id` on bo_pi_num = pi_num
         join `publisher` on pi_pu_code = pu_code
         join `sub_cate` on bo_sc_code = sc_code
         join `main_cate` on sc_mc_code = mc_code
+        JOIN
+            (SELECT EP_BO_CODE, MAX(EP_CODE) AS 최신_EP_CODE FROM episode GROUP BY EP_BO_CODE)
+            latest_ep ON BO_CODE = latest_ep.EP_BO_CODE
+        JOIN episode e ON latest_ep.EP_BO_CODE = e.EP_BO_CODE AND latest_ep.최신_EP_CODE = e.EP_CODE
         where bo_code = #{bo_code}
     </select>
     
@@ -748,28 +753,14 @@
         update book set bo_pi_num = #{pi_num} where bo_code = #{bo_code}
     </update>
     <select id="getEditorsBookListToPage" resultType="BookVO">
-        SELECT
-            book.*,
-            author.au_name AS bo_author,
-            publisher.pu_name AS bo_publisher,
-            e.EP_COVER_IMG AS bo_thumbnail
-        FROM
-            book
-        JOIN author ON book.bo_au_num = author.au_num
-        JOIN publisher_id ON book.bo_pi_num = publisher_id.pi_num
-        JOIN publisher ON publisher_id.pi_pu_code = publisher.pu_code
-        LEFT JOIN
-            (
-                SELECT EP_BO_CODE, MAX(EP_CODE) AS 최신_EP_CODE
-                FROM episode
-                GROUP BY EP_BO_CODE
-            ) latest_ep ON book.BO_CODE = latest_ep.EP_BO_CODE
-        LEFT JOIN episode e ON latest_ep.EP_BO_CODE = e.EP_BO_CODE AND latest_ep.최신_EP_CODE = e.EP_CODE
-        WHERE book.bo_pi_num = #{pi_num}
-        ORDER BY book.bo_title ASC
+        select book.*, author.au_name as bo_author, publisher.pu_name as bo_publisher from book
+        join author on bo_au_num = au_num
+        join publisher_id on bo_pi_num = pi_num
+        join publisher on pi_pu_code = pu_code
+        where bo_pi_num = #{pi_num}
+        order by bo_title asc
         LIMIT #{limit} OFFSET #{offset}
     </select>
-
     <select id="selectNotice" resultType="NoticeVO">
         select * from notice where nt_num = #{nt_num}
     </select>
