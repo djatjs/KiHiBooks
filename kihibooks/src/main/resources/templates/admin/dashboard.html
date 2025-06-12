@@ -8,111 +8,93 @@ layout:decorate="~{layout/layout.html}">
 <title>KiHiBooks</title>
 
 <style>
-	/* 관리자 대시보드 영역에만 적용될 스타일 */
 	.admin-dashboard {
-		font-family: 'Arial', sans-serif; /* 관리자 대시보드 내 폰트 설정 */
-		background-color: #f4f7f6; /* 배경색 설정 */
-		color: #333; /* 기본 텍스트 색상 */
-		padding: 30px; /* 내부 여백 */
-		border-radius: 8px; /* 모서리 둥글게 */
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+		font-family: 'Arial', sans-serif;
+		background-color: #f4f7f6;
+		color: #333;
+		padding: 30px;
+		border-radius: 8px;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	}
 	.admin-dashboard h1,
 	.admin-dashboard h2 {
-		color: #2c3e50; /* 제목 색상 */
-		margin-bottom: 20px; /* 아래 여백 */
-		border-bottom: 2px solid #ff7f50; /* 아래쪽 경계선 */
-		padding-bottom: 10px; /* 경계선과 텍스트 사이 여백 */
+		color: #2c3e50;
+		margin-bottom: 20px;
+		border-bottom: 2px solid #ff7f50;
+		padding-bottom: 10px;
 	}
-
-	/* 요약 정보 카드 섹션 (관리자 대시보드 내) */
 	.admin-dashboard .dashboard-summary {
-		display: flex; /* 플렉스 박스 레이아웃 사용 */
-		gap: 20px; /* 카드 간 간격 */
-		margin-bottom: 30px; /* 아래 여백 */
-		flex-wrap: wrap; /* 화면이 좁아지면 줄 바꿈 */
+		display: flex;
+		gap: 20px;
+		margin-bottom: 30px;
+		flex-wrap: wrap;
 	}
-
-	/* 각 요약 정보 카드 스타일 (관리자 대시보드 내) */
 	.admin-dashboard .summary-card {
-		flex: 1; /* 공간 균등 분배 */
-		background-color: #ecf0f1; /* 배경색 */
-		padding: 20px; /* 내부 여백 */
-		border-radius: 8px; /* 모서리 둥글게 */
-		text-align: center; /* 텍스트 가운데 정렬 */
-		min-width: 150px; /* 최소 너비 */
-		transition: transform 0.2s ease-in-out; /* 호버 효과를 위한 전환 효과 */
+		flex: 1;
+		background-color: #ecf0f1;
+		padding: 20px;
+		border-radius: 8px;
+		text-align: center;
+		min-width: 150px;
+		transition: transform 0.2s ease-in-out;
 	}
-
 	.admin-dashboard .summary-card:hover {
-		transform: translateY(-5px); /* 호버 시 살짝 위로 이동 */
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 호버 시 그림자 강화 */
+		transform: translateY(-5px);
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	}
-
 	.admin-dashboard .summary-card .card-title {
-		font-size: 1em; /* 제목 폰트 크기 */
-		color: #7f8c8d; /* 제목 색상 */
-		margin-bottom: 10px; /* 아래 여백 */
+		font-size: 1em;
+		color: #7f8c8d;
+		margin-bottom: 10px;
 	}
-
 	.admin-dashboard .summary-card .card-value {
-		font-size: 2em; /* 값 폰트 크기 */
-		font-weight: bold; /* 글씨 두껍게 */
-		color: #ff7f50; /* 값 색상 */
+		font-size: 2em;
+		font-weight: bold;
+		color: #ff7f50;
 	}
-
-	/* 계정 관리 액션 버튼 섹션 (관리자 대시보드 내) */
 	.admin-dashboard .dashboard-actions {
-		margin-bottom: 30px; /* 아래 여백 */
+		margin-bottom: 30px;
 	}
-
 	.admin-dashboard .action-buttons {
-		display: flex; /* 플렉스 박스 */
-		gap: 15px; /* 버튼 간 간격 */
-		flex-wrap: wrap; /* 줄 바꿈 */
+		display: flex;
+		gap: 15px;
+		flex-wrap: wrap;
 	}
-
-	/* 각 액션 버튼 스타일 (관리자 대시보드 내) */
 	.admin-dashboard .action-button {
-		display: inline-block; /* 인라인 블록 요소로 설정 */
-		background-color: #ff7f50; /* 배경색 */
-		color: white; /* 텍스트 색상 */
-		padding: 10px 20px; /* 내부 여백 */
-		border-radius: 5px; /* 모서리 둥글게 */
-		text-decoration: none; /* 밑줄 제거 */
-		font-size: 1em; /* 폰트 크기 */
-		transition: background-color 0.2s ease-in-out; /* 호버 효과를 위한 전환 */
+		display: inline-block;
+		background-color: #ff7f50;
+		color: white;
+		padding: 10px 20px;
+		border-radius: 5px;
+		text-decoration: none;
+		font-size: 1em;
+		transition: background-color 0.2s ease-in-out;
 	}
-
 	.admin-dashboard .action-button:hover {
-		background-color: #ff6347; /* 호버 시 배경색 변경 */
+		background-color: #ff6347;
 	}
-	/* 컨테이너 스타일 - 필요에 따라 조정 */
 	.container {
 		max-width: 1200px;
-		margin: 0 auto; /* 가운데 정렬 */
+		margin: 0 auto;
 		padding: 0 20px;
 	}
 
 	@media (max-width: 800px) {
 		.container {
-			padding: 0; /* 작은 화면에서 패딩 제거 */
+			padding: 0;
 		}
 	}
-	/* 사용자 선택 방지 스타일 (HTML에 이미 있음) */
 	main {
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
 	}
-
 </style>
 </head>
 <body >
 	<main layout:fragment="content" class="container">
 		<div class="admin-dashboard">
-
 			<h1>📊 관리자 대시보드</h1>
 			<div class="dashboard-summary">
 					<div class="summary-card">
@@ -121,16 +103,13 @@ layout:decorate="~{layout/layout.html}">
 					</div>
 				<div class="summary-card">
 					<div class="card-title">총 도서</div>
-					<!-- <div class="card-value" th:text="${bookCount}">0</div> -->
 					<div class="card-value">0</div>
 				</div>
 			</div>
-
 			<div class="dashboard-actions">
 				<h2>계정 관리</h2>
 				<div class="action-buttons">
 					<a href="/admin/publishers" class="action-button">출판사 계정 관리</a>
-					<a href="/admin/editors" class="action-button">에디터 권한 관리</a>
 				</div>
 			</div>
 		</div>
