@@ -31,7 +31,7 @@ public class SecurityConfig {
     @Autowired
     private CustomLoginFailureHandler customLoginFailureHandler;
 	
-	@Value("${spring.rememeber.me.key}")
+	@Value("${spring.remember.me.key}")
 	String rememberMeKey;
     
     @Bean
@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .permitAll()
                 .loginProcessingUrl("/login")
                 // .failureUrl("/login?error")
-                .defaultSuccessUrl("/")
+                .defaultSuccessUrl("/genre/romance")
             )
             //자동 로그인 처리
 			.rememberMe(rm-> rm

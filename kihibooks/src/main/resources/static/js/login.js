@@ -3,25 +3,30 @@ document.getElementById('login-form').addEventListener('submit', async (event) =
 
     const username = document.getElementById('email').value;
     const password = document.getElementById('ur_pw').value;
+    const rememberMe = document.querySelector('input[name="remember-me"]').checked ? 'on' : 'off'; // remember-me 값 가져오기
 
     try {
-        const response = await fetch('/login', { // 서버의 로그인 API 엔드포인트
+        const response = await fetch('/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: new URLSearchParams({ username: username, password: password }).toString()
+            body: new URLSearchParams({
+                username: username,
+                password: password,
+                'remember-me': rememberMe // remember-me 값을 body에 추가
+            }).toString()
         });
 
-        if (!response.ok) { // 응답 상태가 2xx가 아닌지 확인
-            const data = await response.json(); // CustomLoginFailureHandler에서 온 JSON 응답을 파싱
-                Swal.fire({
-                    title: '로그인 실패',
-                    text: data.message,
-                    icon: 'error',
-                    confirmButtonText: '확인',
-                    confirmButtonColor: '#ff7f50'
-                });
+        if (!response.ok) {
+            const data = await response.json();
+            Swal.fire({
+                title: '로그인 실패',
+                text: data.message,
+                icon: 'error',
+                confirmButtonText: '확인',
+                confirmButtonColor: '#ff7f50'
+            });
         } else {
             window.location.href = "/";
         }
