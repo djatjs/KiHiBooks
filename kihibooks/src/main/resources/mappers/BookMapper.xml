@@ -532,6 +532,7 @@
         join author on bo_au_num = au_num
         join publisher_id on bo_pi_num = pi_num
         join publisher on pi_pu_code = pu_code
+        
         where bo_pi_num = #{pi_num}
         order by bo_title asc
     </select>
@@ -767,10 +768,14 @@
         update book set bo_pi_num = #{pi_num} where bo_code = #{bo_code}
     </update>
     <select id="getEditorsBookListToPage" resultType="BookVO">
-        select book.*, author.au_name as bo_author, publisher.pu_name as bo_publisher from book
+        select book.*, author.au_name as bo_author, publisher.pu_name as bo_publisher, e.EP_COVER_IMG AS bo_thumbnail from book
         join author on bo_au_num = au_num
         join publisher_id on bo_pi_num = pi_num
         join publisher on pi_pu_code = pu_code
+        JOIN
+            (SELECT EP_BO_CODE, MAX(EP_CODE) AS 최신_EP_CODE FROM episode GROUP BY EP_BO_CODE)
+            latest_ep ON BO_CODE = latest_ep.EP_BO_CODE
+        JOIN episode e ON latest_ep.EP_BO_CODE = e.EP_BO_CODE AND latest_ep.최신_EP_CODE = e.EP_CODE
         where bo_pi_num = #{pi_num}
         order by bo_title asc
         LIMIT #{limit} OFFSET #{offset}
