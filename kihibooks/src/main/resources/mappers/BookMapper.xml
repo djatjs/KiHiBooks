@@ -12,7 +12,7 @@
         <result property="bo_adult" column="BO_ADULT" />
         <result property="bo_fin" column="BO_FIN" />
         <result property="bo_publish_date" column="BO_PUBLISH_DATE" />
-
+        <result property="ep_cover_img" column="EP_COVER_IMG" />
         <collection property="keywordList" ofType="KeywordVO">
             <result property="kw_code" column="KW_CODE"/>
             <result property="kw_name" column="KW_NAME"/>
@@ -357,39 +357,40 @@
         SELECT 
             b.BO_CODE, b.BO_TITLE, b.BO_DESCRIPTION, b.BO_TOTAL_EPISODE,
             b.BO_TOTAL_RATING, b.BO_REVIEW_COUNT, b.BO_ADULT, b.BO_FIN, b.BO_PUBLISH_DATE,
-            a.AU_NAME AS bo_author,
-            k.KW_CODE AS kw_code, k.KW_NAME AS kw_name
-        FROM (
-            SELECT b.BO_CODE
-            FROM book b
-            JOIN book_keyword bk ON b.BO_CODE = bk.BK_BO_CODE
-
-            <if test="keywordIds != null and keywordIds.size() > 0">
-                WHERE bk.BK_KW_CODE IN
-                <foreach collection="keywordIds" item="id" open="(" close=")" separator=",">
-                    #{id}
-                </foreach>
-            </if>
-
-            GROUP BY b.BO_CODE
-
-            <if test="keywordCount != null and keywordCount > 0">
-                HAVING COUNT(DISTINCT bk.BK_KW_CODE) = #{keywordCount}
-            </if>
-
-            <choose>
-                <when test="sort == 'popular'">ORDER BY MAX(b.BO_TOTAL_RATING / b.BO_REVIEW_COUNT) DESC</when>
-                <when test="sort == 'rating'">ORDER BY MAX(b.BO_TOTAL_RATING / b.BO_REVIEW_COUNT) DESC</when>
-                <when test="sort == 'review'">ORDER BY MAX(b.BO_REVIEW_COUNT) DESC</when>
-                <otherwise>ORDER BY MAX(b.BO_PUBLISH_DATE) DESC</otherwise>
-            </choose>
-
-            LIMIT #{limit} OFFSET #{offset}
-        ) base
-        JOIN book b ON b.BO_CODE = base.BO_CODE
+            a.AU_NAME AS BO_AUTHOR,
+            k.KW_CODE AS KW_CODE, k.KW_NAME AS KW_NAME,
+            ANY_VALUE(ep.EP_COVER_IMG) AS EP_COVER_IMG
+        FROM book b
         JOIN author a ON b.BO_AU_NUM = a.AU_NUM
-        LEFT JOIN book_keyword bk ON bk.BK_BO_CODE = b.BO_CODE
-        LEFT JOIN keyword k ON k.KW_CODE = bk.BK_KW_CODE
+        LEFT JOIN episode ep ON ep.EP_CODE = (
+            SELECT MAX(e2.EP_CODE)
+            FROM episode e2
+            WHERE e2.EP_BO_CODE = b.BO_CODE
+        )
+        LEFT JOIN book_keyword bk ON b.BO_CODE = bk.BK_BO_CODE
+        LEFT JOIN keyword k ON bk.BK_KW_CODE = k.KW_CODE
+
+        <if test="keywordIds != null and keywordIds.size() > 0">
+            WHERE bk.BK_KW_CODE IN
+            <foreach collection="keywordIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+
+        GROUP BY b.BO_CODE
+
+        <if test="keywordCount != null and keywordCount > 0">
+            HAVING COUNT(DISTINCT bk.BK_KW_CODE) = #{keywordCount}
+        </if>
+
+        <choose>
+            <when test="sort == 'popular'">ORDER BY MAX(b.BO_TOTAL_RATING / b.BO_REVIEW_COUNT) DESC</when>
+            <when test="sort == 'rating'">ORDER BY MAX(b.BO_TOTAL_RATING / b.BO_REVIEW_COUNT) DESC</when>
+            <when test="sort == 'review'">ORDER BY MAX(b.BO_REVIEW_COUNT) DESC</when>
+            <otherwise>ORDER BY MAX(b.BO_PUBLISH_DATE) DESC</otherwise>
+        </choose>
+
+        LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <!-- 키워드 검색 도서 개수 -->
