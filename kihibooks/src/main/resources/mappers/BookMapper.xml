@@ -748,14 +748,28 @@
         update book set bo_pi_num = #{pi_num} where bo_code = #{bo_code}
     </update>
     <select id="getEditorsBookListToPage" resultType="BookVO">
-        select book.*, author.au_name as bo_author, publisher.pu_name as bo_publisher from book
-        join author on bo_au_num = au_num
-        join publisher_id on bo_pi_num = pi_num
-        join publisher on pi_pu_code = pu_code
-        where bo_pi_num = #{pi_num}
-        order by bo_title asc
+        SELECT
+            book.*,
+            author.au_name AS bo_author,
+            publisher.pu_name AS bo_publisher,
+            e.EP_COVER_IMG AS bo_thumbnail
+        FROM
+            book
+        JOIN author ON book.bo_au_num = author.au_num
+        JOIN publisher_id ON book.bo_pi_num = publisher_id.pi_num
+        JOIN publisher ON publisher_id.pi_pu_code = publisher.pu_code
+        LEFT JOIN
+            (
+                SELECT EP_BO_CODE, MAX(EP_CODE) AS 최신_EP_CODE
+                FROM episode
+                GROUP BY EP_BO_CODE
+            ) latest_ep ON book.BO_CODE = latest_ep.EP_BO_CODE
+        LEFT JOIN episode e ON latest_ep.EP_BO_CODE = e.EP_BO_CODE AND latest_ep.최신_EP_CODE = e.EP_CODE
+        WHERE book.bo_pi_num = #{pi_num}
+        ORDER BY book.bo_title ASC
         LIMIT #{limit} OFFSET #{offset}
     </select>
+
     <select id="selectNotice" resultType="NoticeVO">
         select * from notice where nt_num = #{nt_num}
     </select>

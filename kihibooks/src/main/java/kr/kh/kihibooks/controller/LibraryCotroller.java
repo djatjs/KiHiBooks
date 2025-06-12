@@ -26,6 +26,7 @@ import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.InterestVO;
 import kr.kh.kihibooks.model.vo.LibraryVO;
+import kr.kh.kihibooks.model.vo.NoticeVO;
 import kr.kh.kihibooks.model.vo.ReviewVO;
 import kr.kh.kihibooks.model.vo.CommentVO;
 import kr.kh.kihibooks.pagination.PageInfo;
@@ -90,6 +91,7 @@ public class LibraryCotroller {
         String latestDate = latestDateOpt
         .map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
         .orElse("날짜 없음");
+        List<NoticeVO> notiList = bookService.getNoticeList(bo_code);
         String mainCategory = bookService.getMainCategoryUrlKeyword(book.getBo_main_cate());
 
         model.addAttribute("latestEpDate", latestDate);
@@ -98,6 +100,7 @@ public class LibraryCotroller {
         model.addAttribute("epiList", epiList);
         model.addAttribute("kwList", kwList);
         model.addAttribute("abList", abList);
+        model.addAttribute("notiList", notiList);
         model.addAttribute("mainCategory", mainCategory);
         return "/library/books";
     }
