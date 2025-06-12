@@ -62,12 +62,11 @@ public class BookController {
 
 		// 2. 검색 결과 도서 리스트
 		PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
+		List<BookVO> bookList = pageInfo.getContent();
 		model.addAttribute("bookList", pageInfo.getContent());
 		model.addAttribute("pageInfo", pageInfo);
 		model.addAttribute("selectedKeywordIds", keywordIds);
-
-		System.out.println("bookList size: " + pageInfo.getContent().size()); // 책 리스트 사이즈 확인
-		System.out.println("bookList: " + pageInfo.getContent());
+		model.addAttribute("sort", sort);
 
 		List<KeywordVO> selectedKeywords = keywordService.getSelectedKeywordsPreserveOrder(keywordIds);
 		model.addAttribute("selectedKeywords", selectedKeywords);
@@ -97,12 +96,10 @@ public class BookController {
 
 		// 2. 검색 결과 도서 리스트
 		PageInfo<BookVO> pageInfo = bookService.getBooksByKeywords(keywordIds, sort, page);
+
 		model.addAttribute("bookList", pageInfo.getContent());
 		model.addAttribute("pageInfo", pageInfo);
 		model.addAttribute("selectedKeywordIds", keywordIds);
-
-		System.out.println("bookList size: " + pageInfo.getContent().size()); // 책 리스트 사이즈 확인
-		System.out.println("bookList: " + pageInfo.getContent());
 
 		List<KeywordVO> selectedKeywords = keywordService.getSelectedKeywordsPreserveOrder(keywordIds);
 		model.addAttribute("selectedKeywords", selectedKeywords);
