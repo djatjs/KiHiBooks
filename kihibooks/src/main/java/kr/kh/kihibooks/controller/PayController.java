@@ -287,9 +287,16 @@ public class PayController {
 
         int amount = (int) session.getAttribute("amount");
         String method = (String) session.getAttribute("method");
-        
+        String methodString;
+        if(method.equals("kakaopay")) {
+            methodString = "카카오페이";
+        } else if(method.equals("tosspay")) {
+            methodString = "토스페이";
+        } else {
+            methodString = "null";
+        }
         model.addAttribute("amount", amount);
-        model.addAttribute("method", method);
+        model.addAttribute("methodString", methodString);
         return "user/chargePoint";
     }
 

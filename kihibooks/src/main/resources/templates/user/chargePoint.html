@@ -141,11 +141,11 @@
 					</tr>
 					<tr>
 						<th>충전 금액</th>
-						<td th:text="${usePoint} + '원'">0원</td>
+						<td th:text="${amount} + '원'">0원</td>
 					</tr>
 					<tr>
 						<th>결제 수단</th>
-						<td>카카오페이</td>
+						<td th:text="${methodString}">카카오페이</td>
 					</tr>
 				</tbody>
 			</table>
