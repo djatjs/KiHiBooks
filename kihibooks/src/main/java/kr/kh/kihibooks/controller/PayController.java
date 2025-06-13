@@ -29,6 +29,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.HttpSession;
 import kr.kh.kihibooks.model.dto.ChargeDTO;
 import kr.kh.kihibooks.model.dto.PaymentDTO;
 import kr.kh.kihibooks.model.dto.PointOrderRequest;
@@ -159,7 +160,8 @@ public class PayController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> processPointOrder(
             @RequestBody PointOrderRequest payload,
-            @AuthenticationPrincipal CustomUser customUser) {
+            @AuthenticationPrincipal CustomUser customUser,
+            HttpSession session) {
         List<String> epCodes = payload.getEpCodes();
         String orderId = payload.getOrderId();
         int usePoint = payload.getUsePoint();
@@ -168,7 +170,9 @@ public class PayController {
         Map<String, Object> res = new HashMap<>();
         res.put("contentsId", contentsId);
         res.put("success", true);
-
+                
+        session.setAttribute("epCodes", epCodes);
+        session.setAttribute("usePoint", usePoint);
         return ResponseEntity.ok(res);
     }
 
@@ -282,8 +286,12 @@ public class PayController {
 
     @GetMapping("/order/checkout/point/finished")
     public String chargePoint(@RequestParam("merchant_uid") String contentsId,
-            @AuthenticationPrincipal CustomUser customUser, Model model) {
+            @AuthenticationPrincipal CustomUser customUser, HttpSession session, Model model) {
 
+        List<String> epCodes = (List<String>) session.getAttribute("epCodes");
+        int usePoint = (int) session.getAttribute("usePoint");
+
+        model.addAttribute("usePoint", usePoint);
         return "user/chargePoint";
     }
 
