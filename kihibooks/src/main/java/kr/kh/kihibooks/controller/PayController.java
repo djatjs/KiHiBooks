@@ -289,7 +289,7 @@ public class PayController {
             @AuthenticationPrincipal CustomUser customUser, HttpSession session, Model model) {
 
         List<String> epCodes = (List<String>) session.getAttribute("epCodes");
-        int usePoint = (int) session.getAttribute("usePoint");
+        Integer usePoint = (Integer) session.getAttribute("usePoint");
 
         model.addAttribute("usePoint", usePoint);
         return "user/chargePoint";
