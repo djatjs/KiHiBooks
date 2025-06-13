@@ -295,7 +295,7 @@ public class PayController {
         } else {
             methodString = "null";
         }
-
+        
         DecimalFormat formatter = new DecimalFormat("#,###");
         String formattedAmount = formatter.format(amount);
 
