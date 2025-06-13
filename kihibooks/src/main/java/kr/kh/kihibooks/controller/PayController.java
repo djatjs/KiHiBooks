@@ -160,8 +160,7 @@ public class PayController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> processPointOrder(
             @RequestBody PointOrderRequest payload,
-            @AuthenticationPrincipal CustomUser customUser,
-            HttpSession session) {
+            @AuthenticationPrincipal CustomUser customUser) {
         List<String> epCodes = payload.getEpCodes();
         String orderId = payload.getOrderId();
         int usePoint = payload.getUsePoint();
@@ -171,8 +170,6 @@ public class PayController {
         res.put("contentsId", contentsId);
         res.put("success", true);
                 
-        session.setAttribute("epCodes", epCodes);
-        session.setAttribute("usePoint", usePoint);
         return ResponseEntity.ok(res);
     }
 
@@ -288,17 +285,18 @@ public class PayController {
     public String chargePoint(@RequestParam("merchant_uid") String contentsId,
             @AuthenticationPrincipal CustomUser customUser, HttpSession session, Model model) {
 
-        List<String> epCodes = (List<String>) session.getAttribute("epCodes");
-        Integer usePoint = (Integer) session.getAttribute("usePoint");
-
-        model.addAttribute("usePoint", usePoint);
+        int amount = (int) session.getAttribute("amount");
+        String method = (String) session.getAttribute("method");
+        
+        model.addAttribute("amount", amount);
+        model.addAttribute("method", method);
         return "user/chargePoint";
     }
 
     @PostMapping("/payment/pay")
     @ResponseBody
     public Map<String, Object> processPay(@RequestBody ChargeDTO chargeDTO,
-            @AuthenticationPrincipal CustomUser customUser) {
+            @AuthenticationPrincipal CustomUser customUser, HttpSession session) {
         Map<String, Object> response = new HashMap<>();
         System.out.println("chargeDTO: " + chargeDTO);
 
@@ -347,6 +345,8 @@ public class PayController {
         response.put("nickname", customUser.getUser().getUr_nickname());
         response.put("totalCredit", totalCredit); // 디버깅용: 실제 적립 금액
 
+        session.setAttribute("amount", chargeAmount);
+        session.setAttribute("method", paymentMethod);
         return response;
     }
 
