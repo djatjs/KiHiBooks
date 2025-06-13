@@ -295,7 +295,11 @@ public class PayController {
         } else {
             methodString = "null";
         }
-        model.addAttribute("amount", amount);
+
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        String formattedAmount = formatter.format(amount);
+
+        model.addAttribute("formattedAmount", formattedAmount);
         model.addAttribute("methodString", methodString);
         return "user/chargePoint";
     }
