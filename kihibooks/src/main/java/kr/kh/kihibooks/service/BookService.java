@@ -581,11 +581,11 @@ public class BookService {
         return bookDAO.deleteNotice(nt_num);
     }
 
-    public List<BookVO> getAuthorsAnotherBook(String bo_code) {
-        int au_num = bookDAO.getAuthorNumByBocode(bo_code);
+    // public List<BookVO> getAuthorsAnotherBook(String bo_code) {
+    //     int au_num = bookDAO.getAuthorNumByBocode(bo_code);
 
-        return bookDAO.getAuthorsAnotherBookList(au_num);
-    }
+    //     return bookDAO.getAuthorsAnotherBookList(au_num);
+    // }
 
     public String getMainCategoryUrlKeyword(String bo_main_cate) {
         String urlPath;

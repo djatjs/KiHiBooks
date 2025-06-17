@@ -643,31 +643,25 @@
     </select>
     <select id="getAuthorAnotherBookList" resultType="BookVO">
         SELECT
-            BO_CODE, BO_TITLE,  au_name AS bo_author, BO_TOTAL_RATING, BO_REVIEW_COUNT,
-            (
-                SELECT EP_COVER_IMG FROM episode
-                WHERE EP_BO_CODE = BO_CODE
-                ORDER BY EP_DATE DESC LIMIT 1
-            ) AS bo_thumbnail
+            BO_CODE, BO_TITLE, au_name AS bo_author, BO_TOTAL_RATING, BO_REVIEW_COUNT, MAX(EP_COVER_IMG) AS bo_thumbnail
         FROM book
         JOIN author ON au_num = bo_au_num
-        WHERE bo_au_num = #{au_num}
-        ORDER BY substring((bo_total_rating / bo_review_count / 2.0), 1, 3) desc, bo_review_count desc
+        JOIN episode ON EP_BO_CODE = BO_CODE
+        WHERE bo_au_num = 1
+        GROUP BY BO_CODE, BO_TITLE, au_name, BO_TOTAL_RATING, BO_REVIEW_COUNT
+        ORDER BY SUBSTRING((bo_total_rating / bo_review_count / 2.0), 1, 3) DESC, bo_review_count DESC;
     </select>
 
-    <select id="getAuthorsAnotherBookList" resultType="BookVO">
+    <!-- <select id="getAuthorsAnotherBookList" resultType="BookVO">
         SELECT
-            BO_CODE, BO_TITLE,  au_name AS bo_author, BO_TOTAL_RATING, BO_REVIEW_COUNT,
-            (
-                SELECT EP_COVER_IMG FROM episode
-                WHERE EP_BO_CODE = BO_CODE
-                ORDER BY EP_DATE DESC LIMIT 1
-            ) AS bo_thumbnail
+            BO_CODE, BO_TITLE, au_name AS bo_author, BO_TOTAL_RATING, BO_REVIEW_COUNT, MAX(EP_COVER_IMG) AS bo_thumbnail
         FROM book
         JOIN author ON au_num = bo_au_num
-        WHERE bo_au_num = #{au_num}
-        ORDER BY substring((bo_total_rating / bo_review_count / 2.0), 1, 3) desc, bo_review_count desc
-    </select>
+        JOIN episode ON EP_BO_CODE = BO_CODE
+        WHERE bo_au_num = 1
+        GROUP BY BO_CODE, BO_TITLE, au_name, BO_TOTAL_RATING, BO_REVIEW_COUNT
+        ORDER BY SUBSTRING((bo_total_rating / bo_review_count / 2.0), 1, 3) DESC, bo_review_count DESC;
+    </select> -->
 
     <select id="getNoticeList" resultType="NoticeVO">
         select * from notice
@@ -701,14 +695,12 @@
     <select id="getBestList6" resultType="BookVO">
         SELECT
             BO_CODE, BO_TITLE,  au_name AS bo_author, BO_TOTAL_RATING, BO_REVIEW_COUNT,
-            (
-                SELECT EP_COVER_IMG FROM episode
-                WHERE EP_BO_CODE = BO_CODE
-                ORDER BY EP_DATE DESC LIMIT 1
-            ) AS bo_thumbnail
+            MAX(EP_COVER_IMG) AS bo_thumbnail
         FROM book
         JOIN author ON au_num = bo_au_num
+        JOIN episode ON EP_BO_CODE = BO_CODE
         WHERE bo_sc_code = #{sc_code}
+        GROUP BY BO_CODE, BO_TITLE, au_name, BO_TOTAL_RATING, BO_REVIEW_COUNT
         ORDER BY substring((bo_total_rating / bo_review_count / 2.0), 1, 3) desc, bo_review_count desc
         LIMIT 6;
     </select>
@@ -787,10 +779,10 @@
         join author on bo_au_num = au_num
         join publisher_id on bo_pi_num = pi_num
         join publisher on pi_pu_code = pu_code
-        JOIN
+        left JOIN
             (SELECT EP_BO_CODE, MAX(EP_CODE) AS 최신_EP_CODE FROM episode GROUP BY EP_BO_CODE)
             latest_ep ON BO_CODE = latest_ep.EP_BO_CODE
-        JOIN episode e ON latest_ep.EP_BO_CODE = e.EP_BO_CODE AND latest_ep.최신_EP_CODE = e.EP_CODE
+        left JOIN episode e ON latest_ep.EP_BO_CODE = e.EP_BO_CODE AND latest_ep.최신_EP_CODE = e.EP_CODE
         where bo_pi_num = #{pi_num}
         order by bo_title asc
         LIMIT #{limit} OFFSET #{offset}
