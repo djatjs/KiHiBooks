@@ -3159,9 +3159,7 @@
 																					</div>
 																					<div class="book-info">
 																						<div class="bo-title">
-																							<!-- bo-img와 동일한 링크 -->
-																							<a th:href="@{'/books/' + ${anotherBook.bo_code}}" class="b-title"
-																								th:text="${anotherBook.bo_title}"></a>
+																							<a th:href="@{'/books/' + ${anotherBook.bo_code}}" class="b-title" th:text="${anotherBook.bo_title}"></a>
 																						</div>
 																						<div class="book-author">
 																							<span class="bo-author">
@@ -3169,16 +3167,21 @@
 																									th:text="${anotherBook.bo_author}"></a>
 																							</span>
 																							<span class="bo-rating">
-																								<img class="red mb-1" src="/resources/static/img/star.png" alt="별"
-																									style="height: 12px; margin-right: 2px;"
-																									th:text="${anotherBook.bo_total_rating / anotherBook.bo_review_count / 2.0}">
+																								<span th:if="${anotherBook.bo_review_count > 0}">
+																									<img class="b-rating-img red" src="/resources/static/img/star.png" alt="별점"
+																										style="height: 13px; margin-right: 2px; margin-bottom: 2px;"
+																										th:text="${anotherBook.bo_total_rating / anotherBook.bo_review_count / 2.0}">
+																								</span>
+																								<span th:unless="${anotherBook.bo_review_count > 0}">
+																									<img class="b-rating-img red" src="/resources/static/img/star.png" alt="별점"
+																										style="height: 13px; margin-right: 2px; margin-bottom: 2px;"
+																										th:text="0">
+																								</span>
 																								<span class="b-rating-cnt"
 																									th:text="'(' + ${anotherBook.bo_review_count} + ')'"></span>
 																							</span>
 																						</div>
 																					</div>
-																					<!-- bo-img 와 동일한 링크 -->
-																					<a th:href="@{'/books/' + ${anotherBook.bo_code}}" class="book-click"></a>
 																				</div>
 																			</li>
 																		</ul>
@@ -3713,9 +3716,16 @@
 																							th:text="${best6.bo_author}"></a>
 																					</span>
 																					<span class="b-book-rating">
-																						<img class="b-rating-img red" src="/resources/static/img/star.png" alt="별점"
-																							style="height: 13px; margin-right: 2px; margin-bottom: 2px;"
-																							th:text="${best6.bo_total_rating / best6.bo_review_count / 2.0}">
+																						<span th:if="${best6.bo_review_count > 0}">
+																							<img class="b-rating-img red" src="/resources/static/img/star.png" alt="별점"
+																								style="height: 13px; margin-right: 2px; margin-bottom: 2px;"
+																								th:text="${best6.bo_total_rating / best6.bo_review_count / 2.0}">
+																						</span>
+																						<span th:unless="${best6.bo_review_count > 0}">
+																							<img class="b-rating-img red" src="/resources/static/img/star.png" alt="별점"
+																								style="height: 13px; margin-right: 2px; margin-bottom: 2px;"
+																								th:text="0">
+																						</span>
 																						<span class="b-rating-cnt" style="margin-left: 1px; color: #787878;"
 																							th:text="'('+${best6.bo_review_count}+')'"></span>
 																					</span>
