@@ -197,7 +197,7 @@ public class PublisherContoller {
     
     @GetMapping("/editor/manageEpisode/{bo_code}")
     public String manageEpisodeEpisode(@PathVariable String bo_code, Model model) {
-        BookVO book = bookService.getBook(bo_code);
+        BookVO book = bookService.getBookInfo(bo_code);
         List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
         model.addAttribute("bo_code", bo_code);
         model.addAttribute("book", book);

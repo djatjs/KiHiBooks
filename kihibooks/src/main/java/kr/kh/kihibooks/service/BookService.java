@@ -640,7 +640,11 @@ public class BookService {
     }
 
     public boolean insertLibrary(String ep_code, int urNum) {
-       
         return bookDAO.insertLibrary(ep_code, urNum);
     }
+
+    public BookVO getBookInfo(String bo_code) {
+        return bookDAO.selectBookInfo(bo_code);
+    }
+
 }

@@ -821,4 +821,14 @@
         select count(*) from `library`
         where lb_ep_code = #{ep_code} and lb_ur_num = #{ur_num}
     </select>
+    <select id="selectBookInfo" resultType="BookVO">
+        SELECT book.*, AU_NAME as bo_author, MC_NAME as bo_main_cate, SC_NAME as bo_sub_cate, PU_NAME as bo_publisher
+        FROM book
+        join sub_cate on BO_SC_CODE = SC_CODE
+        join main_cate on SC_MC_CODE = MC_CODE
+        join author on BO_AU_NUM = AU_NUM
+        join publisher_id on BO_PI_NUM = PI_NUM
+        join publisher on PI_PU_CODE = PU_CODE
+        where bo_code = #{bo_code}
+    </select>
 </mapper>
