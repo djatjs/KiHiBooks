@@ -81,7 +81,6 @@ public class BookDetailController {
                 .map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
                 .orElse("날짜 없음");
         List<BookVO> abList = bookService.getAuthorAnotherBook(bo_code);
-        System.out.println(abList);
         List<NoticeVO> notiList = bookService.getNoticeList(bo_code);
         List<BookVO> bestList10 = bookService.getBestList(bo_code);
         List<BookVO> bestList6 = bookService.getBestList6(bo_code);

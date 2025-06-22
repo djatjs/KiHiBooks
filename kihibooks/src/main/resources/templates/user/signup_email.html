@@ -79,10 +79,6 @@
 					complete: function(){
 					}
 				})
-
-				//$("#sendVerificationCode").prop("disabled", true); // 버튼 비활성화
-
-				
 				return;
 			})
 		</script>
@@ -190,13 +186,8 @@
 			}, "이미 사용중인 닉네임입니다.");
 			$.validator.addMethod("notEqualToReservedNickname", function(value, element){
 				const reservedNicknames = [
-					"탈퇴한사용자",
-					"운영자",
-					"관리자",
-					"admin",
-					"administrator",
-					"testuser",
-					"씨발", "개새끼", "지랄", "병신" // 예시 비속어 (실제 목록은 더 상세해야 합니다)
+					"탈퇴한사용자", "운영자", "관리자", "admin", "administrator",
+					"testuser", "키히북스", "나쁜놈", "사기꾼" // 예시 비속어
 				];
 				const lowerCaseValue = value.toLowerCase();
 				return this.optional(element) || !reservedNicknames.includes(lowerCaseValue);

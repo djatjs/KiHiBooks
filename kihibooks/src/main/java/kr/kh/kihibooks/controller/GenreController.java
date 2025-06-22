@@ -86,9 +86,6 @@ public class GenreController {
         model.addAttribute("waitFreeBooks", bookService.getWaitFreeBooks(mcCode));
         model.addAttribute("bestBooks", bookService.getBestBooks(mcCode));
         List<BookVO> newBooks = bookService.getNewBooks(mcCode);
-        for (BookVO book : newBooks) {
-            System.out.println("[NEW] " + book.getBo_code() + " → 썸네일: " + book.getBo_thumbnail());
-        }
         model.addAttribute("newBooks", bookService.getNewBooks(mcCode));
         model.addAttribute("keywordList", genreService.getRandomKeywords());
 

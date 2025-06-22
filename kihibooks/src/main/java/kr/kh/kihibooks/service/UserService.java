@@ -97,13 +97,9 @@ public class UserService {
 		while (code.length() < size) {
 			// 램덤 정수 생성
 			int r = (int) (Math.random() * (62));
-			if (r < 10) {
-				code += r;
-			} else if (r < 36) {
-				code += (char) (r - 10 + 'a');
-			} else {
-				code += (char) (r - 36 + 'A');
-			}
+			if (r < 10) code += r;
+			else if (r < 36) code += (char) (r - 10 + 'a');
+			else code += (char) (r - 36 + 'A');
 		}
 		return code;
 	}
