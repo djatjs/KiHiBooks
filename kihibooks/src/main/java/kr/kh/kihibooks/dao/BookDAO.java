@@ -214,6 +214,4 @@ public interface BookDAO {
 
 	boolean insertLibrary(String ep_code, int ur_num);
 
-	BookVO selectBookInfo(String bo_code);
-
 }
