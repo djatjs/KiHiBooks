@@ -299,7 +299,6 @@ public class PayController {
         DecimalFormat formatter = new DecimalFormat("#,###");
         String formattedAmount = formatter.format(amount);
 
-        System.out.println(methodString + amount);
         model.addAttribute("formattedAmount", formattedAmount);
         model.addAttribute("methodString", methodString);
         return "user/chargePoint";
