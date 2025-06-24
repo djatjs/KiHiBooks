@@ -81,7 +81,6 @@ public class BookDetailController {
                 .map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
                 .orElse("날짜 없음");
         List<BookVO> abList = bookService.getAuthorAnotherBook(bo_code);
-        System.out.println(abList);
         List<NoticeVO> notiList = bookService.getNoticeList(bo_code);
         List<BookVO> bestList10 = bookService.getBestList(bo_code);
         List<BookVO> bestList6 = bookService.getBestList6(bo_code);
@@ -259,6 +258,31 @@ public class BookDetailController {
         boolean res = false;
         if(bookService.insertBuyList(ep_code, urNum)) {
             res = bookService.insertLibrary(ep_code, urNum);
+        }
+
+        return ResponseEntity.ok(res);
+    }
+    
+    @PostMapping("/view/later")
+    public ResponseEntity<Map<String, Object>> viewLater(@RequestBody String epCode, @AuthenticationPrincipal CustomUser customUser) {
+         int urNum = customUser.getUser().getUr_num();
+        String ep_code = epCode.replaceAll("\"", "");
+
+        String contentsId = userService.updatePointOrder(epCode, customUser.getUser().getUr_num(), usePoint);
+
+        Map<String, Object> res = new HashMap<>();
+
+        if(bookService.selectBlList(ep_code, urNum)) {
+            System.out.println("controller: false");
+            res.put("contentsId", contentsId);
+            return ResponseEntity.ok(res);
+        }
+
+        if(bookService.insertBuyList(ep_code, urNum)) {
+           if(bookService.insertLibrary(ep_code, urNum)) {
+            res.put("contentsId", contentsId);
+            return ResponseEntity.ok(res);
+           }
         }
 
         return ResponseEntity.ok(res);

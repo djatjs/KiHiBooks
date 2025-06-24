@@ -3159,7 +3159,9 @@
 																					</div>
 																					<div class="book-info">
 																						<div class="bo-title">
-																							<a th:href="@{'/books/' + ${anotherBook.bo_code}}" class="b-title" th:text="${anotherBook.bo_title}"></a>
+																							<!-- bo-img와 동일한 링크 -->
+																							<a th:href="@{'/books/' + ${anotherBook.bo_code}}" class="b-title"
+																								th:text="${anotherBook.bo_title}"></a>
 																						</div>
 																						<div class="book-author">
 																							<span class="bo-author">
@@ -3167,21 +3169,16 @@
 																									th:text="${anotherBook.bo_author}"></a>
 																							</span>
 																							<span class="bo-rating">
-																								<span th:if="${anotherBook.bo_review_count > 0}">
-																									<img class="b-rating-img red" src="/resources/static/img/star.png" alt="별점"
-																										style="height: 13px; margin-right: 2px; margin-bottom: 2px;"
-																										th:text="${anotherBook.bo_total_rating / anotherBook.bo_review_count / 2.0}">
-																								</span>
-																								<span th:unless="${anotherBook.bo_review_count > 0}">
-																									<img class="b-rating-img red" src="/resources/static/img/star.png" alt="별점"
-																										style="height: 13px; margin-right: 2px; margin-bottom: 2px;"
-																										th:text="0">
-																								</span>
+																								<img class="red mb-1" src="/resources/static/img/star.png" alt="별"
+																									style="height: 12px; margin-right: 2px;"
+																									th:text="${anotherBook.bo_total_rating / anotherBook.bo_review_count / 2.0}">
 																								<span class="b-rating-cnt"
 																									th:text="'(' + ${anotherBook.bo_review_count} + ')'"></span>
 																							</span>
 																						</div>
 																					</div>
+																					<!-- bo-img 와 동일한 링크 -->
+																					<a th:href="@{'/books/' + ${anotherBook.bo_code}}" class="book-click"></a>
 																				</div>
 																			</li>
 																		</ul>
@@ -3716,16 +3713,9 @@
 																							th:text="${best6.bo_author}"></a>
 																					</span>
 																					<span class="b-book-rating">
-																						<span th:if="${best6.bo_review_count > 0}">
-																							<img class="b-rating-img red" src="/resources/static/img/star.png" alt="별점"
-																								style="height: 13px; margin-right: 2px; margin-bottom: 2px;"
-																								th:text="${best6.bo_total_rating / best6.bo_review_count / 2.0}">
-																						</span>
-																						<span th:unless="${best6.bo_review_count > 0}">
-																							<img class="b-rating-img red" src="/resources/static/img/star.png" alt="별점"
-																								style="height: 13px; margin-right: 2px; margin-bottom: 2px;"
-																								th:text="0">
-																						</span>
+																						<img class="b-rating-img red" src="/resources/static/img/star.png" alt="별점"
+																							style="height: 13px; margin-right: 2px; margin-bottom: 2px;"
+																							th:text="${best6.bo_total_rating / best6.bo_review_count / 2.0}">
 																						<span class="b-rating-cnt" style="margin-left: 1px; color: #787878;"
 																							th:text="'('+${best6.bo_review_count}+')'"></span>
 																					</span>
@@ -4353,30 +4343,19 @@
 				}
 				});
 
-				
-
 				// 결제하고 나중에 보기 버튼
 				$('.payment-book-point').on('click', function () {
 					const epCode = $(this).data('ep-code');
-					const epPrice = $('#serial_checkout_point_popup .total-price').text();
-					const payload = {
-						epCodes: [epCode],
-						orderId: `ORDER_${epCode}_${new Date().getTime()}`, // 임시 orderId 생성 (서버에서 실제로 생성해야 함)
-						usePoint: epPrice
-					};
+					
 
 					$.ajax({
-						url: '/order/point',
+						url: '/view/later',
 						type: 'post',
 						contentType: 'application/json',
-						data: JSON.stringify(payload),
+						data: JSON.stringify(epCode),
 						traditional: true,
-						success: function (res) {
-							if (res.success) {
-								window.location.href = `/order/checkout/finished?merchant_uid=${res.orderId}`;
-							} else {
-								alert('포인트 구매 처리 실패: ' + res.error);
-							}
+						success: function () {
+							
 						},
 						error: function () {
 							alert('포인트 구매 처리 중 오류 발생');
