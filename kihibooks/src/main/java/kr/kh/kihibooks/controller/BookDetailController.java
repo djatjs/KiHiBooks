@@ -245,46 +245,23 @@ public class BookDetailController {
     }
 
     @PostMapping("/view/free")
-    public ResponseEntity<Boolean> viewFree(@RequestBody String epCode, @AuthenticationPrincipal CustomUser customUser) {
-        
+    public ResponseEntity<Boolean> viewFree(@RequestBody String epCode,
+            @AuthenticationPrincipal CustomUser customUser) {
+
         int urNum = customUser.getUser().getUr_num();
         String ep_code = epCode.replaceAll("\"", "");
 
-        if(bookService.selectBlList(ep_code, urNum)) {
+        if (bookService.selectBlList(ep_code, urNum)) {
             System.out.println("controller: false");
             return ResponseEntity.ok(false);
         }
 
         boolean res = false;
-        if(bookService.insertBuyList(ep_code, urNum)) {
+        if (bookService.insertBuyList(ep_code, urNum)) {
             res = bookService.insertLibrary(ep_code, urNum);
         }
 
         return ResponseEntity.ok(res);
     }
-    
-    @PostMapping("/view/later")
-    public ResponseEntity<Map<String, Object>> viewLater(@RequestBody String epCode, @AuthenticationPrincipal CustomUser customUser) {
-         int urNum = customUser.getUser().getUr_num();
-        String ep_code = epCode.replaceAll("\"", "");
 
-        String contentsId = userService.updatePointOrder(epCode, customUser.getUser().getUr_num(), usePoint);
-
-        Map<String, Object> res = new HashMap<>();
-
-        if(bookService.selectBlList(ep_code, urNum)) {
-            System.out.println("controller: false");
-            res.put("contentsId", contentsId);
-            return ResponseEntity.ok(res);
-        }
-
-        if(bookService.insertBuyList(ep_code, urNum)) {
-           if(bookService.insertLibrary(ep_code, urNum)) {
-            res.put("contentsId", contentsId);
-            return ResponseEntity.ok(res);
-           }
-        }
-
-        return ResponseEntity.ok(res);
-    }
 }

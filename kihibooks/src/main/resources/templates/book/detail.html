@@ -4323,39 +4323,44 @@
 					});
 
 					function pointAll(orderId) {
-					$.ajax({
-						url: "/order/point",
-						type: "post",
-						contentType: "application/json",
-						data: JSON.stringify({ epCodes: [epCode], orderId: orderId, usePoint: epPrice }),
-						traditional: true,
-						success: function (res) {
-							if (res.success) {
-								window.location.href = `/mylibrary/readEpisode/${epCode}`;
-							} else {
-								alert("포인트 구매 처리 실패: " + response.error);
+						$.ajax({
+							url: "/order/point",
+							type: "post",
+							contentType: "application/json",
+							data: JSON.stringify({ epCodes: [epCode], orderId: orderId, usePoint: epPrice }),
+							traditional: true,
+							success: function (res) {
+								if (res.success) {
+									window.location.href = `/mylibrary/readEpisode/${epCode}`;
+								} else {
+									alert("포인트 구매 처리 실패: " + response.error);
+								}
+							},
+							error: function () {
+								alert("포인트 구매 처리 중 오류 발생")
 							}
-						},
-						error: function () {
-							alert("포인트 구매 처리 중 오류 발생")
-						}
-					});
-				}
+						});
+					}
 				});
 
 				// 결제하고 나중에 보기 버튼
 				$('.payment-book-point').on('click', function () {
 					const epCode = $(this).data('ep-code');
-					
+					const epPrice = $('#serial_checkout_point_popup .total-price').text();
+					const payload = {
+						epCodes: [epCode],
+						orderId: `ORDER_${epCode}_${new Date().getTime()}`, // 임시 orderId 생성 (서버에서 실제로 생성해야 함)
+						usePoint: epPrice
+					};
 
 					$.ajax({
 						url: '/view/later',
 						type: 'post',
 						contentType: 'application/json',
-						data: JSON.stringify(epCode),
+						data: JSON.stringify(payload),
 						traditional: true,
 						success: function () {
-							
+
 						},
 						error: function () {
 							alert('포인트 구매 처리 중 오류 발생');
