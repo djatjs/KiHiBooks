@@ -81,6 +81,7 @@ public class BookDetailController {
                 .map(ts -> new SimpleDateFormat("yyyy.MM.dd").format(ts))
                 .orElse("날짜 없음");
         List<BookVO> abList = bookService.getAuthorAnotherBook(bo_code);
+        System.out.println(abList);
         List<NoticeVO> notiList = bookService.getNoticeList(bo_code);
         List<BookVO> bestList10 = bookService.getBestList(bo_code);
         List<BookVO> bestList6 = bookService.getBestList6(bo_code);
@@ -245,23 +246,21 @@ public class BookDetailController {
     }
 
     @PostMapping("/view/free")
-    public ResponseEntity<Boolean> viewFree(@RequestBody String epCode,
-            @AuthenticationPrincipal CustomUser customUser) {
-
+    public ResponseEntity<Boolean> viewFree(@RequestBody String epCode, @AuthenticationPrincipal CustomUser customUser) {
+        
         int urNum = customUser.getUser().getUr_num();
         String ep_code = epCode.replaceAll("\"", "");
 
-        if (bookService.selectBlList(ep_code, urNum)) {
+        if(bookService.selectBlList(ep_code, urNum)) {
             System.out.println("controller: false");
             return ResponseEntity.ok(false);
         }
 
         boolean res = false;
-        if (bookService.insertBuyList(ep_code, urNum)) {
+        if(bookService.insertBuyList(ep_code, urNum)) {
             res = bookService.insertLibrary(ep_code, urNum);
         }
 
         return ResponseEntity.ok(res);
     }
-
 }
