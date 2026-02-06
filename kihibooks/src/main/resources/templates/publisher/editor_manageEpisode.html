@@ -504,40 +504,80 @@
             </div>
         </div>
 		<script>
-			$("#book_finToY-btn").on("click", function(){
-				const bo_code = $(this).data("bocode");
-				if(confirm("완결 상태로 전환하시겠습니까?")){
-					$.ajax({
-						type: "POST",
-						url: "/editor/bookFinToY",
-						data: {bo_code: bo_code},
-						success: function (data) {
+			const finToYBtn = document.getElementById("book_finToY-btn");
+			if (finToYBtn) {
+				finToYBtn.addEventListener("click", function() {
+					const bo_code = this.dataset.bocode;
+					if (confirm("완결 상태로 전환하시겠습니까?")) {
+						fetch("/editor/bookFinToY", {
+							method: "POST",
+							headers: {"Content-Type": "application/x-www-form-urlencoded"},
+							body: `bo_code=${bo_code}`
+						})
+						.then(res => res.text())
+						.then(data => {
 							alert("완결 상태로 전환되었습니다.");
 							window.location.href = "/editor/myContent";
-						},
-						error: function (data) {
-							alert("완결 상태로 전환에 실패하였습니다.");
-						}
-					});
-				}
-			});
-			$("#book_finToN-btn").on("click", function(){
-				const bo_code = $(this).data("bocode");
-				if(confirm("연재 상태로 전환하시겠습니까?")){
-					$.ajax({
-						type: "POST",
-						url: "/editor/bookFinToN",
-						data: {bo_code: bo_code},
-						success: function (data) {
+						})
+						.catch(() => alert("전환에 실패했습니다."));
+					}
+				});
+			}
+
+			// $("#book_finToY-btn").on("click", function(){
+			// 	const bo_code = $(this).data("bocode");
+			// 	if(confirm("완결 상태로 전환하시겠습니까?")){
+			// 		$.ajax({
+			// 			type: "POST",
+			// 			url: "/editor/bookFinToY",
+			// 			data: {bo_code: bo_code},
+			// 			success: function (data) {
+			// 				alert("완결 상태로 전환되었습니다.");
+			// 				window.location.href = "/editor/myContent";
+			// 			},
+			// 			error: function (data) {
+			// 				alert("완결 상태로 전환에 실패하였습니다.");
+			// 			}
+			// 		});
+			// 	}
+			// });
+			const finToNBtn = document.getElementById("book_finToN-btn");
+			if (finToNBtn) {
+				finToNBtn.addEventListener("click", function() {
+					const bo_code = this.dataset.bocode;
+					if (confirm("연재 상태로 전환하시겠습니까?")) {
+						fetch("/editor/bookFinToN", {
+							method: "POST",
+							headers: {"Content-Type": "application/x-www-form-urlencoded"},
+							body: `bo_code=${bo_code}`
+						})
+						.then(res => res.text())
+						.then(data => {
 							alert("연재 상태로 전환되었습니다.");
 							window.location.href = "/editor/myContent";
-						},
-						error: function (data) {
-							alert("연재 상태로 전환에 실패하였습니다.");
-						}
-					});
-				}
-			});
+						})
+						.catch(() => alert("전환에 실패했습니다."));
+					}
+				});
+			}
+			// $("#book_finToN-btn").on("click", function(){
+			// 	alert("야야양");
+			// 	const bo_code = $(this).data("bocode");
+			// 	if(confirm("연재 상태로 전환하시겠습니까?")){
+			// 		$.ajax({
+			// 			type: "POST",
+			// 			url: "/editor/bookFinToN",
+			// 			data: {bo_code: bo_code},
+			// 			success: function (data) {
+			// 				alert("연재 상태로 전환되었습니다.");
+			// 				window.location.href = "/editor/myContent";
+			// 			},
+			// 			error: function (data) {
+			// 				alert("연재 상태로 전환에 실패하였습니다.");
+			// 			}
+			// 		});
+			// 	}
+			// });
 		</script>
     </main>
 </body>

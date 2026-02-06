@@ -194,7 +194,7 @@ public class UserController {
 
     @GetMapping("/signup/kakao") // 실제 Redirect URI 경로로 수정
     public String kakaoLogin(@RequestParam String code, HttpServletRequest request) {
-        System.out.println("인가 코드: " + code);
+        // System.out.println("인가 코드: " + code);
 
         // 1. 인가 코드를 사용하여 액세스 토큰을 요청
         String accessToken = apiService.getKakaoAccessToken(code);

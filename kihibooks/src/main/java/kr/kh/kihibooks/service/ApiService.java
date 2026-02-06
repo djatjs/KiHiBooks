@@ -85,7 +85,6 @@ public class ApiService {
                 throw new RuntimeException("카카오 액세스 토큰 응답 형식 오류");
             }
 
-
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("카카오 액세스 토큰 발급 실패", e);
@@ -176,16 +175,12 @@ public class ApiService {
             System.err.println("카카오 사용자 정보 파싱 실패: 필수 정보(이메일, 닉네임) 누락 또는 동의하지 않음");
             throw new RuntimeException("카카오 사용자 정보 파싱 오류 또는 필수 정보 동의 필요");
         }
-
-
+        
         UserVO existingUser = userDAO.selectEmail(email);
-
         UserDetails userDetails;
 
+        // 신규 사용자일 경우 -> 회원가입 처리
         if (existingUser == null) {
-            // 신규 사용자일 경우 -> 회원가입 처리
-            System.out.println("신규 카카오 사용자 발견: " + email + ", 닉네임: " + nickname);
-
             String encPw = passwordEncoder.encode(email);
 
             UserVO newUser = new UserVO();
@@ -195,44 +190,20 @@ public class ApiService {
             newUser.setUr_year(birthyear);
             
             if (gender != null) {
-                if (gender.equals("female")) {
-                    gender = "F";
-                } else if (gender.equals("male")) {
-                    gender = "M";
-                }
+                if (gender.equals("female")) gender = "F";
+                else if (gender.equals("male")) gender = "M";
                 newUser.setUr_gender(gender);
             }
 
             userDAO.insertUserWithoutPw(newUser);
-            System.out.println("신규 사용자 DB 저장 완료: " + email);
             userDetails = convertUserVoToUserDetails(newUser);
-        } else {
-            // 기존 사용자일 경우 -> 로그인 처리
-            // System.out.println("기존 카카오 사용자 발견: " + email + ", 닉네임: " + existingUser.getUr_nickname());
-
-            try {
-                userDetails = memberDetailService.loadUserByUsername(email);
-
-                // userDetails = convertUserVoToUserDetails(existingUser);
-
-                Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                // System.out.println("Spring Security 로그인 처리 완료: " + email);
-            } catch (Exception e) {
-                System.err.println("Spring Security 로그인 처리 중 오류 발생: " + e.getMessage());
-                e.printStackTrace();
-                throw new RuntimeException("카카오 계정 로그인 처리 실패", e);
-            }
         }
-
+        // 기존 사용자일 경우 -> 로그인 처리
+        else {
+            userDetails = memberDetailService.loadUserByUsername(email);
+        }
         return userDetails;
     }
-
 
     // ApiService 클래스 내부에 UserVO 객체를 Spring Security의 UserDetails로 변환하는 헬퍼 메소드 추가
     /**
@@ -245,19 +216,12 @@ public class ApiService {
     private UserDetails convertUserVoToUserDetails(UserVO userVO) {
         // 1. 사용자 권한(Authority) 목록 생성
         List<GrantedAuthority> authorities = new ArrayList<>();
-        // UserVO의 권한 필드(ur_authority) 값을 Spring Security의 GrantedAuthority 객체로 변환하여 추가합니다.
-        // UserVO의 ur_authority는 enum('ADMIN','USER','PUBLISHER') 형태라고 하셨으므로,
-        // 이를 Spring Security의 "ROLE_" 접두사가 붙은 권한 문자열로 변환하는 것이 일반적입니다.
         if (userVO.getUr_authority() != null) {
-            // UserVO의 getUr_authority() 메소드가 String을 반환한다고 가정합니다.
             String authority = userVO.getUr_authority();
-            // 권한 문자열 앞에 "ROLE_" 접두사 추가 (Spring Security 관례)
             authorities.add(new SimpleGrantedAuthority("ROLE_"+authority.toUpperCase())); // 예: "USER" -> "ROLE_USER"
         } else {
-             // 권한 정보가 없는 경우 기본 권한을 추가할 수 있습니다. (예: ROLE_ANONYMOUS 또는 기본 ROLE_USER)
-             authorities.add(new SimpleGrantedAuthority("ROLE_USER")); // 권한이 없다면 기본 USER 권한 부여
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         }
-
 
         // 2. Spring Security에서 제공하는 기본 UserDetails 구현체인 User 객체 생성
         // 이 객체는 사용자명(Principal), 비밀번호(Credentials), 활성화 상태, 계정 만료/잠금 상태, 권한 목록 등을 인자로 받습니다.
@@ -271,13 +235,5 @@ public class ApiService {
                 true,          // 계정 잠금 여부 (accountNonLocked) - true로 설정
                 authorities                     // 사용자의 권한 목록 (위에서 생성한 List<GrantedAuthority>)
         );
-
-        // 만약 UserVO에 계정 활성화/만료/잠금 등에 대한 필드가 있다면, 해당 필드 값을 사용하여 위 boolean 값들을 동적으로 설정할 수 있습니다.
-        // 예: return new org.springframework.security.core.userdetails.User(userVO.getUr_email(), "", userVO.isEnabled(), ... , authorities);
-
-        // 또는 프로젝트에 UserDetails를 구현한 커스텀 클래스가 있다면 해당 클래스의 객체를 생성하여 반환합니다.
-        // 예: return new YourCustomUserDetails(userVO.getUr_email(), "", userVO.isEnabled(), ..., authorities, userVO);
     }
-
-
 }

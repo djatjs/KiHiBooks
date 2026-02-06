@@ -207,7 +207,7 @@ public class PublisherContoller {
 
     @GetMapping("/editor/updateBookInfo/{bo_code}")
     public String updateBookInfo(@AuthenticationPrincipal CustomUser customUser, @PathVariable String bo_code, Model model) {
-        BookVO book = bookService.getBook(bo_code);
+        BookVO book = bookService.getBookInfo(bo_code);
         List<EditorVO> editors = publisherService.getEditorList(customUser.getPu_code());
         List <KeywordCategoryVO> keywordList = keywordService.getAllKeywordCategories();
         List <KeywordCategoryVO> selectedKeywordList = keywordService.getSelectedKeywordList(bo_code);

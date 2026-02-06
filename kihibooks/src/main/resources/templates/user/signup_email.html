@@ -187,7 +187,7 @@
 			$.validator.addMethod("notEqualToReservedNickname", function(value, element){
 				const reservedNicknames = [
 					"탈퇴한사용자", "운영자", "관리자", "admin", "administrator",
-					"testuser", "키히북스", "나쁜놈", "사기꾼" // 예시 비속어
+					"testuser", "키히북스", "나쁜놈", "사기꾼" // 예시 예약어
 				];
 				const lowerCaseValue = value.toLowerCase();
 				return this.optional(element) || !reservedNicknames.includes(lowerCaseValue);

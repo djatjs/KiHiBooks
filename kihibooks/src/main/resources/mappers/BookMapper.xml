@@ -647,7 +647,7 @@
         FROM book
         JOIN author ON au_num = bo_au_num
         JOIN episode ON EP_BO_CODE = BO_CODE
-        WHERE bo_au_num = 1
+        WHERE bo_au_num = #{au_num}
         GROUP BY BO_CODE, BO_TITLE, au_name, BO_TOTAL_RATING, BO_REVIEW_COUNT
         ORDER BY SUBSTRING((bo_total_rating / bo_review_count / 2.0), 1, 3) DESC, bo_review_count DESC;
     </select>

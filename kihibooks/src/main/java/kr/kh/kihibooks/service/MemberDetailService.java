@@ -24,31 +24,25 @@ public class MemberDetailService implements UserDetailsService{
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		UserVO user = userDao.selectEmailIncludeDel(username);
-		String authority = null;
-		String pi_pu_code = "";
-		String pu_code = null;
+		String authority = null, pu_code = null;
 		int pi_num= 0;
 
-		if (user == null) {
-			throw new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다.");
-		}
 		if(user != null){
 			PublisherIdVO publisherId = new PublisherIdVO();
 			publisherId.setPi_ur_num(user.getUr_num());
 
 			PublisherIdVO tmp = publisherDAO.selectPublisherIdByNum(user.getUr_num());
+			//출판사 계정인 경우
 			if(tmp != null){
-				pi_pu_code = tmp.getPi_pu_code();
-				publisherId.setPi_pu_code(pi_pu_code);
+				publisherId.setPi_pu_code(tmp.getPi_pu_code());
 				PublisherIdVO pu_id = publisherDAO.selectPublisherId(publisherId);
 				authority = pu_id.getPi_authority();
 				pu_code = pu_id.getPi_pu_code();
 				pi_num = pu_id.getPi_num();
 			}
-			else{
-				authority = user.getUr_authority();
-			}
+			else authority = user.getUr_authority(); //사용자 : USER, 관리자 : ADMIN
 		}
+		else throw new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다.");
 		return user == null ? null : new CustomUser(user, authority, pu_code, pi_num);
 	}
 
