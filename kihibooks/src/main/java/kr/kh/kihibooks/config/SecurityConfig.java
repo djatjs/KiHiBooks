@@ -24,6 +24,7 @@ import kr.kh.kihibooks.utils.CustomUser;
 
 @Configuration
 @EnableWebSecurity
+@org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 public class SecurityConfig {
     @Autowired
 	MemberDetailService memberDetailService;
@@ -39,14 +40,13 @@ public class SecurityConfig {
         http.csrf(csrf ->csrf.disable())
         
             .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("edit/checkPw")
-                .authenticated()
-                .requestMatchers("/account/mykihi")
-                .hasRole(UserRole.USER.name())
-                .requestMatchers("/admin/**")
-                .hasRole(UserRole.ADMIN.name())
-                .anyRequest()
-                .permitAll()  // 그 외 요청은 인증 필요
+                .requestMatchers("/edit/checkPw").authenticated()
+                .requestMatchers("/admin/**").hasRole(UserRole.ADMIN.name())
+                .requestMatchers("/publisher/dashboard").hasAnyRole("SUPER", "EDITOR")
+                .requestMatchers("/publisher/**").hasRole("SUPER")
+                .requestMatchers("/editor/**").hasAnyRole("SUPER", "EDITOR")
+                .requestMatchers("/account/**").authenticated()
+                .anyRequest().permitAll()
             )
             .formLogin((form) -> form
                 .loginPage("/login")

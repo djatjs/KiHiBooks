@@ -8,7 +8,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,9 +19,7 @@ import kr.kh.kihibooks.model.vo.BookVO;
 import kr.kh.kihibooks.model.vo.EditorVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
-import kr.kh.kihibooks.model.vo.KeywordVO;
 import kr.kh.kihibooks.model.vo.NoticeVO;
-import kr.kh.kihibooks.model.vo.PublisherVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.service.BookService;
@@ -30,12 +27,11 @@ import kr.kh.kihibooks.service.KeywordService;
 import kr.kh.kihibooks.service.PublisherService;
 import kr.kh.kihibooks.service.UserService;
 import kr.kh.kihibooks.utils.CustomUser;
-import kr.kh.kihibooks.utils.PageConstants;
 import kr.kh.kihibooks.utils.PaginationUtils;
 
 
 @Controller
-public class PublisherContoller {
+public class PublisherController {
 
     private final BookService bookService;
 
@@ -48,7 +44,7 @@ public class PublisherContoller {
     @Autowired
     KeywordService keywordService;
 
-    PublisherContoller(BookService bookService) {
+    PublisherController(BookService bookService) {
         this.bookService = bookService;
     }
 
@@ -195,6 +191,7 @@ public class PublisherContoller {
         return "redirect:/editor/myContent";
     }
     
+    @org.springframework.security.access.prepost.PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/manageEpisode/{bo_code}")
     public String manageEpisodeEpisode(@PathVariable String bo_code, Model model) {
         BookVO book = bookService.getBook(bo_code);
@@ -205,6 +202,7 @@ public class PublisherContoller {
         return "/publisher/editor_manageEpisode";
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/updateBookInfo/{bo_code}")
     public String updateBookInfo(@AuthenticationPrincipal CustomUser customUser, @PathVariable String bo_code, Model model) {
         BookVO book = bookService.getBook(bo_code);
@@ -230,6 +228,7 @@ public class PublisherContoller {
         return "redirect:/editor/myContent";
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/registerEpisode/{bo_code}")
     public String registerEpisode(@PathVariable String bo_code, Model model) {
         model.addAttribute("bo_code", bo_code);
@@ -272,6 +271,7 @@ public class PublisherContoller {
         return bookService.bookFinToN(bo_code);
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/manageNotice/{bo_code}")
     public String myContent(@AuthenticationPrincipal CustomUser customUser,
                             @PathVariable String bo_code,
@@ -297,6 +297,7 @@ public class PublisherContoller {
         return "/publisher/editor_manageNotice";
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/registerNotice/{bo_code}")
     public String registerNotice(@PathVariable String bo_code, @AuthenticationPrincipal CustomUser customUser, Model model) {
         model.addAttribute("pi_num", customUser.getPi_num());
@@ -311,6 +312,7 @@ public class PublisherContoller {
         return "redirect:/editor/registerNotice/"+bo_code;
     }
 
+    @org.springframework.security.access.prepost.PreAuthorize("#pu_code == authentication.principal.pu_code")
     @GetMapping("/publisher/manageEditorsBook/{pu_code}")
     public String manageEditorsBook(@PathVariable String pu_code, Model model) {
         List<BookVO> books = bookService.getPublishersBookList(pu_code);
