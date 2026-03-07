@@ -132,4 +132,8 @@
     <delete id="deleteLike">
         delete from `like` where li_ur_num = #{ur_num} and li_co_num = #{co_num}
     </delete>
+    <select id="selectIsPurchased" resultType="int">
+        SELECT COUNT(*) FROM library
+        WHERE lb_ur_num = #{ur_num} AND lb_ep_code = #{ep_code}
+    </select>
 </mapper>

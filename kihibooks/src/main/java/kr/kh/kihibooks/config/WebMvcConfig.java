@@ -16,7 +16,7 @@ public class WebMvcConfig implements WebMvcConfigurer{
     String uploadPath;
     
     public void addResourceHandlers(ResourceHandlerRegistry registry){
-        registry.addResourceHandler("/file/**").addResourceLocations("file:///"+uploadPath);
+        // registry.addResourceHandler("/file/**").addResourceLocations("file:///"+uploadPath);
         registry.addResourceHandler("/resources/**").addResourceLocations("classpath:/");
         // 파비콘 관련 설정
         registry.addResourceHandler("/favicon.ico").addResourceLocations("classpath:/static/");

@@ -6,7 +6,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import kr.kh.kihibooks.model.vo.BookVO;
+import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.service.BookService;
+import kr.kh.kihibooks.dao.LibraryDAO;
 
 @Component("ss")
 public class SecurityService {
@@ -14,11 +16,11 @@ public class SecurityService {
     @Autowired
     private BookService bookService;
 
+    @Autowired
+    private LibraryDAO libraryDAO;
+
     /**
-     * 도서 접근 권한 확인
-     * 1. ADMIN: 모든 도서 접근 가능
-     * 2. SUPER: 자신이 속한 출판사의 모든 도서 접근 가능
-     * 3. EDITOR: 자신이 담당한 도서만 접근 가능
+     * 도서 접근 권한 확인 (출판사/관리자용)
      */
     public boolean canAccessBook(String bo_code) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -49,5 +51,31 @@ public class SecurityService {
         }
 
         return false;
+    }
+
+    /**
+     * 특정 회차 파일 접근 권한 확인
+     * 1. 관리자/출판사 관계자: canAccessBook 로직 활용
+     * 2. 일반 사용자: 해당 회차 구매 여부 확인
+     */
+    public boolean canAccessEpisode(String ep_code) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !(auth.getPrincipal() instanceof CustomUser)) {
+            return false;
+        }
+
+        CustomUser user = (CustomUser) auth.getPrincipal();
+        EpisodeVO episode = bookService.getEpisodeByCode(ep_code);
+        if (episode == null) {
+            return false;
+        }
+
+        // 관리자/출판사 관계자 권한 체크
+        if (canAccessBook(episode.getEp_bo_code())) {
+            return true;
+        }
+
+        // 일반 사용자: 구매 여부 확인
+        return libraryDAO.selectIsPurchased(user.getUser().getUr_num(), ep_code) > 0;
     }
 }

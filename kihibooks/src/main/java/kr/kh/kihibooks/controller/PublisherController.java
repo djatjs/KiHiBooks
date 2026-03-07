@@ -3,6 +3,7 @@ package kr.kh.kihibooks.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -191,7 +192,7 @@ public class PublisherController {
         return "redirect:/editor/myContent";
     }
     
-    @org.springframework.security.access.prepost.PreAuthorize("@ss.canAccessBook(#bo_code)")
+    @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/manageEpisode/{bo_code}")
     public String manageEpisodeEpisode(@PathVariable String bo_code, Model model) {
         BookVO book = bookService.getBook(bo_code);
@@ -202,7 +203,7 @@ public class PublisherController {
         return "/publisher/editor_manageEpisode";
     }
 
-    @org.springframework.security.access.prepost.PreAuthorize("@ss.canAccessBook(#bo_code)")
+    @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/updateBookInfo/{bo_code}")
     public String updateBookInfo(@AuthenticationPrincipal CustomUser customUser, @PathVariable String bo_code, Model model) {
         BookVO book = bookService.getBook(bo_code);
@@ -228,7 +229,7 @@ public class PublisherController {
         return "redirect:/editor/myContent";
     }
 
-    @org.springframework.security.access.prepost.PreAuthorize("@ss.canAccessBook(#bo_code)")
+    @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/registerEpisode/{bo_code}")
     public String registerEpisode(@PathVariable String bo_code, Model model) {
         model.addAttribute("bo_code", bo_code);
@@ -271,7 +272,7 @@ public class PublisherController {
         return bookService.bookFinToN(bo_code);
     }
 
-    @org.springframework.security.access.prepost.PreAuthorize("@ss.canAccessBook(#bo_code)")
+    @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/manageNotice/{bo_code}")
     public String myContent(@AuthenticationPrincipal CustomUser customUser,
                             @PathVariable String bo_code,
@@ -297,7 +298,7 @@ public class PublisherController {
         return "/publisher/editor_manageNotice";
     }
 
-    @org.springframework.security.access.prepost.PreAuthorize("@ss.canAccessBook(#bo_code)")
+    @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/registerNotice/{bo_code}")
     public String registerNotice(@PathVariable String bo_code, @AuthenticationPrincipal CustomUser customUser, Model model) {
         model.addAttribute("pi_num", customUser.getPi_num());
@@ -312,7 +313,7 @@ public class PublisherController {
         return "redirect:/editor/registerNotice/"+bo_code;
     }
 
-    @org.springframework.security.access.prepost.PreAuthorize("#pu_code == authentication.principal.pu_code")
+    @PreAuthorize("#pu_code == authentication.principal.pu_code")
     @GetMapping("/publisher/manageEditorsBook/{pu_code}")
     public String manageEditorsBook(@PathVariable String pu_code, Model model) {
         List<BookVO> books = bookService.getPublishersBookList(pu_code);

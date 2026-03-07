@@ -105,9 +105,21 @@ public class LibraryCotroller {
         return "/library/books";
     }
     
+    @Autowired
+    kr.kh.kihibooks.utils.SecurityService securityService;
+
     @GetMapping("/mylibrary/readEpisode/{ep_code}")
     public String readEpubEpisode(@PathVariable("ep_code") String epCode, Model model, @AuthenticationPrincipal CustomUser customUser) {
         EpisodeVO episode = bookService.getEpisodeByCode(epCode);
+        if (episode == null) {
+            return "redirect:/mylibrary?error=notfound";
+        }
+        
+        // [보안] 회차 접근 권한 확인 (구매 여부 또는 출판사 권한)
+        if (!securityService.canAccessEpisode(epCode)) {
+            return "redirect:/library/books/" + episode.getEp_bo_code() + "?error=unauthorized";
+        }
+
         String bo_code = episode.getEp_bo_code();
         
         List<CommentVO> comments = libraryService.getCommentSorted("", epCode);

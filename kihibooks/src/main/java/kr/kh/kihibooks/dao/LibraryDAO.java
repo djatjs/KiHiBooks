@@ -43,5 +43,7 @@ public interface LibraryDAO {
     boolean insertLike(@Param("co_num")int co_num, @Param("ur_num") int urNum);
 
     boolean deleteLike(@Param("co_num")int co_num, @Param("ur_num") int urNum);
+
+    int selectIsPurchased(@Param("ur_num") int ur_num, @Param("ep_code") String ep_code);
     
 }
