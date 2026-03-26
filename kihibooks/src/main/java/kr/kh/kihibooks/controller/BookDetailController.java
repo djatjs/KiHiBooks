@@ -46,7 +46,7 @@ public class BookDetailController {
     private UserService userService;
 
     @GetMapping("/books/{bo_code}")
-    public String bookDetail(Model model, @PathVariable String bo_code,
+    public String bookDetail(Model model, @PathVariable("bo_code") String bo_code,
             @AuthenticationPrincipal CustomUser customUser) {
         BookVO book = bookService.selectDetailBook(bo_code);
         List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
@@ -156,7 +156,7 @@ public class BookDetailController {
     }
 
     @GetMapping("/review/sort")
-    public String getSortedReview(@RequestParam String sort, @RequestParam("bo_code") String bo_code, Model model) {
+    public String getSortedReview(@RequestParam("sort") String sort, @RequestParam("bo_code") String bo_code, Model model) {
         List<ReviewVO> rvList = bookService.getRvList(sort, bo_code);
         System.out.println(rvList);
         model.addAttribute("rvList", rvList);
@@ -185,7 +185,7 @@ public class BookDetailController {
 
     @PostMapping("/review/delete")
     @ResponseBody
-    public boolean deleteReview(int rv_num) {
+    public boolean deleteReview(@RequestParam("rv_num") int rv_num) {
         System.out.println(rv_num);
         boolean res = bookService.deleteReview(rv_num);
         System.out.println(res);
@@ -208,7 +208,7 @@ public class BookDetailController {
 
     @PostMapping("/interest/toggle")
     @ResponseBody
-    public boolean toggleInterest(@RequestParam String action, @RequestParam String boCode,
+    public boolean toggleInterest(@RequestParam("action") String action, @RequestParam("boCode") String boCode,
             @AuthenticationPrincipal CustomUser customUser) {
         int ur_num = customUser.getUser().getUr_num();
 
@@ -229,7 +229,7 @@ public class BookDetailController {
 
     @PostMapping("/alarm/toggle")
     @ResponseBody
-    public boolean toggleNOtiSet(@RequestParam String action, @RequestParam String boCode,
+    public boolean toggleNOtiSet(@RequestParam("action") String action, @RequestParam("boCode") String boCode,
             @AuthenticationPrincipal CustomUser customUser) {
         int ur_num = customUser.getUser().getUr_num();
 

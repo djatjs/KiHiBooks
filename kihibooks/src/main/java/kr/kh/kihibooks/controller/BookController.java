@@ -51,8 +51,8 @@ public class BookController {
 	@GetMapping("/book/keyword")
 	public String keywordSearchPage(
 			@RequestParam(value = "keywordIds", required = false) List<String> keywordIds,
-			@RequestParam(defaultValue = "recent") String sort,
-			@RequestParam(defaultValue = "1") int page,
+			@RequestParam(value = "sort", defaultValue = "recent") String sort,
+			@RequestParam(value = "page", defaultValue = "1") int page,
 			Model model,
 			HttpServletRequest request) {
 		// 1. 키워드 카테고리 + 키워드 리스트
@@ -85,8 +85,8 @@ public class BookController {
 	@GetMapping("/book/keyword/updated")
 	public String updatedKeywordSearchPage(
 			@RequestParam(value = "keywordIds", required = false) List<String> keywordIds,
-			@RequestParam(defaultValue = "recent") String sort,
-			@RequestParam(defaultValue = "1") int page,
+			@RequestParam(value = "sort", defaultValue = "recent") String sort,
+			@RequestParam(value = "page", defaultValue = "1") int page,
 			Model model,
 			HttpServletRequest request) {
 		// 1. 키워드 카테고리 + 키워드 리스트
@@ -119,7 +119,7 @@ public class BookController {
 
 	@ResponseBody
 	@GetMapping("/book/getSubCategory")
-	public List<SubCategoryVO> getSubCategory(@RequestParam int mainCategoryValue) {
+	public List<SubCategoryVO> getSubCategory(@RequestParam("mainCategoryValue") int mainCategoryValue) {
 		if (mainCategoryValue == 0) {
 			return null;
 		}

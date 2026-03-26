@@ -80,7 +80,7 @@ public class LibraryCotroller {
     }
 
     @GetMapping("/library/books/{bo_code}")
-    public String getMethodName(@PathVariable String bo_code, Model model,@AuthenticationPrincipal CustomUser customUser) {
+    public String getMethodName(@PathVariable("bo_code") String bo_code, Model model,@AuthenticationPrincipal CustomUser customUser) {
         BookVO book = bookService.getBook(bo_code);
         List<EpisodeVO> epiList = libraryService.getPurchasedEpisodeList(bo_code, customUser.getUser().getUr_num());
         Optional<Timestamp> latestDateOpt = epiList.stream()
@@ -153,7 +153,7 @@ public class LibraryCotroller {
     }
 
     @GetMapping("/comment/sort")
-    public String getSortedReview(@RequestParam String sort, @RequestParam String ep_code, Model model, @AuthenticationPrincipal CustomUser customUser) {
+    public String getSortedReview(@RequestParam("sort") String sort, @RequestParam("ep_code") String ep_code, Model model, @AuthenticationPrincipal CustomUser customUser) {
         List<CommentVO> commentList = libraryService.getCommentSorted(sort, ep_code);
         Map<Integer, Integer> commentCountMap = new HashMap<>();
         for (CommentVO c : commentList) {
@@ -187,7 +187,7 @@ public class LibraryCotroller {
 
     @ResponseBody
     @PostMapping("/comment/delete")
-    public boolean deleteComment(@RequestParam int co_num, @AuthenticationPrincipal CustomUser customUser) {
+    public boolean deleteComment(@RequestParam("co_num") int co_num, @AuthenticationPrincipal CustomUser customUser) {
         return libraryService.deleteComment(co_num, customUser);
     }
 
@@ -199,7 +199,7 @@ public class LibraryCotroller {
 
     @ResponseBody
     @PostMapping("/comment/like")
-    public Map<String, Object> toggleReviewLike(@RequestParam int co_num, @AuthenticationPrincipal CustomUser customUser) {
+    public Map<String, Object> toggleReviewLike(@RequestParam("co_num") int co_num, @AuthenticationPrincipal CustomUser customUser) {
         int urNum = customUser.getUser().getUr_num();
         boolean liked = libraryService.toggleLike(co_num, urNum);
 

@@ -174,7 +174,7 @@ public class PayController {
 
     @PostMapping("/order/checkout")
     @ResponseBody
-    public boolean checkout(@RequestParam List<String> epCodes, @AuthenticationPrincipal CustomUser customUser) {
+    public boolean checkout(@RequestParam("epCodes") List<String> epCodes, @AuthenticationPrincipal CustomUser customUser) {
         if (epCodes == null || epCodes.isEmpty()) {
             return false;
         }

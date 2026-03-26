@@ -71,7 +71,7 @@ public class PublisherController {
     }
 
     @GetMapping("/publisher/editors")
-    public String editors(@RequestParam(defaultValue = "1") int page, Model model, Authentication auth) {
+    public String editors(@RequestParam(value = "page", defaultValue = "1") int page, Model model, Authentication auth) {
         CustomUser user = (CustomUser) auth.getPrincipal();
         String puCode = user.getPu_code();
 
@@ -103,7 +103,7 @@ public class PublisherController {
 
     @ResponseBody
     @PostMapping("/publisher/addEditor")
-    public boolean addEditor(@RequestParam int userNum, String puCode) {
+    public boolean addEditor(@RequestParam("userNum") int userNum, String puCode) {
         try {
             return publisherService.addEditor(userNum, puCode);
         } catch (Exception e) {
@@ -114,7 +114,7 @@ public class PublisherController {
 
     @ResponseBody
     @PostMapping("/publisher/deleteEditor")
-    public boolean deleteEditor(@RequestParam int userNum) {
+    public boolean deleteEditor(@RequestParam("userNum") int userNum) {
         try {
             return publisherService.deleteEditor(userNum);
         } catch (Exception e) {
@@ -124,7 +124,7 @@ public class PublisherController {
     }
 
     @GetMapping("/editor/myContent")
-    public String myContent(@RequestParam(defaultValue = "1") int page, @AuthenticationPrincipal CustomUser customUser, Model model) {
+    public String myContent(@RequestParam(value = "page", defaultValue = "1") int page, @AuthenticationPrincipal CustomUser customUser, Model model) {
         //등록한 작품 가져오기 (+ 출판사명(publisher), 작가명(author))
         List<BookVO> bookList = bookService.getEditorsBookList(customUser.getPi_num());
         
@@ -194,7 +194,7 @@ public class PublisherController {
     
     @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/manageEpisode/{bo_code}")
-    public String manageEpisodeEpisode(@PathVariable String bo_code, Model model) {
+    public String manageEpisodeEpisode(@PathVariable("bo_code") String bo_code, Model model) {
         BookVO book = bookService.getBook(bo_code);
         List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
         model.addAttribute("bo_code", bo_code);
@@ -205,7 +205,7 @@ public class PublisherController {
 
     @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/updateBookInfo/{bo_code}")
-    public String updateBookInfo(@AuthenticationPrincipal CustomUser customUser, @PathVariable String bo_code, Model model) {
+    public String updateBookInfo(@AuthenticationPrincipal CustomUser customUser, @PathVariable("bo_code") String bo_code, Model model) {
         BookVO book = bookService.getBook(bo_code);
         List<EditorVO> editors = publisherService.getEditorList(customUser.getPu_code());
         List <KeywordCategoryVO> keywordList = keywordService.getAllKeywordCategories();
@@ -231,12 +231,12 @@ public class PublisherController {
 
     @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/registerEpisode/{bo_code}")
-    public String registerEpisode(@PathVariable String bo_code, Model model) {
+    public String registerEpisode(@PathVariable("bo_code") String bo_code, Model model) {
         model.addAttribute("bo_code", bo_code);
         return "/publisher/editor_registerEpisode";
     }
     @PostMapping("/editor/registerEpisode/{bo_code}")
-    public String registerEpisodePost(@PathVariable String bo_code, EpisodeVO ep, MultipartFile epubFile, MultipartFile coverImage) {
+    public String registerEpisodePost(@PathVariable("bo_code") String bo_code, EpisodeVO ep, MultipartFile epubFile, MultipartFile coverImage) {
         if(bookService.insertEpisode(ep, bo_code, epubFile, coverImage)){
             return "redirect:/editor/manageEpisode/"+bo_code;
         }
@@ -244,14 +244,14 @@ public class PublisherController {
     }
     
     @GetMapping("/editor/updateEpisode/{ep_code}")
-    public String updateEpisode(@PathVariable String ep_code, Model model) {
+    public String updateEpisode(@PathVariable("ep_code") String ep_code, Model model) {
         EpisodeVO episode = bookService.getEpisodeByCode(ep_code);
         model.addAttribute("episode", episode);
 
         return "/publisher/editor_updateEpisode";
     }
     @PostMapping("/editor/updateEpisode/{ep_code}")
-    public String updateEpisodePost(@PathVariable String ep_code, EpisodeVO ep, MultipartFile epubFile, MultipartFile coverImage) {
+    public String updateEpisodePost(@PathVariable("ep_code") String ep_code, EpisodeVO ep, MultipartFile epubFile, MultipartFile coverImage) {
         String bo_code = ep.getEp_bo_code();
         if(bookService.updateEpisode(ep, ep_code, bo_code, epubFile, coverImage)){
             return "redirect:/editor/manageEpisode/"+bo_code;
@@ -261,13 +261,13 @@ public class PublisherController {
 
     @ResponseBody
     @PostMapping("/editor/bookFinToY")
-    public boolean bookFinToY(@RequestParam String bo_code) {
+    public boolean bookFinToY(@RequestParam("bo_code") String bo_code) {
         if(bo_code == null || bo_code.isEmpty()){return false;}
         return bookService.bookFinToY(bo_code);
     }
     @ResponseBody
     @PostMapping("/editor/bookFinToN")
-    public boolean bookFinToN(@RequestParam String bo_code) {
+    public boolean bookFinToN(@RequestParam("bo_code") String bo_code) {
         if(bo_code == null || bo_code.isEmpty()){return false;}
         return bookService.bookFinToN(bo_code);
     }
@@ -275,9 +275,9 @@ public class PublisherController {
     @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/manageNotice/{bo_code}")
     public String myContent(@AuthenticationPrincipal CustomUser customUser,
-                            @PathVariable String bo_code,
+                            @PathVariable("bo_code") String bo_code,
                             Model model,
-                            @RequestParam(defaultValue = "1") int page) {
+                            @RequestParam(value = "page", defaultValue = "1") int page) {
         
         BookVO book = bookService.getBook(bo_code);
         List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
@@ -300,13 +300,13 @@ public class PublisherController {
 
     @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/registerNotice/{bo_code}")
-    public String registerNotice(@PathVariable String bo_code, @AuthenticationPrincipal CustomUser customUser, Model model) {
+    public String registerNotice(@PathVariable("bo_code") String bo_code, @AuthenticationPrincipal CustomUser customUser, Model model) {
         model.addAttribute("pi_num", customUser.getPi_num());
         model.addAttribute("bo_code", bo_code);
         return "/publisher/editor_registerNotice";
     }
     @PostMapping("/editor/registerNotice/{bo_code}")
-    public String registerNotice(@PathVariable String bo_code, NoticeVO nt) {
+    public String registerNotice(@PathVariable("bo_code") String bo_code, NoticeVO nt) {
         if(bookService.insertNotice(nt)){
             return "redirect:/editor/manageNotice/"+bo_code;
         }
@@ -315,7 +315,7 @@ public class PublisherController {
 
     @PreAuthorize("#pu_code == authentication.principal.pu_code")
     @GetMapping("/publisher/manageEditorsBook/{pu_code}")
-    public String manageEditorsBook(@PathVariable String pu_code, Model model) {
+    public String manageEditorsBook(@PathVariable("pu_code") String pu_code, Model model) {
         List<BookVO> books = bookService.getPublishersBookList(pu_code);
         List<EditorVO> editors = publisherService.getEditorList(pu_code);
         model.addAttribute("books",books);
@@ -325,13 +325,13 @@ public class PublisherController {
 
     @ResponseBody
     @GetMapping("/publisher/checkHaveBook")
-    public boolean checkHaveBook(@RequestParam int userNum) {
+    public boolean checkHaveBook(@RequestParam("userNum") int userNum) {
         return publisherService.checkHaveBook(userNum);
     }
     
     @ResponseBody
     @PostMapping("/publisher/changeEditor")
-    public boolean changeEditor (@RequestParam String bo_code, @RequestParam int pi_num) {
+    public boolean changeEditor (@RequestParam("bo_code") String bo_code, @RequestParam("pi_num") int pi_num) {
         if(bo_code == null || pi_num == 0){
             return false;
         }
@@ -339,7 +339,7 @@ public class PublisherController {
     }
     @ResponseBody
     @PostMapping("/publisher/keepBook")
-    public boolean keepBook (@RequestParam String bo_code, @AuthenticationPrincipal CustomUser customUser) {
+    public boolean keepBook (@RequestParam("bo_code") String bo_code, @AuthenticationPrincipal CustomUser customUser) {
         if(bo_code == null){
             return false;
         }
@@ -347,13 +347,13 @@ public class PublisherController {
     }
     
     @GetMapping("/editor/updateNotice/{nt_num}")
-    public String updateNotice(@PathVariable int nt_num, Model model) {
+    public String updateNotice(@PathVariable("nt_num") int nt_num, Model model) {
         NoticeVO notice = bookService.getNotice(nt_num);
         model.addAttribute("notice", notice);
         return "/publisher/editor_updateNotice";
     }
     @PostMapping("/editor/updateNotice/{nt_num}")
-    public String updateNoticePost(@PathVariable int nt_num, NoticeVO nt) {
+    public String updateNoticePost(@PathVariable("nt_num") int nt_num, NoticeVO nt) {
         if(bookService.updateNotice(nt)){
             return "redirect:/editor/manageNotice/"+nt.getNt_bo_code();
         }
@@ -362,7 +362,7 @@ public class PublisherController {
 
     @ResponseBody
     @PostMapping("/editor/deleteNotice")
-    public boolean postMethodName(@RequestParam int nt_num) {
+    public boolean postMethodName(@RequestParam("nt_num") int nt_num) {
         if(nt_num == 0){
             return false;
         }

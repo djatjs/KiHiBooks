@@ -66,7 +66,7 @@ public class UserController {
 
     @PostMapping("/edit/checkPw")
     @ResponseBody
-    public boolean checkPw(@RequestParam String pw, @AuthenticationPrincipal CustomUser customUser) {
+    public boolean checkPw(@RequestParam("pw") String pw, @AuthenticationPrincipal CustomUser customUser) {
         if (pw == null || customUser == null) {
             return false;
         }
@@ -81,7 +81,7 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/edit/changeNickname")
-    public boolean changeNickname(@RequestParam String nickname, @AuthenticationPrincipal CustomUser customUser) {
+    public boolean changeNickname(@RequestParam("nickname") String nickname, @AuthenticationPrincipal CustomUser customUser) {
         if (nickname == null || nickname.length() == 0 || customUser == null) {
             return false;
         }
@@ -132,7 +132,7 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/email/verifyCode")
-    public boolean verifyCode(@RequestParam String userCode, @RequestParam String email, HttpSession session) {
+    public boolean verifyCode(@RequestParam("userCode") String userCode, @RequestParam("email") String email, HttpSession session) {
         if (userCode == null || email == null) {
             return false;
         }
@@ -184,7 +184,7 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/user/resign")
-    public boolean resign(@RequestParam String ur_email) {
+    public boolean resign(@RequestParam("ur_email") String ur_email) {
         System.out.println(ur_email);
         if (ur_email == null) {
             return false;
@@ -193,7 +193,7 @@ public class UserController {
     }
 
     @GetMapping("/signup/kakao") // 실제 Redirect URI 경로로 수정
-    public String kakaoLogin(@RequestParam String code, HttpServletRequest request) {
+    public String kakaoLogin(@RequestParam("code") String code, HttpServletRequest request) {
         System.out.println("인가 코드: " + code);
 
         // 1. 인가 코드를 사용하여 액세스 토큰을 요청

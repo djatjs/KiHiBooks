@@ -37,9 +37,9 @@ public class FileController {
     @GetMapping("/file/{boCode}/{type}/{fileName:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(
-            @PathVariable String boCode,
-            @PathVariable String type,
-            @PathVariable String fileName,
+            @PathVariable("boCode") String boCode,
+            @PathVariable("type") String type,
+            @PathVariable("fileName") String fileName,
             HttpServletRequest request) {
 
         // 1. 보안 체크: EPUB 파일인 경우 엄격한 RBAC 적용
