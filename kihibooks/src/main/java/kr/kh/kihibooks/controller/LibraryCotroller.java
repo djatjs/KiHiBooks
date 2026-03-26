@@ -51,7 +51,7 @@ public class LibraryCotroller {
             Model model,
             @RequestParam(defaultValue = "1", name = "Bpage", required = false) int Bpage,
             @RequestParam(defaultValue = "1", name = "Ipage", required = false) int Ipage,
-            @RequestParam(defaultValue = "ownedBooks") String tab) {
+            @RequestParam(value = "tab", defaultValue = "ownedBooks") String tab) {
         int ur_num = customUser.getUser().getUr_num();
         List<LibraryVO> myBooks = libraryService.getMyBooks(ur_num);
         List<InterestVO> myInterests = libraryService.getMyInterests(ur_num);

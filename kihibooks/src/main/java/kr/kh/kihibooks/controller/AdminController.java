@@ -15,6 +15,7 @@ import kr.kh.kihibooks.service.UserService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/admin")
@@ -45,7 +46,7 @@ public class AdminController {
         return "admin/addPublisher";
     }
     @PostMapping("addPublisher")
-    public String addPublisherPost(UserVO user, String pu_name) {
+    public String addPublisherPost(UserVO user, @RequestParam("pu_name") String pu_name) {
         System.out.println(user);
         System.out.println(pu_name);
 

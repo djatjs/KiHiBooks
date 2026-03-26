@@ -103,7 +103,7 @@ public class PublisherController {
 
     @ResponseBody
     @PostMapping("/publisher/addEditor")
-    public boolean addEditor(@RequestParam("userNum") int userNum, String puCode) {
+    public boolean addEditor(@RequestParam("userNum") int userNum, @RequestParam("puCode") String puCode) {
         try {
             return publisherService.addEditor(userNum, puCode);
         } catch (Exception e) {
@@ -159,7 +159,7 @@ public class PublisherController {
     }
 
     @PostMapping("/editor/registerNew")
-    public String registerNewWorkPost(BookVO book, @RequestParam("bo_keywords") List<String> keywordCodes, String pu_code) {
+    public String registerNewWorkPost(BookVO book, @RequestParam("bo_keywords") List<String> keywordCodes, @RequestParam("pu_code") String pu_code) {
         System.out.println(book);
         
         if(book == null || book.getBo_author() == null || book.getBo_title() == null || book.getBo_sc_code()== null || book.getBo_title().isBlank()){
@@ -218,7 +218,7 @@ public class PublisherController {
         return "/publisher/editor_updateBook";
     }
     @PostMapping("/editor/updateBookInfo/{bo_code}")
-    public String updateBookInfoPost(@AuthenticationPrincipal CustomUser customUser, @PathVariable String bo_code, @RequestParam("bo_keywords") List<String> bo_keywords, BookVO book, String pu_code)  {
+    public String updateBookInfoPost(@AuthenticationPrincipal CustomUser customUser, @PathVariable("bo_code") String bo_code, @RequestParam("bo_keywords") List<String> bo_keywords, BookVO book, @RequestParam("pu_code") String pu_code)  {
         //받은 값 확인
         System.out.println("선택한 키워드 : "+bo_keywords);
         System.out.println("수정된 도서 정보 : "+book);
@@ -236,7 +236,7 @@ public class PublisherController {
         return "/publisher/editor_registerEpisode";
     }
     @PostMapping("/editor/registerEpisode/{bo_code}")
-    public String registerEpisodePost(@PathVariable("bo_code") String bo_code, EpisodeVO ep, MultipartFile epubFile, MultipartFile coverImage) {
+    public String registerEpisodePost(@PathVariable("bo_code") String bo_code, EpisodeVO ep, @RequestParam("epubFile") MultipartFile epubFile, @RequestParam("coverImage") MultipartFile coverImage) {
         if(bookService.insertEpisode(ep, bo_code, epubFile, coverImage)){
             return "redirect:/editor/manageEpisode/"+bo_code;
         }
@@ -251,7 +251,7 @@ public class PublisherController {
         return "/publisher/editor_updateEpisode";
     }
     @PostMapping("/editor/updateEpisode/{ep_code}")
-    public String updateEpisodePost(@PathVariable("ep_code") String ep_code, EpisodeVO ep, MultipartFile epubFile, MultipartFile coverImage) {
+    public String updateEpisodePost(@PathVariable("ep_code") String ep_code, EpisodeVO ep, @RequestParam("epubFile") MultipartFile epubFile, @RequestParam("coverImage") MultipartFile coverImage) {
         String bo_code = ep.getEp_bo_code();
         if(bookService.updateEpisode(ep, ep_code, bo_code, epubFile, coverImage)){
             return "redirect:/editor/manageEpisode/"+bo_code;

@@ -18,7 +18,7 @@ public class SearchController {
 
     @GetMapping("/search")
     public String searchBooks(@RequestParam("query") String query,
-                              @RequestParam(defaultValue = "1") int page,
+                              @RequestParam(value = "page", defaultValue = "1") int page,
                               Model model) {
 
         // 검색어로 도서 목록 조회 + 페이징
