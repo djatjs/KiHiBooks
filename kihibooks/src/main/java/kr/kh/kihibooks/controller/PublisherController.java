@@ -1,5 +1,8 @@
 package kr.kh.kihibooks.controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,11 @@ import kr.kh.kihibooks.model.vo.EditorVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
 import kr.kh.kihibooks.model.vo.NoticeVO;
+import kr.kh.kihibooks.model.vo.PublisherBookKpiVO;
+import kr.kh.kihibooks.model.vo.PublisherDailyKpiVO;
+import kr.kh.kihibooks.model.vo.PublisherEditorKpiVO;
+import kr.kh.kihibooks.model.vo.PublisherKpiVO;
+import kr.kh.kihibooks.model.vo.PublisherVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.service.BookService;
@@ -50,22 +58,71 @@ public class PublisherController {
     }
 
     @GetMapping("/publisher/dashboard")
-    public String publisherDashboard(@AuthenticationPrincipal CustomUser customUser, Model model) {
-        //총 등록 도서 수, 연재 중 도서 수, 완결 도서 수
-        int totalBookCount = bookService.getBookCount(customUser.getPu_code());
-        int totalPublishingCount = bookService.getPublishedCount(customUser.getPu_code());
-        int totalCompletedCount = bookService.getCompletedCount(customUser.getPu_code());
-        model.addAttribute("totalBookCount", totalBookCount);
-        model.addAttribute("totalPublishingCount", totalPublishingCount);
-        model.addAttribute("totalCompletedCount", totalCompletedCount);
+    public String publisherDashboard(@AuthenticationPrincipal CustomUser customUser,
+            @RequestParam(value = "days", defaultValue = "30") int requestedDays,
+            Model model) {
+        int days = requestedDays == 7 || requestedDays == 90 ? requestedDays : 30;
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.minusDays(days - 1L);
+        LocalDateTime startAt = startDate.atStartOfDay();
+        LocalDateTime endAt = today.plusDays(1).atStartOfDay();
+        LocalDateTime previousStartAt = startAt.minusDays(days);
+        LocalDateTime inactiveBefore = today.minusDays(14).atStartOfDay();
+        boolean isSuper = "SUPER".equals(customUser.getAuthority());
+        Integer piNum = isSuper ? null : customUser.getPi_num();
 
-        if(customUser.getAuthority().equals("SUPER")){
-            int editorCount = publisherService.getEditorList(customUser.getPu_code()).size();
-            model.addAttribute("editorCount", editorCount);
-        }
-        if(customUser.getAuthority().equals("EDITOR")){
-            int editorsBookCount = bookService.getEditorsBookList(customUser.getPi_num()).size();
-            model.addAttribute("editorsBookCount", editorsBookCount);
+        PublisherKpiVO kpi = publisherService.getKpiSummary(
+                customUser.getPu_code(), piNum, startAt, endAt, inactiveBefore);
+        PublisherKpiVO previousKpi = publisherService.getKpiSummary(
+                customUser.getPu_code(), piNum, previousStartAt, startAt, inactiveBefore);
+        List<PublisherBookKpiVO> topBooks = publisherService.getTopBookKpis(
+                customUser.getPu_code(), piNum, startAt, endAt, 5);
+        List<PublisherBookKpiVO> managedBooks = isSuper ? List.of() : publisherService.getTopBookKpis(
+                customUser.getPu_code(), piNum, startAt, endAt, 100);
+        List<PublisherDailyKpiVO> dailyKpis = publisherService.getDailyKpis(
+                customUser.getPu_code(), piNum, startAt, endAt);
+        PublisherVO publisher = publisherService.getPublisherByCode(customUser.getPu_code());
+
+        long dailyMaxSales = dailyKpis.stream()
+                .mapToLong(PublisherDailyKpiVO::getSalesAmount).max().orElse(0);
+        long topMaxSales = topBooks.stream()
+                .mapToLong(PublisherBookKpiVO::getSalesAmount).max().orElse(0);
+
+        model.addAttribute("publisherName", publisher == null ? "출판사" : publisher.getPu_name());
+        model.addAttribute("isSuper", isSuper);
+        model.addAttribute("dashboardRole", isSuper ? "SUPER" : "EDITOR");
+        model.addAttribute("scopeLabel", piNum == null ? "출판사 전체" : "내 담당 작품");
+        model.addAttribute("selectedDays", days);
+        model.addAttribute("periodLabel", startDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+                + " — " + today.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")));
+        model.addAttribute("lastUpdated", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")));
+        model.addAttribute("kpi", kpi);
+        model.addAttribute("salesChange", publisherService.calculateChangeRate(kpi.getSalesAmount(), previousKpi.getSalesAmount()));
+        model.addAttribute("purchaseChange", publisherService.calculateChangeRate(kpi.getPaidPurchaseCount(), previousKpi.getPaidPurchaseCount()));
+        model.addAttribute("buyerChange", publisherService.calculateChangeRate(kpi.getBuyerCount(), previousKpi.getBuyerCount()));
+        model.addAttribute("reviewChange", publisherService.calculateChangeRate(kpi.getReviewCount(), previousKpi.getReviewCount()));
+        model.addAttribute("ratingChange", Math.round((kpi.getAverageRating() - previousKpi.getAverageRating()) * 10.0) / 10.0);
+        model.addAttribute("topBooks", topBooks);
+        model.addAttribute("managedBooks", managedBooks);
+        model.addAttribute("attentionBooks", managedBooks.stream()
+                .filter(book -> book.getLastEpisodeDate() == null
+                        || book.getLastEpisodeDate().isBefore(inactiveBefore))
+                .toList());
+        model.addAttribute("dailyKpis", dailyKpis);
+        model.addAttribute("dailyMaxSales", dailyMaxSales);
+        model.addAttribute("topMaxSales", topMaxSales);
+
+        if (isSuper) {
+            model.addAttribute("editorCount", publisherService.getEditorCount(customUser.getPu_code()));
+            List<PublisherEditorKpiVO> editorKpis = publisherService.getEditorKpis(
+                    customUser.getPu_code(), startAt, endAt, inactiveBefore);
+            long topBookSales = topBooks.stream().mapToLong(PublisherBookKpiVO::getSalesAmount).max().orElse(0);
+            double topBookShare = kpi.getSalesAmount() == 0 ? 0
+                    : Math.round(topBookSales * 1000.0 / kpi.getSalesAmount()) / 10.0;
+            model.addAttribute("editorKpis", editorKpis);
+            model.addAttribute("topBookShare", topBookShare);
+            model.addAttribute("salesPerBuyer", kpi.getBuyerCount() == 0 ? 0
+                    : kpi.getSalesAmount() / kpi.getBuyerCount());
         }
         return "/publisher/publisherDashboard";
     }
