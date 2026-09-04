@@ -1,410 +1,482 @@
 <!DOCTYPE html>
-<html
-xmlns:th="http://www.thymeleaf.org"
-xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-layout:decorate="~{layout/layout.html}">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
 <head>
 <meta charset="UTF-8">
-<title>KiHiBooks</title>
-
+<title>KiHiBooks - 에디터 관리</title>
 <style>
-    main {
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
+    :root {
+        --editor-primary: #f26b3a;
+        --editor-primary-dark: #dc5728;
+        --editor-primary-soft: #fff1eb;
+        --editor-ink: #18212f;
+        --editor-muted: #566273;
+        --editor-line: #d9dee5;
+        --editor-surface: #fff;
+        --editor-bg: #f3f5f7;
+        --editor-danger: #c93f3f;
+        --management-panel-height: clamp(540px, calc(100vh - 250px), 650px);
     }
-    .editor-management.container {
+    .editor-page, .editor-page * { box-sizing: border-box; }
+    .editor-page {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 20px;
-        background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        margin-top: 30px;
-        margin-bottom: 30px;
+        padding: 26px 20px 56px;
+        color: var(--editor-ink);
     }
-    .editor-management h2 {
-        color: #2c3e50;
-        border-bottom: 2px solid #ff7f50;
-        padding-bottom: 10px;
-        margin-bottom: 25px !important;
-        font-size: 1.8em;
+    .editor-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
     }
-    .editor-management h2.mb-3 {
-        font-weight: bold;
+    .editor-eyebrow {
+        margin-bottom: 8px;
+        color: var(--editor-primary);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .12em;
     }
-    .editor-management #editorTypeSelect {
-        border-color: #ced4da;
-        border-radius: 5px;
-        padding: .375rem .75rem;
-        height: calc(1.5em + .75rem + 2px);
-        box-shadow: inset 0 1px 2px rgba(0,0,0,.075);
+    .editor-title {
+        margin: 0 0 7px;
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -.04em;
     }
-    .editor-management .table {
-        border-collapse: collapse;
-        width: 100%;
-        margin-bottom: 25px !important;
-        border-radius: 8px;
+    .editor-subtitle { margin: 0; color: var(--editor-muted); font-size: 14px; }
+    .editor-count {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 174px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: var(--editor-ink);
+        color: #fff;
+        box-shadow: 0 8px 24px rgba(24, 33, 47, .12);
+    }
+    .count-icon, .empty-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, .1);
+        color: #ff9a75;
+    }
+    .count-icon svg, .empty-icon svg, .search-icon svg { width: 19px; height: 19px; }
+    .count-label { display: block; color: #aeb7c5; font-size: 11px; font-weight: 700; }
+    .count-value { display: block; margin-top: 2px; font-size: 20px; font-weight: 800; }
+    .management-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.65fr) minmax(300px, .75fr);
+        align-items: stretch;
+        gap: 20px;
+    }
+    .editor-panel {
+        height: var(--management-panel-height);
+        border: 1px solid var(--editor-line);
+        border-radius: 14px;
+        background: var(--editor-surface);
+        box-shadow: 0 7px 24px rgba(24, 33, 47, .075);
+    }
+    .editor-list-panel {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
         overflow: hidden;
     }
-    .editor-management .table thead th {
-        background-color: #ff7f50 !important;
-        color: white;
-        font-weight: bold;
-        text-align: center;
+    .panel-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 21px 22px 18px;
+        border-bottom: 1px solid var(--editor-line);
+    }
+    .panel-title { margin: 0 0 5px; font-size: 17px; font-weight: 800; letter-spacing: -.02em; }
+    .panel-description { margin: 0; color: var(--editor-muted); font-size: 13px; line-height: 1.55; }
+    .status-chip {
+        flex: 0 0 auto;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: var(--editor-primary-soft);
+        color: var(--editor-primary);
+        font-size: 11px;
+        font-weight: 800;
+    }
+    .table-wrap {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: auto;
+        overscroll-behavior: contain;
+        scrollbar-color: #b7bec8 #f2f4f6;
+        scrollbar-width: thin;
+    }
+    .table-wrap::-webkit-scrollbar { width: 9px; height: 9px; }
+    .table-wrap::-webkit-scrollbar-track { background: #f2f4f6; }
+    .table-wrap::-webkit-scrollbar-thumb { border: 2px solid #f2f4f6; border-radius: 999px; background: #b7bec8; }
+    .editor-table { width: 100%; min-width: 650px; margin: 0; border-collapse: collapse; }
+    .editor-table th {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--editor-line);
+        background: #fafbfc;
+        color: var(--editor-muted);
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        font-size: 12px;
+        font-weight: 800;
+        text-align: left;
+    }
+    .editor-table th:first-child, .editor-table td:first-child { width: 62px; text-align: center; }
+    .editor-table th:last-child, .editor-table td:last-child { width: 82px; text-align: right; }
+    .editor-table td {
+        padding: 15px 16px;
+        border-bottom: 1px solid #f0f2f5;
+        color: #374151;
+        font-size: 14px;
         vertical-align: middle;
-        padding: 12px 15px;
-        border-bottom: none;
     }
-    .editor-management .table tbody td {
-        vertical-align: middle;
-        padding: 10px 15px;
-        text-align: center;
+    .editor-table tbody tr:last-child td { border-bottom: 0; }
+    .editor-table tbody tr:hover { background: #fffaf8; }
+    .row-number { color: #707b8a !important; font-size: 13px !important; font-weight: 700; }
+    .editor-profile { display: flex; align-items: center; gap: 11px; }
+    .editor-avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        border-radius: 10px;
+        background: var(--editor-primary-soft);
+        color: var(--editor-primary);
+        font-size: 12px;
+        font-weight: 800;
     }
-    .editor-management .table-hover tbody tr:hover {
-        background-color: #f8f9fa;
+    .editor-name { color: var(--editor-ink); font-weight: 800; }
+    .editor-role { margin-top: 2px; color: #788391; font-size: 10px; font-weight: 700; letter-spacing: .05em; }
+    .editor-email { color: var(--editor-muted) !important; }
+    .delete-btn {
+        padding: 7px 10px;
+        border: 1px solid #f2d1d1;
+        border-radius: 7px;
+        background: #fff;
+        color: var(--editor-danger);
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: background .18s ease, border-color .18s ease;
     }
-    .editor-management .table tbody .btn-danger {
-        background-color: #dc3545;
-        border-color: #dc3545;
+    .delete-btn:hover, .delete-btn:focus-visible { border-color: #e8aaaa; background: #fff1f1; outline: none; }
+    .empty-state { padding: 46px 20px !important; color: var(--editor-muted) !important; text-align: center !important; }
+    .empty-icon { display: flex; width: 44px; height: 44px; margin: 0 auto 10px; background: var(--editor-bg); color: #9aa2af; }
+    .pagination-wrap {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px 22px;
+        border-top: 1px solid var(--editor-line);
     }
-    .editor-management .table tbody .btn-danger:hover {
-        background-color: #c82333;
-        border-color: #bd2130;
+    .page-summary { color: var(--editor-muted); font-size: 12px; }
+    .pagination { display: flex; align-items: center; gap: 5px; margin: 0; padding: 0; list-style: none; }
+    .pagination a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 32px;
+        height: 32px;
+        padding: 0 8px;
+        border: 1px solid var(--editor-line);
+        border-radius: 7px;
+        background: #fff;
+        color: var(--editor-muted);
+        font-size: 12px;
+        font-weight: 700;
     }
-    .editor-management .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-        padding: 10px 20px;
-        font-size: 1.1em;
-    }
-    .editor-management .btn-primary:hover {
-        background-color: #0069d9;
-        border-color: #0062cc;
-    }
-    .editor-management .table tbody tr td.text-center {
-        font-style: italic;
-        color: #6c757d;
-        padding: 20px;
-    }
-
-    .editor-management .text-right {
-        text-align: right !important;
-    }
-    .addeditorBtn {
-        background-color: #ff7f50;
-        color: #ffffff;
-        text-decoration: no;
-    }
-    .addeditorBtn:hover {
-        background-color: #ff6347;
-        color: #ffffff;
-    }
-    .search-area {
-        margin-bottom: 20px;
+    .pagination a:hover { border-color: #f3b49e; color: var(--editor-primary); }
+    .pagination a.active { border-color: var(--editor-ink); background: var(--editor-ink); color: #fff; pointer-events: none; }
+    .invite-panel { position: sticky; top: 20px; display: flex; flex-direction: column; overflow: hidden; }
+    .invite-body { display: flex; min-height: 0; flex: 1; flex-direction: column; padding: 20px 22px 22px; }
+    .search-label { display: block; margin-bottom: 8px; color: #374151; font-size: 13px; font-weight: 800; }
+    .search-control { position: relative; }
+    .search-icon {
+        position: absolute;
+        top: 50%;
+        left: 12px;
+        display: inline-flex;
+        color: #9aa2af;
+        pointer-events: none;
+        transform: translateY(-50%);
     }
     #user-search-input {
-        padding: 8px;
-        margin-right: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+        width: 100%;
+        height: 43px;
+        padding: 0 12px 0 40px;
+        border: 1px solid #dfe3e9;
+        border-radius: 9px;
+        background: #fff;
+        color: var(--editor-ink);
+        font-size: 13px;
+        outline: none;
+        transition: border-color .18s ease, box-shadow .18s ease;
     }
-    #search-user-button {
-        padding: 8px 15px;
-        background-color: #5cb85c;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    .search-results {
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 15px;
-        background-color: white;
-        min-height: 100px;
-    }
-    .user-item {
-        padding: 10px 0;
-        border-bottom: 1px solid #eee;
-        display: flex;
-        justify-content: space-between;
+    #user-search-input::placeholder { color: #adb4bf; }
+    #user-search-input:focus { border-color: #f2a387; box-shadow: 0 0 0 3px rgba(242, 107, 58, .1); }
+    .search-button, .add-editor-button {
+        display: inline-flex;
         align-items: center;
-    }
-    .add-editor-button {
-        padding: 5px 10px;
-        background-color: #f0ad4e;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    .pagination {
-        display: flex;
         justify-content: center;
-        margin-top: 30px;
-        margin-bottom: 30px;
-        padding: 0;
-        list-style: none;
-        border-radius: .25rem;
-    }
-    .pagination a,
-    .pagination span a {
-        position: relative;
-        display: block;
-        padding: .5rem .75rem;
-        margin-left: -1px;
-        line-height: 1.25;
-        color: #ff7f50;
-        background-color: #fff;
-        border: 1px solid #dee2e6;
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-    .pagination a:first-child {
-        margin-left: 0;
-        border-top-left-radius: .25rem;
-        border-bottom-left-radius: .25rem;
-    }
-    .pagination a:last-child {
-        border-top-right-radius: .25rem;
-        border-bottom-right-radius: .25rem;
-    }
-    .pagination a:hover {
-        color: #ff7f50;
-        background-color: #e9ecef;
-        border-color: #dee2e6;
-    }
-    .pagination .active {
-        z-index: 1;
+        width: 100%;
+        border: 0;
+        border-radius: 9px;
+        background: var(--editor-primary);
         color: #fff;
-        background-color: #ff7f50;
-        border-color: #ff7f50;
-        pointer-events: none;
+        font-weight: 800;
+        cursor: pointer;
+        transition: background .18s ease, transform .18s ease;
     }
-    .pagination > a:first-child {
-        margin-right: 5px;
+    .search-button { height: 42px; margin-top: 10px; font-size: 13px; }
+    .search-button:hover, .add-editor-button:hover { background: var(--editor-primary-dark); color: #fff; }
+    .search-button:active, .add-editor-button:active { transform: translateY(1px); }
+    .search-button:disabled, .add-editor-button:disabled { cursor: wait; opacity: .65; }
+    .search-results {
+        min-height: 112px;
+        margin-top: 16px;
+        padding: 15px;
+        border: 1px dashed #dfe3e9;
+        border-radius: 10px;
+        background: #fafbfc;
     }
-    .pagination > a:last-child {
-        margin-left: 5px;
+    .search-placeholder {
+        display: flex;
+        min-height: 80px;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        color: var(--editor-muted);
+        font-size: 12px;
+        line-height: 1.6;
+        text-align: center;
     }
-    .orenge-btn {
-		padding: 6px 20px;
-		font-size: 1rem;
-		background-color: #ff7f50;
-		color: white;
-		border: none;
-		border-radius: .25rem;
-		cursor: pointer;
-		transition: background-color 0.2s ease-in-out;
-	}
-	.orenge-btn:hover {
-		background-color: #ff6347;
-		color: #fff;
-	}
-
-    @media (max-width: 800px) {
-        .editor-management.container {
-            padding: 10px;
-        }
-        .editor-management .table thead th,
-        .editor-management .table tbody td {
-            padding: 8px 10px;
-            font-size: 0.9em;
-        }
-        .editor-management .btn-primary {
-            padding: 8px 15px;
-            font-size: 1em;
-        }
+    .search-placeholder.error { color: var(--editor-danger); }
+    .search-result-card { padding: 2px; }
+    .result-label { color: #9aa2af; font-size: 10px; font-weight: 800; letter-spacing: .06em; }
+    .result-name { margin-top: 7px; color: var(--editor-ink); font-size: 15px; font-weight: 800; }
+    .result-email { margin-top: 3px; color: var(--editor-muted); font-size: 12px; }
+    .add-editor-button { height: 38px; margin-top: 14px; font-size: 12px; }
+    .management-note {
+        margin-top: 16px;
+        padding: 13px 14px;
+        border-radius: 9px;
+        background: var(--editor-bg);
+        color: var(--editor-muted);
+        font-size: 12px;
+        line-height: 1.6;
+    }
+    .management-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 20px; }
+    .text-link { color: var(--editor-muted); font-size: 13px; font-weight: 700; }
+    .text-link:hover, .book-link:hover { color: var(--editor-primary); }
+    .book-link { display: inline-flex; align-items: center; gap: 6px; color: var(--editor-ink); font-size: 13px; font-weight: 800; }
+    .feedback-toast {
+        position: fixed;
+        right: 22px;
+        bottom: 22px;
+        z-index: 1050;
+        max-width: calc(100vw - 44px);
+        padding: 12px 15px;
+        border-radius: 9px;
+        background: var(--editor-ink);
+        color: #fff;
+        box-shadow: 0 10px 30px rgba(24, 33, 47, .2);
+        font-size: 12px;
+        font-weight: 700;
+    }
+    @media (max-width: 900px) {
+        .management-grid { grid-template-columns: 1fr; }
+        .editor-list-panel { height: 560px; }
+        .invite-panel { position: static; height: auto; min-height: 480px; }
+    }
+    @media (max-width: 620px) {
+        .editor-page { padding: 20px 14px 40px; }
+        .editor-hero { align-items: stretch; flex-direction: column; }
+        .editor-title { font-size: 25px; }
+        .editor-count { width: 100%; }
+        .panel-head, .invite-body { padding-right: 16px; padding-left: 16px; }
+        .pagination-wrap { align-items: flex-start; flex-direction: column; padding: 15px 16px; }
+        .management-actions { align-items: flex-start; flex-direction: column-reverse; }
+        .editor-list-panel { height: 500px; }
     }
 </style>
 </head>
 <body>
-	<main layout:fragment="content">
-        <input type="hidden" id="pu_code" th:value="${#authentication.principal?.pu_code}">
-        <div class="container editor-management">
-			<h2 class="mb-3" style="font-weight: bold;">📊 에디터 계정 관리</h2>
-			<div class="editor-add-section">
+<main layout:fragment="content" class="editor-page">
+    <input type="hidden" id="pu_code" th:value="${#authentication.principal?.pu_code}">
+
+    <section class="editor-hero">
+        <div>
+            <div class="editor-eyebrow">PUBLISHER MANAGEMENT</div>
+            <h1 class="editor-title">에디터 관리</h1>
+            <p class="editor-subtitle"><span th:text="${publisherName}">출판사</span>의 에디터 계정과 담당 작품을 관리합니다.</p>
         </div>
-        
-        <div class="editor-list mb-4">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>번호</th>
-                        <th>에디터</th>
-                        <th>이메일</th>
-                        <th>소속 출판사</th>
-                        <th>관리</th>
-                    </tr>
-                </thead>
-                <tbody th:if="${pageInfo.content != null and !pageInfo.content.isEmpty()}">
-                    <tr th:each="editor, count : ${pageInfo.content}">
-                        <td th:text="${count.count + (pageInfo.currentPage - 1) * pageInfo.pageSize}"></td>
-                        <td th:text="${editor.ur_nickname}"></td>
-                        <td th:text="${editor.ur_email}"></td>
-                        <td th:text="${editor.pu_name}"></td>
-                        <td>
-                            <button class="btn btn-danger btn-sm delete-btn" th:data-user-id="${editor.ur_num}">삭제</button>
-                        </td>
-                    </tr>
-                </tbody>
-                <tbody th:if="${pageInfo.content == null || pageInfo.content.isEmpty()}">
-                    <tr>
-                        <td colspan="5" class="text-center">등록된 에디터가 없습니다.</td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <div class="pagination" th:if="${pageInfo.totalCount > 0}">
-                <a th:if="${pageInfo.startPage > 1}"
-                th:href="@{/publisher/editors(page=${pageInfo.startPage - 1})}">«</a>
-
-                <span th:each="i : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}">
-                    <a th:href="@{/publisher/editors(page=${i})}"
-                    th:classappend="${i == pageInfo.currentPage} ? 'active' : ''"
-                    th:text="${i}"></a>
-                </span>
-
-                <a th:if="${pageInfo.endPage < pageInfo.totalPages}"
-                th:href="@{/publisher/editors(page=${pageInfo.endPage + 1})}">»</a>
-            </div>
-
-            <h2 style="font-weight: bold;">➕ 새로운 에디터 추가</h2>
-            <p>기존에 가입된 사용자를 검색하여 출판사의 에디터로 등록할 수 있습니다.</p>
-
-            <!-- 유저 검색 영역 -->
-            <div class="search-area">
-                <input type="text" id="user-search-input" class="col-4" placeholder="사용자 닉네임을 입력하세요"/>
-                <button type="button" id="search-user-button">사용자 검색</button>
-            </div>
-
-            <!-- 검색 결과 표시 영역 -->
-            <div class="search-results" id="search-results-area">
-                <p id="search-initial-message">검색어를 입력하고 '사용자 검색' 버튼을 눌러주세요.</p>
-            </div>
-            <a th:href="@{/publisher/dashboard}" class="btn btn-secondary mt-3">목록으로</a>
-            <script>
-                //유저 검색 버튼 클릭 시
-                $("#search-user-button").on('click', function(){
-                    var searchInput = $("#user-search-input").val();
-                    if(searchInput.length === 0){
-                        alert("검색어를 입력하세요");
-                        return;
-                    }
-                    $.ajax({
-                        url: "/publisher/searchUser",
-                        method: "POST",
-                        data: searchInput,
-                        contentType: "text/plain",
-                        success: function(response) {
-                            if (response && response.ur_nickname) {
-                                displaySearchResults(response);
-                            }
-                            else{
-                                alert("유저 검색 실패 : 존재하지 않는 사용자");
-                                $("#search-results-area").html("검색 결과가 없습니다.");
-                            }
-                        }
-                    })
-                })
-            </script>
-            <script>
-                function displaySearchResults(user){
-                    const $resultsArea = $("#search-results-area");
-                    $resultsArea.empty();
-
-                    const userItemHtml = `
-                        <div class="d-flex justify-content-between">
-                            <span class="user-info">
-                                닉네임: ${user.ur_nickname}
-                                (${maskEmail(user.ur_email)}) <!-- UR_NUM 값을 함께 표시 -->
-                            </span>
-                            <button class="btn btn-sm add-editor-button" id="add-editor-button" data-user-id="${user.ur_num}">
-                                에디터로 추가
-                            </button>
-                        </div>
-                    `;
-                    $resultsArea.append(userItemHtml);
-                }
-                function maskEmail(email, visibleCharsCount = 2) {
-                    if (!email) return '';
-                    const atIndex = email.indexOf('@');
-                    const username = email.substring(0, atIndex);
-                    const domain = email.substring(atIndex);
-                    const actualVisibleChars = Math.max(0, Math.min(visibleCharsCount, username.length));
-                    const visiblePart = username.substring(0, actualVisibleChars);
-                    const maskedPart = '*'.repeat(username.length - actualVisibleChars);
-
-                    return `${visiblePart}${maskedPart}${domain}`;
-                }
-            </script>
-            <script>
-                $(document).on("click", ".add-editor-button", function() {
-                    const userNum = $(this).data("user-id");
-                    const puCode = $("#pu_code").val();
-                    $.ajax({
-                        url: "/publisher/addEditor",
-                        type: "POST",
-                        data:
-                        {
-                            userNum: userNum,
-                            puCode : puCode
-                        },
-                        success: function(response) {
-                            console.log(response);
-                            if(response){
-                                alert("추가되었습니다.");
-                                location.reload();
-                            }else{
-                                alert("추가에 실패했습니다.");
-                            }
-                        }
-                    })
-                });
-            </script>
-            <script>
-                // 에디터 계정 삭제 버튼 클릭시 이벤트 처리
-                $(".delete-btn").on("click",function() {
-                    const userNum = $(this).data("user-id");
-                    // 1. 담당 도서가 있는지 확인
-                    $.ajax({
-                        url : "/publisher/checkHaveBook",
-                        method : "GET",
-                        data : {userNum : userNum},
-                        success : function(res){
-                            if(res){ //있는경우
-                                alert("담당 도서가 있습니다. 다른 에디터에게 도서를 이전시킨 후 시도해주세요.");
-                                return;
-                            }
-                            if(!confirm("정말 삭제하시겠습니까?")) return;
-                            deleteEditor(userNum);
-                        }
-                    });
-                })
-                function deleteEditor(userNum){
-                    $.ajax({
-                        url: "/publisher/deleteEditor",
-                        method: "POST",
-                        data: { userNum: userNum },
-                        success: function (response) {
-                            if (response) {
-                                alert("에디터 삭제 완료");
-                                const currentUrl = new URL(window.location.href);
-                                currentUrl.searchParams.set('page', 1);
-                                window.location.href = currentUrl.pathname + currentUrl.search;
-                            } else {
-                                alert("에디터 삭제 실패");
-                            }
-                        },
-                        error: function () {
-                            alert("서버 통신 오류");
-                        }
-                    });
-                }
-            </script>
+        <div class="editor-count" aria-label="등록 에디터 수">
+            <span class="count-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </span>
+            <span><span class="count-label">등록 에디터</span><strong class="count-value"><span th:text="${pageInfo.totalCount}">0</span>명</strong></span>
         </div>
-	</main>
+    </section>
+
+    <div class="management-grid">
+        <section class="editor-panel editor-list-panel" aria-labelledby="editor-list-title">
+            <div class="panel-head">
+                <div>
+                    <h2 class="panel-title" id="editor-list-title">에디터 계정</h2>
+                    <p class="panel-description">출판사 콘텐츠에 접근할 수 있는 에디터 목록입니다.</p>
+                </div>
+                <span class="status-chip">EDITOR</span>
+            </div>
+            <div class="table-wrap">
+                <table class="editor-table">
+                    <thead><tr><th scope="col">번호</th><th scope="col">에디터</th><th scope="col">이메일</th><th scope="col">소속 출판사</th><th scope="col">관리</th></tr></thead>
+                    <tbody th:if="${pageInfo.content != null and !pageInfo.content.isEmpty()}">
+                        <tr th:each="editor, count : ${pageInfo.content}">
+                            <td class="row-number" th:text="${count.count + (pageInfo.currentPage - 1) * pageInfo.pageSize}">1</td>
+                            <td><div class="editor-profile"><span class="editor-avatar" aria-hidden="true">ED</span><div><div class="editor-name" th:text="${editor.ur_nickname}">에디터</div><div class="editor-role">CONTENT EDITOR</div></div></div></td>
+                            <td class="editor-email" th:text="${editor.ur_email}">editor@example.com</td>
+                            <td th:text="${editor.pu_name}">출판사</td>
+                            <td><button type="button" class="delete-btn" th:data-user-id="${editor.ur_num}" th:data-user-name="${editor.ur_nickname}">삭제</button></td>
+                        </tr>
+                    </tbody>
+                    <tbody th:if="${pageInfo.content == null || pageInfo.content.isEmpty()}">
+                        <tr><td colspan="5" class="empty-state">
+                            <span class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M19 8v6M22 11h-6"></path></svg></span>
+                            등록된 에디터가 없습니다.<br>오른쪽 검색 영역에서 첫 에디터를 추가해 보세요.
+                        </td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-wrap" th:if="${pageInfo.totalCount > 0}">
+                <span class="page-summary">전체 <strong th:text="${pageInfo.totalCount}">0</strong>명 중 <strong th:text="${(pageInfo.currentPage - 1) * pageInfo.pageSize + 1}">1</strong>–<strong th:text="${(pageInfo.currentPage * pageInfo.pageSize) > pageInfo.totalCount ? pageInfo.totalCount : (pageInfo.currentPage * pageInfo.pageSize)}">2</strong></span>
+                <nav class="pagination" aria-label="에디터 목록 페이지">
+                    <a th:if="${pageInfo.startPage > 1}" th:href="@{/publisher/editors(page=${pageInfo.startPage - 1})}" aria-label="이전 페이지">‹</a>
+                    <span th:each="i : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}"><a th:href="@{/publisher/editors(page=${i})}" th:classappend="${i == pageInfo.currentPage} ? 'active' : ''" th:attr="aria-current=${i == pageInfo.currentPage ? 'page' : null}" th:text="${i}">1</a></span>
+                    <a th:if="${pageInfo.endPage < pageInfo.totalPages}" th:href="@{/publisher/editors(page=${pageInfo.endPage + 1})}" aria-label="다음 페이지">›</a>
+                </nav>
+            </div>
+        </section>
+
+        <aside class="editor-panel invite-panel" aria-labelledby="invite-title">
+            <div class="panel-head"><div><h2 class="panel-title" id="invite-title">새 에디터 추가</h2><p class="panel-description">가입된 사용자를 닉네임으로 찾아 권한을 부여합니다.</p></div></div>
+            <div class="invite-body">
+                <label class="search-label" for="user-search-input">사용자 닉네임</label>
+                <div class="search-control">
+                    <span class="search-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></span>
+                    <input type="text" id="user-search-input" placeholder="닉네임을 정확히 입력하세요" autocomplete="off">
+                </div>
+                <button type="button" id="search-user-button" class="search-button">사용자 검색</button>
+                <div class="search-results" id="search-results-area" aria-live="polite"><p class="search-placeholder">검색한 사용자의 계정 정보가<br>이곳에 표시됩니다.</p></div>
+                <div class="management-note">에디터를 삭제하려면 먼저 담당 작품을 다른 에디터에게 이전해야 합니다.</div>
+                <div class="management-actions">
+                    <a th:href="@{/publisher/dashboard}" class="text-link">← 대시보드로</a>
+                    <a th:href="@{/publisher/manageEditorsBook/{puCode}(puCode=${#authentication.principal.pu_code})}" class="book-link">담당 작품 관리 <span aria-hidden="true">→</span></a>
+                </div>
+            </div>
+        </aside>
+    </div>
+    <div id="feedback-toast" class="feedback-toast" role="status" aria-live="polite" hidden></div>
+</main>
+
+<script layout:fragment="script">
+    $(function () {
+        const $searchInput = $("#user-search-input");
+        const $searchButton = $("#search-user-button");
+        const $resultsArea = $("#search-results-area");
+
+        function showFeedback(message) {
+            const $toast = $("#feedback-toast");
+            $toast.stop(true, true).text(message).prop("hidden", false).fadeIn(120);
+            window.setTimeout(function () { $toast.fadeOut(180, function () { $toast.prop("hidden", true); }); }, 2400);
+        }
+        function showSearchMessage(message, isError) {
+            $resultsArea.empty().append($("<p>", { class: "search-placeholder" + (isError ? " error" : ""), text: message }));
+        }
+        function maskEmail(email) {
+            if (!email || email.indexOf("@") < 0) return email || "";
+            const atIndex = email.indexOf("@");
+            const username = email.substring(0, atIndex);
+            return username.substring(0, Math.min(2, username.length)) + "*".repeat(Math.max(0, username.length - 2)) + email.substring(atIndex);
+        }
+        function displaySearchResult(user) {
+            const $card = $("<div>", { class: "search-result-card" });
+            $card.append($("<div>", { class: "result-label", text: "SEARCH RESULT" }));
+            $card.append($("<div>", { class: "result-name", text: user.ur_nickname }));
+            $card.append($("<div>", { class: "result-email", text: maskEmail(user.ur_email) }));
+            $card.append($("<button>", { type: "button", class: "add-editor-button", "data-user-id": user.ur_num, text: "에디터 권한 부여" }));
+            $resultsArea.empty().append($card);
+        }
+        function searchUser() {
+            const searchInput = $.trim($searchInput.val());
+            if (!searchInput) { showSearchMessage("검색할 닉네임을 입력해 주세요.", true); $searchInput.focus(); return; }
+            $searchButton.prop("disabled", true).text("검색 중...");
+            showSearchMessage("사용자를 찾고 있습니다.", false);
+            $.ajax({
+                url: "/publisher/searchUser", method: "POST", data: searchInput, contentType: "text/plain",
+                success: function (response) { response && response.ur_nickname ? displaySearchResult(response) : showSearchMessage("일치하는 사용자를 찾지 못했습니다.", true); },
+                error: function () { showSearchMessage("검색 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.", true); },
+                complete: function () { $searchButton.prop("disabled", false).text("사용자 검색"); }
+            });
+        }
+        $searchButton.on("click", searchUser);
+        $searchInput.on("keydown", function (event) { if (event.key === "Enter") searchUser(); });
+
+        $(document).on("click", ".add-editor-button", function () {
+            const $button = $(this);
+            $button.prop("disabled", true).text("권한 부여 중...");
+            $.ajax({
+                url: "/publisher/addEditor", type: "POST",
+                data: { userNum: $button.data("user-id"), puCode: $("#pu_code").val() },
+                success: function (response) {
+                    if (response) { showFeedback("에디터가 추가되었습니다."); window.setTimeout(function () { window.location.reload(); }, 550); }
+                    else { showSearchMessage("에디터 추가에 실패했습니다. 이미 등록된 계정인지 확인해 주세요.", true); }
+                },
+                error: function () { showSearchMessage("서버와 통신하지 못했습니다. 잠시 후 다시 시도해 주세요.", true); },
+                complete: function () { $button.prop("disabled", false).text("에디터 권한 부여"); }
+            });
+        });
+
+        $(document).on("click", ".delete-btn", function () {
+            const userNum = $(this).data("user-id");
+            const userName = $(this).data("user-name") || "이 에디터";
+            $.ajax({
+                url: "/publisher/checkHaveBook", method: "GET", data: { userNum: userNum },
+                success: function (hasBook) {
+                    if (hasBook) { showFeedback("담당 작품을 먼저 다른 에디터에게 이전해 주세요."); return; }
+                    if (!window.confirm(userName + "님의 에디터 권한을 삭제할까요?")) return;
+                    deleteEditor(userNum);
+                },
+                error: function () { showFeedback("담당 작품을 확인하지 못했습니다."); }
+            });
+        });
+        function deleteEditor(userNum) {
+            $.ajax({
+                url: "/publisher/deleteEditor", method: "POST", data: { userNum: userNum },
+                success: function (response) {
+                    if (response) { showFeedback("에디터 권한이 삭제되었습니다."); window.setTimeout(function () { window.location.href = "/publisher/editors?page=1"; }, 550); }
+                    else { showFeedback("에디터 삭제에 실패했습니다."); }
+                },
+                error: function () { showFeedback("서버와 통신하지 못했습니다."); }
+            });
+        }
+    });
+</script>
 </body>
 </html>

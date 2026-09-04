@@ -133,16 +133,16 @@ public class PublisherController {
         String puCode = user.getPu_code();
 
         int totalCount = publisherService.getEditorCount(puCode); // 전체 수
-        // int pageSize = PageConstants.PAGE_SIZE;
-        int pageSize = 2;
-        // int blockSize = PageConstants.BLOCK_SIZE;
-        int blockSize = 2;
+        int pageSize = 20;
+        int blockSize = 5;
         int offset = (page - 1) * pageSize;
 
         List<EditorVO> editorList = publisherService.getEditorList(puCode, pageSize, offset);
         PageInfo<EditorVO> pageInfo = PaginationUtils.paginate(editorList, totalCount, page, pageSize, blockSize);
+        PublisherVO publisher = publisherService.getPublisherByCode(puCode);
 
         model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("publisherName", publisher == null ? "출판사" : publisher.getPu_name());
         return "publisher/manageEditors";
     }
 
@@ -181,25 +181,20 @@ public class PublisherController {
     }
 
     @GetMapping("/editor/myContent")
-    public String myContent(@RequestParam(value = "page", defaultValue = "1") int page, @AuthenticationPrincipal CustomUser customUser, Model model) {
+    public String myContent(@AuthenticationPrincipal CustomUser customUser, Model model) {
         //등록한 작품 가져오기 (+ 출판사명(publisher), 작가명(author))
         List<BookVO> bookList = bookService.getEditorsBookList(customUser.getPi_num());
         
         int totalCount = bookList.size(); // 전체 수
-        // int pageSize = PageConstants.PAGE_SIZE;
-        int pageSize = 5;
-        // int blockSize = PageConstants.BLOCK_SIZE;
-        int blockSize = 5;
-        int offset = (page - 1) * pageSize;
+        PublisherVO publisher = publisherService.getPublisherByCode(customUser.getPu_code());
+        long finishedCount = bookList.stream().filter(book -> "Y".equals(book.getBo_fin())).count();
 
-        List<BookVO> books = bookService.getEditorsBookListToPage(customUser.getPi_num(), pageSize, offset);
-        PageInfo<BookVO> pageInfo = PaginationUtils.paginate(books, totalCount, page, pageSize, blockSize);
-
-        model.addAttribute("pageInfo", pageInfo);
-
-
+        model.addAttribute("books", bookList);
+        model.addAttribute("totalCount", totalCount);
         model.addAttribute("user", customUser.getUser());
-        // model.addAttribute("books", books);
+        model.addAttribute("publisherName", publisher == null ? "출판사" : publisher.getPu_name());
+        model.addAttribute("finishedCount", finishedCount);
+        model.addAttribute("serializingCount", totalCount - finishedCount);
         return "/publisher/editor_myContent";
     }
     
@@ -342,6 +337,8 @@ public class PublisherController {
         int totalCount = bookService.getNoticeCount(bo_code);
         int pageSize = 5;
         int blockSize = 3;
+        int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+        page = Math.max(1, Math.min(page, Math.max(totalPages, 1)));
         int offset = (page - 1) * pageSize;
 
         List<NoticeVO> noticeList = bookService.getNoticeListForPage(bo_code, pageSize, offset);
@@ -375,8 +372,10 @@ public class PublisherController {
     public String manageEditorsBook(@PathVariable("pu_code") String pu_code, Model model) {
         List<BookVO> books = bookService.getPublishersBookList(pu_code);
         List<EditorVO> editors = publisherService.getEditorList(pu_code);
+        PublisherVO publisher = publisherService.getPublisherByCode(pu_code);
         model.addAttribute("books",books);
         model.addAttribute("editors",editors);
+        model.addAttribute("publisherName", publisher == null ? "출판사" : publisher.getPu_name());
         return "/publisher/manageEditorsBook";
     }
 

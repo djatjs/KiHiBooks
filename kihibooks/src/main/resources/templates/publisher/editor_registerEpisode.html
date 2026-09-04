@@ -122,12 +122,14 @@
         }
 
     </style>
+    <link rel="stylesheet" th:href="@{/css/editor-content-workflow.css}">
 </head>
 
 <body>
     <main layout:fragment="content">
         <div class="container register-work-page">
-            <h2>📖 회차 등록</h2>
+            <div class="workspace-eyebrow">EPISODE EDITOR</div>
+            <h2>회차 등록</h2>
             <p>기존 작품에 회차를 등록하세요.</p>
 
             <form th:action="@{/editor/registerEpisode/{bo_code}(bo_code=${bo_code})}" method="post" enctype="multipart/form-data" class="register-work-form">

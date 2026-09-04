@@ -122,12 +122,14 @@
         }
 
     </style>
+    <link rel="stylesheet" th:href="@{/css/editor-content-workflow.css}">
 </head>
 
 <body>
     <main layout:fragment="content">
         <div class="container update-work-page">
-            <h2>📖 회차 정보 수정</h2>
+            <div class="workspace-eyebrow">EPISODE EDITOR</div>
+            <h2>회차 정보 수정</h2>
             <p>회차 정보를 수정해주세요.</p>
 
             <form th:action="@{/editor/updateEpisode/{ep_code}(ep_code=${ep_code})}" method="post" enctype="multipart/form-data" class="update-work-form">
@@ -185,7 +187,7 @@
 
                 <!-- 버튼 -->
                 <div class="button-group">
-                    <button type="submit" class="btn btn-primary">등록</button>
+                    <button type="submit" class="btn btn-primary">변경 저장</button>
                     <button type="button" class="btn btn-secondary" onclick="history.back()">취소</button>
                 </div>
             </form>
