@@ -72,4 +72,206 @@
         join publisher on pi_pu_code = pu_code
         where pi_authority = 'SUPER' and pu_code = #{pu_code}
     </select>
+    <select id="selectPublisherByCode" resultType="PublisherVO">
+        select pu_code, pu_name
+        from publisher
+        where pu_code = #{puCode}
+    </select>
+    <select id="selectKpiSummary" resultType="PublisherKpiVO">
+        SELECT
+            COALESCE(SUM(CASE WHEN o.OD_ID IS NOT NULL AND e.EP_PRICE > 0 THEN e.EP_PRICE ELSE 0 END), 0) AS salesAmount,
+            COUNT(CASE WHEN o.OD_ID IS NOT NULL AND e.EP_PRICE > 0 THEN 1 END) AS paidPurchaseCount,
+            COUNT(DISTINCT CASE WHEN o.OD_ID IS NOT NULL AND e.EP_PRICE > 0 THEN bl.BL_UR_NUM END) AS buyerCount,
+            (
+                SELECT COUNT(*)
+                FROM review r
+                JOIN book rb ON rb.BO_CODE = r.RV_BO_CODE
+                JOIN publisher_id rpi ON rpi.PI_NUM = rb.BO_PI_NUM
+                WHERE rpi.PI_PU_CODE = #{puCode}
+                <if test="piNum != null">
+                    AND rb.BO_PI_NUM = #{piNum}
+                </if>
+                AND r.RV_DEL = 'N'
+                AND r.RV_DATE >= #{startAt}
+                AND r.RV_DATE &lt; #{endAt}
+            ) AS reviewCount,
+            COALESCE((
+                SELECT AVG(r.RV_RATING)
+                FROM review r
+                JOIN book rb ON rb.BO_CODE = r.RV_BO_CODE
+                JOIN publisher_id rpi ON rpi.PI_NUM = rb.BO_PI_NUM
+                WHERE rpi.PI_PU_CODE = #{puCode}
+                <if test="piNum != null">
+                    AND rb.BO_PI_NUM = #{piNum}
+                </if>
+                AND r.RV_DEL = 'N'
+                AND r.RV_DATE >= #{startAt}
+                AND r.RV_DATE &lt; #{endAt}
+            ), 0) AS averageRating,
+            (
+                SELECT COUNT(*)
+                FROM book cb
+                JOIN publisher_id cpi ON cpi.PI_NUM = cb.BO_PI_NUM
+                WHERE cpi.PI_PU_CODE = #{puCode}
+                <if test="piNum != null">
+                    AND cb.BO_PI_NUM = #{piNum}
+                </if>
+            ) AS totalBookCount,
+            (
+                SELECT COUNT(*)
+                FROM book cb
+                JOIN publisher_id cpi ON cpi.PI_NUM = cb.BO_PI_NUM
+                WHERE cpi.PI_PU_CODE = #{puCode}
+                <if test="piNum != null">
+                    AND cb.BO_PI_NUM = #{piNum}
+                </if>
+                AND cb.BO_FIN = 'N'
+                AND EXISTS (SELECT 1 FROM episode ce WHERE ce.EP_BO_CODE = cb.BO_CODE)
+            ) AS publishingBookCount,
+            (
+                SELECT COUNT(*)
+                FROM book cb
+                JOIN publisher_id cpi ON cpi.PI_NUM = cb.BO_PI_NUM
+                WHERE cpi.PI_PU_CODE = #{puCode}
+                <if test="piNum != null">
+                    AND cb.BO_PI_NUM = #{piNum}
+                </if>
+                AND cb.BO_FIN = 'Y'
+            ) AS completedBookCount,
+            (
+                SELECT COUNT(*)
+                FROM book cb
+                JOIN publisher_id cpi ON cpi.PI_NUM = cb.BO_PI_NUM
+                WHERE cpi.PI_PU_CODE = #{puCode}
+                <if test="piNum != null">
+                    AND cb.BO_PI_NUM = #{piNum}
+                </if>
+                AND cb.BO_FIN = 'N'
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM episode ce
+                    WHERE ce.EP_BO_CODE = cb.BO_CODE
+                    AND ce.EP_DATE >= #{inactiveBefore}
+                )
+            ) AS inactiveBookCount,
+            (
+                SELECT COUNT(*)
+                FROM book cb
+                JOIN publisher_id cpi ON cpi.PI_NUM = cb.BO_PI_NUM
+                WHERE cpi.PI_PU_CODE = #{puCode}
+                <if test="piNum != null">
+                    AND cb.BO_PI_NUM = #{piNum}
+                </if>
+                AND (cpi.PI_AUTHORITY = 'SUPER' OR cpi.PI_DEL = 'Y')
+            ) AS unassignedBookCount
+        FROM book b
+        JOIN publisher_id pi ON pi.PI_NUM = b.BO_PI_NUM
+        LEFT JOIN episode e ON e.EP_BO_CODE = b.BO_CODE
+        LEFT JOIN buy_list bl ON bl.BL_EP_CODE = e.EP_CODE
+            AND bl.BL_DATE >= #{startAt}
+            AND bl.BL_DATE &lt; #{endAt}
+        LEFT JOIN `order` o ON o.OD_ID = bl.BL_ID AND o.OD_STATUS = 'PAID'
+        WHERE pi.PI_PU_CODE = #{puCode}
+        <if test="piNum != null">
+            AND b.BO_PI_NUM = #{piNum}
+        </if>
+    </select>
+    <select id="selectTopBookKpis" resultType="PublisherBookKpiVO">
+        SELECT
+            b.BO_CODE AS boCode,
+            b.BO_TITLE AS boTitle,
+            u.UR_NICKNAME AS editorName,
+            COALESCE(SUM(CASE WHEN o.OD_ID IS NOT NULL AND e.EP_PRICE > 0 THEN e.EP_PRICE ELSE 0 END), 0) AS salesAmount,
+            COUNT(CASE WHEN o.OD_ID IS NOT NULL AND e.EP_PRICE > 0 THEN 1 END) AS paidPurchaseCount,
+            COUNT(DISTINCT CASE WHEN o.OD_ID IS NOT NULL AND e.EP_PRICE > 0 THEN bl.BL_UR_NUM END) AS buyerCount,
+            COALESCE((
+                SELECT AVG(r.RV_RATING)
+                FROM review r
+                WHERE r.RV_BO_CODE = b.BO_CODE
+                AND r.RV_DEL = 'N'
+                AND r.RV_DATE >= #{startAt}
+                AND r.RV_DATE &lt; #{endAt}
+            ), 0) AS averageRating,
+            MAX(e.EP_DATE) AS lastEpisodeDate
+        FROM book b
+        JOIN publisher_id pi ON pi.PI_NUM = b.BO_PI_NUM
+        JOIN user u ON u.UR_NUM = pi.PI_UR_NUM
+        LEFT JOIN episode e ON e.EP_BO_CODE = b.BO_CODE
+        LEFT JOIN buy_list bl ON bl.BL_EP_CODE = e.EP_CODE
+            AND bl.BL_DATE >= #{startAt}
+            AND bl.BL_DATE &lt; #{endAt}
+        LEFT JOIN `order` o ON o.OD_ID = bl.BL_ID AND o.OD_STATUS = 'PAID'
+        WHERE pi.PI_PU_CODE = #{puCode}
+        <if test="piNum != null">
+            AND b.BO_PI_NUM = #{piNum}
+        </if>
+        GROUP BY b.BO_CODE, b.BO_TITLE, u.UR_NICKNAME
+        ORDER BY salesAmount DESC, paidPurchaseCount DESC, b.BO_TITLE ASC
+        LIMIT #{limit}
+    </select>
+    <select id="selectDailyKpis" resultType="PublisherDailyKpiVO">
+        SELECT
+            DATE(bl.BL_DATE) AS salesDate,
+            SUM(e.EP_PRICE) AS salesAmount,
+            COUNT(*) AS paidPurchaseCount
+        FROM buy_list bl
+        JOIN `order` o ON o.OD_ID = bl.BL_ID AND o.OD_STATUS = 'PAID'
+        JOIN episode e ON e.EP_CODE = bl.BL_EP_CODE AND e.EP_PRICE > 0
+        JOIN book b ON b.BO_CODE = e.EP_BO_CODE
+        JOIN publisher_id pi ON pi.PI_NUM = b.BO_PI_NUM
+        WHERE pi.PI_PU_CODE = #{puCode}
+        <if test="piNum != null">
+            AND b.BO_PI_NUM = #{piNum}
+        </if>
+        AND bl.BL_DATE >= #{startAt}
+        AND bl.BL_DATE &lt; #{endAt}
+        GROUP BY DATE(bl.BL_DATE)
+        ORDER BY salesDate ASC
+    </select>
+    <select id="selectEditorKpis" resultType="PublisherEditorKpiVO">
+        SELECT
+            pi.PI_NUM AS piNum,
+            u.UR_NICKNAME AS editorName,
+            COUNT(DISTINCT b.BO_CODE) AS bookCount,
+            COUNT(DISTINCT CASE
+                WHEN b.BO_FIN = 'N'
+                    AND EXISTS (SELECT 1 FROM episode pe WHERE pe.EP_BO_CODE = b.BO_CODE)
+                THEN b.BO_CODE END) AS publishingBookCount,
+            COUNT(DISTINCT CASE
+                WHEN b.BO_FIN = 'N'
+                    AND NOT EXISTS (
+                        SELECT 1 FROM episode ie
+                        WHERE ie.EP_BO_CODE = b.BO_CODE
+                        AND ie.EP_DATE >= #{inactiveBefore}
+                    )
+                THEN b.BO_CODE END) AS inactiveBookCount,
+            COALESCE(SUM(CASE
+                WHEN o.OD_ID IS NOT NULL AND e.EP_PRICE > 0 THEN e.EP_PRICE ELSE 0 END), 0) AS salesAmount,
+            COUNT(CASE
+                WHEN o.OD_ID IS NOT NULL AND e.EP_PRICE > 0 THEN 1 END) AS paidPurchaseCount,
+            COUNT(DISTINCT CASE
+                WHEN o.OD_ID IS NOT NULL AND e.EP_PRICE > 0 THEN bl.BL_UR_NUM END) AS buyerCount,
+            COALESCE((
+                SELECT AVG(r.RV_RATING)
+                FROM review r
+                JOIN book rb ON rb.BO_CODE = r.RV_BO_CODE
+                WHERE rb.BO_PI_NUM = pi.PI_NUM
+                AND r.RV_DEL = 'N'
+                AND r.RV_DATE >= #{startAt}
+                AND r.RV_DATE &lt; #{endAt}
+            ), 0) AS averageRating
+        FROM publisher_id pi
+        JOIN user u ON u.UR_NUM = pi.PI_UR_NUM
+        LEFT JOIN book b ON b.BO_PI_NUM = pi.PI_NUM
+        LEFT JOIN episode e ON e.EP_BO_CODE = b.BO_CODE
+        LEFT JOIN buy_list bl ON bl.BL_EP_CODE = e.EP_CODE
+            AND bl.BL_DATE >= #{startAt}
+            AND bl.BL_DATE &lt; #{endAt}
+        LEFT JOIN `order` o ON o.OD_ID = bl.BL_ID AND o.OD_STATUS = 'PAID'
+        WHERE pi.PI_PU_CODE = #{puCode}
+        AND pi.PI_AUTHORITY = 'EDITOR'
+        AND pi.PI_DEL = 'N'
+        GROUP BY pi.PI_NUM, u.UR_NICKNAME
+        ORDER BY inactiveBookCount DESC, bookCount DESC, editorName ASC
+    </select>
 </mapper>

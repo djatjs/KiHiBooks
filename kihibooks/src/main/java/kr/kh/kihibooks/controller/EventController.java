@@ -18,7 +18,7 @@ public class EventController {
     private EventService eventService;
 
     @GetMapping("/event")
-    public String eventPage(@RequestParam(defaultValue = "ongoing") String tab, Model model) {
+    public String eventPage(@RequestParam(value = "tab", defaultValue = "ongoing") String tab, Model model) {
         List<EventVO> eventList;
         if ("ago".equals(tab)) {
             eventList = eventService.getPastEvents();

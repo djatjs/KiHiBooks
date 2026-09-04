@@ -88,12 +88,14 @@
         }
 
     </style>
+    <link rel="stylesheet" th:href="@{/css/editor-content-workflow.css}">
 </head>
 
 <body>
     <main layout:fragment="content">
         <div class="container register-work-page">
-            <h2>📖 공지 수정</h2>
+            <div class="workspace-eyebrow">NOTICE EDITOR</div>
+            <h2>공지 수정</h2>
             <p>수정할 공지 내용을 입력하세요.</p>
             <form th:action="@{/editor/updateNotice/{nt_num}(nt_num=${notice.nt_num})}" method="post" class="register-work-form">
                 <input type="hidden" name="nt_bo_code" th:value="${notice.nt_bo_code}">
@@ -114,7 +116,7 @@
 
                 <!-- 버튼 -->
                 <div class="button-group">
-                    <button type="submit" class="btn btn-primary">등록</button>
+                    <button type="submit" class="btn btn-primary">변경 저장</button>
                     <button type="button" class="btn btn-secondary" onclick="history.back()">취소</button>
                 </div>
             </form>

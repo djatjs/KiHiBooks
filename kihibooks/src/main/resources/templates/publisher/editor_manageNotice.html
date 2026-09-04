@@ -305,10 +305,13 @@ layout:decorate="~{layout/layout.html}">
 
 
 </style>
+<link rel="stylesheet" th:href="@{/css/editor-content-workflow.css}">
 </head>
 <body >
-	<main layout:fragment="content" class="container">
-        <h2 class="titleH2">📖 도서 공지 사항</h2>
+	<main layout:fragment="content" class="container editor-workflow-page">
+        <div class="workspace-eyebrow">NOTICE MANAGEMENT</div>
+        <h2 class="titleH2">도서 공지 사항</h2>
+        <p class="workflow-description">독자에게 안내할 공지를 등록하고 기존 공지를 관리하세요.</p>
         <div id="page_detail" class="page-detail">
             <div class="detail-wrap">
                 <div class="detail-content">
@@ -317,7 +320,7 @@ layout:decorate="~{layout/layout.html}">
                             <div class="grid-left-top2">
                                 <div class="thumb-grid">
 									<th:block th:if="${#lists.isEmpty(epiList)}">
-										<img src="/resources/static/img/default_thumb.png" alt="next" style="width: 204px; height: 300px;">
+										<img src="/img/default_thumb.png" alt="기본 도서 표지">
 									</th:block>
 									<th:block th:if="${!#lists.isEmpty(epiList)}">
 										<img class="thumb-img" th:src="@{/file/{path}(path=${epiList[epiList.size() - 1].ep_cover_img})}">
@@ -329,7 +332,7 @@ layout:decorate="~{layout/layout.html}">
                                         <span class="blank"></span>
                                         <div class="cate-title">
                                             <span  class="main-cate-title" th:text="${book.bo_main_cate}"></span>
-                                            <img src="/resources/static/img/next.png" alt="next" style="height: 10px;" class="mb-1">
+                                            <img src="/img/next.png" alt="" style="height: 10px;" class="mb-1">
                                             <span th:href="@{/}" class="sub-cate-title" th:text="${book.bo_sub_cate}"></span>
                                         </div>
                                     </div>
@@ -383,12 +386,12 @@ layout:decorate="~{layout/layout.html}">
                                 <div class="notice-line"></div>
                                 <div class="list-module">
 									<!-- 공지사항 리스트 -->
-									<tbody th:if="${pageInfo.content == null or pageInfo.content.isEmpty()}">
+									<div th:if="${pageInfo.content == null or pageInfo.content.isEmpty()}">
 										<div class="list-wrapper">
 											<div>등록된 공지사항이 없습니다.</div>
 										</div>
-									</th:block>
-									<tbody th:if="${pageInfo.content != null and !pageInfo.content.isEmpty()}">
+									</div>
+									<div th:if="${pageInfo.content != null and !pageInfo.content.isEmpty()}">
 										<div class="notice-list-wrapper">
 											<table class="table table-borderless" style="font-size: 14px;">
 												<tr>
@@ -410,8 +413,8 @@ layout:decorate="~{layout/layout.html}">
 												</tr>
 											</table>
 										</div>
-									</th:block>
-									<div class="pagination">
+									</div>
+									<div class="pagination" th:if="${pageInfo.totalPages > 1}">
 										<a th:if="${pageInfo.startPage > 1}" th:href="@{/editor/manageNotice/{bo_code}(bo_code=${book.bo_code}, page=${pageInfo.startPage - 1})}">«</a>
 										<span th:each="i : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}">
 											<a th:href="@{/editor/manageNotice/{bo_code}(bo_code=${book.bo_code}, page=${i})}"
@@ -432,6 +435,7 @@ layout:decorate="~{layout/layout.html}">
 		</div>
 		<script>
 			$(".delete-btn").on("click", function(){
+				if(!confirm("이 공지를 삭제하시겠습니까?")) return;
 				// const bo_code = $(this).data("bo_code");
 				const nt_num = $(this).data("nt_num");
 				$.ajax({

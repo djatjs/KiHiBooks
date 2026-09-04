@@ -1,319 +1,413 @@
 <!DOCTYPE html>
-<html
-    xmlns:th="http://www.thymeleaf.org"
-    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-    xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-    layout:decorate="~{layout/layout.html}">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout.html}">
 <head>
-    <meta charset="UTF-8">
-    <title>KiHiBooks - 콘텐츠 관리</title>
-    <style>
-        .content-management-page h2 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #ff7f50;
-            padding-bottom: 10px;
-            font-weight: bold;
-        }
-        .series-container,
-        .registration-container {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        }
-        .series-container h4 {
-            color: #34495e;
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-        .series-body {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 20px;
-        }
-        .series-item {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            background-color: #fff;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            width: 100%;
-            max-width: 200px;
-        }
-        .series-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        }
-        .series-item img {
-            display: block;
-            margin: 0 auto;
-            height: 150px;
-            object-fit: cover;
-        }
-        .series-item h5 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            color: #2c3e50;
-            font-size: 1.1rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
-            display: block;
-        }
-        .series-item p {
-            margin-bottom: 5px;
-            color: #555;
-            font-size: 0.9rem;
-        }
-        .series-item .status {
-            font-weight: bold;
-            color: #ff7f50;
-        }
-        .series-item .status.finished {
-            color: #6c757d;
-        }
-        .no-works {
-            grid-column: 1 / -1;
-            text-align: center;
-            font-size: 1rem;
-            color: #888;
-            padding: 20px 0;
-        }
-        .registration-container {
-            text-align: center;
-        }
-        .orenge-btn {
-            padding: 6px 20px;
-            font-size: 1rem;
-            background-color: #ff7f50;
-            color: white;
-            border: none;
-            border-radius: .25rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease-in-out;
-        }
-        .orenge-btn:hover {
-            background-color: #ff6347;
-            color: #fff;
-        }
-        .modal-item {
-            width: 500px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            background-color: #fff;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .center-img {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 30px;
-            margin-bottom: 30px;
-            padding: 0;
-            list-style: none;
-            border-radius: .25rem;
-        }
-        .pagination a,
-        .pagination span a {
-            position: relative;
-            display: block;
-            padding: .5rem .75rem;
-            margin-left: -1px;
-            line-height: 1.25;
-            color: #ff7f50;
-            background-color: #fff;
-            border: 1px solid #dee2e6;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        .pagination a:first-child {
-            margin-left: 0;
-            border-top-left-radius: .25rem;
-            border-bottom-left-radius: .25rem;
-        }
-        .pagination a:last-child {
-            border-top-right-radius: .25rem;
-            border-bottom-right-radius: .25rem;
-        }
-        .pagination a:hover {
-            color: #ff7f50;
-            background-color: #e9ecef;
-            border-color: #dee2e6;
-        }
-        .pagination .active {
-            z-index: 1;
-            color: #fff;
-            background-color: #ff7f50;
-            border-color: #ff7f50;
-            pointer-events: none;
-        }
-        .pagination > a:first-child {
-            margin-right: 5px;
-        }
-        .pagination > a:last-child {
-            margin-left: 5px;
-        }
-        .button-container {
-            text-align: right;
-        }
-
-    </style>
+<meta charset="UTF-8">
+<title>KiHiBooks - 내 콘텐츠 관리</title>
+<style>
+    :root {
+        --content-primary: #f26b3a;
+        --content-primary-dark: #dc5728;
+        --content-primary-soft: #fff1eb;
+        --content-ink: #18212f;
+        --content-muted: #566273;
+        --content-line: #d9dee5;
+        --content-bg: #f3f5f7;
+        --content-surface: #fff;
+        --content-success: #16865c;
+    }
+    .content-page, .content-page * { box-sizing: border-box; }
+    .content-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 26px 20px 56px;
+        color: var(--content-ink);
+    }
+    .content-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 20px;
+    }
+    .content-eyebrow {
+        margin-bottom: 8px;
+        color: var(--content-primary);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .12em;
+    }
+    .content-title {
+        margin: 0 0 7px;
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -.04em;
+    }
+    .content-subtitle { margin: 0; color: var(--content-muted); font-size: 14px; }
+    .register-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        height: 42px;
+        padding: 0 17px;
+        border-radius: 9px;
+        background: var(--content-primary);
+        color: #fff;
+        box-shadow: 0 6px 16px rgba(242, 107, 58, .2);
+        font-size: 13px;
+        font-weight: 800;
+    }
+    .register-link:hover { background: var(--content-primary-dark); color: #fff; }
+    .register-link span { font-size: 18px; font-weight: 500; line-height: 1; }
+    .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    .metric-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 16px 18px;
+        border: 1px solid var(--content-line);
+        border-radius: 12px;
+        background: var(--content-surface);
+        box-shadow: 0 4px 16px rgba(24, 33, 47, .05);
+    }
+    .metric-card:first-child { border-color: var(--content-ink); background: var(--content-ink); color: #fff; }
+    .metric-label { color: var(--content-muted); font-size: 12px; font-weight: 800; }
+    .metric-card:first-child .metric-label { color: #b6bec9; }
+    .metric-note { margin-top: 4px; color: #8a94a2; font-size: 10px; }
+    .metric-card:first-child .metric-note { color: #9fa9b7; }
+    .metric-value { flex: 0 0 auto; font-size: 25px; font-weight: 900; letter-spacing: -.04em; }
+    .metric-unit { margin-left: 2px; color: inherit; font-size: 12px; font-weight: 700; opacity: .72; }
+    .content-panel {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid var(--content-line);
+        border-radius: 14px;
+        background: var(--content-surface);
+        box-shadow: 0 7px 24px rgba(24, 33, 47, .075);
+    }
+    .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--content-line);
+    }
+    .panel-title { margin: 0 0 5px; font-size: 17px; font-weight: 800; letter-spacing: -.02em; }
+    .panel-description { margin: 0; color: var(--content-muted); font-size: 13px; line-height: 1.55; }
+    .search-control { position: relative; width: 250px; }
+    .search-icon {
+        position: absolute;
+        top: 50%;
+        left: 11px;
+        display: inline-flex;
+        color: #7d8795;
+        pointer-events: none;
+        transform: translateY(-50%);
+    }
+    .search-icon svg { width: 18px; height: 18px; }
+    #content-search {
+        width: 100%;
+        height: 38px;
+        padding: 0 12px 0 37px;
+        border: 1px solid var(--content-line);
+        border-radius: 8px;
+        background: #fff;
+        color: var(--content-ink);
+        font-size: 12px;
+        outline: none;
+        transition: border-color .18s ease, box-shadow .18s ease;
+    }
+    #content-search::placeholder { color: #929ba7; }
+    #content-search:focus { border-color: #f2a387; box-shadow: 0 0 0 3px rgba(242, 107, 58, .1); }
+    .filter-bar {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 12px 22px;
+        border-bottom: 1px solid var(--content-line);
+        background: #fafbfc;
+    }
+    .filter-button {
+        height: 31px;
+        padding: 0 11px;
+        border: 1px solid var(--content-line);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--content-muted);
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: background .18s ease, border-color .18s ease, color .18s ease;
+    }
+    .filter-button:hover { border-color: #f3b49e; color: var(--content-primary); }
+    .filter-button.active { border-color: var(--content-ink); background: var(--content-ink); color: #fff; }
+    .content-scroll {
+        padding: 20px 22px;
+    }
+    .content-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    .content-card {
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid var(--content-line);
+        border-radius: 12px;
+        background: #fff;
+        transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    .content-card:hover { border-color: #efb39d; box-shadow: 0 9px 22px rgba(24, 33, 47, .1); transform: translateY(-2px); }
+    .cover-wrap { position: relative; height: 190px; overflow: hidden; background: #e9edf1; }
+    .cover-image { width: 100%; height: 100%; padding: 10px; object-fit: contain; transition: transform .25s ease; }
+    .content-card:hover .cover-image { transform: scale(1.025); }
+    .status-chip {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, .93);
+        color: var(--content-success);
+        box-shadow: 0 2px 8px rgba(24, 33, 47, .12);
+        font-size: 10px;
+        font-weight: 900;
+    }
+    .status-chip::before { width: 6px; height: 6px; border-radius: 50%; background: currentColor; content: ""; }
+    .status-chip.finished { color: #687383; }
+    .card-body { padding: 14px 14px 13px; }
+    .book-title {
+        margin: 0;
+        overflow: hidden;
+        color: var(--content-ink);
+        font-size: 15px;
+        font-weight: 900;
+        letter-spacing: -.02em;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .book-author { margin: 5px 0 0; overflow: hidden; color: var(--content-muted); font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .book-code { margin-top: 8px; color: #8a94a2; font-size: 9px; font-weight: 800; letter-spacing: .04em; }
+    .primary-action {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 38px;
+        margin-top: 13px;
+        padding: 0 11px;
+        border-radius: 8px;
+        background: var(--content-primary-soft);
+        color: var(--content-primary);
+        font-size: 11px;
+        font-weight: 900;
+    }
+    .primary-action:hover { background: #ffe6dc; color: var(--content-primary-dark); }
+    .secondary-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 7px; }
+    .secondary-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 32px;
+        border: 1px solid var(--content-line);
+        border-radius: 7px;
+        color: #4b5563;
+        font-size: 10px;
+        font-weight: 800;
+    }
+    .secondary-action:hover { border-color: #f3b49e; color: var(--content-primary); }
+    .empty-state {
+        display: flex;
+        min-height: 330px;
+        align-items: center;
+        justify-content: center;
+        grid-column: 1 / -1;
+        border: 1px dashed var(--content-line);
+        border-radius: 11px;
+        background: #fafbfc;
+        color: var(--content-muted);
+        text-align: center;
+    }
+    .empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 11px;
+        border-radius: 13px;
+        background: var(--content-bg);
+        color: #7d8795;
+    }
+    .empty-icon svg { width: 21px; height: 21px; }
+    .empty-title { color: var(--content-ink); font-size: 14px; font-weight: 900; }
+    .empty-description { margin-top: 5px; font-size: 12px; line-height: 1.55; }
+    .empty-register { display: inline-flex; margin-top: 14px; color: var(--content-primary); font-size: 12px; font-weight: 900; }
+    .panel-foot {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 16px;
+        min-height: 61px;
+        flex: 0 0 auto;
+        padding: 13px 22px;
+        border-top: 1px solid var(--content-line);
+    }
+    .list-summary { color: var(--content-muted); font-size: 12px; }
+    .list-summary strong { color: var(--content-ink); }
+    @media (max-width: 1000px) { .content-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 760px) {
+        .content-page { padding: 20px 14px 40px; }
+        .content-hero { align-items: stretch; flex-direction: column; }
+        .content-title { font-size: 25px; }
+        .register-link { width: 100%; }
+        .metric-grid { grid-template-columns: 1fr; }
+        .metric-card { min-height: 74px; }
+        .panel-head { align-items: stretch; flex-direction: column; padding: 17px 16px; }
+        .search-control { width: 100%; }
+        .filter-bar, .content-scroll, .panel-foot { padding-right: 16px; padding-left: 16px; }
+        .content-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .panel-foot { align-items: stretch; flex-direction: column; }
+    }
+    @media (max-width: 480px) {
+        .content-grid { grid-template-columns: 1fr; }
+        .cover-wrap { height: 220px; }
+    }
+</style>
 </head>
 <body>
-	<main layout:fragment="content">
-    <div class="container content-management-page">
+<main layout:fragment="content" class="content-page">
+    <section class="content-hero">
+        <div>
+            <div class="content-eyebrow">EDITOR WORKSPACE</div>
+            <h1 class="content-title"><span th:text="${user.ur_nickname}">에디터</span>님의 콘텐츠</h1>
+            <p class="content-subtitle"><span th:text="${publisherName}">출판사</span>에서 담당하고 있는 작품을 관리합니다.</p>
+        </div>
+        <a class="register-link" th:href="@{/editor/registerNew}"><span aria-hidden="true">＋</span> 새 작품 등록</a>
+    </section>
 
-        <h2 class="mb-3">📖 콘텐츠 관리</h2>
-        <p>에디터님이 담당하거나 등록하신 작품(도서 시리즈)을 관리할 수 있습니다.</p>
-        
-        <!-- 1. 담당 작품 리스트 섹션 (연재 중인 작품) -->
-        <div class="series-container">
-            <h4>연재 중인 작품</h4>
-            <hr>
-            <div class="series-body">
-                <th:block th:if="${pageInfo != null and pageInfo.content != null and !pageInfo.content.isEmpty()}">
-                    <div class="series-item" th:each="work : ${pageInfo.content}" th:data-title="${work.bo_title}" th:data-author="${work.bo_author}" th:data-code="${work.bo_code}" th:data-fin="${work.bo_fin}" th:data-description="${work.bo_description}" th:data-img="${work.bo_thumbnail}">
-                        <div data-toggle="modal" data-target="#workModal">
-                            <h5 th:text="${work.bo_title}">작품 제목</h5>
-                            <img class="thumb-img" th:if="${work.bo_thumbnail != null and work.bo_thumbnail != ''}" th:src="@{/file/{path}(path=${work.bo_thumbnail})}" alt="책 썸네일"  style="width: 150px; height: 200px;">
-                            <img class="mt-1" th:unless="${work.bo_thumbnail != null and work.bo_thumbnail != ''}" src="/resources/static/img/default_thumb.png" alt="기본 썸네일" style="width: 150px; height: 200px;">
-                            <p class="mt-2" th:text="${work.bo_author}">저자명</p>
-                            <p><span class="status" th:classappend="${work.bo_fin == 'Y' ? 'finished' : ''}" th:text="${work.bo_fin == 'Y' ? '완결' : '연재 중'}">연재 중</span></p>
+    <section class="metric-grid" aria-label="콘텐츠 현황">
+        <article class="metric-card">
+            <div><div class="metric-label">전체 담당 작품</div><div class="metric-note">현재 내 계정에 배정된 작품</div></div>
+            <div class="metric-value"><span th:text="${totalCount}">0</span><span class="metric-unit">권</span></div>
+        </article>
+        <article class="metric-card">
+            <div><div class="metric-label">연재 중</div><div class="metric-note">회차 운영이 진행 중인 작품</div></div>
+            <div class="metric-value"><span th:text="${serializingCount}">0</span><span class="metric-unit">권</span></div>
+        </article>
+        <article class="metric-card">
+            <div><div class="metric-label">완결</div><div class="metric-note">연재가 완료된 작품</div></div>
+            <div class="metric-value"><span th:text="${finishedCount}">0</span><span class="metric-unit">권</span></div>
+        </article>
+    </section>
+
+    <section class="content-panel" aria-labelledby="content-list-title">
+        <div class="panel-head">
+            <div>
+                <h2 class="panel-title" id="content-list-title">담당 작품</h2>
+                <p class="panel-description">작품별 회차, 공지와 기본 정보를 바로 관리할 수 있습니다.</p>
+            </div>
+            <label class="search-control" for="content-search">
+                <span class="search-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></span>
+                <input id="content-search" type="search" placeholder="전체 작품 또는 작가 검색" autocomplete="off">
+            </label>
+        </div>
+
+        <div class="filter-bar" role="group" aria-label="연재 상태 필터">
+            <button type="button" class="filter-button active" data-filter="all">전체</button>
+            <button type="button" class="filter-button" data-filter="serializing">연재 중</button>
+            <button type="button" class="filter-button" data-filter="finished">완결</button>
+        </div>
+
+        <div class="content-scroll">
+            <div class="content-grid" id="content-grid">
+                <article class="content-card" th:each="work : ${books}"
+                         th:data-status="${work.bo_fin == 'Y' ? 'finished' : 'serializing'}"
+                         th:data-search="${work.bo_title + ' ' + work.bo_author}">
+                    <div class="cover-wrap">
+                        <img class="cover-image" loading="lazy"
+                             th:if="${work.bo_thumbnail != null and !#strings.isEmpty(work.bo_thumbnail)}"
+                             th:src="@{/file/{path}(path=${work.bo_thumbnail})}"
+                             th:alt="${work.bo_title + ' 표지'}">
+                        <img class="cover-image" loading="lazy"
+                             th:unless="${work.bo_thumbnail != null and !#strings.isEmpty(work.bo_thumbnail)}"
+                             src="/img/default_thumb.png"
+                             th:alt="${work.bo_title + ' 기본 표지'}">
+                        <span class="status-chip" th:classappend="${work.bo_fin == 'Y'} ? 'finished'" th:text="${work.bo_fin == 'Y' ? '완결' : '연재 중'}">연재 중</span>
+                    </div>
+                    <div class="card-body">
+                        <h3 class="book-title" th:text="${work.bo_title}" th:title="${work.bo_title}">작품 제목</h3>
+                        <p class="book-author" th:text="${work.bo_author}">작가명</p>
+                        <div class="book-code" th:text="${work.bo_code}">BOOK CODE</div>
+                        <a class="primary-action" th:href="@{/editor/manageEpisode/{boCode}(boCode=${work.bo_code})}"><span>회차 관리</span><span aria-hidden="true">→</span></a>
+                        <div class="secondary-actions">
+                            <a class="secondary-action" th:href="@{/editor/manageNotice/{boCode}(boCode=${work.bo_code})}">공지 관리</a>
+                            <a class="secondary-action" th:href="@{/editor/updateBookInfo/{boCode}(boCode=${work.bo_code})}">정보 수정</a>
                         </div>
                     </div>
-                    
-                </th:block>
-                <th:block th:unless="${pageInfo != null and pageInfo.content != null and !pageInfo.content.isEmpty()}">
-                    <p class="no-works">현재 연재 중인 작품이 없습니다.</p>
-                </th:block>
-            </div>
-            <div class="pagination" th:if="${pageInfo.totalCount > 0}">
-                <a th:if="${pageInfo.startPage > 1}"
-                th:href="@{/editor/myContent(page=${pageInfo.startPage - 1})}">«</a>
+                </article>
 
-                <span th:each="i : ${#numbers.sequence(pageInfo.startPage, pageInfo.endPage)}">
-                    <a th:href="@{/editor/myContent(page=${i})}"
-                    th:classappend="${i == pageInfo.currentPage} ? 'active' : ''"
-                    th:text="${i}"></a>
-                </span>
+                <div class="empty-state" th:if="${books == null or books.isEmpty()}">
+                    <div>
+                        <span class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"></path></svg></span>
+                        <div class="empty-title">담당 중인 작품이 없습니다.</div>
+                        <div class="empty-description">새 작품을 등록하거나 출판사 관리자에게 작품 배정을 요청해 주세요.</div>
+                        <a class="empty-register" th:href="@{/editor/registerNew}">첫 작품 등록하기 →</a>
+                    </div>
+                </div>
 
-                <a th:if="${pageInfo.endPage < pageInfo.totalPages}"
-                th:href="@{/editor/myContent(page=${pageInfo.endPage + 1})}">»</a>
-            </div>
-            <!-- 2. 작품 등록 섹션 -->
-            <div class="registration-container">
-                <h3>새로운 작품 등록</h3>
-                <p>새로운 도서 시리즈를 등록하려면 아래 버튼을 클릭하세요.</p>
-                <button class="orenge-btn" type="button" onclick="location.href='/editor/registerNew'">작품 등록</button>
-            </div>
-        </div>
-        <div class="button-container">
-            <button type="button" onclick="location.href='/publisher/dashboard'" class="rightBtn orenge-btn mt-3 ml-3">목록으로</button>
-        </div>
-        
-        <!-- 담당 작품 클릭시 모달 -->
-        <div class="modal" id="workModal">
-            <div class="modal-dialog ">
-                <div class="modal-content modal-item">
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title">도서 정보</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <!-- Modal body -->
-                    <div class="modal-body">
-                        <p><strong>작품 제목 : </strong> <span id="modalBoTitle"></span></p>
-                        <img id="modalBoThumbnail" class="mt-1 mb-3 center-img" src="/resources/static/img/default_thumb.png" alt="썸네일" style="width: 180px; height: 240px;">
-                        <p><strong>저자:</strong> <span id="modalBoAuthor"></span></p>
-                        <p><strong>상태:</strong> <span id="modalBoFin"></span></p>
-                        <p>
-                            <strong>내용:</strong>
-                            <span id="modalBoDescription"></span>
-                            <span id="toggleMoreBtn" style="color: #ff7f50; cursor: pointer; display: none;"> 더보기</span>
-                        </p>
-                        <input type="hidden" name="modalBoCode" id="modalBoCode">
-                    </div>
-                    <!-- Modal footer -->
-                    <div class="modal-footer">
-                        <div class="btn orenge-btn" id="manageEpisodeBtn">회차 관리</div>
-                        <div class="btn orenge-btn" id="updateBookInfoBtn">수정</div>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-                    </div>
+                <div class="empty-state" id="filter-empty" hidden>
+                    <div><div class="empty-title">조건에 맞는 작품이 없습니다.</div><div class="empty-description">검색어나 연재 상태 필터를 변경해 보세요.</div></div>
                 </div>
             </div>
         </div>
-    </div>
-        <script>
-            $(document).ready(function () {
-                const maxLength = 100; // 최대 표시할 글자 수
-                $('.series-item').on('click', function () {
-                    const boTitle = $(this).data('title');
-                    const boAuthor = $(this).data('author');
-                    const boFin = $(this).data('fin') === 'Y' ? '완결' : '연재 중';
-                    const boDescription = $(this).data('description');
-                    const boCode = $(this).data('code');
-                    const bo_thumbnail = $(this).data('img');
 
-                    $('#modalBoTitle').text(boTitle);
-                    $('#modalBoAuthor').text(boAuthor);
-                    $('#modalBoFin').text(boFin);
-                    $('#modalBoCode').val(boCode);
-                    const $modalImage = $('#modalBoThumbnail');
-                    if (bo_thumbnail && bo_thumbnail !== '') {
-                        $modalImage.attr('src', '/file/' + bo_thumbnail);
-                    } else {
-                        $modalImage.attr('src', '/resources/static/img/default_thumb.png');
-                    }
+        <div class="panel-foot">
+            <span class="list-summary">현재 <strong id="visible-content-count" th:text="${totalCount}">0</strong>개 표시 · 전체 <strong th:text="${totalCount}">0</strong>개 작품</span>
+        </div>
+    </section>
+</main>
 
-                    // 더보기 기능 적용
-                    if (boDescription.length > maxLength) {
-                        const shortText = boDescription.substring(0, maxLength) + '...';
-                        $('#modalBoDescription').text(shortText).data('full', boDescription).data('short', shortText);
-                        $('#toggleMoreBtn').text(' 더보기').show();
-                    } else {
-                        $('#modalBoDescription').text(boDescription);
-                        $('#toggleMoreBtn').hide();
-                    }
-                    //회차관리 버튼
-                    $("#manageEpisodeBtn").on("click", function(){
-                        window.location.href = "/editor/manageEpisode/" + boCode;
-                    })
-                    //수정 버튼
-                    $("#updateBookInfoBtn").on("click", function(){
-                        window.location.href = "/editor/updateBookInfo/" + boCode;
-                    })
-                });
+<script layout:fragment="script">
+    $(function () {
+        const $cards = $(".content-card");
+        let activeFilter = "all";
 
-                $('#toggleMoreBtn').on('click', function () {
-                    const descSpan = $('#modalBoDescription');
-                    const isShort = $(this).text().includes('더보기');
-
-                    if (isShort) {
-                        descSpan.text(descSpan.data('full'));
-                        $(this).text(' 접기');
-                    } else {
-                        descSpan.text(descSpan.data('short'));
-                        $(this).text(' 더보기');
-                    }
-                });
-
-                $('#workModal').on('hidden.bs.modal', function () {
-                    document.activeElement.blur();
-                });
+        function updateVisibleCards() {
+            const keyword = $.trim($("#content-search").val()).toLocaleLowerCase();
+            let visibleCount = 0;
+            $cards.each(function () {
+                const $card = $(this);
+                const matchesStatus = activeFilter === "all" || $card.data("status") === activeFilter;
+                const searchableText = String($card.data("search") || "").toLocaleLowerCase();
+                const matchesKeyword = !keyword || searchableText.indexOf(keyword) !== -1;
+                const isVisible = matchesStatus && matchesKeyword;
+                $card.toggle(isVisible);
+                if (isVisible) visibleCount += 1;
             });
-        </script>
-	</main>
+            $("#visible-content-count").text(visibleCount);
+            $("#filter-empty").prop("hidden", visibleCount !== 0 || $cards.length === 0);
+        }
+
+        $("#content-search").on("input", updateVisibleCards);
+        $(".filter-button").on("click", function () {
+            activeFilter = $(this).data("filter");
+            $(".filter-button").removeClass("active").removeAttr("aria-pressed");
+            $(this).addClass("active").attr("aria-pressed", "true");
+            updateVisibleCards();
+        });
+        $(".filter-button.active").attr("aria-pressed", "true");
+        updateVisibleCards();
+    });
+</script>
 </body>
 </html>

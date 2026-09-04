@@ -139,11 +139,13 @@
         }
         
     </style>
+    <link rel="stylesheet" th:href="@{/css/editor-content-workflow.css}">
 </head>
 <body>
     <main layout:fragment="content">
         <div class="container register-work-page">
-            <h2>📖 새 작품 등록</h2>
+            <div class="workspace-eyebrow">BOOK SETUP</div>
+            <h2>새 작품 등록</h2>
             <p>새로운 작품(도서 시리즈) 정보를 입력하고 등록하세요.</p>
 
             <!-- 새 작품 등록 폼 -->
@@ -260,20 +262,27 @@
                 <!-- 키워드 -->
                 <div class="form-group">
                     <label class="form-label" for="bo_keywords">키워드</label>
-                    <div class="keyword-list">
-                        <h5>선택된 키워드:</h5>
-                        <div class="selected-keywords" id="selected-keywords-area">
-                            <small id="no-keywords-message" class="form-text text-muted">선택된 키워드가 없습니다.</small>
-                        </div>
-                        <th:block th:each="category : ${keywordList}">
-                            <h5 th:text="${category.kc_name}"></h5>
-                            <div>
-                                <th:block th:each="keyword : ${category.keywordList}">
-                                    <button type="button" class="btn keyword-button" th:data-keyword="${keyword.kw_code}" th:data-name="${keyword.kw_name}" th:text="${keyword.kw_name}">
-                                    </button>
-                                </th:block>
+                    <div class="keyword-picker">
+                        <section class="keyword-selected-panel">
+                            <div class="keyword-section-heading">
+                                <h5>선택된 키워드</h5>
+                                <span>다시 누르면 선택이 해제됩니다.</span>
                             </div>
-                        </th:block>
+                            <div class="selected-keywords" id="selected-keywords-area">
+                                <small id="no-keywords-message" class="form-text text-muted">선택된 키워드가 없습니다.</small>
+                            </div>
+                        </section>
+                        <div class="keyword-groups">
+                            <section class="keyword-group" th:each="category : ${keywordList}">
+                                <h5 th:text="${category.kc_name}"></h5>
+                                <div class="keyword-options">
+                                    <button type="button" class="btn keyword-button" th:each="keyword : ${category.keywordList}"
+                                            th:data-keyword="${keyword.kw_code}" th:data-name="${keyword.kw_name}"
+                                            th:text="${keyword.kw_name}">
+                                    </button>
+                                </div>
+                            </section>
+                        </div>
                     </div>
                 </div>
                 <!-- 버튼 그룹 -->

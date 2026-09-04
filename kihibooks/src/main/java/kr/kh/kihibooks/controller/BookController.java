@@ -111,7 +111,7 @@ public class BookController {
 	////////////////////////////////////////// 준호 영역 끝 //////////////////////////////////////////
 
 	@GetMapping("/library/recents")
-	public String recentList(Model model, Integer ur_num) {
+	public String recentList(Model model, @RequestParam(value = "ur_num", required = false) Integer ur_num) {
 		List<BookVO> list = bookService.getBookList(ur_num == null ? 0 : ur_num);
 		model.addAttribute("bookList", list);
 		return "user/recentList";

@@ -34,6 +34,36 @@
  * **출판사 맞춤형 워크플로우 구현**
     * **콘텐츠 관리 프로세스:** 신규 도서 등록 → 에피소드 업로드 → 가격 설정 및 발행으로 이어지는 일련의 비즈니스 로직 구현.
     * **책임 관리 체계:** 도서별로 담당 에디터를 매핑하는 기능을 구현하여 출판사 내부에서도 담당자마다 본인이 맡은 작품만 관리할 수 있는 업무 환경 구성.
+
+---
+
+## 출판사 KPI 대시보드 데모 데이터
+
+`DB/kpi_dashboard_demo.sql`은 은하출판사(`P001`)의 기존 도서와 회차를 이용해 실행일 기준 KPI 샘플 데이터를 생성합니다.
+
+* 최근 30일: 콘텐츠 판매액 1,700원, 유료 구매 회차 17건, 구매 독자 4명, 리뷰 6개
+* 이전 30일: 콘텐츠 판매액 600원, 유료 구매 회차 6건, 구매 독자 3명, 리뷰 3개
+* 주문 ID는 `KPIDEMO`, 리뷰 내용은 `[KPI_DEMO]`로 구분합니다.
+* 같은 SQL을 다시 실행하면 기존 KPI 데모 데이터만 교체하므로 중복 생성되지 않습니다.
+
+MySQL Workbench에서는 `DB/kpi_dashboard_demo.sql`을 열고 전체 실행하면 됩니다. MySQL CLI에서는 다음과 같이 적용할 수 있습니다.
+
+```text
+mysql -u root -p --default-character-set=utf8mb4 kihibooks
+mysql> source C:/Users/user/Desktop/dev/KiHiBooks/DB/kpi_dashboard_demo.sql;
+```
+
+기본 사용자 또는 `P001` 회차 데이터가 없다면 SQL이 오류를 발생시키고 변경 내용을 롤백합니다. 이 경우 `DB/step1_2_3_user_author_cate.sql`, `DB/step4_books_insert.sql`, `DB/step7_episode_dummy.sql` 순서로 기본 데이터를 먼저 준비해야 합니다.
+
+다른 프로젝트의 `SPRING_DATASOURCE_*` 환경변수가 연결 설정을 덮어쓰지 않도록 KiHiBooks는 전용 prefix를 사용합니다. Git에서 제외된 로컬 `application.properties`의 DB 설정은 다음 형식으로 작성합니다.
+
+```properties
+kihibooks.datasource.username=root
+kihibooks.datasource.password=로컬_MYSQL_비밀번호
+kihibooks.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+kihibooks.datasource.jdbc-url=jdbc:mysql://localhost:3306/kihibooks?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+```
+
 ---
 
 ## 트러블슈팅

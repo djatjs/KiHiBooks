@@ -19,8 +19,9 @@ public class PaginationUtils {
     
 	public static <T> PageInfo<T> paginate(List<T> list, int totalCount, int currentPage, int pageSize, int blockSize) {
         int totalPages = (int) Math.ceil((double) totalCount / pageSize);
-        int startPage = ((currentPage - 1) / blockSize) * blockSize + 1;
-        int endPage = Math.min(startPage + blockSize - 1, totalPages);
+        currentPage = Math.max(1, Math.min(currentPage, Math.max(totalPages, 1)));
+        int startPage = totalPages == 0 ? 0 : ((currentPage - 1) / blockSize) * blockSize + 1;
+        int endPage = totalPages == 0 ? 0 : Math.min(startPage + blockSize - 1, totalPages);
 
         return new PageInfo<>(list, totalCount, currentPage, pageSize, blockSize, totalPages, startPage, endPage);
     }

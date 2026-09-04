@@ -15,7 +15,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 @MapperScan("kr.kh.kihibooks.dao")
 public class MyBatisConfig {
 
-	@ConfigurationProperties(prefix = "spring.datasource")
+	@ConfigurationProperties(prefix = "kihibooks.datasource")
 	@Bean
 	public DataSource dataSource() {
 		return DataSourceBuilder.create().build();

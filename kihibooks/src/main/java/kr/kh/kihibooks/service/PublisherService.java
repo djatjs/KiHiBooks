@@ -1,5 +1,6 @@
 package kr.kh.kihibooks.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,10 @@ import kr.kh.kihibooks.dao.PublisherDAO;
 import kr.kh.kihibooks.dao.UserDAO;
 import kr.kh.kihibooks.model.vo.EditorVO;
 import kr.kh.kihibooks.model.vo.PublisherIdVO;
+import kr.kh.kihibooks.model.vo.PublisherBookKpiVO;
+import kr.kh.kihibooks.model.vo.PublisherDailyKpiVO;
+import kr.kh.kihibooks.model.vo.PublisherEditorKpiVO;
+import kr.kh.kihibooks.model.vo.PublisherKpiVO;
 import kr.kh.kihibooks.model.vo.PublisherVO;
 import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.utils.PageConstants;
@@ -118,6 +123,39 @@ public class PublisherService {
             return false;
         }
         return true;
+    }
+
+    public PublisherVO getPublisherByCode(String puCode) {
+        return publisherDAO.selectPublisherByCode(puCode);
+    }
+
+    public PublisherKpiVO getKpiSummary(String puCode, Integer piNum,
+            LocalDateTime startAt, LocalDateTime endAt, LocalDateTime inactiveBefore) {
+        PublisherKpiVO summary = publisherDAO.selectKpiSummary(
+                puCode, piNum, startAt, endAt, inactiveBefore);
+        return summary == null ? new PublisherKpiVO() : summary;
+    }
+
+    public List<PublisherBookKpiVO> getTopBookKpis(String puCode, Integer piNum,
+            LocalDateTime startAt, LocalDateTime endAt, int limit) {
+        return publisherDAO.selectTopBookKpis(puCode, piNum, startAt, endAt, limit);
+    }
+
+    public List<PublisherDailyKpiVO> getDailyKpis(String puCode, Integer piNum,
+            LocalDateTime startAt, LocalDateTime endAt) {
+        return publisherDAO.selectDailyKpis(puCode, piNum, startAt, endAt);
+    }
+
+    public List<PublisherEditorKpiVO> getEditorKpis(String puCode,
+            LocalDateTime startAt, LocalDateTime endAt, LocalDateTime inactiveBefore) {
+        return publisherDAO.selectEditorKpis(puCode, startAt, endAt, inactiveBefore);
+    }
+
+    public double calculateChangeRate(long current, long previous) {
+        if (previous == 0) {
+            return current == 0 ? 0 : 100;
+        }
+        return Math.round(((current - previous) * 1000.0 / previous)) / 10.0;
     }
     
 }

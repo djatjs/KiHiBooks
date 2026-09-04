@@ -372,10 +372,13 @@
 			}
         }
     </style>
+    <link rel="stylesheet" th:href="@{/css/editor-content-workflow.css}">
 </head>
 <body>
-    <main layout:fragment="content" class="container">
-        <h2 class="titleH2">📖 도서 회차 관리</h2>
+    <main layout:fragment="content" class="container editor-workflow-page">
+        <div class="workspace-eyebrow">EPISODE MANAGEMENT</div>
+        <h2 class="titleH2">도서 회차 관리</h2>
+        <p class="workflow-description">회차를 등록하고 작품의 연재 상태를 관리하세요.</p>
         <div id="page_detail" class="page-detail">
             <div class="detail-wrap">
                 <div class="detail-content">
@@ -384,7 +387,7 @@
                             <div class="grid-left-top2">
                                 <div class="thumb-grid">
 									<th:block th:if="${#lists.isEmpty(epiList)}">
-										<img src="/resources/static/img/default_thumb.png" alt="next" style="width: 204px; height: 300px;">
+										<img src="/img/default_thumb.png" alt="기본 도서 표지">
 									</th:block>
 									<th:block th:if="${!#lists.isEmpty(epiList)}">
 										<img class="thumb-img" th:src="@{/file/{path}(path=${epiList[epiList.size() - 1].ep_cover_img})}">
@@ -395,7 +398,7 @@
                                         <span class="blank"></span>
                                         <div class="cate-title">
                                             <span  class="main-cate-title" th:text="${book.bo_main_cate}"></span>
-                                            <img src="/resources/static/img/next.png" alt="next" style="height: 10px;" class="mb-1">
+                                            <img src="/img/next.png" alt="" style="height: 10px;" class="mb-1">
                                             <span th:href="@{/}" class="sub-cate-title" th:text="${book.bo_sub_cate}"></span>
                                         </div>
                                     </div>
@@ -420,7 +423,7 @@
 												<th:block th:if="${book.bo_fin == 'Y'}">
 													<button class="register-btn" id="book_finToN-btn" th:data-bocode="${book.bo_code}">연재로 전환</button>
 												</th:block>
-												<a th:href="@{/editor/manageNotice/{boCode}(boCode=${book.bo_code})}" class="register-btn">공지 사항 관리</a>
+												<a th:href="@{/editor/manageNotice/{bo_code}(bo_code=${book.bo_code})}" class="register-btn">공지 사항 관리</a>
 											</div>
 										</div>
                                     </div>
@@ -463,13 +466,13 @@
 																<div class="info-title-with-badge">
 																	<div th:if="${episode.ep_price == 0}" class="badge-list">
 																		<div class="badge">
-																			<img class="free-badge" src="/resources/static/img/free.png" alt="무료 배지">
+																				<img class="free-badge" src="/img/free.png" alt="무료 배지">
 																		</div>
 																	</div>
 																	<div th:if="${episode.ep_price != 0} and ${book.bo_wait_for_free == 'Y'}"
 																		class="badge-list">
 																		<div class="badge">
-																			<img class="clock-badge" src="/resources/static/img/clock_badge.png" alt="키다무 배지">
+																				<img class="clock-badge" src="/img/clock_badge.png" alt="키다무 배지">
 																		</div>
 																	</div>
 																	<div class="epi-title" th:text="${episode.ep_title}"></div>

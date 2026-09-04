@@ -1,5 +1,8 @@
 package kr.kh.kihibooks.controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,11 @@ import kr.kh.kihibooks.model.vo.EditorVO;
 import kr.kh.kihibooks.model.vo.EpisodeVO;
 import kr.kh.kihibooks.model.vo.KeywordCategoryVO;
 import kr.kh.kihibooks.model.vo.NoticeVO;
+import kr.kh.kihibooks.model.vo.PublisherBookKpiVO;
+import kr.kh.kihibooks.model.vo.PublisherDailyKpiVO;
+import kr.kh.kihibooks.model.vo.PublisherEditorKpiVO;
+import kr.kh.kihibooks.model.vo.PublisherKpiVO;
+import kr.kh.kihibooks.model.vo.PublisherVO;
 import kr.kh.kihibooks.model.vo.UserVO;
 import kr.kh.kihibooks.pagination.PageInfo;
 import kr.kh.kihibooks.service.BookService;
@@ -50,22 +58,71 @@ public class PublisherController {
     }
 
     @GetMapping("/publisher/dashboard")
-    public String publisherDashboard(@AuthenticationPrincipal CustomUser customUser, Model model) {
-        //총 등록 도서 수, 연재 중 도서 수, 완결 도서 수
-        int totalBookCount = bookService.getBookCount(customUser.getPu_code());
-        int totalPublishingCount = bookService.getPublishedCount(customUser.getPu_code());
-        int totalCompletedCount = bookService.getCompletedCount(customUser.getPu_code());
-        model.addAttribute("totalBookCount", totalBookCount);
-        model.addAttribute("totalPublishingCount", totalPublishingCount);
-        model.addAttribute("totalCompletedCount", totalCompletedCount);
+    public String publisherDashboard(@AuthenticationPrincipal CustomUser customUser,
+            @RequestParam(value = "days", defaultValue = "30") int requestedDays,
+            Model model) {
+        int days = requestedDays == 7 || requestedDays == 90 ? requestedDays : 30;
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.minusDays(days - 1L);
+        LocalDateTime startAt = startDate.atStartOfDay();
+        LocalDateTime endAt = today.plusDays(1).atStartOfDay();
+        LocalDateTime previousStartAt = startAt.minusDays(days);
+        LocalDateTime inactiveBefore = today.minusDays(14).atStartOfDay();
+        boolean isSuper = "SUPER".equals(customUser.getAuthority());
+        Integer piNum = isSuper ? null : customUser.getPi_num();
 
-        if(customUser.getAuthority().equals("SUPER")){
-            int editorCount = publisherService.getEditorList(customUser.getPu_code()).size();
-            model.addAttribute("editorCount", editorCount);
-        }
-        if(customUser.getAuthority().equals("EDITOR")){
-            int editorsBookCount = bookService.getEditorsBookList(customUser.getPi_num()).size();
-            model.addAttribute("editorsBookCount", editorsBookCount);
+        PublisherKpiVO kpi = publisherService.getKpiSummary(
+                customUser.getPu_code(), piNum, startAt, endAt, inactiveBefore);
+        PublisherKpiVO previousKpi = publisherService.getKpiSummary(
+                customUser.getPu_code(), piNum, previousStartAt, startAt, inactiveBefore);
+        List<PublisherBookKpiVO> topBooks = publisherService.getTopBookKpis(
+                customUser.getPu_code(), piNum, startAt, endAt, 5);
+        List<PublisherBookKpiVO> managedBooks = isSuper ? List.of() : publisherService.getTopBookKpis(
+                customUser.getPu_code(), piNum, startAt, endAt, 100);
+        List<PublisherDailyKpiVO> dailyKpis = publisherService.getDailyKpis(
+                customUser.getPu_code(), piNum, startAt, endAt);
+        PublisherVO publisher = publisherService.getPublisherByCode(customUser.getPu_code());
+
+        long dailyMaxSales = dailyKpis.stream()
+                .mapToLong(PublisherDailyKpiVO::getSalesAmount).max().orElse(0);
+        long topMaxSales = topBooks.stream()
+                .mapToLong(PublisherBookKpiVO::getSalesAmount).max().orElse(0);
+
+        model.addAttribute("publisherName", publisher == null ? "출판사" : publisher.getPu_name());
+        model.addAttribute("isSuper", isSuper);
+        model.addAttribute("dashboardRole", isSuper ? "SUPER" : "EDITOR");
+        model.addAttribute("scopeLabel", piNum == null ? "출판사 전체" : "내 담당 작품");
+        model.addAttribute("selectedDays", days);
+        model.addAttribute("periodLabel", startDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+                + " — " + today.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")));
+        model.addAttribute("lastUpdated", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")));
+        model.addAttribute("kpi", kpi);
+        model.addAttribute("salesChange", publisherService.calculateChangeRate(kpi.getSalesAmount(), previousKpi.getSalesAmount()));
+        model.addAttribute("purchaseChange", publisherService.calculateChangeRate(kpi.getPaidPurchaseCount(), previousKpi.getPaidPurchaseCount()));
+        model.addAttribute("buyerChange", publisherService.calculateChangeRate(kpi.getBuyerCount(), previousKpi.getBuyerCount()));
+        model.addAttribute("reviewChange", publisherService.calculateChangeRate(kpi.getReviewCount(), previousKpi.getReviewCount()));
+        model.addAttribute("ratingChange", Math.round((kpi.getAverageRating() - previousKpi.getAverageRating()) * 10.0) / 10.0);
+        model.addAttribute("topBooks", topBooks);
+        model.addAttribute("managedBooks", managedBooks);
+        model.addAttribute("attentionBooks", managedBooks.stream()
+                .filter(book -> book.getLastEpisodeDate() == null
+                        || book.getLastEpisodeDate().isBefore(inactiveBefore))
+                .toList());
+        model.addAttribute("dailyKpis", dailyKpis);
+        model.addAttribute("dailyMaxSales", dailyMaxSales);
+        model.addAttribute("topMaxSales", topMaxSales);
+
+        if (isSuper) {
+            model.addAttribute("editorCount", publisherService.getEditorCount(customUser.getPu_code()));
+            List<PublisherEditorKpiVO> editorKpis = publisherService.getEditorKpis(
+                    customUser.getPu_code(), startAt, endAt, inactiveBefore);
+            long topBookSales = topBooks.stream().mapToLong(PublisherBookKpiVO::getSalesAmount).max().orElse(0);
+            double topBookShare = kpi.getSalesAmount() == 0 ? 0
+                    : Math.round(topBookSales * 1000.0 / kpi.getSalesAmount()) / 10.0;
+            model.addAttribute("editorKpis", editorKpis);
+            model.addAttribute("topBookShare", topBookShare);
+            model.addAttribute("salesPerBuyer", kpi.getBuyerCount() == 0 ? 0
+                    : kpi.getSalesAmount() / kpi.getBuyerCount());
         }
         return "/publisher/publisherDashboard";
     }
@@ -76,16 +133,16 @@ public class PublisherController {
         String puCode = user.getPu_code();
 
         int totalCount = publisherService.getEditorCount(puCode); // 전체 수
-        // int pageSize = PageConstants.PAGE_SIZE;
-        int pageSize = 2;
-        // int blockSize = PageConstants.BLOCK_SIZE;
-        int blockSize = 2;
+        int pageSize = 20;
+        int blockSize = 5;
         int offset = (page - 1) * pageSize;
 
         List<EditorVO> editorList = publisherService.getEditorList(puCode, pageSize, offset);
         PageInfo<EditorVO> pageInfo = PaginationUtils.paginate(editorList, totalCount, page, pageSize, blockSize);
+        PublisherVO publisher = publisherService.getPublisherByCode(puCode);
 
         model.addAttribute("pageInfo", pageInfo);
+        model.addAttribute("publisherName", publisher == null ? "출판사" : publisher.getPu_name());
         return "publisher/manageEditors";
     }
 
@@ -103,7 +160,7 @@ public class PublisherController {
 
     @ResponseBody
     @PostMapping("/publisher/addEditor")
-    public boolean addEditor(@RequestParam("userNum") int userNum, String puCode) {
+    public boolean addEditor(@RequestParam("userNum") int userNum, @RequestParam("puCode") String puCode) {
         try {
             return publisherService.addEditor(userNum, puCode);
         } catch (Exception e) {
@@ -124,25 +181,20 @@ public class PublisherController {
     }
 
     @GetMapping("/editor/myContent")
-    public String myContent(@RequestParam(value = "page", defaultValue = "1") int page, @AuthenticationPrincipal CustomUser customUser, Model model) {
+    public String myContent(@AuthenticationPrincipal CustomUser customUser, Model model) {
         //등록한 작품 가져오기 (+ 출판사명(publisher), 작가명(author))
         List<BookVO> bookList = bookService.getEditorsBookList(customUser.getPi_num());
         
         int totalCount = bookList.size(); // 전체 수
-        // int pageSize = PageConstants.PAGE_SIZE;
-        int pageSize = 5;
-        // int blockSize = PageConstants.BLOCK_SIZE;
-        int blockSize = 5;
-        int offset = (page - 1) * pageSize;
+        PublisherVO publisher = publisherService.getPublisherByCode(customUser.getPu_code());
+        long finishedCount = bookList.stream().filter(book -> "Y".equals(book.getBo_fin())).count();
 
-        List<BookVO> books = bookService.getEditorsBookListToPage(customUser.getPi_num(), pageSize, offset);
-        PageInfo<BookVO> pageInfo = PaginationUtils.paginate(books, totalCount, page, pageSize, blockSize);
-
-        model.addAttribute("pageInfo", pageInfo);
-
-
+        model.addAttribute("books", bookList);
+        model.addAttribute("totalCount", totalCount);
         model.addAttribute("user", customUser.getUser());
-        // model.addAttribute("books", books);
+        model.addAttribute("publisherName", publisher == null ? "출판사" : publisher.getPu_name());
+        model.addAttribute("finishedCount", finishedCount);
+        model.addAttribute("serializingCount", totalCount - finishedCount);
         return "/publisher/editor_myContent";
     }
     
@@ -159,7 +211,7 @@ public class PublisherController {
     }
 
     @PostMapping("/editor/registerNew")
-    public String registerNewWorkPost(BookVO book, @RequestParam("bo_keywords") List<String> keywordCodes, String pu_code) {
+    public String registerNewWorkPost(BookVO book, @RequestParam("bo_keywords") List<String> keywordCodes, @RequestParam("pu_code") String pu_code) {
         System.out.println(book);
         
         if(book == null || book.getBo_author() == null || book.getBo_title() == null || book.getBo_sc_code()== null || book.getBo_title().isBlank()){
@@ -218,7 +270,7 @@ public class PublisherController {
         return "/publisher/editor_updateBook";
     }
     @PostMapping("/editor/updateBookInfo/{bo_code}")
-    public String updateBookInfoPost(@AuthenticationPrincipal CustomUser customUser, @PathVariable String bo_code, @RequestParam("bo_keywords") List<String> bo_keywords, BookVO book, String pu_code)  {
+    public String updateBookInfoPost(@AuthenticationPrincipal CustomUser customUser, @PathVariable("bo_code") String bo_code, @RequestParam("bo_keywords") List<String> bo_keywords, BookVO book, @RequestParam("pu_code") String pu_code)  {
         //받은 값 확인
         System.out.println("선택한 키워드 : "+bo_keywords);
         System.out.println("수정된 도서 정보 : "+book);
@@ -236,7 +288,7 @@ public class PublisherController {
         return "/publisher/editor_registerEpisode";
     }
     @PostMapping("/editor/registerEpisode/{bo_code}")
-    public String registerEpisodePost(@PathVariable("bo_code") String bo_code, EpisodeVO ep, MultipartFile epubFile, MultipartFile coverImage) {
+    public String registerEpisodePost(@PathVariable("bo_code") String bo_code, EpisodeVO ep, @RequestParam("epubFile") MultipartFile epubFile, @RequestParam("coverImage") MultipartFile coverImage) {
         if(bookService.insertEpisode(ep, bo_code, epubFile, coverImage)){
             return "redirect:/editor/manageEpisode/"+bo_code;
         }
@@ -251,7 +303,7 @@ public class PublisherController {
         return "/publisher/editor_updateEpisode";
     }
     @PostMapping("/editor/updateEpisode/{ep_code}")
-    public String updateEpisodePost(@PathVariable("ep_code") String ep_code, EpisodeVO ep, MultipartFile epubFile, MultipartFile coverImage) {
+    public String updateEpisodePost(@PathVariable("ep_code") String ep_code, EpisodeVO ep, @RequestParam("epubFile") MultipartFile epubFile, @RequestParam("coverImage") MultipartFile coverImage) {
         String bo_code = ep.getEp_bo_code();
         if(bookService.updateEpisode(ep, ep_code, bo_code, epubFile, coverImage)){
             return "redirect:/editor/manageEpisode/"+bo_code;
@@ -285,6 +337,8 @@ public class PublisherController {
         int totalCount = bookService.getNoticeCount(bo_code);
         int pageSize = 5;
         int blockSize = 3;
+        int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+        page = Math.max(1, Math.min(page, Math.max(totalPages, 1)));
         int offset = (page - 1) * pageSize;
 
         List<NoticeVO> noticeList = bookService.getNoticeListForPage(bo_code, pageSize, offset);
@@ -318,8 +372,10 @@ public class PublisherController {
     public String manageEditorsBook(@PathVariable("pu_code") String pu_code, Model model) {
         List<BookVO> books = bookService.getPublishersBookList(pu_code);
         List<EditorVO> editors = publisherService.getEditorList(pu_code);
+        PublisherVO publisher = publisherService.getPublisherByCode(pu_code);
         model.addAttribute("books",books);
         model.addAttribute("editors",editors);
+        model.addAttribute("publisherName", publisher == null ? "출판사" : publisher.getPu_name());
         return "/publisher/manageEditorsBook";
     }
 
