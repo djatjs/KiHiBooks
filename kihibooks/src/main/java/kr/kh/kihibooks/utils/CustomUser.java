@@ -10,9 +10,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import kr.kh.kihibooks.model.vo.UserVO;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class CustomUser extends User {
 	
 	private UserVO user;
@@ -20,9 +20,6 @@ public class CustomUser extends User {
 	private String pu_code;
 	private int pi_num;
 	
-	public CustomUser(String username, String password, Collection<? extends GrantedAuthority> authorities) {
-		super(username, password, authorities);
-	}
 	public CustomUser(UserVO vo, String authority, String pu_code, int pi_num) {
 		super(	vo.getUr_email(),
 				vo.getUr_pw(),
@@ -38,7 +35,7 @@ public class CustomUser extends User {
 		authorities.add(new SimpleGrantedAuthority("ROLE_" + vo.getUr_authority()));
 		
 		// 출판사 사용자인 경우 세부 권한(SUPER, EDITOR)을 추가
-		if ("PUBLISHER".equals(vo.getUr_authority()) && authority != null && !authority.equals("PUBLISHER")) {
+		if ("PUBLISHER".equals(vo.getUr_authority()) && authority != null) {
 			authorities.add(new SimpleGrantedAuthority("ROLE_" + authority));
 		}
 		return authorities;

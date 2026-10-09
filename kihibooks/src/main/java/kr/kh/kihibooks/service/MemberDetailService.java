@@ -24,14 +24,10 @@ public class MemberDetailService implements UserDetailsService{
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		UserVO user = userDao.selectEmailIncludeDel(username);
-		String authority = null;
-		String pi_pu_code = "";
-		String pu_code = null;
+		String authority = null, pu_code = null, pi_pu_code = "";
 		int pi_num= 0;
 
-		if (user == null) {
-			throw new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다.");
-		}
+		if (user == null) throw new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다.");
 		if(user != null){
 			PublisherIdVO publisherId = new PublisherIdVO();
 			publisherId.setPi_ur_num(user.getUr_num());
@@ -45,9 +41,7 @@ public class MemberDetailService implements UserDetailsService{
 				pu_code = pu_id.getPi_pu_code();
 				pi_num = pu_id.getPi_num();
 			}
-			else{
-				authority = user.getUr_authority();
-			}
+			else authority = user.getUr_authority();
 		}
 		return user == null ? null : new CustomUser(user, authority, pu_code, pi_num);
 	}

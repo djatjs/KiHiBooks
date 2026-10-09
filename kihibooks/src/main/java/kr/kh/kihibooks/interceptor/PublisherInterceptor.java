@@ -1,6 +1,7 @@
 package kr.kh.kihibooks.interceptor;
 
 import java.util.Map;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -46,10 +47,14 @@ public class PublisherInterceptor implements HandlerInterceptor {
 
         // 3. 리소스별 소유권 확인 (Resource-based Auth)
         @SuppressWarnings("unchecked")
-        Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(
+            HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         
-        if (pathVariables != null) {
-            String bo_code = pathVariables.get("bo_code");
+        if (pathVariables == null) {
+            pathVariables = Collections.emptyMap();
+        }
+        {
+            String bo_code = firstNonBlank(pathVariables.get("bo_code"), request.getParameter("bo_code"));
             String ep_code = pathVariables.get("ep_code");
             String pu_code_path = pathVariables.get("pu_code");
 
@@ -62,33 +67,49 @@ public class PublisherInterceptor implements HandlerInterceptor {
             // 도서 코드 소유권 확인
             if (bo_code != null) {
                 BookVO book = bookService.getBook(bo_code);
-                if (book == null || !user.getPu_code().equals(book.getBo_pu_code())) {
+                if (!canAccessBook(user, book)) {
                     response.sendError(HttpServletResponse.SC_FORBIDDEN, "해당 도서에 대한 권한이 없습니다.");
                     return false;
                 }
-                
-                // EDITOR인 경우 본인 담당 도서인지 추가 확인 (선택 사항 - 필요시 활성화)
-                /*
-                if ("EDITOR".equals(user.getAuthority()) && book.getBo_pi_num() != user.getPi_num()) {
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "본인 담당 도서가 아닙니다.");
-                    return false;
-                }
-                */
             }
 
             // 회차 코드 소유권 확인
             if (ep_code != null) {
                 EpisodeVO episode = bookService.getEpisodeByCode(ep_code);
-                if (episode != null) {
-                    BookVO book = bookService.getBook(episode.getEp_bo_code());
-                    if (book == null || !user.getPu_code().equals(book.getBo_pu_code())) {
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "해당 회차에 대한 권한이 없습니다.");
+                BookVO book = episode == null ? null : bookService.getBook(episode.getEp_bo_code());
+                if (!canAccessBook(user, book)) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "해당 회차에 대한 권한이 없습니다.");
+                    return false;
+                }
+            }
+
+            String ntNum = firstNonBlank(pathVariables.get("nt_num"), request.getParameter("nt_num"));
+            if (ntNum != null) {
+                try {
+                    var notice = bookService.getNotice(Integer.parseInt(ntNum));
+                    BookVO book = notice == null ? null : bookService.getBook(notice.getNt_bo_code());
+                    if (!canAccessBook(user, book)) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "해당 공지에 대한 권한이 없습니다.");
                         return false;
                     }
+                } catch (NumberFormatException e) {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "잘못된 공지 번호입니다.");
+                    return false;
                 }
             }
         }
 
         return true;
+    }
+
+    private boolean canAccessBook(CustomUser user, BookVO book) {
+        if (book == null || user.getPu_code() == null || !user.getPu_code().equals(book.getBo_pu_code())) {
+            return false;
+        }
+        return "SUPER".equals(user.getAuthority()) || book.getBo_pi_num() == user.getPi_num();
+    }
+
+    private String firstNonBlank(String first, String second) {
+        return first != null && !first.isBlank() ? first : second != null && !second.isBlank() ? second : null;
     }
 }

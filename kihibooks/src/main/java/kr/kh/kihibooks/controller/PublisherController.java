@@ -211,7 +211,8 @@ public class PublisherController {
     }
 
     @PostMapping("/editor/registerNew")
-    public String registerNewWorkPost(BookVO book, @RequestParam("bo_keywords") List<String> keywordCodes, @RequestParam("pu_code") String pu_code) {
+    public String registerNewWorkPost(@AuthenticationPrincipal CustomUser customUser, BookVO book,
+            @RequestParam("bo_keywords") List<String> keywordCodes) {
         System.out.println(book);
         
         if(book == null || book.getBo_author() == null || book.getBo_title() == null || book.getBo_sc_code()== null || book.getBo_title().isBlank()){
@@ -227,8 +228,14 @@ public class PublisherController {
             }
         }
         book.setBo_au_num(authorNum);
+        // 클라이언트가 출판사/담당자 값을 바꿔 보내도 로그인 사용자의 범위를 벗어나지 않게 한다.
+        if ("EDITOR".equals(customUser.getAuthority())) {
+            book.setBo_pi_num(customUser.getPi_num());
+        } else if (!isPublisherMember(customUser, book.getBo_pi_num())) {
+            return "redirect:/editor/registerNew";
+        }
         //2. 책
-        if(!bookService.addBook(book, pu_code)){
+        if(!bookService.addBook(book, customUser.getPu_code())){
             return "redirect:/editor/registerNew";
         }
         // 3. bo_code 다시 받아오기
@@ -274,6 +281,16 @@ public class PublisherController {
         //받은 값 확인
         System.out.println("선택한 키워드 : "+bo_keywords);
         System.out.println("수정된 도서 정보 : "+book);
+        BookVO existingBook = bookService.getBook(bo_code);
+        if (existingBook == null) {
+            return "redirect:/editor/myContent";
+        }
+        book.setBo_code(bo_code);
+        if ("EDITOR".equals(customUser.getAuthority())) {
+            book.setBo_pi_num(customUser.getPi_num());
+        } else if (!isPublisherMember(customUser, book.getBo_pi_num())) {
+            book.setBo_pi_num(existingBook.getBo_pi_num());
+        }
         //도서 수정 작업
         if(!bookService.updateBookInfo(book, bo_keywords)){
             return "redirect:/editor/updateBookInfo/"+bo_code;
@@ -304,7 +321,12 @@ public class PublisherController {
     }
     @PostMapping("/editor/updateEpisode/{ep_code}")
     public String updateEpisodePost(@PathVariable("ep_code") String ep_code, EpisodeVO ep, @RequestParam("epubFile") MultipartFile epubFile, @RequestParam("coverImage") MultipartFile coverImage) {
-        String bo_code = ep.getEp_bo_code();
+        EpisodeVO existingEpisode = bookService.getEpisodeByCode(ep_code);
+        if (existingEpisode == null) {
+            return "redirect:/editor/myContent";
+        }
+        ep.setEp_code(ep_code);
+        String bo_code = existingEpisode.getEp_bo_code();
         if(bookService.updateEpisode(ep, ep_code, bo_code, epubFile, coverImage)){
             return "redirect:/editor/manageEpisode/"+bo_code;
         }
@@ -360,7 +382,10 @@ public class PublisherController {
         return "/publisher/editor_registerNotice";
     }
     @PostMapping("/editor/registerNotice/{bo_code}")
-    public String registerNotice(@PathVariable("bo_code") String bo_code, NoticeVO nt) {
+    public String registerNotice(@PathVariable("bo_code") String bo_code, NoticeVO nt,
+            @AuthenticationPrincipal CustomUser customUser) {
+        nt.setNt_bo_code(bo_code);
+        nt.setNt_pi_num(customUser.getPi_num());
         if(bookService.insertNotice(nt)){
             return "redirect:/editor/manageNotice/"+bo_code;
         }
@@ -410,6 +435,13 @@ public class PublisherController {
     }
     @PostMapping("/editor/updateNotice/{nt_num}")
     public String updateNoticePost(@PathVariable("nt_num") int nt_num, NoticeVO nt) {
+        NoticeVO existingNotice = bookService.getNotice(nt_num);
+        if (existingNotice == null) {
+            return "redirect:/editor/myContent";
+        }
+        nt.setNt_num(nt_num);
+        nt.setNt_bo_code(existingNotice.getNt_bo_code());
+        nt.setNt_pi_num(existingNotice.getNt_pi_num());
         if(bookService.updateNotice(nt)){
             return "redirect:/editor/manageNotice/"+nt.getNt_bo_code();
         }
@@ -423,6 +455,12 @@ public class PublisherController {
             return false;
         }
         return bookService.deleteNotice(nt_num);
+    }
+
+    private boolean isPublisherMember(CustomUser customUser, int piNum) {
+        return piNum == customUser.getPi_num()
+                || publisherService.getEditorList(customUser.getPu_code()).stream()
+                        .anyMatch(editor -> editor.getPi_num() == piNum);
     }
     
 
