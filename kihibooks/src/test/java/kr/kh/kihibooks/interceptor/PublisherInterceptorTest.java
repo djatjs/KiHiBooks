@@ -33,6 +33,7 @@ class PublisherInterceptorTest {
         interceptor = new PublisherInterceptor();
         bookService = mock(BookService.class);
         ReflectionTestUtils.setField(interceptor, "bookService", bookService);
+        ReflectionTestUtils.setField(interceptor, "securityService", new kr.kh.kihibooks.utils.SecurityService());
     }
 
     @AfterEach
@@ -49,6 +50,28 @@ class PublisherInterceptorTest {
         assertThat(interceptor.preHandle(request("/editor/manageEpisode/BOOK-2", Map.of("bo_code", "BOOK-2")), response, new Object()))
                 .isTrue();
         assertThat(response.getStatus()).isEqualTo(200);
+    }
+
+    @Test
+    void superCannotAccessBookOfAnotherPublisher() throws Exception {
+        authenticate("SUPER", "P001", 1);
+        when(bookService.getBook("BOOK-9")).thenReturn(book("P002", 1));
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        assertThat(interceptor.preHandle(request("/editor/manageEpisode/BOOK-9", Map.of("bo_code", "BOOK-9")), response, new Object()))
+                .isFalse();
+        assertThat(response.getStatus()).isEqualTo(403);
+    }
+
+    @Test
+    void editorCannotAccessBookOfAnotherPublisherEvenWithSameEditorNumber() throws Exception {
+        authenticate("EDITOR", "P001", 11);
+        when(bookService.getBook("BOOK-9")).thenReturn(book("P002", 11));
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        assertThat(interceptor.preHandle(request("/editor/manageEpisode/BOOK-9", Map.of("bo_code", "BOOK-9")), response, new Object()))
+                .isFalse();
+        assertThat(response.getStatus()).isEqualTo(403);
     }
 
     @Test

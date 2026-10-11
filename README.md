@@ -84,9 +84,23 @@ Thymeleaf로 HTML을 렌더링하는 서버 중심 구조입니다. 루트의 `p
 
 DB 트랜잭션은 업로드한 파일의 저장·삭제까지 롤백하지 않습니다.
 
+### 소유권 검증을 한곳에서
+
+도서·회차에 대한 소유권 규칙은 `SecurityService`에 모았고, 세 곳이 같은 규칙을 씁니다.
+
+| 적용 위치 | 검사 내용 |
+| --- | --- |
+| `PublisherInterceptor` (`/publisher/**`, `/editor/**`) | 요청한 도서·회차·공지가 내 출판사 것이고, 에디터라면 내가 담당하는 도서인가 |
+| `@PreAuthorize("@ss.canAccessBook(#bo_code)")` (도서·회차·공지 관리 메서드) | 위와 같은 규칙. 인터셉터를 거치지 않는 경로로 호출되어도 메서드에서 막음 |
+| EPUB 파일 응답, 회차 열람 | 관리자·해당 도서 담당자이거나, 구매했거나 서재에 담은 회차인가 |
+
+구매 여부는 `buy_list`(유료 구매)와 `library`(무료 열람) 두 테이블을 모두 확인합니다. 이전 구현은 `library`만 확인해 유료 구매자가 차단되는 문제가 있었고, 그 때문에 검증을 꺼 두었다가 다시 구현했습니다.
+
+`PublisherInterceptorTest`, `SecurityServiceTest`, `PublisherMethodSecurityTest`가 허용·차단 경우를 검증합니다.
+
 ### 현재 구현의 한계
 
-`SecurityService.canAccessBook()`과 `canAccessEpisode()`는 현재 항상 `true`를 반환합니다. 따라서 이 메서드를 호출하는 `@PreAuthorize`와 EPUB 파일 접근 검사는 별도의 소유권·구매 검증을 수행하지 않습니다. 출판사 관리 경로에는 인터셉터 검증이 적용되어 있으며, 위 메서드의 검증 구현은 남은 과제입니다.
+출판사 소유권 검증은 `/publisher/**`, `/editor/**` 경로와 `@PreAuthorize`를 붙인 메서드에 적용됩니다. 같은 데이터를 다루는 새 경로를 추가할 때 둘 중 하나를 적용하지 않으면 검증에서 빠집니다.
 
 ## 프로젝트 구조
 

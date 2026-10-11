@@ -23,6 +23,9 @@ public class PublisherInterceptor implements HandlerInterceptor {
     @Autowired
     private BookService bookService;
 
+    @Autowired
+    private kr.kh.kihibooks.utils.SecurityService securityService;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         
@@ -102,11 +105,9 @@ public class PublisherInterceptor implements HandlerInterceptor {
         return true;
     }
 
+    // 소유권 규칙은 SecurityService 한곳에 둔다(메서드 보안, 파일 응답과 같은 규칙)
     private boolean canAccessBook(CustomUser user, BookVO book) {
-        if (book == null || user.getPu_code() == null || !user.getPu_code().equals(book.getBo_pu_code())) {
-            return false;
-        }
-        return "SUPER".equals(user.getAuthority()) || book.getBo_pi_num() == user.getPi_num();
+        return securityService.canAccessBook(user, book);
     }
 
     private String firstNonBlank(String first, String second) {

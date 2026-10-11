@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -253,7 +254,7 @@ public class PublisherController {
     
     @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/manageEpisode/{bo_code}")
-    public String manageEpisodeEpisode(@PathVariable("bo_code") String bo_code, Model model) {
+    public String manageEpisodeEpisode(@P("bo_code") @PathVariable("bo_code") String bo_code, Model model) {
         BookVO book = bookService.getBook(bo_code);
         List<EpisodeVO> epiList = bookService.getEpisodeList(bo_code);
         model.addAttribute("bo_code", bo_code);
@@ -264,7 +265,7 @@ public class PublisherController {
 
     @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/updateBookInfo/{bo_code}")
-    public String updateBookInfo(@AuthenticationPrincipal CustomUser customUser, @PathVariable("bo_code") String bo_code, Model model) {
+    public String updateBookInfo(@AuthenticationPrincipal CustomUser customUser, @P("bo_code") @PathVariable("bo_code") String bo_code, Model model) {
         BookVO book = bookService.getBook(bo_code);
         List<EditorVO> editors = publisherService.getEditorList(customUser.getPu_code());
         List <KeywordCategoryVO> keywordList = keywordService.getAllKeywordCategories();
@@ -277,7 +278,7 @@ public class PublisherController {
         return "/publisher/editor_updateBook";
     }
     @PostMapping("/editor/updateBookInfo/{bo_code}")
-    public String updateBookInfoPost(@AuthenticationPrincipal CustomUser customUser, @PathVariable("bo_code") String bo_code, @RequestParam("bo_keywords") List<String> bo_keywords, BookVO book, @RequestParam("pu_code") String pu_code)  {
+    public String updateBookInfoPost(@AuthenticationPrincipal CustomUser customUser, @P("bo_code") @PathVariable("bo_code") String bo_code, @RequestParam("bo_keywords") List<String> bo_keywords, BookVO book, @RequestParam("pu_code") String pu_code)  {
         //받은 값 확인
         System.out.println("선택한 키워드 : "+bo_keywords);
         System.out.println("수정된 도서 정보 : "+book);
@@ -300,12 +301,12 @@ public class PublisherController {
 
     @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/registerEpisode/{bo_code}")
-    public String registerEpisode(@PathVariable("bo_code") String bo_code, Model model) {
+    public String registerEpisode(@P("bo_code") @PathVariable("bo_code") String bo_code, Model model) {
         model.addAttribute("bo_code", bo_code);
         return "/publisher/editor_registerEpisode";
     }
     @PostMapping("/editor/registerEpisode/{bo_code}")
-    public String registerEpisodePost(@PathVariable("bo_code") String bo_code, EpisodeVO ep, @RequestParam("epubFile") MultipartFile epubFile, @RequestParam("coverImage") MultipartFile coverImage) {
+    public String registerEpisodePost(@P("bo_code") @PathVariable("bo_code") String bo_code, EpisodeVO ep, @RequestParam("epubFile") MultipartFile epubFile, @RequestParam("coverImage") MultipartFile coverImage) {
         if(bookService.insertEpisode(ep, bo_code, epubFile, coverImage)){
             return "redirect:/editor/manageEpisode/"+bo_code;
         }
@@ -349,7 +350,7 @@ public class PublisherController {
     @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/manageNotice/{bo_code}")
     public String myContent(@AuthenticationPrincipal CustomUser customUser,
-                            @PathVariable("bo_code") String bo_code,
+                            @P("bo_code") @PathVariable("bo_code") String bo_code,
                             Model model,
                             @RequestParam(value = "page", defaultValue = "1") int page) {
         
@@ -376,13 +377,13 @@ public class PublisherController {
 
     @PreAuthorize("@ss.canAccessBook(#bo_code)")
     @GetMapping("/editor/registerNotice/{bo_code}")
-    public String registerNotice(@PathVariable("bo_code") String bo_code, @AuthenticationPrincipal CustomUser customUser, Model model) {
+    public String registerNotice(@P("bo_code") @PathVariable("bo_code") String bo_code, @AuthenticationPrincipal CustomUser customUser, Model model) {
         model.addAttribute("pi_num", customUser.getPi_num());
         model.addAttribute("bo_code", bo_code);
         return "/publisher/editor_registerNotice";
     }
     @PostMapping("/editor/registerNotice/{bo_code}")
-    public String registerNotice(@PathVariable("bo_code") String bo_code, NoticeVO nt,
+    public String registerNotice(@P("bo_code") @PathVariable("bo_code") String bo_code, NoticeVO nt,
             @AuthenticationPrincipal CustomUser customUser) {
         nt.setNt_bo_code(bo_code);
         nt.setNt_pi_num(customUser.getPi_num());
@@ -394,7 +395,7 @@ public class PublisherController {
 
     @PreAuthorize("#pu_code == authentication.principal.pu_code")
     @GetMapping("/publisher/manageEditorsBook/{pu_code}")
-    public String manageEditorsBook(@PathVariable("pu_code") String pu_code, Model model) {
+    public String manageEditorsBook(@P("pu_code") @PathVariable("pu_code") String pu_code, Model model) {
         List<BookVO> books = bookService.getPublishersBookList(pu_code);
         List<EditorVO> editors = publisherService.getEditorList(pu_code);
         PublisherVO publisher = publisherService.getPublisherByCode(pu_code);
