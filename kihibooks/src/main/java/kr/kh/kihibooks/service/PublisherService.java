@@ -83,6 +83,10 @@ public class PublisherService {
         if (userNum == 0 || puCode == null) {
             throw new IllegalArgumentException("userNum 또는 puCode가 잘못됨");
         }
+        // 이미 다른 출판사(또는 우리 출판사)에 소속된 사용자는 데려올 수 없다
+        if (publisherDAO.selectPublisherIdByNum(userNum) != null) {
+            throw new IllegalArgumentException("이미 출판사에 소속된 사용자: " + userNum);
+        }
         // USER권한 -> PUBLISHER
         if (!userDAO.updateAthourityToPublisher(userNum)) {
             throw new RuntimeException("권한 업데이트 실패");
@@ -95,7 +99,12 @@ public class PublisherService {
     }
 
     @Transactional
-    public boolean deleteEditor(int userNum) {
+    public boolean deleteEditor(int userNum, String puCode) {
+        // 우리 출판사 소속 에디터만 해제할 수 있다
+        PublisherIdVO target = publisherDAO.selectPublisherIdByNum(userNum);
+        if (target == null || puCode == null || !puCode.equals(target.getPi_pu_code())) {
+            throw new IllegalArgumentException("다른 출판사 소속이거나 에디터가 아닌 사용자: " + userNum);
+        }
         // 1. 출판사 ID 테이블에서 해당 유저 PI_NUM = "Y"로 수정
         if (!publisherDAO.deleteEditorByUserNum(userNum)) {
             throw new RuntimeException("에디터 삭제 실패");

@@ -161,9 +161,10 @@ public class PublisherController {
 
     @ResponseBody
     @PostMapping("/publisher/addEditor")
-    public boolean addEditor(@RequestParam("userNum") int userNum, @RequestParam("puCode") String puCode) {
+    public boolean addEditor(@RequestParam("userNum") int userNum, @AuthenticationPrincipal CustomUser customUser) {
         try {
-            return publisherService.addEditor(userNum, puCode);
+            // 출판사 코드는 요청 값이 아니라 로그인한 대표의 소속에서 가져온다
+            return publisherService.addEditor(userNum, customUser.getPu_code());
         } catch (Exception e) {
             System.out.println("트랜잭션 실패: " + e.getMessage());
             return false;
@@ -172,9 +173,9 @@ public class PublisherController {
 
     @ResponseBody
     @PostMapping("/publisher/deleteEditor")
-    public boolean deleteEditor(@RequestParam("userNum") int userNum) {
+    public boolean deleteEditor(@RequestParam("userNum") int userNum, @AuthenticationPrincipal CustomUser customUser) {
         try {
-            return publisherService.deleteEditor(userNum);
+            return publisherService.deleteEditor(userNum, customUser.getPu_code());
         } catch (Exception e) {
             System.out.println("트랜잭션 실패: " + e.getMessage());
             return false;

@@ -42,6 +42,12 @@ public class FileController {
             @PathVariable("fileName") String fileName,
             HttpServletRequest request) {
 
+        // 0. 폴더는 정해진 두 개만 허용한다. Windows는 경로 대소문자를 구분하지 않아
+        //    "EPUBS"·"epubs." 같은 이름이 아래 검사를 건너뛰고 같은 폴더를 열 수 있기 때문이다.
+        if (!"covers".equals(type) && !"epubs".equals(type)) {
+            return ResponseEntity.notFound().build();
+        }
+
         // 1. 보안 체크: EPUB 파일인 경우 엄격한 RBAC 적용
         if ("epubs".equals(type)) {
             // 파일명에서 회차 코드 추출 (ep_code.epub -> ep_code)

@@ -799,7 +799,13 @@
         ORDER BY bo_title ASC
     </select>
     <update id="changeEditor">
-        update book set bo_pi_num = #{pi_num} where bo_code = #{bo_code}
+        <!-- 새 담당자는 지금 담당자와 같은 출판사(=도서의 출판사)의 현재 소속 계정이어야 한다 -->
+        update book set bo_pi_num = #{pi_num}
+        where bo_code = #{bo_code}
+          and exists (select 1 from publisher_id newpi
+                      join publisher_id curpi on curpi.pi_pu_code = newpi.pi_pu_code
+                      where newpi.pi_num = #{pi_num} and newpi.pi_del = 'N'
+                        and curpi.pi_num = book.bo_pi_num)
     </update>
     <select id="getEditorsBookListToPage" resultType="BookVO">
         select book.*, author.au_name as bo_author, publisher.pu_name as bo_publisher, e.EP_COVER_IMG AS bo_thumbnail from book
